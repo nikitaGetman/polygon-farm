@@ -21,5 +21,6 @@ module.exports = {
       { ignores: ["modules"] },
     ],
     camelcase: "off",
+    "node/no-missing-import": "off",
   },
 };

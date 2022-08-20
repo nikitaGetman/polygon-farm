@@ -14,7 +14,7 @@ const accounts = process.env.PRIVATE_KEY ? [process.env.PRIVATE_KEY] : [];
 
 const config: HardhatUserConfig = {
   solidity: {
-    version: "0.8.9",
+    version: "0.8.11",
     settings: {
       optimizer: {
         enabled: true,
@@ -44,7 +44,7 @@ const config: HardhatUserConfig = {
     ],
   },
   gasReporter: {
-    enabled: true,
+    enabled: false,
     currency: "USD",
   },
 };

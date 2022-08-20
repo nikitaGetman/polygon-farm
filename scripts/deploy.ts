@@ -1,22 +1,28 @@
 import { ethers } from "hardhat";
+import { Token1__factory } from "../typechain-types";
 
 async function main() {
-  const currentTimestampInSeconds = Math.round(Date.now() / 1000);
-  const ONE_YEAR_IN_SECS = 365 * 24 * 60 * 60;
-  const unlockTime = currentTimestampInSeconds + ONE_YEAR_IN_SECS;
+  const config = {
+    initialSupply: 21_000_000,
+    holderAddress: "0xSomeAddress",
+  };
 
-  const lockedAmount = ethers.utils.parseEther("1");
+  const initialSupply = ethers.BigNumber.from(10)
+    .pow(18)
+    .mul(config.initialSupply);
+  const signers = await ethers.getSigners();
 
-  const Lock = await ethers.getContractFactory("Lock");
-  const lock = await Lock.deploy(unlockTime, { value: lockedAmount });
+  const [adminAccount] = signers;
 
-  await lock.deployed();
+  const token = await new Token1__factory(adminAccount).deploy(
+    initialSupply,
+    config.holderAddress
+  );
 
-  console.log("Lock with 1 ETH deployed to:", lock.address);
+  await token.deployed();
+  console.log("Token1 is deployed to:", token.address);
 }
 
-// We recommend this pattern to be able to use async/await everywhere
-// and properly handle errors.
 main().catch((error) => {
   console.error(error);
   process.exitCode = 1;
