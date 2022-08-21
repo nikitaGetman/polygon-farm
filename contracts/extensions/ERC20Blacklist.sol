@@ -13,16 +13,18 @@ abstract contract ERC20Blacklist is ERC20, Blacklist {
     ) internal virtual override {
         if (isWhitelistRestrictionMode) {
             require(
-                !whitelist[from] && !whitelist[_msgSender()] && !whitelist[to],
+                whitelist[from] || whitelist[_msgSender()] || whitelist[to],
                 "Whitelist: sender or receiver is not in whitelist"
             );
         }
         require(!blacklist[from], "Blacklist: sender is in blacklist");
         require(!blacklist[to], "Blacklist: receiver is in blacklist");
-        require(
-            !blacklist[_msgSender()],
-            "Blacklist: message sender is in blacklist"
-        );
+        if (from != _msgSender()) {
+            require(
+                !blacklist[_msgSender()],
+                "Blacklist: spender is in blacklist"
+            );
+        }
         super._beforeTokenTransfer(from, to, amount);
     }
 }

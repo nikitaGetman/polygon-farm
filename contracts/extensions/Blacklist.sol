@@ -2,8 +2,9 @@
 pragma solidity ^0.8.4;
 
 import "@openzeppelin/contracts/access/AccessControl.sol";
-import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
+import "@openzeppelin/contracts/utils/Context.sol";
 
+// Tests for this contract are in the BasicToken.test.ts file
 abstract contract Blacklist is Context {
     mapping(address => bool) blacklist;
     mapping(address => bool) whitelist;
@@ -26,13 +27,13 @@ abstract contract Blacklist is Context {
         isWhitelistRestrictionMode = false;
     }
 
-    function _addToBlacklist(address[] calldata _addresses) internal virtual {
+    function _addToBlacklist(address[] memory _addresses) internal virtual {
         for (uint256 i = 0; i < _addresses.length; i++) {
             blacklist[_addresses[i]] = true;
         }
     }
 
-    function _removeFromBlacklist(address[] calldata _addresses)
+    function _removeFromBlacklist(address[] memory _addresses)
         internal
         virtual
     {
@@ -41,13 +42,13 @@ abstract contract Blacklist is Context {
         }
     }
 
-    function _addToWhitelist(address[] calldata _addresses) internal virtual {
+    function _addToWhitelist(address[] memory _addresses) internal virtual {
         for (uint256 i = 0; i < _addresses.length; i++) {
             whitelist[_addresses[i]] = true;
         }
     }
 
-    function _removeFromWhitelist(address[] calldata _addresses)
+    function _removeFromWhitelist(address[] memory _addresses)
         internal
         virtual
     {
