@@ -1,5 +1,5 @@
 import { ethers } from "hardhat";
-import { Token1__factory } from "../typechain-types";
+import { Token1__factory } from "typechain-types";
 
 async function main() {
   const config = {

@@ -9,6 +9,8 @@ import "hardhat-gas-reporter";
 import "solidity-coverage";
 import "./tasks";
 
+import "tsconfig-paths/register";
+
 dotenv.config();
 
 const accounts = process.env.PRIVATE_KEY ? [process.env.PRIVATE_KEY] : [];

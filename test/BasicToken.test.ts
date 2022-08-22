@@ -2,7 +2,7 @@ import { loadFixture } from "@nomicfoundation/hardhat-network-helpers";
 import { expect } from "chai";
 import { ethers } from "hardhat";
 import { BigNumber } from "ethers";
-import { BasicToken__factory } from "../typechain-types";
+import { BasicToken__factory } from "typechain-types";
 
 describe("BasicToken", function () {
   async function deployTokenFixture() {
