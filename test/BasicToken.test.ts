@@ -88,11 +88,15 @@ describe("BasicToken", function () {
         deployTokenFixture
       );
 
-      const [acc1] = restSigners;
+      const [acc1, acc2] = restSigners;
 
       await expect(
         token.connect(holderAccount).transfer(acc1.address, 100)
       ).to.changeTokenBalances(token, [holderAccount, acc1], [-100, 100]);
+
+      await expect(
+        token.connect(acc1).transfer(acc2.address, 100)
+      ).to.changeTokenBalances(token, [acc1, acc2], [-100, 100]);
     });
 
     it("Should not transfer tokens when paused", async function () {
@@ -113,6 +117,73 @@ describe("BasicToken", function () {
         initialBalance
       );
       expect(await token.balanceOf(acc1.address)).to.equal(BigNumber.from(0));
+    });
+
+    it("Should not transfer more than have", async function () {
+      const { token, holderAccount, restSigners } = await loadFixture(
+        deployTokenFixture
+      );
+
+      const [acc1, acc2, acc3] = restSigners;
+
+      await token.connect(holderAccount).transfer(acc1.address, 100);
+      await token.connect(acc1).approve(acc2.address, 100);
+
+      await expect(token.connect(acc1).transfer(acc3.address, 101)).to.be
+        .reverted;
+      await expect(
+        token.connect(acc2).transferFrom(acc1.address, acc3.address, 101)
+      ).to.be.reverted;
+
+      expect(await token.balanceOf(acc1.address)).to.be.eq(100);
+      expect(await token.balanceOf(acc3.address)).to.be.eq(0);
+    });
+
+    it("Should not burn more than have", async function () {
+      const { token, holderAccount, restSigners } = await loadFixture(
+        deployTokenFixture
+      );
+
+      const [acc1, acc2] = restSigners;
+
+      await token.connect(holderAccount).transfer(acc1.address, 100);
+      await token.connect(holderAccount).approve(acc2.address, 100);
+
+      await expect(token.connect(acc1).burn(101)).to.be.reverted;
+      await expect(await token.connect(acc1).burn(100)).to.changeTokenBalance(
+        token,
+        acc1.address,
+        -100
+      );
+
+      await expect(token.connect(acc2).burnFrom(holderAccount.address, 101)).to
+        .be.reverted;
+      await expect(
+        await token.connect(acc2).burnFrom(holderAccount.address, 100)
+      ).to.changeTokenBalance(token, holderAccount.address, -100);
+    });
+
+    it("Should increase totalBurn on burn", async function () {
+      const { token, holderAccount, restSigners } = await loadFixture(
+        deployTokenFixture
+      );
+
+      const [acc1] = restSigners;
+
+      const initialSupply = await token.totalMinted();
+      expect(await token.totalSupply()).to.be.eq(initialSupply);
+      expect(await token.totalBurn()).to.be.eq(0);
+
+      await token.connect(holderAccount).burn(100);
+      expect(await token.totalMinted()).to.be.eq(initialSupply);
+      expect(await token.totalSupply()).to.be.eq(initialSupply.sub(100));
+      expect(await token.totalBurn()).to.be.eq(100);
+
+      await token.connect(holderAccount).approve(acc1.address, 100);
+      await token.connect(acc1).burnFrom(holderAccount.address, 100);
+      expect(await token.totalMinted()).to.be.eq(initialSupply);
+      expect(await token.totalSupply()).to.be.eq(initialSupply.sub(200));
+      expect(await token.totalBurn()).to.be.eq(200);
     });
   });
 
@@ -163,7 +234,7 @@ describe("BasicToken", function () {
       await expect(token.connect(acc2).unpause()).to.be.reverted;
     });
 
-    it("Should add to blacklist only by Admin", async () => {
+    it("Should add to blacklist only by Admin", async function () {
       const { token, adminAccount, holderAccount, restSigners } =
         await loadFixture(deployTokenFixture);
 
@@ -181,7 +252,7 @@ describe("BasicToken", function () {
       expect(await token.isAddressInBlacklist(acc3.address)).to.be.eq(false);
     });
 
-    it("Should remove from blacklist only by Admin", async () => {
+    it("Should remove from blacklist only by Admin", async function () {
       const { token, adminAccount, holderAccount, restSigners } =
         await loadFixture(deployTokenFixture);
 
@@ -203,7 +274,7 @@ describe("BasicToken", function () {
       expect(await token.isAddressInBlacklist(acc3.address)).to.be.eq(true);
     });
 
-    it("Should add to whitelist only by Admin", async () => {
+    it("Should add to whitelist only by Admin", async function () {
       const { token, adminAccount, holderAccount, restSigners } =
         await loadFixture(deployTokenFixture);
 
@@ -221,7 +292,7 @@ describe("BasicToken", function () {
       expect(await token.isAddressInWhiteList(acc3.address)).to.be.eq(false);
     });
 
-    it("Should remove from whitelist only by Admin", async () => {
+    it("Should remove from whitelist only by Admin", async function () {
       const { token, adminAccount, holderAccount, restSigners } =
         await loadFixture(deployTokenFixture);
 
@@ -243,7 +314,7 @@ describe("BasicToken", function () {
       expect(await token.isAddressInWhiteList(acc3.address)).to.be.eq(true);
     });
 
-    it("Should toggle whitelist mode only by Admin", async () => {
+    it("Should toggle whitelist mode only by Admin", async function () {
       const { token, adminAccount, restSigners } = await loadFixture(
         deployTokenFixture
       );
@@ -263,6 +334,39 @@ describe("BasicToken", function () {
 
       await expect(token.connect(acc1).onWhitelistMode()).to.be.reverted;
       expect(await token.isWhitelistRestrictionMode()).to.be.eq(false);
+    });
+  });
+
+  describe("Pause", function () {
+    it("Should not transfer when paused", async function () {
+      const { token, adminAccount, holderAccount, restSigners } =
+        await loadFixture(deployTokenFixture);
+
+      const [acc1, acc2, acc3] = restSigners;
+
+      await token.connect(holderAccount).transfer(acc1.address, 100);
+      await token.connect(acc1).increaseAllowance(acc2.address, 100);
+      await token.connect(adminAccount).pause();
+
+      await expect(
+        token.connect(acc1).transfer(acc3.address, 10)
+      ).to.be.revertedWith("Pausable: paused");
+
+      await expect(
+        token.connect(acc2).transferFrom(acc1.address, acc3.address, 10)
+      ).to.be.revertedWith("Pausable: paused");
+
+      expect(await token.balanceOf(acc1.address)).to.eq(100);
+      expect(await token.balanceOf(acc2.address)).to.eq(0);
+      expect(await token.balanceOf(acc3.address)).to.eq(0);
+
+      await token.connect(adminAccount).unpause();
+      await token.connect(acc1).transfer(acc3.address, 10);
+      await token.connect(acc2).transferFrom(acc1.address, acc3.address, 10);
+
+      expect(await token.balanceOf(acc1.address)).to.eq(80);
+      expect(await token.balanceOf(acc2.address)).to.eq(0);
+      expect(await token.balanceOf(acc3.address)).to.eq(20);
     });
   });
 
@@ -506,7 +610,92 @@ describe("BasicToken", function () {
     });
   });
 
-  // TODO: add tests for Pause
-  // TODO: add tests for Burn and Total burn
-  // TODO: test Events in separate suite
+  describe("Events", function () {
+    it("Should emit Paused / Unpaused event", async function () {
+      const { token, adminAccount, restSigners } = await loadFixture(
+        deployTokenFixture
+      );
+
+      const [acc1] = restSigners;
+      const PauserRole = await token.PAUSER_ROLE();
+
+      await token.connect(adminAccount).grantRole(PauserRole, acc1.address);
+
+      await expect(await token.connect(acc1).pause())
+        .to.emit(token, "Paused")
+        .withArgs(acc1.address);
+
+      await expect(await token.connect(acc1).unpause())
+        .to.emit(token, "Unpaused")
+        .withArgs(acc1.address);
+    });
+
+    it("Should emit Transfer / Approval event", async function () {
+      const { token, holderAccount, restSigners } = await loadFixture(
+        deployTokenFixture
+      );
+
+      const [acc1, acc2] = restSigners;
+
+      await expect(
+        await token.connect(holderAccount).transfer(acc1.address, 100)
+      )
+        .to.emit(token, "Transfer")
+        .withArgs(holderAccount.address, acc1.address, 100);
+
+      await expect(
+        await token.connect(holderAccount).approve(acc2.address, 100)
+      )
+        .to.emit(token, "Approval")
+        .withArgs(holderAccount.address, acc2.address, 100);
+
+      await expect(
+        await token
+          .connect(acc2)
+          .transferFrom(holderAccount.address, acc1.address, 100)
+      )
+        .to.emit(token, "Transfer")
+        .withArgs(holderAccount.address, acc1.address, 100);
+    });
+
+    it("Should emit Transfer on burn", async function () {
+      const { token, holderAccount, restSigners } = await loadFixture(
+        deployTokenFixture
+      );
+
+      await expect(await token.connect(holderAccount).burn(50))
+        .to.emit(token, "Transfer")
+        .withArgs(holderAccount.address, ethers.constants.AddressZero, 50);
+
+      const [acc1] = restSigners;
+      await token.connect(holderAccount).approve(acc1.address, 100);
+
+      await expect(
+        await token.connect(acc1).burnFrom(holderAccount.address, 30)
+      )
+        .to.emit(token, "Transfer")
+        .withArgs(holderAccount.address, ethers.constants.AddressZero, 30);
+    });
+
+    it("Should emit RoleGranted / RoleRevoked", async function () {
+      const { token, adminAccount, restSigners } = await loadFixture(
+        deployTokenFixture
+      );
+
+      const [acc1] = restSigners;
+      const PauserRole = await token.PAUSER_ROLE();
+
+      await expect(
+        await token.connect(adminAccount).grantRole(PauserRole, acc1.address)
+      )
+        .to.emit(token, "RoleGranted")
+        .withArgs(PauserRole, acc1.address, adminAccount.address);
+
+      await expect(
+        await token.connect(adminAccount).revokeRole(PauserRole, acc1.address)
+      )
+        .to.emit(token, "RoleRevoked")
+        .withArgs(PauserRole, acc1.address, adminAccount.address);
+    });
+  });
 });

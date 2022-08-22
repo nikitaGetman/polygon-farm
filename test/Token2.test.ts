@@ -50,7 +50,7 @@ describe("Token 2", function () {
     });
   });
 
-  describe("Roles", function () {
+  describe("Mint", function () {
     it("Should add/remove to whitelist on granting/revoking Minter role", async function () {
       const { token, adminAccount, restSigners } = await loadFixture(
         deployTokenFixture
@@ -66,6 +66,13 @@ describe("Token 2", function () {
 
       await token.revokeRole(MinterRole, acc1.address);
       expect(await token.isAddressInWhiteList(acc1.address)).to.be.eq(false);
+
+      const PauserRole = token.PAUSER_ROLE();
+      await token.connect(adminAccount).grantRole(PauserRole, acc1.address);
+      expect(await token.isAddressInWhiteList(acc1.address)).to.be.eq(false);
+
+      await token.revokeRole(PauserRole, acc1.address);
+      expect(await token.isAddressInWhiteList(acc1.address)).to.be.eq(false);
     });
     it("Should mint only with Minter role", async function () {
       const { token, adminAccount, restSigners } = await loadFixture(
@@ -73,13 +80,16 @@ describe("Token 2", function () {
       );
 
       const [acc1, acc2] = restSigners;
-      //   await token.connect(adminAccount).addToWhitelist([acc1.address]);
+
+      const initialSupply = await token.totalMinted();
 
       // With Admin role
       await expect(await token.connect(adminAccount).mint(acc1.address, 1000))
         .to.changeTokenBalance(token, acc1, 1000)
         .to.emit(token, "Transfer")
         .withArgs(ethers.constants.AddressZero, acc1.address, 1000);
+
+      expect(await token.totalMinted()).to.be.eq(initialSupply.add(1000));
 
       // With no role
       await expect(token.connect(acc2).mint(acc1.address, 1000)).to.be.reverted;
@@ -98,6 +108,8 @@ describe("Token 2", function () {
         .to.emit(token, "Transfer")
         .withArgs(ethers.constants.AddressZero, acc1.address, 1000);
 
+      expect(await token.totalMinted()).to.be.eq(initialSupply.add(2000));
+
       // Revoke role
       await expect(
         await token.connect(adminAccount).revokeRole(MinterRole, acc2.address)
@@ -107,6 +119,17 @@ describe("Token 2", function () {
 
       await expect(token.connect(acc2).mint(acc1.address, 1000)).to.be.reverted;
       expect(await token.balanceOf(acc1.address)).to.be.eq(2000);
+      expect(await token.totalMinted()).to.be.eq(initialSupply.add(2000));
+    });
+    it("Should emit Transfer on mint", async () => {
+      const { token, adminAccount, restSigners } = await loadFixture(
+        deployTokenFixture
+      );
+
+      const [acc1] = restSigners;
+      await expect(await token.connect(adminAccount).mint(acc1.address, 1000))
+        .to.emit(token, "Transfer")
+        .withArgs(ethers.constants.AddressZero, acc1.address, 1000);
     });
   });
 });
