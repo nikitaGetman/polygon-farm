@@ -8,6 +8,7 @@ import "@openzeppelin/contracts/access/AccessControl.sol";
 import "@openzeppelin/contracts/security/Pausable.sol";
 import "../extensions/ERC20Blacklist.sol";
 
+// TODO: имеет ли смысл убрать управление токеном в отдельный Proxy контракт?
 contract BasicToken is
     ERC20,
     ERC20Burnable,

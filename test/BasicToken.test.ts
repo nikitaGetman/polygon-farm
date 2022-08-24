@@ -139,6 +139,37 @@ describe("BasicToken", function () {
       expect(await token.balanceOf(acc3.address)).to.be.eq(0);
     });
 
+    it("Should not decrease allowance if set to max(uint256)", async function () {
+      const { token, holderAccount, restSigners } = await loadFixture(
+        deployTokenFixture
+      );
+
+      const [acc1, acc2] = restSigners;
+
+      await token
+        .connect(holderAccount)
+        .approve(acc1.address, ethers.constants.MaxUint256);
+
+      const initialAllowance = await token.allowance(
+        holderAccount.address,
+        acc1.address
+      );
+
+      await expect(
+        token
+          .connect(acc1)
+          .transferFrom(holderAccount.address, acc2.address, 100)
+      ).to.changeTokenBalances(
+        token,
+        [holderAccount.address, acc2.address],
+        [-100, 100]
+      );
+
+      expect(
+        await token.allowance(holderAccount.address, acc1.address)
+      ).to.be.eq(initialAllowance);
+    });
+
     it("Should not burn more than have", async function () {
       const { token, holderAccount, restSigners } = await loadFixture(
         deployTokenFixture
