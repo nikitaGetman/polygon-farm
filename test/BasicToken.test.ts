@@ -728,5 +728,74 @@ describe("BasicToken", function () {
         .to.emit(token, "RoleRevoked")
         .withArgs(PauserRole, acc1.address, adminAccount.address);
     });
+
+    it("Should emit BlacklistAdded", async function () {
+      const { token, adminAccount, restSigners } = await loadFixture(
+        deployTokenFixture
+      );
+
+      const [acc1, acc2, acc3] = restSigners;
+      const addresses = [acc1.address, acc2.address, acc3.address];
+
+      await expect(token.connect(adminAccount).addToBlacklist(addresses))
+        .to.emit(token, "BlacklistAdded")
+        .withArgs(addresses, adminAccount.address);
+    });
+
+    it("Should emit BlacklistRemoved", async function () {
+      const { token, adminAccount, restSigners } = await loadFixture(
+        deployTokenFixture
+      );
+
+      const [acc1, acc2, acc3] = restSigners;
+      const addresses = [acc1.address, acc2.address, acc3.address];
+
+      await token.connect(adminAccount).addToBlacklist(addresses);
+      await expect(token.connect(adminAccount).removeFromBlacklist(addresses))
+        .to.emit(token, "BlacklistRemoved")
+        .withArgs(addresses, adminAccount.address);
+    });
+
+    it("Should emit WhitelistAdded", async function () {
+      const { token, adminAccount, restSigners } = await loadFixture(
+        deployTokenFixture
+      );
+
+      const [acc1, acc2, acc3] = restSigners;
+      const addresses = [acc1.address, acc2.address, acc3.address];
+
+      await expect(token.connect(adminAccount).addToWhitelist(addresses))
+        .to.emit(token, "WhitelistAdded")
+        .withArgs(addresses, adminAccount.address);
+    });
+
+    it("Should emit WhitelistRemoved", async function () {
+      const { token, adminAccount, restSigners } = await loadFixture(
+        deployTokenFixture
+      );
+
+      const [acc1, acc2, acc3] = restSigners;
+      const addresses = [acc1.address, acc2.address, acc3.address];
+
+      await token.connect(adminAccount).addToWhitelist(addresses);
+      await expect(token.connect(adminAccount).removeFromWhitelist(addresses))
+        .to.emit(token, "WhitelistRemoved")
+        .withArgs(addresses, adminAccount.address);
+    });
+
+    it("Should emit WhitelistEnabled", async function () {
+      const { token, adminAccount } = await loadFixture(deployTokenFixture);
+      await expect(token.connect(adminAccount).onWhitelistMode())
+        .to.emit(token, "WhitelistEnabled")
+        .withArgs(adminAccount.address);
+    });
+
+    it("Should emit WhitelistDisabled", async function () {
+      const { token, adminAccount } = await loadFixture(deployTokenFixture);
+      await token.connect(adminAccount).onWhitelistMode();
+      await expect(token.connect(adminAccount).offWhitelistMode())
+        .to.emit(token, "WhitelistDisabled")
+        .withArgs(adminAccount.address);
+    });
   });
 });
