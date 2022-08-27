@@ -3,20 +3,20 @@ pragma solidity ^0.8.4;
 
 import "@openzeppelin/contracts/access/AccessControl.sol";
 import "@openzeppelin/contracts/utils/Context.sol";
-import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
+import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import "@openzeppelin/contracts/security/Pausable.sol";
 
 contract VendorSell is Context, AccessControl, Pausable {
-    using SafeERC20 for ERC20;
+    using SafeERC20 for IERC20;
 
     uint256 private SWAP_RATE_DIVIDER = 100;
     uint256 private _swapRate; // divide on SWAP_RATE_DIVIDER
     bool private _isSellAvailable;
 
-    ERC20 private _token;
+    IERC20 public token;
     address private _tokenPool;
-    ERC20 private _changeToken;
+    IERC20 public changeToken;
     address private _changeTokenPool;
 
     event BuyTokens(
@@ -40,8 +40,8 @@ contract VendorSell is Context, AccessControl, Pausable {
         _grantRole(DEFAULT_ADMIN_ROLE, _msgSender());
         _swapRate = swapRate_;
 
-        _token = ERC20(tokenAddress_);
-        _changeToken = ERC20(changeTokenAddress_);
+        token = IERC20(tokenAddress_);
+        changeToken = IERC20(changeTokenAddress_);
 
         _tokenPool = tokenPool_;
         _changeTokenPool = changeTokenPool_;
@@ -79,11 +79,11 @@ contract VendorSell is Context, AccessControl, Pausable {
     }
 
     function getTokenReserve() public view returns (uint256) {
-        return _token.balanceOf(_tokenPool);
+        return token.balanceOf(_tokenPool);
     }
 
     function getChangeTokenReserve() public view returns (uint256) {
-        return _changeToken.balanceOf(_changeTokenPool);
+        return changeToken.balanceOf(_changeTokenPool);
     }
 
     // TODO: что случиться при разных decimals у токенов?
@@ -109,29 +109,29 @@ contract VendorSell is Context, AccessControl, Pausable {
         require(_amountToken > 0, "Insufficient amount");
 
         require(
-            _changeToken.allowance(_msgSender(), address(this)) >=
+            changeToken.allowance(_msgSender(), address(this)) >=
                 _amountChangeToken,
             "User allowance of token is not enough"
         );
         require(
-            _changeToken.balanceOf(_msgSender()) >= _amountChangeToken,
+            changeToken.balanceOf(_msgSender()) >= _amountChangeToken,
             "User balance of token is not enough"
         );
         require(
-            _token.allowance(_tokenPool, address(this)) >= _amountToken,
+            token.allowance(_tokenPool, address(this)) >= _amountToken,
             "Vendor allowance of token is not enough"
         );
         require(
-            _token.balanceOf(_tokenPool) >= _amountToken,
+            token.balanceOf(_tokenPool) >= _amountToken,
             "Vendor balance of token is not enough"
         );
 
-        _changeToken.safeTransferFrom(
+        changeToken.safeTransferFrom(
             _msgSender(),
             _changeTokenPool,
             _amountChangeToken
         );
-        _token.safeTransferFrom(_tokenPool, _msgSender(), _amountToken);
+        token.safeTransferFrom(_tokenPool, _msgSender(), _amountToken);
 
         emit BuyTokens(_msgSender(), _amountToken, _amountChangeToken);
     }
@@ -145,25 +145,25 @@ contract VendorSell is Context, AccessControl, Pausable {
         );
         require(_amountChangeToken > 0, "Insufficient amount");
         require(
-            _token.allowance(_msgSender(), address(this)) >= _amountToken,
+            token.allowance(_msgSender(), address(this)) >= _amountToken,
             "User allowance of token is not enough"
         );
         require(
-            _token.balanceOf(_msgSender()) >= _amountToken,
+            token.balanceOf(_msgSender()) >= _amountToken,
             "User balance of token is not enough"
         );
         require(
-            _changeToken.allowance(_changeTokenPool, address(this)) >=
+            changeToken.allowance(_changeTokenPool, address(this)) >=
                 _amountChangeToken,
             "Vendor allowance of change token is not enough"
         );
         require(
-            _changeToken.balanceOf(_changeTokenPool) >= _amountChangeToken,
+            changeToken.balanceOf(_changeTokenPool) >= _amountChangeToken,
             "Vendor balance of change token is not enough"
         );
 
-        _token.safeTransferFrom(_msgSender(), _tokenPool, _amountToken);
-        _changeToken.safeTransferFrom(
+        token.safeTransferFrom(_msgSender(), _tokenPool, _amountToken);
+        changeToken.safeTransferFrom(
             _changeTokenPool,
             _msgSender(),
             _amountChangeToken
