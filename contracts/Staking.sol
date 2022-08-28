@@ -5,8 +5,9 @@ import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/access/AccessControl.sol";
 import "./tokens/Token1.sol";
 import "./tokens/Token2.sol";
+import "./extensions/Subscribable.sol";
 
-contract Staking is AccessControl {
+contract Staking is AccessControl, Subscribable {
     struct Stake {
         uint256 stakeId;
         uint256 amount;
@@ -15,7 +16,7 @@ contract Staking is AccessControl {
         uint256 percent;
         uint256 profit;
         bool isClaimed;
-        bool isToken1;
+        bool isToken2;
     }
 
     struct User {
@@ -50,32 +51,35 @@ contract Staking is AccessControl {
     // uint256 public totalRefDividends;
     // uint256 public totalRefDividendsClaimed;
 
-    Token1 token1;
-    Token2 token2;
+    Token1 public token1;
+    Token2 public token2;
 
     event Staked(
         address indexed user,
-        uint256 amount,
         uint256 indexed stakeIndex,
-        uint256 timestamp,
-        bool indexed isToken1
+        uint256 amount,
+        uint256 profit,
+        bool isToken2,
+        uint256 indexed timestamp
     );
     event Claimed(
         address indexed user,
-        uint256 amount,
         uint256 indexed stakeIndex,
-        uint256 timestamp,
-        bool indexed isToken1
+        uint256 amount,
+        bool isToken2,
+        uint256 indexed timestamp
     );
-    event ActivityChanged(bool isActive);
+    event ActivityChanged(bool isActive, address admin);
 
     constructor(
         address token1_,
         address token2_,
         address rewardPool_,
         uint256 durationDays_,
-        uint256 rewardPercent_
-    ) {
+        uint256 rewardPercent_,
+        uint256 subsciptionCost_,
+        uint256 subscriptionPeriodDays_
+    ) Subscribable(token1_, subsciptionCost_, subscriptionPeriodDays_) {
         require(token1_ != address(0), "Zero address for token 1");
         require(token2_ != address(0), "Zero address for token 2");
         require(rewardPool_ != address(0), "Zero address for reward pool");
@@ -92,65 +96,69 @@ contract Staking is AccessControl {
         token2 = Token2(token2_);
     }
 
-    function deposit(uint256 depositAmount, bool isToken2) public whenActive {
+    function deposit(uint256 depositAmount_, bool isToken2_)
+        public
+        whenActive
+        subscribersOnly
+    {
         require(
-            depositAmount >= MIN_STAKE_LIMIT,
+            depositAmount_ >= MIN_STAKE_LIMIT,
             "Stake amount less than minimum value"
         );
-        uint256 profit = calculateStakeProfit(depositAmount);
+        uint256 profit = calculateStakeProfit(depositAmount_);
 
         require(
             profit <= token1.balanceOf(_rewardPool),
             "Not enough tokens for reward"
         );
-        if (isToken2) {
-            token2.burnFrom(_msgSender(), depositAmount);
+        if (isToken2_) {
+            token2.burnFrom(_msgSender(), depositAmount_);
         } else {
-            token1.transferFrom(_msgSender(), address(this), depositAmount);
+            token1.transferFrom(_msgSender(), address(this), depositAmount_);
         }
         token1.transferFrom(_rewardPool, address(this), profit);
 
         User storage user = users[_msgSender()];
-        uint256 stakeId = 0; //isToken2_ ? user.token2Stakes.length : user.token1Stakes.length;
+        uint256 stakeId = user.stakes.length;
 
         Stake memory newStake = Stake(
-            stakeId, // TODO: нужен ли id?
-            depositAmount,
+            stakeId,
+            depositAmount_,
             block.timestamp,
             block.timestamp + durationDays * TIME_STEP,
             reward,
             profit,
             false,
-            !isToken2
+            isToken2_
         );
 
         user.stakes.push(newStake);
 
-        if (isToken2) {
-            user.totalStakedToken2 += depositAmount;
-            totalStakedToken2 += depositAmount;
+        if (isToken2_) {
+            user.totalStakedToken2 += depositAmount_;
+            totalStakedToken2 += depositAmount_;
             totalStakesToken2No++;
         } else {
-            user.totalStakedToken1 += depositAmount;
-            totalStakedToken1 += depositAmount;
+            user.totalStakedToken1 += depositAmount_;
+            totalStakedToken1 += depositAmount_;
             totalStakesToken1No++;
         }
 
         emit Staked(
             _msgSender(),
-            depositAmount,
-            stakeId,
-            block.timestamp,
-            !isToken2
+            newStake.stakeId,
+            newStake.amount,
+            newStake.profit,
+            newStake.isToken2,
+            block.timestamp
         );
     }
 
-    function withdraw(uint256 stakeId) public {
+    function withdraw(uint256 stakeId_) public {
         User storage user = users[_msgSender()];
-        // TODO: test with stakeId out of range
-        Stake storage stake = user.stakes[stakeId];
+        require(stakeId_ < user.stakes.length, "Invalid stake id");
 
-        require(stake.timeStart > 0, "Invalid stake id");
+        Stake storage stake = user.stakes[stakeId_];
         require(!stake.isClaimed, "Stake is already claimed");
         require(stake.timeEnd <= block.timestamp, "Stake is not ready yet");
 
@@ -163,11 +171,15 @@ contract Staking is AccessControl {
 
         emit Claimed(
             _msgSender(),
+            stake.stakeId,
             withdrawAmount,
-            stakeId,
-            block.timestamp,
-            stake.isToken1
+            stake.isToken2,
+            block.timestamp
         );
+    }
+
+    function subscribe() public {
+        _subscribe(_msgSender());
     }
 
     // --------- Helper functions ---------
@@ -182,7 +194,9 @@ contract Staking is AccessControl {
             uint256 _totalStakesToken2No,
             uint256 _totalStakedToken1,
             uint256 _totalStakedToken2,
-            uint256 _totalClaimed
+            uint256 _totalClaimed,
+            uint256 _subscriptionCost,
+            uint256 _subscriptionPeriodDays
         )
     {
         _durationDays = durationDays;
@@ -193,50 +207,74 @@ contract Staking is AccessControl {
         _totalStakedToken1 = totalStakedToken1;
         _totalStakedToken2 = totalStakedToken2;
         _totalClaimed = totalClaimed;
+        _subscriptionCost = subscriptionCost;
+        _subscriptionPeriodDays = subscriptionPeriodDays;
     }
 
-    function getUserInfo(address userAddr)
+    function getUserInfo(address userAddr_)
         public
         view
         returns (
             uint256 _totalStakedToken1,
             uint256 _totalStakedToken2,
-            // uint256 _totalStakesToken1No,
-            // uint256 _totalStakesToken2No,
-            uint256 _totalClaimed
+            uint256 _totalClaimed,
+            bool _subscribed,
+            uint256 _subscribedTill
         )
     {
-        User storage user = users[userAddr];
+        User storage user = users[userAddr_];
 
         _totalStakedToken1 = user.totalStakedToken1;
         _totalStakedToken2 = user.totalStakedToken2;
         _totalClaimed = user.totalClaimed;
-
-        // TODO: это нужно?
-        // _totalStakesToken1No = user.stakes.length;
-        // _totalStakesToken2No = user.token2Stakes.length;
+        _subscribed = isSubscriber(userAddr_);
+        _subscribedTill = _subscribed ? subscribers[userAddr_] : 0;
     }
 
-    function getUserStakes(address user) public view {}
+    // Returns only active stakes (not claimed)
+    function getUserStakes(address userAddr_)
+        public
+        view
+        returns (Stake[] memory stakes)
+    {
+        User storage user = users[userAddr_];
+
+        uint256 activeStakesAmount = 0;
+        for (uint256 i = 0; i < user.stakes.length; i++) {
+            if (!user.stakes[i].isClaimed) {
+                activeStakesAmount++;
+            }
+        }
+
+        Stake[] memory activeStakes = new Stake[](activeStakesAmount);
+
+        for (uint256 i = 0; i < user.stakes.length; i++) {
+            if (!user.stakes[i].isClaimed) {
+                activeStakes[i] = user.stakes[i];
+            }
+        }
+
+        return activeStakes;
+    }
 
     function getTimestamp() public view returns (uint256) {
         return block.timestamp;
     }
 
-    function calculateStakeProfit(uint256 amount)
+    function calculateStakeProfit(uint256 amount_)
         public
         view
         returns (uint256)
     {
-        return (amount * reward) / PERCENTS_DIVIDER;
+        return (amount_ * reward) / PERCENTS_DIVIDER;
     }
 
-    function calculateStakeReward(address userAddr, uint256 stakeId)
+    function calculateStakeReward(address userAddr_, uint256 stakeId_)
         public
         view
         returns (uint256)
     {
-        return _calculateStakeReward(users[userAddr].stakes[stakeId]);
+        return _calculateStakeReward(users[userAddr_].stakes[stakeId_]);
     }
 
     function _calculateStakeReward(Stake storage stake)
@@ -246,9 +284,9 @@ contract Staking is AccessControl {
     {
         if (stake.timeStart == 0 || stake.isClaimed) return 0;
 
-        uint256 stakeReward = stake.isToken1
-            ? stake.amount + stake.profit
-            : stake.profit;
+        uint256 stakeReward = stake.isToken2
+            ? stake.profit
+            : stake.amount + stake.profit;
 
         if (stake.timeEnd <= block.timestamp) return stakeReward;
 
@@ -263,47 +301,76 @@ contract Staking is AccessControl {
     }
 
     // --------- Administrative functions ---------
-    function setActive(bool value) public onlyRole(DEFAULT_ADMIN_ROLE) {
-        isActive = value;
-        emit ActivityChanged(value);
+    function setActive(bool value_) public onlyRole(DEFAULT_ADMIN_ROLE) {
+        isActive = value_;
+        emit ActivityChanged(value_, _msgSender());
     }
 
-    function updateRewardPool(address poolAddress)
+    function updateRewardPool(address poolAddress_)
         public
         onlyRole(DEFAULT_ADMIN_ROLE)
     {
-        _rewardPool = poolAddress;
+        _rewardPool = poolAddress_;
     }
 
-    function updatePercentDivider(uint256 divider)
+    function updateToken1(address token1_) public onlyRole(DEFAULT_ADMIN_ROLE) {
+        token1 = Token1(token1_);
+    }
+
+    function updateToken2(address token2_) public onlyRole(DEFAULT_ADMIN_ROLE) {
+        token2 = Token2(token2_);
+    }
+
+    function updatePercentDivider(uint256 divider_)
         public
         onlyRole(DEFAULT_ADMIN_ROLE)
     {
-        PERCENTS_DIVIDER = divider;
+        PERCENTS_DIVIDER = divider_;
     }
 
-    function updateTimeStep(uint256 step) public onlyRole(DEFAULT_ADMIN_ROLE) {
-        TIME_STEP = step;
+    function updateTimeStep(uint256 step_) public onlyRole(DEFAULT_ADMIN_ROLE) {
+        TIME_STEP = step_;
     }
 
-    function updateMinStakeLimit(uint256 minLimit)
+    function updateMinStakeLimit(uint256 minLimit_)
         public
         onlyRole(DEFAULT_ADMIN_ROLE)
     {
-        MIN_STAKE_LIMIT = minLimit;
+        MIN_STAKE_LIMIT = minLimit_;
     }
 
-    function updateDurationDays(uint256 duration)
+    function updateDurationDays(uint256 duration_)
         public
         onlyRole(DEFAULT_ADMIN_ROLE)
     {
-        durationDays = duration * TIME_STEP;
+        durationDays = duration_ * TIME_STEP;
     }
 
-    function updateReward(uint256 newReward)
+    function updateReward(uint256 newReward_)
         public
         onlyRole(DEFAULT_ADMIN_ROLE)
     {
-        reward = newReward;
+        reward = newReward_;
+    }
+
+    function updateSubsctiptionCost(uint256 cost_)
+        public
+        onlyRole(DEFAULT_ADMIN_ROLE)
+    {
+        _updateSubsctiptionCost(cost_);
+    }
+
+    function updateSubsctiptionPeriod(uint256 periodDays_)
+        public
+        onlyRole(DEFAULT_ADMIN_ROLE)
+    {
+        _updateSubsctiptionPeriod(periodDays_);
+    }
+
+    function updateSubsctiptionToken(address token_)
+        public
+        onlyRole(DEFAULT_ADMIN_ROLE)
+    {
+        _updateSubsctiptionToken(token_);
     }
 }
