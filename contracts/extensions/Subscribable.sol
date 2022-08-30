@@ -11,7 +11,7 @@ contract Subscribable is Context {
 
     mapping(address => uint256) public subscribers;
 
-    Token1 public subsciptionToken;
+    Token1 public subscriptionToken;
 
     constructor(
         address token_,
@@ -26,7 +26,7 @@ contract Subscribable is Context {
             periodDays_ > 0,
             "Subscribable: subscription period should be greater than 0"
         );
-        subsciptionToken = Token1(token_);
+        subscriptionToken = Token1(token_);
         subscriptionCost = cost_;
         subscriptionPeriodDays = periodDays_;
     }
@@ -40,7 +40,7 @@ contract Subscribable is Context {
     }
 
     function _subscribe(address addr_) internal virtual {
-        subsciptionToken.burnFrom(addr_, subscriptionCost);
+        subscriptionToken.burnFrom(addr_, subscriptionCost);
         subscribers[addr_] = block.timestamp + subscriptionPeriodDays * 1 days;
     }
 
@@ -53,15 +53,15 @@ contract Subscribable is Context {
     }
 
     // --------- Administrative functions ---------
-    function _updateSubsctiptionCost(uint256 cost_) internal {
+    function _updateSubscriptionCost(uint256 cost_) internal {
         subscriptionCost = cost_;
     }
 
-    function _updateSubsctiptionPeriod(uint256 periodDays_) internal {
+    function _updateSubscriptionPeriod(uint256 periodDays_) internal {
         subscriptionPeriodDays = periodDays_;
     }
 
-    function _updateSubsctiptionToken(address token_) internal {
-        subsciptionToken = Token1(token_);
+    function _updateSubscriptionToken(address token_) internal {
+        subscriptionToken = Token1(token_);
     }
 }

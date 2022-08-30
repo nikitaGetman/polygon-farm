@@ -667,7 +667,7 @@ describe("Staking", function () {
     });
   });
 
-  // */
+  // *
 
   describe("Withdraw", () => {
     it("Should withdraw only with correct stake id", async () => {
@@ -872,10 +872,12 @@ describe("Staking", function () {
       const userStakes = await stakingContract.getUserStakes(acc.address);
 
       const profit = userStakes.reduce((acc, stake) => {
-        if (stake.isToken2) {
-          acc = acc.add(stake.profit);
-        } else {
-          acc = acc.add(stake.profit).add(stake.amount);
+        if (!stake.isClaimed) {
+          if (stake.isToken2) {
+            acc = acc.add(stake.profit);
+          } else {
+            acc = acc.add(stake.profit).add(stake.amount);
+          }
         }
         return acc;
       }, BigNumber.from(0));
@@ -902,10 +904,10 @@ describe("Staking", function () {
     });
   });
 
-  // */
+  // *
 
   describe("Roles / Administration", () => {
-    it("Should change activity only by Admin", async () => {
+    it("Should update activity only by Admin", async () => {
       const { stakingContract, adminAccount, restSigners } = await loadFixture(
         deployFixture
       );
@@ -927,8 +929,244 @@ describe("Staking", function () {
       await stakingContract.connect(acc2).setActive(false);
       expect(await stakingContract.isActive()).to.be.eq(false);
     });
-    // Roles and Administration: change Activity can only admin / change settings can only Admin
+
+    it("Should update reward pool only by Admin", async () => {
+      const { stakingContract, adminAccount, restSigners } = await loadFixture(
+        deployFixture
+      );
+
+      const [acc1, acc2, newPool] = restSigners;
+
+      await expect(
+        stakingContract.connect(acc1).updateRewardPool(newPool.address)
+      ).to.be.reverted;
+
+      const AdminRole = await stakingContract.DEFAULT_ADMIN_ROLE();
+      await stakingContract
+        .connect(adminAccount)
+        .grantRole(AdminRole, acc2.address);
+
+      await expect(
+        stakingContract.connect(acc2).updateRewardPool(newPool.address)
+      ).not.to.be.reverted;
+    });
+
+    it("Should update token 1 only by Admin", async () => {
+      const { stakingContract, adminAccount, restSigners } = await loadFixture(
+        deployFixture
+      );
+
+      const [acc1, acc2, newToken] = restSigners;
+
+      await expect(stakingContract.connect(acc1).updateToken1(newToken.address))
+        .to.be.reverted;
+
+      const AdminRole = await stakingContract.DEFAULT_ADMIN_ROLE();
+      await stakingContract
+        .connect(adminAccount)
+        .grantRole(AdminRole, acc2.address);
+
+      await expect(stakingContract.connect(acc2).updateToken1(newToken.address))
+        .not.to.be.reverted;
+
+      expect(await stakingContract.token1()).to.be.eq(newToken.address);
+    });
+
+    it("Should update token 2 only by Admin", async () => {
+      const { stakingContract, adminAccount, restSigners } = await loadFixture(
+        deployFixture
+      );
+
+      const [acc1, acc2, newToken] = restSigners;
+
+      await expect(stakingContract.connect(acc1).updateToken2(newToken.address))
+        .to.be.reverted;
+
+      const AdminRole = await stakingContract.DEFAULT_ADMIN_ROLE();
+      await stakingContract
+        .connect(adminAccount)
+        .grantRole(AdminRole, acc2.address);
+
+      await expect(stakingContract.connect(acc2).updateToken2(newToken.address))
+        .not.to.be.reverted;
+
+      expect(await stakingContract.token2()).to.be.eq(newToken.address);
+    });
+
+    it("Should update percent divider only by Admin", async () => {
+      const { stakingContract, adminAccount, restSigners } = await loadFixture(
+        deployFixture
+      );
+
+      const [acc1, acc2] = restSigners;
+
+      await expect(stakingContract.connect(acc1).updatePercentDivider(10)).to.be
+        .reverted;
+
+      const AdminRole = await stakingContract.DEFAULT_ADMIN_ROLE();
+      await stakingContract
+        .connect(adminAccount)
+        .grantRole(AdminRole, acc2.address);
+
+      await expect(stakingContract.connect(acc2).updatePercentDivider(10000))
+        .not.to.be.reverted;
+
+      expect(await stakingContract.PERCENTS_DIVIDER()).to.be.eq(10000);
+    });
+
+    it("Should update time step only by Admin", async () => {
+      const { stakingContract, adminAccount, restSigners } = await loadFixture(
+        deployFixture
+      );
+
+      const [acc1, acc2] = restSigners;
+
+      await expect(stakingContract.connect(acc1).updateTimeStep(500)).to.be
+        .reverted;
+
+      const AdminRole = await stakingContract.DEFAULT_ADMIN_ROLE();
+      await stakingContract
+        .connect(adminAccount)
+        .grantRole(AdminRole, acc2.address);
+
+      await expect(stakingContract.connect(acc2).updateTimeStep(2500)).not.to.be
+        .reverted;
+
+      expect(await stakingContract.TIME_STEP()).to.be.eq(2500);
+    });
+
+    it("Should update min stake limit only by Admin", async () => {
+      const { stakingContract, adminAccount, restSigners } = await loadFixture(
+        deployFixture
+      );
+
+      const [acc1, acc2] = restSigners;
+
+      await expect(stakingContract.connect(acc1).updateMinStakeLimit(500)).to.be
+        .reverted;
+
+      const AdminRole = await stakingContract.DEFAULT_ADMIN_ROLE();
+      await stakingContract
+        .connect(adminAccount)
+        .grantRole(AdminRole, acc2.address);
+
+      await expect(stakingContract.connect(acc2).updateMinStakeLimit(2500)).not
+        .to.be.reverted;
+
+      expect(await stakingContract.MIN_STAKE_LIMIT()).to.be.eq(2500);
+    });
+
+    it("Should update duration days only by Admin", async () => {
+      const { stakingContract, adminAccount, restSigners } = await loadFixture(
+        deployFixture
+      );
+
+      const [acc1, acc2] = restSigners;
+
+      await expect(stakingContract.connect(acc1).updateDurationDays(5)).to.be
+        .reverted;
+
+      const AdminRole = await stakingContract.DEFAULT_ADMIN_ROLE();
+      await stakingContract
+        .connect(adminAccount)
+        .grantRole(AdminRole, acc2.address);
+
+      await expect(stakingContract.connect(acc2).updateDurationDays(100)).not.to
+        .be.reverted;
+
+      expect(await stakingContract.durationDays()).to.be.eq(100);
+    });
+
+    it("Should update reward only by Admin", async () => {
+      const { stakingContract, adminAccount, restSigners } = await loadFixture(
+        deployFixture
+      );
+
+      const [acc1, acc2] = restSigners;
+
+      await expect(stakingContract.connect(acc1).updateReward(5)).to.be
+        .reverted;
+
+      const AdminRole = await stakingContract.DEFAULT_ADMIN_ROLE();
+      await stakingContract
+        .connect(adminAccount)
+        .grantRole(AdminRole, acc2.address);
+
+      await expect(stakingContract.connect(acc2).updateReward(100)).not.to.be
+        .reverted;
+
+      expect(await stakingContract.reward()).to.be.eq(100);
+    });
+
+    it("Should update subscription cost only by Admin", async () => {
+      const { stakingContract, adminAccount, restSigners } = await loadFixture(
+        deployFixture
+      );
+
+      const [acc1, acc2] = restSigners;
+
+      await expect(stakingContract.connect(acc1).updateSubscriptionCost(5)).to
+        .be.reverted;
+
+      const AdminRole = await stakingContract.DEFAULT_ADMIN_ROLE();
+      await stakingContract
+        .connect(adminAccount)
+        .grantRole(AdminRole, acc2.address);
+
+      await expect(stakingContract.connect(acc2).updateSubscriptionCost(100))
+        .not.to.be.reverted;
+
+      expect(await stakingContract.subscriptionCost()).to.be.eq(100);
+    });
+
+    it("Should update subscription period only by Admin", async () => {
+      const { stakingContract, adminAccount, restSigners } = await loadFixture(
+        deployFixture
+      );
+
+      const [acc1, acc2] = restSigners;
+
+      await expect(stakingContract.connect(acc1).updateSubscriptionPeriod(5)).to
+        .be.reverted;
+
+      const AdminRole = await stakingContract.DEFAULT_ADMIN_ROLE();
+      await stakingContract
+        .connect(adminAccount)
+        .grantRole(AdminRole, acc2.address);
+
+      await expect(stakingContract.connect(acc2).updateSubscriptionPeriod(100))
+        .not.to.be.reverted;
+
+      expect(await stakingContract.subscriptionPeriodDays()).to.be.eq(100);
+    });
+
+    it("Should update subscription token only by Admin", async () => {
+      const { stakingContract, adminAccount, restSigners } = await loadFixture(
+        deployFixture
+      );
+
+      const [acc1, acc2, newToken] = restSigners;
+
+      await expect(
+        stakingContract.connect(acc1).updateSubscriptionToken(newToken.address)
+      ).to.be.reverted;
+
+      const AdminRole = await stakingContract.DEFAULT_ADMIN_ROLE();
+      await stakingContract
+        .connect(adminAccount)
+        .grantRole(AdminRole, acc2.address);
+
+      await expect(
+        stakingContract.connect(acc2).updateSubscriptionToken(newToken.address)
+      ).not.to.be.reverted;
+
+      expect(await stakingContract.subscriptionToken()).to.be.eq(
+        newToken.address
+      );
+    });
   });
+
+  // */
 
   describe("Events", () => {
     it("Should emit ActivityChanged", async () => {
@@ -1080,6 +1318,278 @@ describe("Staking", function () {
   });
 
   describe("Helpers", () => {
-    // Helpers: Should return only active stakes
+    // getUserStakes
+    it("Should return correct user stakes", async () => {
+      const {
+        stakingContract,
+        adminAccount,
+        token1,
+        token1Holder,
+        token2,
+        token2Holder,
+        restSigners,
+        durationDays,
+        minStakeLimit,
+        rewardPercent,
+      } = await loadFixture(deployFixture);
+
+      const [acc] = restSigners;
+
+      const startTime = await time.latest();
+      const endTime = startTime + durationDays * 3600 * 24;
+
+      const params = {
+        acc,
+        adminAccount,
+        token1,
+        token1Holder,
+        stakingContract,
+        token2,
+        token2Holder,
+      };
+      await autoStakeToken({
+        ...params,
+        stakeAmount: minStakeLimit.add(10),
+      });
+      await autoStakeToken({
+        ...params,
+        stakeAmount: minStakeLimit.mul(2),
+      });
+      await autoStakeToken({
+        ...params,
+        stakeAmount: minStakeLimit.add(50),
+        isToken2: true,
+      });
+
+      await waitForStakeFinished(durationDays);
+      await stakingContract.connect(acc).withdraw(1);
+
+      const userStakes = await stakingContract.getUserStakes(acc.address);
+
+      let profit = await stakingContract.calculateStakeProfit(
+        minStakeLimit.add(10)
+      );
+      expect(userStakes[0].stakeId).to.be.eq(0);
+      expect(userStakes[0].amount).to.be.eq(minStakeLimit.add(10));
+      expect(userStakes[0].timeStart)
+        .to.be.greaterThan(startTime)
+        .and.be.lessThan(startTime + 1000);
+      expect(userStakes[0].timeEnd)
+        .to.be.greaterThan(endTime)
+        .and.be.lessThan(endTime + 1000);
+      expect(userStakes[0].percent).to.be.eq(rewardPercent);
+      expect(userStakes[0].profit).to.be.eq(profit);
+      expect(userStakes[0].isToken2).to.be.eq(false);
+      expect(userStakes[0].isClaimed).to.be.eq(false);
+
+      profit = await stakingContract.calculateStakeProfit(minStakeLimit.mul(2));
+      expect(userStakes[1].stakeId).to.be.eq(1);
+      expect(userStakes[1].amount).to.be.eq(minStakeLimit.mul(2));
+      expect(userStakes[1].timeStart)
+        .to.be.greaterThan(startTime)
+        .and.be.lessThan(startTime + 1000);
+      expect(userStakes[1].timeEnd)
+        .to.be.greaterThan(endTime)
+        .and.be.lessThan(endTime + 1000);
+      expect(userStakes[1].percent).to.be.eq(rewardPercent);
+      expect(userStakes[1].profit).to.be.eq(profit);
+      expect(userStakes[1].isToken2).to.be.eq(false);
+      expect(userStakes[1].isClaimed).to.be.eq(true);
+
+      profit = await stakingContract.calculateStakeProfit(
+        minStakeLimit.add(50)
+      );
+      expect(userStakes[2].stakeId).to.be.eq(2);
+      expect(userStakes[2].amount).to.be.eq(minStakeLimit.add(50));
+      expect(userStakes[2].timeStart)
+        .to.be.greaterThan(startTime)
+        .and.be.lessThan(startTime + 1000);
+      expect(userStakes[2].timeEnd)
+        .to.be.greaterThan(endTime)
+        .and.be.lessThan(endTime + 1000);
+      expect(userStakes[2].percent).to.be.eq(rewardPercent);
+      expect(userStakes[2].profit).to.be.eq(profit);
+      expect(userStakes[2].isToken2).to.be.eq(true);
+      expect(userStakes[2].isClaimed).to.be.eq(false);
+    });
+    // getTimestamp
+    it("Should return correct timestamp", async () => {
+      const { stakingContract } = await loadFixture(deployFixture);
+
+      const nextTime = (await time.latest()) + 100;
+      await time.setNextBlockTimestamp(nextTime);
+      await mine();
+
+      expect(await stakingContract.getTimestamp()).to.be.eq(nextTime);
+    });
+    // calculateStakeProfit
+    it("Should return correct stake profit", async () => {
+      const { stakingContract, rewardPercent } = await loadFixture(
+        deployFixture
+      );
+
+      const amount = BigNumber.from(345_987_000_000);
+      const percentsDivider = await stakingContract.PERCENTS_DIVIDER();
+      const profit = await stakingContract.calculateStakeProfit(amount);
+      const expectedProfit = amount.mul(rewardPercent).div(percentsDivider);
+      expect(profit).to.be.eq(expectedProfit);
+    });
+    // calculateStakeReward
+    it("Should return correct stake reward for token 1", async () => {
+      const {
+        stakingContract,
+        adminAccount,
+        token1,
+        token1Holder,
+        restSigners,
+        durationDays,
+        minStakeLimit,
+      } = await loadFixture(deployFixture);
+
+      const [acc] = restSigners;
+
+      await expect(
+        stakingContract.calculateStakeReward(acc.address, 0)
+      ).to.be.revertedWithPanic(50);
+
+      const params = {
+        acc,
+        adminAccount,
+        token1,
+        token1Holder,
+        stakingContract,
+      };
+      await autoStakeToken({
+        ...params,
+        stakeAmount: minStakeLimit,
+      });
+
+      // Wrong stake id
+      await expect(
+        stakingContract.calculateStakeReward(acc.address, 1)
+      ).to.be.revertedWithPanic(50);
+
+      const stakes = await stakingContract.getUserStakes(acc.address);
+      const [stake] = stakes;
+
+      // Just now
+      const profit = await stakingContract.calculateStakeProfit(minStakeLimit);
+      let expectedReward = BigNumber.from(await time.latest())
+        .sub(stake.timeStart)
+        .mul(minStakeLimit.add(profit))
+        .div(stake.timeEnd.sub(stake.timeStart));
+      expect(
+        await stakingContract.calculateStakeReward(acc.address, 0)
+      ).to.be.eq(expectedReward);
+
+      // A bit later
+      await time.setNextBlockTimestamp((await time.latest()) + 10000);
+      await mine();
+
+      expectedReward = BigNumber.from(await time.latest())
+        .sub(stake.timeStart)
+        .mul(minStakeLimit.add(profit))
+        .div(stake.timeEnd.sub(stake.timeStart));
+
+      expect(
+        await stakingContract.calculateStakeReward(acc.address, 0)
+      ).to.be.eq(expectedReward);
+
+      // After ending
+      await waitForStakeFinished(durationDays);
+      await time.setNextBlockTimestamp((await time.latest()) + 10000);
+      await mine();
+
+      expect(
+        await stakingContract.calculateStakeReward(acc.address, 0)
+      ).to.be.eq(minStakeLimit.add(profit));
+
+      // Claimed
+      await stakingContract.connect(acc).withdraw(0);
+      expect(
+        await stakingContract.calculateStakeReward(acc.address, 0)
+      ).to.be.eq(0);
+    });
+
+    it("Should return correct stake reward for token 1", async () => {
+      const {
+        stakingContract,
+        adminAccount,
+        token1,
+        token1Holder,
+        token2,
+        token2Holder,
+        restSigners,
+        durationDays,
+        minStakeLimit,
+      } = await loadFixture(deployFixture);
+
+      const [acc] = restSigners;
+
+      await expect(
+        stakingContract.calculateStakeReward(acc.address, 0)
+      ).to.be.revertedWithPanic(50);
+
+      const params = {
+        acc,
+        adminAccount,
+        token1,
+        token1Holder,
+        stakingContract,
+        token2,
+        token2Holder,
+      };
+      await autoStakeToken({
+        ...params,
+        stakeAmount: minStakeLimit,
+        isToken2: true,
+      });
+
+      // Wrong stake id
+      await expect(
+        stakingContract.calculateStakeReward(acc.address, 1)
+      ).to.be.revertedWithPanic(50);
+
+      const stakes = await stakingContract.getUserStakes(acc.address);
+      const [stake] = stakes;
+
+      // Just now
+      const profit = await stakingContract.calculateStakeProfit(minStakeLimit);
+      let expectedReward = BigNumber.from(await time.latest())
+        .sub(stake.timeStart)
+        .mul(profit)
+        .div(stake.timeEnd.sub(stake.timeStart));
+      expect(
+        await stakingContract.calculateStakeReward(acc.address, 0)
+      ).to.be.eq(expectedReward);
+
+      // A bit later
+      await time.setNextBlockTimestamp((await time.latest()) + 10000);
+      await mine();
+
+      expectedReward = BigNumber.from(await time.latest())
+        .sub(stake.timeStart)
+        .mul(profit)
+        .div(stake.timeEnd.sub(stake.timeStart));
+
+      expect(
+        await stakingContract.calculateStakeReward(acc.address, 0)
+      ).to.be.eq(expectedReward);
+
+      // After ending
+      await waitForStakeFinished(durationDays);
+      await time.setNextBlockTimestamp((await time.latest()) + 10000);
+      await mine();
+
+      expect(
+        await stakingContract.calculateStakeReward(acc.address, 0)
+      ).to.be.eq(profit);
+
+      // Claimed
+      await stakingContract.connect(acc).withdraw(0);
+      expect(
+        await stakingContract.calculateStakeReward(acc.address, 0)
+      ).to.be.eq(0);
+    });
   });
 });

@@ -77,9 +77,9 @@ contract Staking is AccessControl, Subscribable {
         address rewardPool_,
         uint256 durationDays_,
         uint256 rewardPercent_,
-        uint256 subsciptionCost_,
+        uint256 subscriptionCost_,
         uint256 subscriptionPeriodDays_
-    ) Subscribable(token1_, subsciptionCost_, subscriptionPeriodDays_) {
+    ) Subscribable(token1_, subscriptionCost_, subscriptionPeriodDays_) {
         require(token1_ != address(0), "Zero address for token 1");
         require(token2_ != address(0), "Zero address for token 2");
         require(rewardPool_ != address(0), "Zero address for reward pool");
@@ -231,30 +231,12 @@ contract Staking is AccessControl, Subscribable {
         _subscribedTill = _subscribed ? subscribers[userAddr_] : 0;
     }
 
-    // Returns only active stakes (not claimed)
     function getUserStakes(address userAddr_)
         public
         view
         returns (Stake[] memory stakes)
     {
-        User storage user = users[userAddr_];
-
-        uint256 activeStakesAmount = 0;
-        for (uint256 i = 0; i < user.stakes.length; i++) {
-            if (!user.stakes[i].isClaimed) {
-                activeStakesAmount++;
-            }
-        }
-
-        Stake[] memory activeStakes = new Stake[](activeStakesAmount);
-
-        for (uint256 i = 0; i < user.stakes.length; i++) {
-            if (!user.stakes[i].isClaimed) {
-                activeStakes[i] = user.stakes[i];
-            }
-        }
-
-        return activeStakes;
+        return users[userAddr_].stakes;
     }
 
     function getTimestamp() public view returns (uint256) {
@@ -343,7 +325,7 @@ contract Staking is AccessControl, Subscribable {
         public
         onlyRole(DEFAULT_ADMIN_ROLE)
     {
-        durationDays = duration_ * TIME_STEP;
+        durationDays = duration_;
     }
 
     function updateReward(uint256 newReward_)
@@ -353,24 +335,24 @@ contract Staking is AccessControl, Subscribable {
         reward = newReward_;
     }
 
-    function updateSubsctiptionCost(uint256 cost_)
+    function updateSubscriptionCost(uint256 cost_)
         public
         onlyRole(DEFAULT_ADMIN_ROLE)
     {
-        _updateSubsctiptionCost(cost_);
+        _updateSubscriptionCost(cost_);
     }
 
-    function updateSubsctiptionPeriod(uint256 periodDays_)
+    function updateSubscriptionPeriod(uint256 periodDays_)
         public
         onlyRole(DEFAULT_ADMIN_ROLE)
     {
-        _updateSubsctiptionPeriod(periodDays_);
+        _updateSubscriptionPeriod(periodDays_);
     }
 
-    function updateSubsctiptionToken(address token_)
+    function updateSubscriptionToken(address token_)
         public
         onlyRole(DEFAULT_ADMIN_ROLE)
     {
-        _updateSubsctiptionToken(token_);
+        _updateSubscriptionToken(token_);
     }
 }
