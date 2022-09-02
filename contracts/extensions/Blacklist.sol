@@ -18,24 +18,6 @@ abstract contract Blacklist is Context {
     event WhitelistEnabled(address admin);
     event WhitelistDisabled(address admin);
 
-    function isAddressInBlacklist(address _address) public view returns (bool) {
-        return blacklist[_address];
-    }
-
-    function isAddressInWhiteList(address _address) public view returns (bool) {
-        return whitelist[_address];
-    }
-
-    function _onWhitelistMode() internal virtual {
-        isWhitelistRestrictionMode = true;
-        emit WhitelistEnabled(_msgSender());
-    }
-
-    function _offWhitelistMode() internal virtual {
-        isWhitelistRestrictionMode = false;
-        emit WhitelistDisabled(_msgSender());
-    }
-
     function _addToBlacklist(address[] memory _addresses) internal virtual {
         for (uint256 i = 0; i < _addresses.length; i++) {
             blacklist[_addresses[i]] = true;
@@ -68,5 +50,25 @@ abstract contract Blacklist is Context {
             whitelist[_addresses[i]] = false;
         }
         emit WhitelistRemoved(_addresses, _msgSender());
+    }
+
+    // --------- Helper functions ---------
+    function isAddressInBlacklist(address _address) public view returns (bool) {
+        return blacklist[_address];
+    }
+
+    function isAddressInWhiteList(address _address) public view returns (bool) {
+        return whitelist[_address];
+    }
+
+    // --------- Administrative functions ---------
+    function _onWhitelistMode() internal virtual {
+        isWhitelistRestrictionMode = true;
+        emit WhitelistEnabled(_msgSender());
+    }
+
+    function _offWhitelistMode() internal virtual {
+        isWhitelistRestrictionMode = false;
+        emit WhitelistDisabled(_msgSender());
     }
 }

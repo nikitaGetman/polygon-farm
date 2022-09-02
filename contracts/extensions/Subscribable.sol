@@ -44,6 +44,7 @@ contract Subscribable is Context {
         subscribers[addr_] = block.timestamp + subscriptionPeriodDays * 1 days;
     }
 
+    // --------- Helper functions ---------
     function isSubscriber(address addr_) public view virtual returns (bool) {
         return subscribers[addr_] >= block.timestamp;
     }

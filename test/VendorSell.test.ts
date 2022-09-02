@@ -8,7 +8,8 @@ describe("Vendor Contract", function () {
     const [adminAccount, tokenPoolAcc, changeTokenPoolAcc, ...restSigners] =
       await ethers.getSigners();
 
-    const swapRate = 50; // 0.5
+    const swapRate = 500; // 0.5
+    const swapRateDivider = 1000;
     const initialSupply = 1_000_000_000_000;
 
     const token = await new Token1__factory(adminAccount).deploy(
@@ -51,36 +52,41 @@ describe("Vendor Contract", function () {
       changeTokenPoolAcc,
       swapRate,
       restSigners,
+      swapRateDivider,
     };
   }
 
   it("Should calculate correct swap rate for token", async function () {
-    const { swapContract, swapRate } = await loadFixture(deployContractFixture);
+    const { swapContract, swapRate, swapRateDivider } = await loadFixture(
+      deployContractFixture
+    );
 
     expect(await swapContract.getEquivalentTokenEstimate(100)).to.be.eq(
-      ethers.BigNumber.from(100).mul(swapRate).div(100)
+      ethers.BigNumber.from(100).mul(swapRate).div(swapRateDivider)
     );
     expect(await swapContract.getEquivalentTokenEstimate(0)).to.be.eq(
-      ethers.BigNumber.from(0).mul(swapRate).div(100)
+      ethers.BigNumber.from(0).mul(swapRate).div(swapRateDivider)
     );
     const largeUint = ethers.constants.MaxUint256.div(1000);
     expect(await swapContract.getEquivalentTokenEstimate(largeUint)).to.be.eq(
-      largeUint.mul(swapRate).div(100)
+      largeUint.mul(swapRate).div(swapRateDivider)
     );
   });
   it("Should calculate correct swap rate for change token", async function () {
-    const { swapContract, swapRate } = await loadFixture(deployContractFixture);
+    const { swapContract, swapRate, swapRateDivider } = await loadFixture(
+      deployContractFixture
+    );
 
     expect(await swapContract.getEquivalentChangeTokenEstimate(100)).to.be.eq(
-      (100 * 100) / swapRate
+      (100 * swapRateDivider) / swapRate
     );
     expect(await swapContract.getEquivalentChangeTokenEstimate(0)).to.be.eq(
-      (0 * 100) / swapRate
+      (0 * swapRateDivider) / swapRate
     );
     const largeUint = ethers.constants.MaxUint256.div(1000);
     expect(
       await swapContract.getEquivalentChangeTokenEstimate(largeUint)
-    ).to.be.eq(largeUint.mul(100).div(swapRate));
+    ).to.be.eq(largeUint.mul(swapRateDivider).div(swapRate));
   });
 
   it("Should revert if user allowance not enough", async function () {
@@ -492,6 +498,7 @@ describe("Vendor Contract", function () {
       tokenPoolAcc,
       restSigners,
       swapRate,
+      swapRateDivider,
     } = await loadFixture(deployContractFixture);
 
     expect(await swapContract.getTokenReserve()).to.be.eq(initialSupply);
@@ -507,7 +514,7 @@ describe("Vendor Contract", function () {
 
     expect(await swapContract.getTokenReserve()).to.be.eq(initialSupply - 50);
     expect(await swapContract.getChangeTokenReserve()).to.be.eq(
-      initialSupply - (50 * 100) / swapRate
+      initialSupply - (50 * swapRateDivider) / swapRate
     );
   });
 
@@ -525,10 +532,11 @@ describe("Vendor Contract", function () {
 
     const [acc1, acc2, newPool] = restSigners;
 
-    await expect(swapContract.connect(acc1).setTokenPool(newPool.address)).to.be
-      .reverted;
-    await expect(swapContract.connect(acc1).setChangeTokenPool(newPool.address))
-      .to.be.reverted;
+    await expect(swapContract.connect(acc1).updateTokenPool(newPool.address)).to
+      .be.reverted;
+    await expect(
+      swapContract.connect(acc1).updateChangeTokenPool(newPool.address)
+    ).to.be.reverted;
 
     expect(await swapContract.getTokenReserve()).to.be.eq(initialSupply);
     expect(await swapContract.getChangeTokenReserve()).to.be.eq(initialSupply);
@@ -538,10 +546,11 @@ describe("Vendor Contract", function () {
     const AdminRole = await swapContract.DEFAULT_ADMIN_ROLE();
     await swapContract.connect(adminAccount).grantRole(AdminRole, acc2.address);
 
-    await expect(swapContract.connect(acc2).setTokenPool(newPool.address)).not
-      .to.be.reverted;
-    await expect(swapContract.connect(acc2).setChangeTokenPool(newPool.address))
+    await expect(swapContract.connect(acc2).updateTokenPool(newPool.address))
       .not.to.be.reverted;
+    await expect(
+      swapContract.connect(acc2).updateChangeTokenPool(newPool.address)
+    ).not.to.be.reverted;
 
     expect(await swapContract.getTokenReserve()).to.be.eq(1000);
     expect(await swapContract.getChangeTokenReserve()).to.be.eq(2000);
@@ -554,6 +563,7 @@ describe("Vendor Contract", function () {
       changeToken,
       restSigners,
       swapRate,
+      swapRateDivider,
     } = await loadFixture(deployContractFixture);
 
     const [acc2] = restSigners;
@@ -562,8 +572,8 @@ describe("Vendor Contract", function () {
     await changeToken.connect(acc2).approve(swapContract.address, 1000);
 
     await expect(swapContract.connect(acc2).buyTokens(1000))
-      .to.emit(swapContract, "BuyTokens")
-      .withArgs(acc2.address, (1000 * swapRate) / 100, 1000);
+      .to.emit(swapContract, "TokensPurchased")
+      .withArgs(acc2.address, (1000 * swapRate) / swapRateDivider, 1000);
   });
 
   it("Should emit event on sell token", async function () {
@@ -574,6 +584,7 @@ describe("Vendor Contract", function () {
       token,
       restSigners,
       swapRate,
+      swapRateDivider,
     } = await loadFixture(deployContractFixture);
 
     await swapContract.connect(adminAccount).enableSell();
@@ -584,7 +595,7 @@ describe("Vendor Contract", function () {
     await token.connect(acc1).approve(swapContract.address, 1000);
 
     await expect(swapContract.connect(acc1).sellTokens(1000))
-      .to.emit(swapContract, "SellTokens")
-      .withArgs(acc1.address, 1000, (1000 * 100) / swapRate);
+      .to.emit(swapContract, "TokensSold")
+      .withArgs(acc1.address, 1000, (1000 * swapRateDivider) / swapRate);
   });
 });

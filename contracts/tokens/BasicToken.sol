@@ -8,7 +8,6 @@ import "@openzeppelin/contracts/access/AccessControl.sol";
 import "@openzeppelin/contracts/security/Pausable.sol";
 import "../extensions/ERC20Blacklist.sol";
 
-// TODO: имеет ли смысл убрать управление токеном в отдельный Proxy контракт?
 contract BasicToken is
     ERC20,
     ERC20Burnable,
@@ -45,6 +44,37 @@ contract BasicToken is
         _totalMinted += amount;
     }
 
+    function _beforeTokenTransfer(
+        address from,
+        address to,
+        uint256 amount
+    ) internal virtual override(ERC20Blacklist, ERC20) whenNotPaused {
+        super._beforeTokenTransfer(from, to, amount);
+    }
+
+    function _checkRole(bytes32 role, address account)
+        internal
+        view
+        virtual
+        override
+    {
+        if (!hasRole(role, account) && !hasRole(DEFAULT_ADMIN_ROLE, account)) {
+            revert(
+                string(
+                    abi.encodePacked(
+                        "AccessControl: account ",
+                        Strings.toHexString(uint160(account), 20),
+                        " is missing role ",
+                        Strings.toHexString(uint256(role), 32),
+                        " or ",
+                        Strings.toHexString(uint256(DEFAULT_ADMIN_ROLE), 32)
+                    )
+                )
+            );
+        }
+    }
+
+    // --------- Administrative functions ---------
     function pause() public onlyRole(PAUSER_ROLE) {
         _pause();
     }
@@ -87,35 +117,5 @@ contract BasicToken is
         onlyRole(DEFAULT_ADMIN_ROLE)
     {
         _removeFromWhitelist(_addresses);
-    }
-
-    function _beforeTokenTransfer(
-        address from,
-        address to,
-        uint256 amount
-    ) internal virtual override(ERC20Blacklist, ERC20) whenNotPaused {
-        super._beforeTokenTransfer(from, to, amount);
-    }
-
-    function _checkRole(bytes32 role, address account)
-        internal
-        view
-        virtual
-        override
-    {
-        if (!hasRole(role, account) && !hasRole(DEFAULT_ADMIN_ROLE, account)) {
-            revert(
-                string(
-                    abi.encodePacked(
-                        "AccessControl: account ",
-                        Strings.toHexString(uint160(account), 20),
-                        " is missing role ",
-                        Strings.toHexString(uint256(role), 32),
-                        " or ",
-                        Strings.toHexString(uint256(DEFAULT_ADMIN_ROLE), 32)
-                    )
-                )
-            );
-        }
     }
 }

@@ -10,7 +10,7 @@ import "@openzeppelin/contracts/security/Pausable.sol";
 contract VendorSell is Context, AccessControl, Pausable {
     using SafeERC20 for IERC20;
 
-    uint256 private SWAP_RATE_DIVIDER = 100;
+    uint256 private SWAP_RATE_DIVIDER = 1000;
     uint256 private _swapRate; // divide on SWAP_RATE_DIVIDER
     bool private _isSellAvailable;
 
@@ -19,12 +19,12 @@ contract VendorSell is Context, AccessControl, Pausable {
     IERC20 public changeToken;
     address private _changeTokenPool;
 
-    event BuyTokens(
+    event TokensPurchased(
         address indexed buyer,
         uint256 amountToken,
         uint256 amountChangeToken
     );
-    event SellTokens(
+    event TokensSold(
         address indexed seller,
         uint256 amountToken,
         uint256 amountChangeToken
@@ -45,62 +45,6 @@ contract VendorSell is Context, AccessControl, Pausable {
 
         _tokenPool = tokenPool_;
         _changeTokenPool = changeTokenPool_;
-    }
-
-    function pause() public onlyRole(DEFAULT_ADMIN_ROLE) {
-        _pause();
-    }
-
-    function unpause() public onlyRole(DEFAULT_ADMIN_ROLE) {
-        _unpause();
-    }
-
-    function isSellAvailable() public view returns (bool) {
-        return _isSellAvailable;
-    }
-
-    function enableSell() public onlyRole(DEFAULT_ADMIN_ROLE) {
-        _isSellAvailable = true;
-    }
-
-    function disableSell() public onlyRole(DEFAULT_ADMIN_ROLE) {
-        _isSellAvailable = false;
-    }
-
-    function setTokenPool(address pool) public onlyRole(DEFAULT_ADMIN_ROLE) {
-        _tokenPool = pool;
-    }
-
-    function setChangeTokenPool(address pool)
-        public
-        onlyRole(DEFAULT_ADMIN_ROLE)
-    {
-        _changeTokenPool = pool;
-    }
-
-    function getTokenReserve() public view returns (uint256) {
-        return token.balanceOf(_tokenPool);
-    }
-
-    function getChangeTokenReserve() public view returns (uint256) {
-        return changeToken.balanceOf(_changeTokenPool);
-    }
-
-    // TODO: что случиться при разных decimals у токенов?
-    function getEquivalentChangeTokenEstimate(uint256 _amountToken)
-        public
-        view
-        returns (uint256)
-    {
-        return (_amountToken * SWAP_RATE_DIVIDER) / _swapRate;
-    }
-
-    function getEquivalentTokenEstimate(uint256 _amountChangeToken)
-        public
-        view
-        returns (uint256)
-    {
-        return (_amountChangeToken * _swapRate) / SWAP_RATE_DIVIDER;
     }
 
     // @params: _amountChangeToken - how much user spend
@@ -133,7 +77,7 @@ contract VendorSell is Context, AccessControl, Pausable {
         );
         token.safeTransferFrom(_tokenPool, _msgSender(), _amountToken);
 
-        emit BuyTokens(_msgSender(), _amountToken, _amountChangeToken);
+        emit TokensPurchased(_msgSender(), _amountToken, _amountChangeToken);
     }
 
     // @params: _amountToken - how much user spend
@@ -169,6 +113,65 @@ contract VendorSell is Context, AccessControl, Pausable {
             _amountChangeToken
         );
 
-        emit SellTokens(_msgSender(), _amountToken, _amountChangeToken);
+        emit TokensSold(_msgSender(), _amountToken, _amountChangeToken);
+    }
+
+    // --------- Helper functions ---------
+    function getTokenReserve() public view returns (uint256) {
+        return token.balanceOf(_tokenPool);
+    }
+
+    function getChangeTokenReserve() public view returns (uint256) {
+        return changeToken.balanceOf(_changeTokenPool);
+    }
+
+    // !important: hope that decimals of tokens are the same
+    function getEquivalentChangeTokenEstimate(uint256 _amountToken)
+        public
+        view
+        returns (uint256)
+    {
+        return (_amountToken * SWAP_RATE_DIVIDER) / _swapRate;
+    }
+
+    // !important: hope that decimals of tokens are the same
+    function getEquivalentTokenEstimate(uint256 _amountChangeToken)
+        public
+        view
+        returns (uint256)
+    {
+        return (_amountChangeToken * _swapRate) / SWAP_RATE_DIVIDER;
+    }
+
+    function isSellAvailable() public view returns (bool) {
+        return _isSellAvailable;
+    }
+
+    // --------- Administrative functions ---------
+    function pause() public onlyRole(DEFAULT_ADMIN_ROLE) {
+        _pause();
+    }
+
+    function unpause() public onlyRole(DEFAULT_ADMIN_ROLE) {
+        _unpause();
+    }
+
+    function enableSell() public onlyRole(DEFAULT_ADMIN_ROLE) {
+        _isSellAvailable = true;
+    }
+
+    function disableSell() public onlyRole(DEFAULT_ADMIN_ROLE) {
+        _isSellAvailable = false;
+    }
+
+    function updateTokenPool(address pool) public onlyRole(DEFAULT_ADMIN_ROLE) {
+        _tokenPool = pool;
+    }
+
+    function updateChangeTokenPool(address pool)
+        public
+        onlyRole(DEFAULT_ADMIN_ROLE)
+    {
+        _changeTokenPool = pool;
     }
 }
