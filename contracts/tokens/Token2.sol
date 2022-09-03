@@ -8,7 +8,7 @@ contract Token2 is BasicToken {
     bytes32 public constant MINTER_ROLE = keccak256("MINTER_ROLE");
 
     constructor(uint256 initialSupply_, address holderAddress_)
-        BasicToken(initialSupply_, holderAddress_, "Token2", "TKN2")
+        BasicToken(initialSupply_, holderAddress_, "Test SAVR", "TSAVR")
     {
         _grantRole(MINTER_ROLE, _msgSender());
 

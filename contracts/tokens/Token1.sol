@@ -8,7 +8,7 @@ contract Token1 is BasicToken, ERC20Snapshot {
     bytes32 public constant SNAPSHOT_ROLE = keccak256("SNAPSHOT_ROLE");
 
     constructor(uint256 initialSupply_, address holderAddress_)
-        BasicToken(initialSupply_, holderAddress_, "Token1", "TKN1")
+        BasicToken(initialSupply_, holderAddress_, "Test SAV", "TSAV")
     {
         _grantRole(SNAPSHOT_ROLE, _msgSender());
     }

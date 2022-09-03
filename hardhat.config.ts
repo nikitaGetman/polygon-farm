@@ -10,6 +10,7 @@ import "solidity-coverage";
 import "./tasks";
 
 import "tsconfig-paths/register";
+import "hardhat-deploy";
 
 dotenv.config();
 
@@ -26,10 +27,34 @@ const config: HardhatUserConfig = {
     },
   },
   networks: {
+    localhost: {
+      live: false,
+      saveDeployments: true,
+      tags: ["local"],
+    },
+    hardhat: {
+      live: false,
+      saveDeployments: true,
+      tags: ["test", "local"],
+    },
     mumbai: {
       url: process.env.MUMBAI_RPC_URL,
       accounts,
+      tags: ["staging"],
     },
+    // mainnet: {
+    //   tags: ["production"],
+    // },
+  },
+  namedAccounts: {
+    deployer: {
+      default: 0,
+      mumbai: "",
+      mainnet: "",
+    },
+    token1Holder: 1,
+    token2Holder: 1,
+    vestingPool: 3,
   },
   etherscan: {
     apiKey: {
@@ -47,7 +72,8 @@ const config: HardhatUserConfig = {
     ],
   },
   gasReporter: {
-    enabled: false,
+    enabled: !!process.env.REPORT_GAS,
+    coinmarketcap: process.env.COIN_MARKET_CAP_KEY,
     currency: "USD",
   },
 };

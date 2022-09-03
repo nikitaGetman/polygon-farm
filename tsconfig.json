@@ -14,6 +14,12 @@
     },
     "baseUrl": "."
   },
-  "include": ["./scripts", "./test", "./typechain-types"],
+  "include": [
+    "./scripts",
+    "./test",
+    "./typechain-types",
+    "./hardhat.config.ts",
+    "./deploy"
+  ],
   "files": ["./hardhat.config.ts"]
 }
