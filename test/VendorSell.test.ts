@@ -1,7 +1,11 @@
 import { loadFixture } from "@nomicfoundation/hardhat-network-helpers";
 import { expect } from "chai";
 import { ethers } from "hardhat";
-import { VendorSell__factory, Token1__factory } from "typechain-types";
+import {
+  VendorSell__factory,
+  Token1__factory,
+  ERC20BurnableMock__factory,
+} from "typechain-types";
 
 describe("Vendor Contract", function () {
   async function deployContractFixture() {
@@ -16,10 +20,9 @@ describe("Vendor Contract", function () {
       initialSupply,
       tokenPoolAcc.address
     );
-    const changeToken = await new Token1__factory(adminAccount).deploy(
-      initialSupply,
-      changeTokenPoolAcc.address
-    );
+    const changeToken = await new ERC20BurnableMock__factory(
+      changeTokenPoolAcc
+    ).deploy("Test Token", "TTN", initialSupply);
 
     await token.deployed();
     await changeToken.deployed();
@@ -31,6 +34,7 @@ describe("Vendor Contract", function () {
       changeTokenPoolAcc.address,
       swapRate
     );
+    await swapContract.deployed();
 
     await token
       .connect(tokenPoolAcc)
@@ -39,8 +43,6 @@ describe("Vendor Contract", function () {
     await changeToken
       .connect(changeTokenPoolAcc)
       .approve(swapContract.address, ethers.constants.MaxUint256);
-
-    await swapContract.deployed();
 
     return {
       swapContract,

@@ -1,15 +1,11 @@
-// SPDX-License-Identifier: Apache-2.0
+// SPDX-License-Identifier: MIT
 pragma solidity 0.8.11;
 
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 import "@openzeppelin/contracts/access/AccessControl.sol";
-import "@openzeppelin/contracts/utils/math/Math.sol";
 import "@openzeppelin/contracts/utils/math/SafeMath.sol";
-
-// TODO: Check tests
-// TODO: Create task for creating vesting schedule
 
 contract TokenVesting is AccessControl, ReentrancyGuard {
     using SafeMath for uint256;
@@ -56,11 +52,8 @@ contract TokenVesting is AccessControl, ReentrancyGuard {
         require(pool_ != address(0x0));
         _token = IERC20(token_);
         _vestingPool = payable(pool_);
+        _grantRole(DEFAULT_ADMIN_ROLE, _msgSender());
     }
-
-    receive() external payable {}
-
-    fallback() external payable {}
 
     /**
      * @notice Creates a new vesting schedule for a beneficiary.
@@ -121,7 +114,7 @@ contract TokenVesting is AccessControl, ReentrancyGuard {
     function release(bytes32 vestingScheduleId, uint256 amount)
         public
         nonReentrant
-        onlyIfVestingScheduleNotRevoked(vestingScheduleId)
+        onlyIfVestingScheduleExistsAndNotRevoked(vestingScheduleId)
     {
         VestingSchedule storage vestingSchedule = vestingSchedules[
             vestingScheduleId
@@ -152,7 +145,7 @@ contract TokenVesting is AccessControl, ReentrancyGuard {
     function revoke(bytes32 vestingScheduleId)
         public
         onlyRole(DEFAULT_ADMIN_ROLE)
-        onlyIfVestingScheduleNotRevoked(vestingScheduleId)
+        onlyIfVestingScheduleExistsAndNotRevoked(vestingScheduleId)
     {
         VestingSchedule storage vestingSchedule = vestingSchedules[
             vestingScheduleId
@@ -248,7 +241,7 @@ contract TokenVesting is AccessControl, ReentrancyGuard {
     function computeReleasableAmount(bytes32 vestingScheduleId)
         public
         view
-        onlyIfVestingScheduleNotRevoked(vestingScheduleId)
+        onlyIfVestingScheduleExistsAndNotRevoked(vestingScheduleId)
         returns (uint256)
     {
         VestingSchedule storage vestingSchedule = vestingSchedules[
@@ -335,13 +328,13 @@ contract TokenVesting is AccessControl, ReentrancyGuard {
         ) {
             return 0;
         } else if (
-            currentTime >= vestingSchedule.start.add(vestingSchedule.duration)
+            currentTime >= vestingSchedule.cliff.add(vestingSchedule.duration)
         ) {
             return vestingSchedule.amountTotal.sub(vestingSchedule.released);
         } else {
-            uint256 timeFromStart = currentTime.sub(vestingSchedule.start);
+            uint256 timeAfterCliff = currentTime.sub(vestingSchedule.cliff);
             uint256 secondsPerSlice = vestingSchedule.slicePeriodSeconds;
-            uint256 vestedSlicePeriods = timeFromStart.div(secondsPerSlice);
+            uint256 vestedSlicePeriods = timeAfterCliff.div(secondsPerSlice);
             uint256 vestedSeconds = vestedSlicePeriods.mul(secondsPerSlice);
             uint256 vestedAmount = vestingSchedule
                 .amountTotal
@@ -357,17 +350,11 @@ contract TokenVesting is AccessControl, ReentrancyGuard {
     }
 
     /**
-     * @dev Reverts if no vesting schedule matches the passed identifier.
-     */
-    modifier onlyIfVestingScheduleExists(bytes32 vestingScheduleId) {
-        require(vestingSchedules[vestingScheduleId].initialized == true);
-        _;
-    }
-
-    /**
      * @dev Reverts if the vesting schedule does not exist or has been revoked.
      */
-    modifier onlyIfVestingScheduleNotRevoked(bytes32 vestingScheduleId) {
+    modifier onlyIfVestingScheduleExistsAndNotRevoked(
+        bytes32 vestingScheduleId
+    ) {
         require(vestingSchedules[vestingScheduleId].initialized == true);
         require(vestingSchedules[vestingScheduleId].revoked == false);
         _;
@@ -378,6 +365,10 @@ contract TokenVesting is AccessControl, ReentrancyGuard {
         public
         onlyRole(DEFAULT_ADMIN_ROLE)
     {
+        require(
+            pool != address(0x0),
+            "TokenVesting: pool can not be zero address"
+        );
         _vestingPool = payable(pool);
     }
 }
