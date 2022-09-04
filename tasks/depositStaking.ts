@@ -12,21 +12,14 @@ task("deposit-staking", "Deposit to staking contract")
     const account = await ethers.getSigner(accountAddr);
 
     const stakingArtifact = await deployments.getArtifact("Staking");
-    const staking = (await ethers.getContractAtFromArtifact(
-      stakingArtifact,
+    const staking = await ethers.getContractAt<Staking>(
+      stakingArtifact.abi,
       taskArgs.contract,
       account
-    )) as Staking;
+    );
 
     const tokenName = taskArgs.isToken2 ? "Token2" : "Token1";
-    const tokenAddress = (await deployments.get(tokenName)).address;
-    const tokenArtifact = await deployments.getArtifact(tokenName);
-
-    const token = await ethers.getContractAtFromArtifact(
-      tokenArtifact,
-      tokenAddress,
-      account
-    );
+    const token = await ethers.getContract(tokenName, account);
 
     const tx = await token.approve(staking.address, taskArgs.amount);
     await tx.wait();

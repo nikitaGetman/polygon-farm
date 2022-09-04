@@ -8,7 +8,6 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   const { deployer, vestingPool } = await getNamedAccounts();
 
   const token1Address = (await deployments.get("Token1")).address;
-  const token1Artifact = await deployments.getArtifact("Token1");
 
   const tokenVesting = await deploy("TokenVesting", {
     from: deployer,
@@ -18,10 +17,7 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   });
 
   const vestingPoolSigner = await ethers.getSigner(vestingPool);
-  const token1 = await ethers.getContractAtFromArtifact(
-    token1Artifact,
-    token1Address
-  );
+  const token1 = await ethers.getContract("Token1");
 
   await token1
     .connect(vestingPoolSigner)
@@ -29,5 +25,4 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
 };
 func.tags = ["TokenVesting"];
 func.dependencies = ["Token1"];
-func.runAtTheEnd = true;
 export default func;

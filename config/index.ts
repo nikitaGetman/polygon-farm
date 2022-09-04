@@ -1,9 +1,5 @@
-type Staking = {
-  durationDays: number;
-  rewardPercent: number;
-  subscriptionCost: number;
-  subscriptionDurationDays: number;
-};
+import { ethers } from "ethers";
+import { Staking } from "types/index";
 
 export const STAKINGS: Staking[] = [
   {
@@ -27,3 +23,8 @@ export const STAKINGS: Staking[] = [
 ];
 
 export const VENDOR_SELL_SWAP_RATE = 1;
+
+export const TOKEN1_INITIAL_SUPPLY = ethers.BigNumber.from(10)
+  .pow(18)
+  .mul(1_000_000);
+export const TOKEN2_INITIAL_SUPPLY = 0;

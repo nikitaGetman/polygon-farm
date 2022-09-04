@@ -1,10 +1,10 @@
 import { HardhatRuntimeEnvironment } from "hardhat/types";
 import { DeployFunction } from "hardhat-deploy/types";
 import { STAKINGS } from "../config";
+import { getStakingName } from "utils/getStakingName";
 
 const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   const { deployments, getNamedAccounts, ethers, network, run } = hre;
-  const { getArtifact } = deployments;
 
   const { deployer, stakingPool } = await getNamedAccounts();
 
@@ -14,6 +14,7 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   for (let i = 0; i < STAKINGS.length; i++) {
     const staking = STAKINGS[i];
 
+    const contractName = getStakingName(staking);
     const stakingDeploy = await run("deploy-staking", {
       token1: token1Address,
       token2: token2Address,
@@ -23,18 +24,19 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
       subscriptionCost: staking.subscriptionCost,
       subscriptionPeriodDays: staking.subscriptionDurationDays,
       account: deployer,
+      contractName,
     });
+
+    await deployments.save(contractName, stakingDeploy);
 
     // Set contract TIME_STEP to 1 minute for testing and activate it
     if (!network.live) {
-      const stakingContract = await ethers.getContractAtFromArtifact(
-        await getArtifact("Staking"),
-        stakingDeploy.address
-      );
+      const stakingContract = await ethers.getContract(contractName, deployer);
       await stakingContract.updateTimeStep(60);
       await stakingContract.setActive(true);
     }
   }
 };
-func.tags = ["Token2"];
+func.tags = ["Staking"];
+func.dependencies = ["Token1", "Token2"];
 export default func;

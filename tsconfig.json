@@ -16,11 +16,12 @@
     "baseUrl": "."
   },
   "include": [
+    "./hardhat.config.ts",
     "./scripts",
     "./test",
     "./typechain-types",
-    "./hardhat.config.ts",
     "./deploy",
+    "./utils",
     "./tasks"
   ],
   "files": ["./hardhat.config.ts"]

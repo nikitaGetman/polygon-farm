@@ -6,7 +6,7 @@ task("transfer-tokens", "Refill account balance of tokens")
   .addParam("amount", "Amount to transfer")
   .addOptionalParam("isToken2", "Transfer token 2?", false, types.boolean)
   .addOptionalParam("isMockToken", "Transfer mock token?", false, types.boolean)
-  .setAction(async (taskArgs, { ethers, getNamedAccounts, deployments }) => {
+  .setAction(async (taskArgs, { ethers, getNamedAccounts }) => {
     const fromAccountAddr =
       (await getNamedAccounts())[taskArgs.from] || taskArgs.from;
     const toAccountAddr =
@@ -18,14 +18,7 @@ task("transfer-tokens", "Refill account balance of tokens")
       : taskArgs.isMockToken
       ? "ERC20BurnableMock"
       : "Token1";
-    const tokenAddress = (await deployments.get(tokenName)).address;
-    const tokenArtifact = await deployments.getArtifact(tokenName);
-
-    const token = await ethers.getContractAtFromArtifact(
-      tokenArtifact,
-      tokenAddress,
-      fromAccount
-    );
+    const token = await ethers.getContract(tokenName, fromAccount);
 
     const tx = await token.transfer(toAccountAddr, taskArgs.amount);
     await tx.wait();

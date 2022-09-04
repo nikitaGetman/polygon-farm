@@ -15,18 +15,14 @@ task("create-vesting", "Create vesting schedule for account")
     types.boolean
   )
   .addOptionalParam("account", "Admin account name", "admin", types.string)
-  .setAction(async (taskArgs, { ethers, getNamedAccounts, deployments }) => {
+  .setAction(async (taskArgs, { ethers, getNamedAccounts }) => {
     const accountAddr = (await getNamedAccounts())[taskArgs.account];
     const account = await ethers.getSigner(accountAddr);
 
-    const vestingAddress = (await deployments.get("TokenVesting")).address;
-    const vestingArtifact = await deployments.getArtifact("TokenVesting");
-
-    const vesting = (await ethers.getContractAtFromArtifact(
-      vestingArtifact,
-      vestingAddress,
+    const vesting = await ethers.getContract<TokenVesting>(
+      "TokenVesting",
       account
-    )) as TokenVesting;
+    );
 
     const vestingId = await vesting.computeNextVestingScheduleIdForHolder(
       taskArgs.beneficiary

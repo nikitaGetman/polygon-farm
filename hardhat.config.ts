@@ -7,14 +7,13 @@ import "@nomiclabs/hardhat-waffle";
 import "@typechain/hardhat";
 import "hardhat-gas-reporter";
 import "solidity-coverage";
-import "./tasks";
-
-import "tsconfig-paths/register";
 import "hardhat-deploy";
+import "tsconfig-paths/register";
+
+import "./tasks";
+import { node_url, accounts } from "utils/network";
 
 dotenv.config();
-
-const accounts = process.env.PRIVATE_KEY ? [process.env.PRIVATE_KEY] : [];
 
 const config: HardhatUserConfig = {
   defaultNetwork: "localhost",
@@ -29,23 +28,29 @@ const config: HardhatUserConfig = {
   },
   networks: {
     localhost: {
-      live: false,
-      saveDeployments: true,
       tags: ["local"],
+      mining: {
+        auto: true,
+        interval: [3000, 6000],
+      },
     },
     hardhat: {
-      live: false,
-      saveDeployments: true,
       tags: ["test", "local"],
+      mining: {
+        auto: true,
+        interval: [3000, 6000],
+      },
     },
     mumbai: {
-      url: process.env.MUMBAI_RPC_URL,
-      accounts,
+      url: node_url("mumbai"),
+      accounts: accounts("mumbai"),
       tags: ["staging"],
     },
-    // mainnet: {
-    //   tags: ["production"],
-    // },
+    mainnet: {
+      url: node_url("mainnet"),
+      accounts: accounts("mainnet"),
+      tags: ["production"],
+    },
   },
   namedAccounts: {
     deployer: {
@@ -65,7 +70,8 @@ const config: HardhatUserConfig = {
   },
   etherscan: {
     apiKey: {
-      mumbai: process.env.MUMBAI_ETHERSCAN_KEY || "",
+      mumbai: process.env.ETHERSCAN_KEY_MUMBAI || "",
+      mainnet: process.env.ETHERSCAN_KEY_MAINNET || "",
     },
     customChains: [
       {

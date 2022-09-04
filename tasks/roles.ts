@@ -19,8 +19,8 @@ task("grant-role", "Grant role for account in contract with access control")
       taskArgs.adminAccount;
 
     const artifact = await getArtifact(taskArgs.contract, deployments);
-    const contract = await ethers.getContractAtFromArtifact(
-      artifact,
+    const contract = await ethers.getContractAt(
+      artifact.abi,
       taskArgs.contract,
       await ethers.getSigner(adminAccountAddr)
     );
@@ -51,8 +51,8 @@ task("revoke-role", "Revoke role from account for contract with access control")
       taskArgs.adminAccount;
 
     const artifact = await getArtifact(taskArgs.contract, deployments);
-    const contract = await ethers.getContractAtFromArtifact(
-      artifact,
+    const contract = await ethers.getContractAt(
+      artifact.abi,
       taskArgs.contract,
       await ethers.getSigner(adminAccountAddr)
     );
@@ -74,8 +74,8 @@ task("has-role", "Check has role for contracts with access control")
       (await getNamedAccounts())[taskArgs.account] || taskArgs.account;
 
     const artifact = await getArtifact(taskArgs.contract, deployments);
-    const contract = await ethers.getContractAtFromArtifact(
-      artifact,
+    const contract = await ethers.getContractAt(
+      artifact.abi,
       taskArgs.contract
     );
 

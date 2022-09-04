@@ -1,20 +1,20 @@
 import { HardhatRuntimeEnvironment } from "hardhat/types";
 import { DeployFunction } from "hardhat-deploy/types";
+import { TOKEN1_INITIAL_SUPPLY } from "config";
 
 const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   const { deployments, getNamedAccounts, ethers } = hre;
   const { deploy } = deployments;
 
   const { deployer } = await getNamedAccounts();
-  const initialSupply = process.env.TOKEN1_INITIAL_SUPPLY;
 
-  if (!initialSupply) {
+  if (!TOKEN1_INITIAL_SUPPLY) {
     throw new Error("ERC20BurnableMock initial supply not specified");
   }
 
   await deploy("ERC20BurnableMock", {
     from: deployer,
-    args: ["Test USDT", "TUSDT", ethers.BigNumber.from(initialSupply)],
+    args: ["Test USDT", "TUSDT", ethers.BigNumber.from(TOKEN1_INITIAL_SUPPLY)],
     log: true,
     autoMine: true,
   });

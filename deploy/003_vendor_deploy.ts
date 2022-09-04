@@ -9,27 +9,30 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   const { deployer, vendorPool, vendorChangePool } = await getNamedAccounts();
 
   const token1Address = (await deployments.get("Token1")).address;
-  const token1Artifact = await deployments.getArtifact("Token1");
-  const changeTokenAddress =
+
+  const changeTokenContract =
     network.name === "mainnet"
       ? null
-      : (await deployments.get("ERC20BurnableMock")).address;
-  const changeTokenArtifact =
-    network.name === "mainnet"
-      ? null
-      : await deployments.getArtifact("ERC20BurnableMock");
+      : await deployments.get("ERC20BurnableMock");
   const swapRate = VENDOR_SELL_SWAP_RATE;
 
-  if (!changeTokenArtifact || !changeTokenAddress) {
+  const token1 = await ethers.getContract("Token1");
+
+  if (!token1 || !changeTokenContract) {
     throw new Error("VendorSell incorrect config for change token");
   }
+
+  const changeToken = await ethers.getContractAt(
+    changeTokenContract.abi,
+    changeTokenContract.address
+  );
 
   const vendorSell = await deploy("VendorSell", {
     from: deployer,
     args: [
       token1Address,
       vendorPool,
-      changeTokenAddress,
+      changeTokenContract.address,
       vendorChangePool,
       swapRate,
     ],
@@ -39,15 +42,6 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
 
   const vendorPoolSigner = await ethers.getSigner(vendorPool);
   const vendorChangePoolSigner = await ethers.getSigner(vendorChangePool);
-
-  const token1 = await ethers.getContractAtFromArtifact(
-    token1Artifact,
-    token1Address
-  );
-  const changeToken = await ethers.getContractAtFromArtifact(
-    changeTokenArtifact,
-    changeTokenAddress
-  );
 
   await token1
     .connect(vendorPoolSigner)

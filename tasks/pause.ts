@@ -12,14 +12,10 @@ task("pause-token1", "Pause token 1")
     const accountAddr =
       (await getNamedAccounts())[taskArgs.account] || taskArgs.account;
 
-    const tokenAddress = (await deployments.get("Token1")).address;
-    const tokenArtifact = await deployments.getArtifact("Token1");
-
-    const token = (await ethers.getContractAtFromArtifact(
-      tokenArtifact,
-      tokenAddress,
+    const token = await ethers.getContract<Token1>(
+      "Token1",
       await ethers.getSigner(accountAddr)
-    )) as Token1;
+    );
 
     await token.pause();
 
@@ -37,14 +33,10 @@ task("pause-token2", "Pause token 2")
     const accountAddr =
       (await getNamedAccounts())[taskArgs.account] || taskArgs.account;
 
-    const tokenAddress = (await deployments.get("Token2")).address;
-    const tokenArtifact = await deployments.getArtifact("Token2");
-
-    const token = (await ethers.getContractAtFromArtifact(
-      tokenArtifact,
-      tokenAddress,
+    const token = await ethers.getContract<Token2>(
+      "Token2",
       await ethers.getSigner(accountAddr)
-    )) as Token2;
+    );
 
     await token.pause();
 
@@ -62,14 +54,10 @@ task("unpause-token1", "Pause token 1")
     const accountAddr =
       (await getNamedAccounts())[taskArgs.account] || taskArgs.account;
 
-    const tokenAddress = (await deployments.get("Token1")).address;
-    const tokenArtifact = await deployments.getArtifact("Token1");
-
-    const token = (await ethers.getContractAtFromArtifact(
-      tokenArtifact,
-      tokenAddress,
+    const token = await ethers.getContract<Token1>(
+      "Token1",
       await ethers.getSigner(accountAddr)
-    )) as Token1;
+    );
 
     await token.unpause();
 
@@ -87,14 +75,10 @@ task("unpause-token2", "Pause token 2")
     const accountAddr =
       (await getNamedAccounts())[taskArgs.account] || taskArgs.account;
 
-    const tokenAddress = (await deployments.get("Token2")).address;
-    const tokenArtifact = await deployments.getArtifact("Token2");
-
-    const token = (await ethers.getContractAtFromArtifact(
-      tokenArtifact,
-      tokenAddress,
+    const token = await ethers.getContract<Token2>(
+      "Token2",
       await ethers.getSigner(accountAddr)
-    )) as Token2;
+    );
 
     await token.unpause();
 

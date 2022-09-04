@@ -7,14 +7,10 @@ task("snapshot", "Create snapshot token 1")
     const accountAddr =
       (await getNamedAccounts())[taskArgs.account] || taskArgs.account;
 
-    const tokenAddress = (await deployments.get("Token1")).address;
-    const tokenArtifact = await deployments.getArtifact("Token1");
-
-    const token = (await ethers.getContractAtFromArtifact(
-      tokenArtifact,
-      tokenAddress,
+    const token = await ethers.getContract<Token1>(
+      "Token1",
       await ethers.getSigner(accountAddr)
-    )) as Token1;
+    );
 
     await token.snapshot();
     const id = await token.snapshotCount();

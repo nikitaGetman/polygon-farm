@@ -10,22 +10,14 @@ task("subscribe-to-staking", "Subscribe to staking contract")
     const account = await ethers.getSigner(accountAddr);
 
     const stakingArtifact = await deployments.getArtifact("Staking");
-    const staking = (await ethers.getContractAtFromArtifact(
-      stakingArtifact,
+    const staking = await ethers.getContractAt<Staking>(
+      stakingArtifact.abi,
       taskArgs.contract,
       account
-    )) as Staking;
+    );
 
     const subscriptionCost = await staking.subscriptionCost();
-
-    const tokenAddress = (await deployments.get("Token1")).address;
-    const tokenArtifact = await deployments.getArtifact("Token1");
-
-    const token = (await ethers.getContractAtFromArtifact(
-      tokenArtifact,
-      tokenAddress,
-      account
-    )) as Token1;
+    const token = await ethers.getContract<Token1>("Token1", account);
 
     const tx = await token.approve(staking.address, subscriptionCost);
     await tx.wait();
@@ -36,7 +28,3 @@ task("subscribe-to-staking", "Subscribe to staking contract")
       `Account (${taskArgs.account}) subscribed to staking contract (${taskArgs.contract})`
     );
   });
-
-// 0x851356ae760d987E095750cCeb3bC6014560891C
-// 0x998abeb3E57409262aE5b751f60747921B33613E
-//

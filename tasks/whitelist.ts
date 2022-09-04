@@ -11,15 +11,7 @@ task("add-to-whitelist", "Add addresses to token whitelist")
     const admin = await ethers.getSigner(adminAddr);
 
     const tokenName = taskArgs.token === "token2" ? "Token2" : "Token1";
-
-    const tokenAddress = (await deployments.get(tokenName)).address;
-    const tokenArtifact = await deployments.getArtifact(tokenName);
-
-    const token = (await ethers.getContractAtFromArtifact(
-      tokenArtifact,
-      tokenAddress,
-      admin
-    )) as BasicToken;
+    const token = await ethers.getContract<BasicToken>(tokenName, admin);
 
     const accountsToBlock = taskArgs.addresses.split(",");
     const tx = await token.addToWhitelist(accountsToBlock);
@@ -42,15 +34,7 @@ task("remove-from-whitelist", "Remove addresses from token whitelist")
     const admin = await ethers.getSigner(adminAddr);
 
     const tokenName = taskArgs.token === "token2" ? "Token2" : "Token1";
-
-    const tokenAddress = (await deployments.get(tokenName)).address;
-    const tokenArtifact = await deployments.getArtifact(tokenName);
-
-    const token = (await ethers.getContractAtFromArtifact(
-      tokenArtifact,
-      tokenAddress,
-      admin
-    )) as BasicToken;
+    const token = await ethers.getContract<BasicToken>(tokenName, admin);
 
     const accountsToBlock = taskArgs.addresses.split(",");
     const tx = await token.removeFromWhitelist(accountsToBlock);

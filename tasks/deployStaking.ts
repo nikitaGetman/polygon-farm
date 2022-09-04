@@ -1,4 +1,5 @@
 import { task, types } from "hardhat/config";
+import { getStakingName } from "utils/getStakingName";
 
 task("deploy-staking", "Deploy staking contract with params")
   .addParam("token1", "Token1 address")
@@ -19,18 +20,25 @@ task("deploy-staking", "Deploy staking contract with params")
     "deployer",
     types.string
   )
+  .addOptionalParam("contractName", "Account name or address")
   .setAction(async (taskArgs, { ethers, getNamedAccounts, deployments }) => {
     const deployer =
       (await getNamedAccounts())[taskArgs.account] || taskArgs.account;
     const rewardPoolAddress =
       (await getNamedAccounts())[taskArgs.rewardPool] || taskArgs.rewardPool;
 
-    const { deploy, getArtifact } = deployments;
+    const { deploy } = deployments;
 
     const rewardPercent = taskArgs.rewardPercent * 10; // multiply for percent divider
+    const stakingName =
+      taskArgs.contractName ||
+      getStakingName({
+        durationDays: taskArgs.durationDays,
+      });
 
-    const staking = await deploy("Staking", {
+    const staking = await deploy(stakingName, {
       from: deployer,
+      contract: "Staking",
       args: [
         taskArgs.token1,
         taskArgs.token2,
@@ -44,10 +52,8 @@ task("deploy-staking", "Deploy staking contract with params")
       autoMine: true,
     });
 
-    const token1Artifact = await getArtifact("Token1");
-    const token1 = await ethers.getContractAtFromArtifact(
-      token1Artifact,
-      taskArgs.token1,
+    const token1 = await ethers.getContract(
+      "Token1",
       await ethers.getSigner(rewardPoolAddress)
     );
 

@@ -12,14 +12,7 @@ task("add-to-blacklist", "Add addresses to token blacklist")
 
     const tokenName = taskArgs.token === "token2" ? "Token2" : "Token1";
 
-    const tokenAddress = (await deployments.get(tokenName)).address;
-    const tokenArtifact = await deployments.getArtifact(tokenName);
-
-    const token = (await ethers.getContractAtFromArtifact(
-      tokenArtifact,
-      tokenAddress,
-      admin
-    )) as BasicToken;
+    const token = await ethers.getContract<BasicToken>(tokenName, admin);
 
     const accountsToBlock = taskArgs.addresses.split(",");
     const tx = await token.addToBlacklist(accountsToBlock);
@@ -43,14 +36,7 @@ task("remove-from-blacklist", "Remove addresses from token blacklist")
 
     const tokenName = taskArgs.token === "token2" ? "Token2" : "Token1";
 
-    const tokenAddress = (await deployments.get(tokenName)).address;
-    const tokenArtifact = await deployments.getArtifact(tokenName);
-
-    const token = (await ethers.getContractAtFromArtifact(
-      tokenArtifact,
-      tokenAddress,
-      admin
-    )) as BasicToken;
+    const token = await ethers.getContract<BasicToken>(tokenName, admin);
 
     const accountsToBlock = taskArgs.addresses.split(",");
     const tx = await token.removeFromBlacklist(accountsToBlock);
