@@ -5,19 +5,21 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   const { deployments, getNamedAccounts, ethers } = hre;
   const { deploy } = deployments;
 
-  const { deployer, token1Holder } = await getNamedAccounts();
+  const { deployer } = await getNamedAccounts();
   const initialSupply = process.env.TOKEN1_INITIAL_SUPPLY;
 
   if (!initialSupply) {
-    throw new Error("Token1 initial supply not specified");
+    throw new Error("ERC20BurnableMock initial supply not specified");
   }
 
-  await deploy("Token1", {
+  await deploy("ERC20BurnableMock", {
     from: deployer,
-    args: [ethers.BigNumber.from(initialSupply), token1Holder],
+    args: ["Test USDT", "TUSDT", ethers.BigNumber.from(initialSupply)],
     log: true,
     autoMine: true,
   });
 };
-func.tags = ["Token1"];
+func.tags = ["ERC20BurnableMock"];
+func.skip = (hre: HardhatRuntimeEnvironment) =>
+  Promise.resolve(hre.network.live);
 export default func;

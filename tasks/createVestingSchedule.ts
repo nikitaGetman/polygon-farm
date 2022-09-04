@@ -1,21 +1,48 @@
-import * as dotenv from "dotenv";
 import { task, types } from "hardhat/config";
-
-dotenv.config();
+import type { TokenVesting } from "../typechain-types";
 
 task("create-vesting", "Create vesting schedule for account")
   .addParam("beneficiary", "Beneficiary address")
-  .addParam("start", "Start time (seconds)")
   .addParam("duration", "Duration period (seconds)")
   .addParam("amount", "Vesting amount")
+  .addOptionalParam("start", "Start time (seconds)", 0, types.int)
   .addOptionalParam("cliff", "Cliff period (seconds)", 0, types.int)
   .addOptionalParam("slicePeriod", "Slice period (seconds)", 1, types.int)
   .addOptionalParam(
     "revocable",
-    "Is vesting schedule revokable by admin",
+    "Is vesting revokable by admin?",
     false,
     types.boolean
   )
-  .setAction(async (args) => {
-    console.log(args);
+  .addOptionalParam("account", "Admin account name", "admin", types.string)
+  .setAction(async (taskArgs, { ethers, getNamedAccounts, deployments }) => {
+    const accountAddr = (await getNamedAccounts())[taskArgs.account];
+    const account = await ethers.getSigner(accountAddr);
+
+    const vestingAddress = (await deployments.get("TokenVesting")).address;
+    const vestingArtifact = await deployments.getArtifact("TokenVesting");
+
+    const vesting = (await ethers.getContractAtFromArtifact(
+      vestingArtifact,
+      vestingAddress,
+      account
+    )) as TokenVesting;
+
+    const vestingId = await vesting.computeNextVestingScheduleIdForHolder(
+      taskArgs.beneficiary
+    );
+    const tx = await vesting.createVestingSchedule(
+      taskArgs.beneficiary,
+      taskArgs.start,
+      taskArgs.cliff,
+      taskArgs.duration,
+      taskArgs.slicePeriod,
+      taskArgs.revocable,
+      taskArgs.amount
+    );
+    await tx.wait();
+
+    console.log(
+      `Vesting schedule created with id: "${vestingId}". Transaction: "${tx.hash}"`
+    );
   });

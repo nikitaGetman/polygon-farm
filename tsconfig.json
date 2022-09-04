@@ -8,6 +8,7 @@
     "declaration": true,
     "forceConsistentCasingInFileNames": true,
     "skipLibCheck": true,
+    "resolveJsonModule": true,
     "paths": {
       "*": ["*"],
       "~/*": ["src/*"]
@@ -19,7 +20,8 @@
     "./test",
     "./typechain-types",
     "./hardhat.config.ts",
-    "./deploy"
+    "./deploy",
+    "./tasks"
   ],
   "files": ["./hardhat.config.ts"]
 }

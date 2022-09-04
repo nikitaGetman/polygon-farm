@@ -17,6 +17,15 @@ contract Token1 is BasicToken, ERC20Snapshot {
         _snapshot();
     }
 
+    function snapshotCount()
+        public
+        view
+        onlyRole(SNAPSHOT_ROLE)
+        returns (uint256)
+    {
+        return _getCurrentSnapshotId();
+    }
+
     function _beforeTokenTransfer(
         address from,
         address to,

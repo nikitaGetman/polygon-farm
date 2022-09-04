@@ -17,6 +17,7 @@ dotenv.config();
 const accounts = process.env.PRIVATE_KEY ? [process.env.PRIVATE_KEY] : [];
 
 const config: HardhatUserConfig = {
+  defaultNetwork: "localhost",
   solidity: {
     version: "0.8.11",
     settings: {
@@ -52,9 +53,15 @@ const config: HardhatUserConfig = {
       mumbai: "",
       mainnet: "",
     },
+    admin: 0,
     token1Holder: 1,
     token2Holder: 1,
+    // TODO: the same on development
+    stakingPool: 3,
     vestingPool: 3,
+    vendorPool: 3,
+    vendorChangePool: 3,
+    vestingBeneficiary: 5,
   },
   etherscan: {
     apiKey: {

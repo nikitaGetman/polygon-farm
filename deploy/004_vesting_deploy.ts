@@ -7,23 +7,23 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
 
   const { deployer, vestingPool } = await getNamedAccounts();
 
-  const token1 = await deployments.get("Token1");
+  const token1Address = (await deployments.get("Token1")).address;
   const token1Artifact = await deployments.getArtifact("Token1");
 
   const tokenVesting = await deploy("TokenVesting", {
     from: deployer,
-    args: [token1.address, vestingPool],
+    args: [token1Address, vestingPool],
     log: true,
     autoMine: true,
   });
 
   const vestingPoolSigner = await ethers.getSigner(vestingPool);
-  const token1Contract = await ethers.getContractAtFromArtifact(
+  const token1 = await ethers.getContractAtFromArtifact(
     token1Artifact,
-    token1.address
+    token1Address
   );
 
-  await token1Contract
+  await token1
     .connect(vestingPoolSigner)
     .approve(tokenVesting.address, ethers.constants.MaxUint256);
 };

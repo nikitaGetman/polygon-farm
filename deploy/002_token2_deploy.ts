@@ -15,5 +15,5 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
     autoMine: true,
   });
 };
-export default func;
 func.tags = ["Token2"];
+export default func;
