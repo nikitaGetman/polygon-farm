@@ -18,7 +18,7 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
 
   const token1 = await ethers.getContract("Token1");
 
-  if (!token1 || !changeTokenContract) {
+  if (!changeTokenContract) {
     throw new Error("VendorSell incorrect config for change token");
   }
 

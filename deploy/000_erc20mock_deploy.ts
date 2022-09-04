@@ -21,5 +21,5 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
 };
 func.tags = ["ERC20BurnableMock"];
 func.skip = (hre: HardhatRuntimeEnvironment) =>
-  Promise.resolve(hre.network.live);
+  Promise.resolve(hre.network.live && hre.network.name === "mainnet");
 export default func;

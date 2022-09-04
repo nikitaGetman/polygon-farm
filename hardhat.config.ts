@@ -45,28 +45,39 @@ const config: HardhatUserConfig = {
       url: node_url("mumbai"),
       accounts: accounts("mumbai"),
       tags: ["staging"],
+      verify: {
+        etherscan: {
+          apiUrl: "https://api-testnet.polygonscan.com",
+          apiKey: process.env.ETHERSCAN_KEY_MUMBAI || "",
+        },
+      },
     },
     mainnet: {
       url: node_url("mainnet"),
       accounts: accounts("mainnet"),
       tags: ["production"],
+      verify: {
+        etherscan: {
+          apiUrl: "https://api.polygonscan.com",
+          apiKey: process.env.ETHERSCAN_KEY_MAINNET || "",
+        },
+      },
     },
   },
   namedAccounts: {
     deployer: {
       default: 0,
-      mumbai: "",
-      mainnet: "",
+      mumbai: 0,
+      mainnet: 0,
     },
     admin: 0,
     token1Holder: 1,
     token2Holder: 1,
     // TODO: the same on development
-    stakingPool: 3,
-    vestingPool: 3,
-    vendorPool: 3,
-    vendorChangePool: 3,
-    vestingBeneficiary: 5,
+    stakingPool: 2,
+    vestingPool: 2,
+    vendorPool: 2,
+    vendorChangePool: 2,
   },
   etherscan: {
     apiKey: {

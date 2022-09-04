@@ -22,7 +22,7 @@ export const STAKINGS: Staking[] = [
   },
 ];
 
-export const VENDOR_SELL_SWAP_RATE = 1;
+export const VENDOR_SELL_SWAP_RATE = 1000; // = 1, swap rate divider is 1000
 
 export const TOKEN1_INITIAL_SUPPLY = ethers.BigNumber.from(10)
   .pow(18)

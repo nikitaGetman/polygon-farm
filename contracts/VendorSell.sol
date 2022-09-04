@@ -11,7 +11,7 @@ contract VendorSell is Context, AccessControl, Pausable {
     using SafeERC20 for IERC20;
 
     uint256 private SWAP_RATE_DIVIDER = 1000;
-    uint256 private _swapRate; // divide on SWAP_RATE_DIVIDER
+    uint256 public swapRate; // divide on SWAP_RATE_DIVIDER
     bool private _isSellAvailable;
 
     IERC20 public token;
@@ -38,7 +38,7 @@ contract VendorSell is Context, AccessControl, Pausable {
         uint256 swapRate_
     ) {
         _grantRole(DEFAULT_ADMIN_ROLE, _msgSender());
-        _swapRate = swapRate_;
+        swapRate = swapRate_;
 
         token = IERC20(tokenAddress_);
         changeToken = IERC20(changeTokenAddress_);
@@ -131,7 +131,7 @@ contract VendorSell is Context, AccessControl, Pausable {
         view
         returns (uint256)
     {
-        return (_amountToken * SWAP_RATE_DIVIDER) / _swapRate;
+        return (_amountToken * SWAP_RATE_DIVIDER) / swapRate;
     }
 
     // !important: hope that decimals of tokens are the same
@@ -140,7 +140,7 @@ contract VendorSell is Context, AccessControl, Pausable {
         view
         returns (uint256)
     {
-        return (_amountChangeToken * _swapRate) / SWAP_RATE_DIVIDER;
+        return (_amountChangeToken * swapRate) / SWAP_RATE_DIVIDER;
     }
 
     function isSellAvailable() public view returns (bool) {
@@ -166,6 +166,13 @@ contract VendorSell is Context, AccessControl, Pausable {
 
     function updateTokenPool(address pool) public onlyRole(DEFAULT_ADMIN_ROLE) {
         _tokenPool = pool;
+    }
+
+    function updateSwapRate(uint256 swapRate_)
+        public
+        onlyRole(DEFAULT_ADMIN_ROLE)
+    {
+        swapRate = swapRate_;
     }
 
     function updateChangeTokenPool(address pool)

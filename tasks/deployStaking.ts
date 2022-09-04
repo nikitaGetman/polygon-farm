@@ -1,5 +1,6 @@
 import { task, types } from "hardhat/config";
 import { getStakingName } from "utils/getStakingName";
+import type { Token2 } from "../typechain-types";
 
 task("deploy-staking", "Deploy staking contract with params")
   .addParam("token1", "Token1 address")
@@ -26,7 +27,7 @@ task("deploy-staking", "Deploy staking contract with params")
       (await getNamedAccounts())[taskArgs.account] || taskArgs.account;
     const rewardPoolAddress =
       (await getNamedAccounts())[taskArgs.rewardPool] || taskArgs.rewardPool;
-
+    const { admin } = await getNamedAccounts();
     const { deploy } = deployments;
 
     const rewardPercent = taskArgs.rewardPercent * 10; // multiply for percent divider
@@ -52,17 +53,24 @@ task("deploy-staking", "Deploy staking contract with params")
       autoMine: true,
     });
 
+    // Approve staking pool tokens for staking contract
     const token1 = await ethers.getContract(
       "Token1",
       await ethers.getSigner(rewardPoolAddress)
     );
-
-    // Approve staking pool tokens for staking contract
     await token1.approve(staking.address, ethers.constants.MaxUint256);
+
+    // Add staking contract to Token2 whitelist
+    const token2 = await ethers.getContract<Token2>(
+      "Token2",
+      await ethers.getSigner(admin)
+    );
+    await token2.addToWhitelist([staking.address]);
 
     console.log(
       `Staking contract deployed to "${staking.address}". Duration: ${taskArgs.durationDays}. Reward: ${taskArgs.rewardPercent}. Reward pool: "${rewardPoolAddress}"`
     );
+    console.log("Staking contract added to Token2 Whitelist");
 
     return staking;
   });
