@@ -47,6 +47,9 @@ describe("Token 2", function () {
       expect(await token.isAddressInWhiteList(holderAccount.address)).to.be.eq(
         true
       );
+      expect(
+        await token.isAddressInWhiteList(ethers.constants.AddressZero)
+      ).to.be.eq(true);
     });
   });
 

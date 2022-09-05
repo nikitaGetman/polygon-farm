@@ -13,9 +13,10 @@ contract Token2 is BasicToken {
         _grantRole(MINTER_ROLE, _msgSender());
 
         isWhitelistRestrictionMode = true;
-        address[] memory whitelistAddresses = new address[](2);
+        address[] memory whitelistAddresses = new address[](3);
         whitelistAddresses[0] = _msgSender();
         whitelistAddresses[1] = holderAddress_;
+        whitelistAddresses[2] = address(0); // For minting and burning
         _addToWhitelist(whitelistAddresses);
     }
 

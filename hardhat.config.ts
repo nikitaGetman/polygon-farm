@@ -9,14 +9,12 @@ import "hardhat-gas-reporter";
 import "solidity-coverage";
 import "hardhat-deploy";
 import "tsconfig-paths/register";
-
 import "./tasks";
 import { node_url, accounts } from "utils/network";
 
 dotenv.config();
 
 const config: HardhatUserConfig = {
-  defaultNetwork: "localhost",
   solidity: {
     version: "0.8.11",
     settings: {
@@ -96,7 +94,7 @@ const config: HardhatUserConfig = {
     ],
   },
   gasReporter: {
-    enabled: !!process.env.REPORT_GAS,
+    enabled: process.env.REPORT_GAS === "true",
     coinmarketcap: process.env.COIN_MARKET_CAP_KEY,
     currency: "USD",
   },

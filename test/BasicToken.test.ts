@@ -518,19 +518,6 @@ describe("BasicToken", function () {
           .transferFrom(accSender.address, accReceiver.address, 10)
       ).not.to.be.reverted;
     });
-    it("Should transfer if spender in whitelist", async () => {
-      const { token, adminAccount, accSender, accReceiver, accSpender } =
-        await loadFixture(deployWithMoneyFixture);
-
-      await token.connect(adminAccount).onWhitelistMode();
-      await token.addToWhitelist([accSpender.address]);
-
-      await expect(
-        token
-          .connect(accSpender)
-          .transferFrom(accSender.address, accReceiver.address, 10)
-      ).not.to.be.reverted;
-    });
     it("Should transfer if receiver in whitelist", async () => {
       const { token, adminAccount, accSender, accReceiver, accSpender } =
         await loadFixture(deployWithMoneyFixture);
@@ -579,20 +566,6 @@ describe("BasicToken", function () {
           .transferFrom(accSender.address, accReceiver.address, 10)
       ).to.be.revertedWith("Blacklist: spender is in blacklist");
     });
-    it("Should not transfer if spender in whitelist, but sender in blacklist", async () => {
-      const { token, adminAccount, accSender, accReceiver, accSpender } =
-        await loadFixture(deployWithMoneyFixture);
-
-      await token.connect(adminAccount).onWhitelistMode();
-      await token.addToWhitelist([accSpender.address]);
-      await token.addToBlacklist([accSender.address]);
-
-      await expect(
-        token
-          .connect(accSpender)
-          .transferFrom(accSender.address, accReceiver.address, 10)
-      ).to.be.revertedWith("Blacklist: sender is in blacklist");
-    });
     it("Should not transfer if spender in whitelist, but receiver in blacklist", async () => {
       const { token, adminAccount, accSender, accReceiver, accSpender } =
         await loadFixture(deployWithMoneyFixture);
@@ -605,7 +578,7 @@ describe("BasicToken", function () {
         token
           .connect(accSpender)
           .transferFrom(accSender.address, accReceiver.address, 10)
-      ).to.be.revertedWith("Blacklist: receiver is in blacklist");
+      ).to.be.revertedWith("Whitelist: sender or receiver is not in whitelist");
     });
     it("Should not transfer if receiver in whitelist, but sender in blacklist", async () => {
       const { token, adminAccount, accSender, accReceiver, accSpender } =
