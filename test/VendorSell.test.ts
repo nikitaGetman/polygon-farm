@@ -112,9 +112,9 @@ describe("Vendor Contract", function () {
     // No allowance
     await expect(
       swapContract.connect(acc1).sellTokens(1000)
-    ).to.be.revertedWith("User allowance of token is not enough");
+    ).to.be.revertedWith("ERC20: insufficient allowance");
     await expect(swapContract.connect(acc2).buyTokens(1000)).to.be.revertedWith(
-      "User allowance of token is not enough"
+      "ERC20: insufficient allowance"
     );
 
     // Low allowance
@@ -123,9 +123,9 @@ describe("Vendor Contract", function () {
 
     await expect(
       swapContract.connect(acc1).sellTokens(1000)
-    ).to.be.revertedWith("User allowance of token is not enough");
+    ).to.be.revertedWith("ERC20: insufficient allowance");
     await expect(swapContract.connect(acc2).buyTokens(1000)).to.be.revertedWith(
-      "User allowance of token is not enough"
+      "ERC20: insufficient allowance"
     );
 
     // Sufficient allowance
@@ -159,9 +159,9 @@ describe("Vendor Contract", function () {
     // No balance
     await expect(
       swapContract.connect(acc1).sellTokens(1000)
-    ).to.be.revertedWith("User balance of token is not enough");
+    ).to.be.revertedWith("ERC20: transfer amount exceeds balance");
     await expect(swapContract.connect(acc2).buyTokens(1000)).to.be.revertedWith(
-      "User balance of token is not enough"
+      "ERC20: transfer amount exceeds balance"
     );
 
     // Low balance
@@ -170,9 +170,9 @@ describe("Vendor Contract", function () {
 
     await expect(
       swapContract.connect(acc1).sellTokens(1000)
-    ).to.be.revertedWith("User balance of token is not enough");
+    ).to.be.revertedWith("ERC20: transfer amount exceeds balance");
     await expect(swapContract.connect(acc2).buyTokens(1000)).to.be.revertedWith(
-      "User balance of token is not enough"
+      "ERC20: transfer amount exceeds balance"
     );
 
     // Sufficient balance
@@ -213,10 +213,10 @@ describe("Vendor Contract", function () {
 
     await expect(
       swapContract.connect(acc1).sellTokens(1000)
-    ).to.be.revertedWith("Vendor allowance of change token is not enough");
+    ).to.be.revertedWith("ERC20: insufficient allowance");
 
     await expect(swapContract.connect(acc2).buyTokens(1000)).to.be.revertedWith(
-      "Vendor allowance of token is not enough"
+      "ERC20: insufficient allowance"
     );
 
     await token.connect(tokenPoolAcc).approve(swapContract.address, 10000);
@@ -255,11 +255,11 @@ describe("Vendor Contract", function () {
     await changeToken.connect(acc2).approve(swapContract.address, 1000);
 
     await expect(swapContract.connect(acc1).sellTokens(300)).to.be.revertedWith(
-      "Vendor balance of change token is not enough"
+      "ERC20: transfer amount exceeds balance"
     );
 
     await expect(swapContract.connect(acc2).buyTokens(300)).to.be.revertedWith(
-      "Vendor balance of token is not enough"
+      "ERC20: transfer amount exceeds balance"
     );
 
     await expect(swapContract.connect(acc1).sellTokens(50)).not.to.be.reverted;
@@ -520,7 +520,7 @@ describe("Vendor Contract", function () {
     );
   });
 
-  it("Should change token 1 pool addresses only by admin", async function () {
+  it("Should change token pool addresses only by admin", async function () {
     const {
       swapContract,
       adminAccount,
@@ -556,6 +556,54 @@ describe("Vendor Contract", function () {
 
     expect(await swapContract.getTokenReserve()).to.be.eq(1000);
     expect(await swapContract.getChangeTokenReserve()).to.be.eq(2000);
+  });
+
+  it("Should change tokens only by admin", async function () {
+    const { swapContract, adminAccount, initialSupply, restSigners } =
+      await loadFixture(deployContractFixture);
+
+    const [acc1, acc2, newToken, newChangeToken] = restSigners;
+
+    await expect(swapContract.connect(acc1).updateToken(newToken.address)).to.be
+      .reverted;
+    await expect(
+      swapContract.connect(acc1).updateChangeToken(newChangeToken.address)
+    ).to.be.reverted;
+
+    expect(await swapContract.getTokenReserve()).to.be.eq(initialSupply);
+    expect(await swapContract.getChangeTokenReserve()).to.be.eq(initialSupply);
+    // token.connect(tokenPoolAcc).transfer(newPool.address, 1000);
+    // changeToken.connect(changeTokenPoolAcc).transfer(newPool.address, 2000);
+
+    const AdminRole = await swapContract.DEFAULT_ADMIN_ROLE();
+    await swapContract.connect(adminAccount).grantRole(AdminRole, acc2.address);
+
+    await expect(swapContract.connect(acc2).updateToken(newToken.address)).not
+      .to.be.reverted;
+    await expect(
+      swapContract.connect(acc2).updateChangeToken(newChangeToken.address)
+    ).not.to.be.reverted;
+  });
+
+  it("Should change swapRate only by admin", async function () {
+    const { swapContract, adminAccount, restSigners, swapRate } =
+      await loadFixture(deployContractFixture);
+
+    const [acc1, acc2] = restSigners;
+    const newSwapRate = 600;
+
+    await expect(swapContract.connect(acc1).updateSwapRate(newSwapRate)).to.be
+      .reverted;
+
+    expect(await swapContract.swapRate()).to.be.eq(swapRate);
+
+    const AdminRole = await swapContract.DEFAULT_ADMIN_ROLE();
+    await swapContract.connect(adminAccount).grantRole(AdminRole, acc2.address);
+
+    await expect(swapContract.connect(acc2).updateSwapRate(newSwapRate)).not.to
+      .be.reverted;
+
+    expect(await swapContract.swapRate()).to.be.eq(newSwapRate);
   });
 
   it("Should emit event on buy token", async function () {

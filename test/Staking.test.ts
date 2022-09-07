@@ -1206,7 +1206,7 @@ describe("Staking", function () {
       let profit = await stakingContract.calculateStakeProfit(
         minStakeLimit.add(10)
       );
-      let timestamp = (await time.latest()) + 10;
+      let timestamp = (await time.latest()) + 100;
       await time.setNextBlockTimestamp(timestamp);
 
       await expect(
@@ -1223,7 +1223,7 @@ describe("Staking", function () {
         );
 
       profit = await stakingContract.calculateStakeProfit(minStakeLimit.mul(3));
-      timestamp = (await time.latest()) + 10;
+      timestamp = (await time.latest()) + 100;
       await time.setNextBlockTimestamp(timestamp);
       await expect(
         stakingContract.connect(acc).deposit(minStakeLimit.mul(3), false)
@@ -1244,7 +1244,7 @@ describe("Staking", function () {
         .approve(stakingContract.address, ethers.constants.MaxUint256);
 
       profit = await stakingContract.calculateStakeProfit(minStakeLimit);
-      timestamp = (await time.latest()) + 10;
+      timestamp = (await time.latest()) + 100;
       await time.setNextBlockTimestamp(timestamp);
       await expect(stakingContract.connect(acc).deposit(minStakeLimit, true))
         .to.emit(stakingContract, "Staked")
@@ -1285,7 +1285,7 @@ describe("Staking", function () {
       await waitForStakeFinished(durationDays);
 
       let profit = await stakingContract.calculateStakeProfit(minStakeLimit);
-      let timestamp = (await time.latest()) + 10;
+      let timestamp = (await time.latest()) + 1000;
       await time.setNextBlockTimestamp(timestamp);
       await expect(stakingContract.connect(acc).withdraw(0))
         .to.emit(stakingContract, "Claimed")
@@ -1294,7 +1294,7 @@ describe("Staking", function () {
       profit = await stakingContract.calculateStakeProfit(
         minStakeLimit.mul(10)
       );
-      timestamp = (await time.latest()) + 10;
+      timestamp = (await time.latest()) + 1000;
       await time.setNextBlockTimestamp(timestamp);
       await expect(stakingContract.connect(acc).withdraw(1))
         .to.emit(stakingContract, "Claimed")
@@ -1309,7 +1309,7 @@ describe("Staking", function () {
       profit = await stakingContract.calculateStakeProfit(
         minStakeLimit.add(100)
       );
-      timestamp = (await time.latest()) + 10;
+      timestamp = (await time.latest()) + 1000;
       await time.setNextBlockTimestamp(timestamp);
       await expect(stakingContract.connect(acc).withdraw(2))
         .to.emit(stakingContract, "Claimed")

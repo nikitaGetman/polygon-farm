@@ -1,6 +1,6 @@
 export type Staking = {
   durationDays: number;
   rewardPercent: number;
-  subscriptionCost: number;
+  subscriptionCost: number | string; // BigNumber
   subscriptionDurationDays: number;
 };

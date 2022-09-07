@@ -8,7 +8,7 @@ task("deploy-staking", "Deploy staking contract with params")
   .addParam("rewardPool", "Reward pool address")
   .addParam("durationDays", "Staking duration (days)", 0, types.int)
   .addParam("rewardPercent", "Reward for staking (percents)", 0, types.int)
-  .addParam("subscriptionCost", "Cost of subscription", 0, types.int)
+  .addParam("subscriptionCost", "Cost of subscription", "0", types.string)
   .addOptionalParam(
     "subscriptionPeriodDays",
     "Period of subscription",

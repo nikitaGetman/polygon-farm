@@ -53,29 +53,17 @@ contract VendorSell is Context, AccessControl, Pausable {
         require(_amountToken > 0, "Insufficient amount");
 
         require(
-            changeToken.allowance(_msgSender(), address(this)) >=
-                _amountChangeToken,
-            "User allowance of token is not enough"
+            changeToken.transferFrom(
+                _msgSender(),
+                _changeTokenPool,
+                _amountChangeToken
+            ),
+            "Change token transfer error"
         );
         require(
-            changeToken.balanceOf(_msgSender()) >= _amountChangeToken,
-            "User balance of token is not enough"
+            token.transferFrom(_tokenPool, _msgSender(), _amountToken),
+            "Token transfer error"
         );
-        require(
-            token.allowance(_tokenPool, address(this)) >= _amountToken,
-            "Vendor allowance of token is not enough"
-        );
-        require(
-            token.balanceOf(_tokenPool) >= _amountToken,
-            "Vendor balance of token is not enough"
-        );
-
-        changeToken.safeTransferFrom(
-            _msgSender(),
-            _changeTokenPool,
-            _amountChangeToken
-        );
-        token.safeTransferFrom(_tokenPool, _msgSender(), _amountToken);
 
         emit TokensPurchased(_msgSender(), _amountToken, _amountChangeToken);
     }
@@ -88,29 +76,18 @@ contract VendorSell is Context, AccessControl, Pausable {
             _amountToken
         );
         require(_amountChangeToken > 0, "Insufficient amount");
-        require(
-            token.allowance(_msgSender(), address(this)) >= _amountToken,
-            "User allowance of token is not enough"
-        );
-        require(
-            token.balanceOf(_msgSender()) >= _amountToken,
-            "User balance of token is not enough"
-        );
-        require(
-            changeToken.allowance(_changeTokenPool, address(this)) >=
-                _amountChangeToken,
-            "Vendor allowance of change token is not enough"
-        );
-        require(
-            changeToken.balanceOf(_changeTokenPool) >= _amountChangeToken,
-            "Vendor balance of change token is not enough"
-        );
 
-        token.safeTransferFrom(_msgSender(), _tokenPool, _amountToken);
-        changeToken.safeTransferFrom(
-            _changeTokenPool,
-            _msgSender(),
-            _amountChangeToken
+        require(
+            token.transferFrom(_msgSender(), _tokenPool, _amountToken),
+            "Token transfer error"
+        );
+        require(
+            changeToken.transferFrom(
+                _changeTokenPool,
+                _msgSender(),
+                _amountChangeToken
+            ),
+            "Change token transfer error"
         );
 
         emit TokensSold(_msgSender(), _amountToken, _amountChangeToken);
@@ -180,5 +157,16 @@ contract VendorSell is Context, AccessControl, Pausable {
         onlyRole(DEFAULT_ADMIN_ROLE)
     {
         _changeTokenPool = pool;
+    }
+
+    function updateToken(IERC20 token_) public onlyRole(DEFAULT_ADMIN_ROLE) {
+        token = token_;
+    }
+
+    function updateChangeToken(IERC20 token_)
+        public
+        onlyRole(DEFAULT_ADMIN_ROLE)
+    {
+        changeToken = token_;
     }
 }

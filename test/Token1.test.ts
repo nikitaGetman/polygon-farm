@@ -76,6 +76,7 @@ describe("Token 1", function () {
         .withArgs(SnapshotRole, acc2.address, adminAccount.address);
 
       await expect(token.connect(acc2).snapshot()).to.be.reverted;
+      expect(await token.snapshotCount()).to.be.equal(2);
     });
   });
 });
