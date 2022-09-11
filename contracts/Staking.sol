@@ -178,7 +178,7 @@ contract Staking is AccessControl, Subscribable {
         );
     }
 
-    function subscribe() public {
+    function subscribe() public whenActive {
         _subscribe(_msgSender());
     }
 
@@ -228,7 +228,7 @@ contract Staking is AccessControl, Subscribable {
         _totalStakedToken2 = user.totalStakedToken2;
         _totalClaimed = user.totalClaimed;
         _subscribed = isSubscriber(userAddr_);
-        _subscribedTill = _subscribed ? subscribers[userAddr_] : 0;
+        _subscribedTill = _subscriptionExpiration(userAddr_);
     }
 
     function getUserStakes(address userAddr_)

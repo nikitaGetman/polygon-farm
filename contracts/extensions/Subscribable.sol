@@ -9,7 +9,7 @@ contract Subscribable is Context {
     uint256 public subscriptionCost;
     uint256 public subscriptionPeriodDays;
 
-    mapping(address => uint256) public subscribers;
+    mapping(address => uint256) private _subscribers;
 
     Token1 public subscriptionToken;
 
@@ -41,16 +41,25 @@ contract Subscribable is Context {
 
     function _subscribe(address addr_) internal virtual {
         subscriptionToken.burnFrom(addr_, subscriptionCost);
-        subscribers[addr_] = block.timestamp + subscriptionPeriodDays * 1 days;
+        _subscribers[addr_] = block.timestamp + subscriptionPeriodDays * 1 days;
     }
 
     // --------- Helper functions ---------
     function isSubscriber(address addr_) public view virtual returns (bool) {
-        return subscribers[addr_] >= block.timestamp;
+        return _subscribers[addr_] >= block.timestamp;
     }
 
     function isSubscriber() public view virtual returns (bool) {
         return isSubscriber(_msgSender());
+    }
+
+    function _subscriptionExpiration(address addr_)
+        internal
+        view
+        virtual
+        returns (uint256)
+    {
+        return _subscribers[addr_];
     }
 
     // --------- Administrative functions ---------

@@ -20,7 +20,8 @@ async function autoSubscribe(
   acc: SignerWithAddress,
   token: Token1,
   tokenHolder: SignerWithAddress,
-  stakingContract: Staking
+  stakingContract: Staking,
+  adminAccount: SignerWithAddress
 ) {
   await token
     .connect(tokenHolder)
@@ -29,6 +30,7 @@ async function autoSubscribe(
     .connect(acc)
     .approve(stakingContract.address, ethers.constants.MaxUint256);
 
+  await stakingContract.connect(adminAccount).setActive(true);
   await stakingContract.connect(acc).subscribe();
 }
 
@@ -53,7 +55,7 @@ async function autoStakeToken({
   stakeAmount?: BigNumber;
   isToken2?: boolean;
 }) {
-  await autoSubscribe(acc, token1, token1Holder, stakingContract);
+  await autoSubscribe(acc, token1, token1Holder, stakingContract, adminAccount);
 
   const amount = stakeAmount || (await stakingContract.MIN_STAKE_LIMIT());
   if (isToken2 && token2 && token2Holder) {
@@ -65,7 +67,6 @@ async function autoStakeToken({
     await token1.connect(token1Holder).transfer(acc.address, amount);
   }
 
-  await stakingContract.connect(adminAccount).setActive(true);
   await stakingContract.connect(acc).deposit(amount, isToken2);
 }
 
@@ -275,6 +276,7 @@ describe("Staking", function () {
         token1Holder,
         token1,
         subscriptionCost,
+        adminAccount,
       } = await loadFixture(deployFixture);
 
       const [acc1] = restSigners;
@@ -290,6 +292,12 @@ describe("Staking", function () {
         .connect(acc1)
         .approve(stakingContract.address, subscriptionCost);
 
+      // Should subscribe only when staking active
+      await expect(
+        stakingContract.connect(acc1).subscribe()
+      ).to.be.revertedWith("Contract is not active");
+
+      await stakingContract.connect(adminAccount).setActive(true);
       await stakingContract.connect(acc1).subscribe();
       expect(await stakingContract.connect(acc1)["isSubscriber()"]()).to.be.eq(
         true
@@ -306,6 +314,7 @@ describe("Staking", function () {
         token1,
         subscriptionCost,
         subscriptionPeriodDays,
+        adminAccount,
       } = await loadFixture(deployFixture);
 
       const [acc1] = restSigners;
@@ -317,6 +326,7 @@ describe("Staking", function () {
         .connect(acc1)
         .approve(stakingContract.address, subscriptionCost);
 
+      await stakingContract.connect(adminAccount).setActive(true);
       await stakingContract.connect(acc1).subscribe();
 
       const currentTimestamp = await time.latest();
@@ -358,7 +368,14 @@ describe("Staking", function () {
 
       const [acc1] = restSigners;
 
-      await autoSubscribe(acc1, token1, token1Holder, stakingContract);
+      await autoSubscribe(
+        acc1,
+        token1,
+        token1Holder,
+        stakingContract,
+        adminAccount
+      );
+      await stakingContract.connect(adminAccount).setActive(false);
       await token1.connect(token1Holder).transfer(acc1.address, minStakeLimit);
 
       await expect(
@@ -414,9 +431,14 @@ describe("Staking", function () {
 
       const [acc1] = restSigners;
 
-      await autoSubscribe(acc1, token1, token1Holder, stakingContract);
+      await autoSubscribe(
+        acc1,
+        token1,
+        token1Holder,
+        stakingContract,
+        adminAccount
+      );
       await token1.connect(token1Holder).transfer(acc1.address, minStakeLimit);
-      await stakingContract.connect(adminAccount).setActive(true);
 
       await expect(
         stakingContract.connect(acc1).deposit(minStakeLimit.sub(1), false)
@@ -438,9 +460,14 @@ describe("Staking", function () {
 
       const [acc1, acc2] = restSigners;
 
-      await autoSubscribe(acc1, token1, token1Holder, stakingContract);
+      await autoSubscribe(
+        acc1,
+        token1,
+        token1Holder,
+        stakingContract,
+        adminAccount
+      );
       await token1.connect(token1Holder).transfer(acc1.address, minStakeLimit);
-      await stakingContract.connect(adminAccount).setActive(true);
 
       const profit = await stakingContract.calculateStakeProfit(minStakeLimit);
       await token1
@@ -667,8 +694,6 @@ describe("Staking", function () {
     });
   });
 
-  // *
-
   describe("Withdraw", () => {
     it("Should withdraw only with correct stake id", async () => {
       const {
@@ -681,8 +706,6 @@ describe("Staking", function () {
       } = await loadFixture(deployFixture);
 
       const [acc] = restSigners;
-
-      await autoSubscribe(acc, token1, token1Holder, stakingContract);
 
       await expect(stakingContract.connect(acc).withdraw(0)).to.be.revertedWith(
         "Invalid stake id"
@@ -1196,8 +1219,13 @@ describe("Staking", function () {
       } = await loadFixture(deployFixture);
 
       const [acc] = restSigners;
-      await autoSubscribe(acc, token1, token1Holder, stakingContract);
-      await stakingContract.connect(adminAccount).setActive(true);
+      await autoSubscribe(
+        acc,
+        token1,
+        token1Holder,
+        stakingContract,
+        adminAccount
+      );
 
       await token1
         .connect(token1Holder)
