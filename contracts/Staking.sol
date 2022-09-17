@@ -1,11 +1,11 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.11;
 
-import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/access/AccessControl.sol";
-import "./tokens/Token1.sol";
-import "./tokens/Token2.sol";
+import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "./extensions/Subscribable.sol";
+import "./interfaces/IReferralManager.sol";
+import "@openzeppelin/contracts/token/ERC20/extensions/ERC20Burnable.sol";
 
 contract Staking is AccessControl, Subscribable {
     struct Stake {
@@ -24,10 +24,7 @@ contract Staking is AccessControl, Subscribable {
         uint256 totalStakedToken1;
         uint256 totalStakedToken2;
         uint256 totalClaimed;
-        // address referrer;
-        // uint256[8] refCount;
-        // uint256 totalRefDividends;
-        // uint256 totalRefDividendsClaimed;
+        uint256 currentToken1Staked;
     }
 
     mapping(address => User) public users;
@@ -35,8 +32,6 @@ contract Staking is AccessControl, Subscribable {
     uint256 public PERCENTS_DIVIDER = 1000;
     uint256 public TIME_STEP = 1 days;
     uint256 public MIN_STAKE_LIMIT = 1 * 1e17; // 0.1 Token
-    // uint256 public WALLET_DEPOSIT_LIMIT = 25 * 1e18; // 25 Tokens
-    // uint256[] public REFERRAL_PERCENTS	= [50, 1, 1];   // 5% 0.1% 0.1%
     address private _rewardPool;
     uint256 public durationDays;
     uint256 public reward; // percents, e.g. 70 == 7%
@@ -48,11 +43,10 @@ contract Staking is AccessControl, Subscribable {
     uint256 public totalStakedToken1;
     uint256 public totalStakedToken2;
     uint256 public totalClaimed;
-    // uint256 public totalRefDividends;
-    // uint256 public totalRefDividendsClaimed;
 
-    Token1 public token1;
-    Token2 public token2;
+    IERC20 public token1;
+    ERC20Burnable public token2;
+    IReferralManager public referralManager;
 
     event Staked(
         address indexed user,
@@ -75,16 +69,18 @@ contract Staking is AccessControl, Subscribable {
         address token1_,
         address token2_,
         address rewardPool_,
+        address referralManager_,
         uint256 durationDays_,
         uint256 rewardPercent_,
         uint256 subscriptionCost_,
         uint256 subscriptionPeriodDays_
     ) Subscribable(token1_, subscriptionCost_, subscriptionPeriodDays_) {
-        require(token1_ != address(0), "Zero address for token 1");
-        require(token2_ != address(0), "Zero address for token 2");
-        require(rewardPool_ != address(0), "Zero address for reward pool");
-        require(durationDays_ > 0, "Duration should be greater than 0");
-        require(rewardPercent_ > 0, "Reward should be greater than 0");
+        require(token1_ != address(0));
+        require(token2_ != address(0));
+        require(rewardPool_ != address(0));
+        require(referralManager_ != address(0));
+        require(durationDays_ > 0);
+        require(rewardPercent_ > 0);
 
         _grantRole(DEFAULT_ADMIN_ROLE, _msgSender());
 
@@ -92,15 +88,17 @@ contract Staking is AccessControl, Subscribable {
         durationDays = durationDays_;
         reward = rewardPercent_;
 
-        token1 = Token1(token1_);
-        token2 = Token2(token2_);
+        token1 = IERC20(token1_);
+        token2 = ERC20Burnable(token2_);
+        referralManager = IReferralManager(referralManager_);
     }
 
-    function deposit(uint256 depositAmount_, bool isToken2_)
-        public
-        whenActive
-        subscribersOnly
-    {
+    function deposit(
+        uint256 depositAmount_,
+        bool isToken2_,
+        address referrer
+    ) public whenActive subscribersOnly {
+        require(referrer != _msgSender(), "Referrer can not be sender");
         require(
             depositAmount_ >= MIN_STAKE_LIMIT,
             "Stake amount less than minimum value"
@@ -140,9 +138,16 @@ contract Staking is AccessControl, Subscribable {
             totalStakesToken2No++;
         } else {
             user.totalStakedToken1 += depositAmount_;
+            user.currentToken1Staked += depositAmount_;
             totalStakedToken1 += depositAmount_;
             totalStakesToken1No++;
         }
+
+        address userReferrer = referralManager.getUserReferrer(_msgSender());
+        if (userReferrer == address(0) && referrer != address(0)) {
+            referralManager.setUserReferrer(_msgSender(), referrer);
+        }
+        _assignRefRewards(_msgSender(), depositAmount_);
 
         emit Staked(
             _msgSender(),
@@ -168,6 +173,9 @@ contract Staking is AccessControl, Subscribable {
         token1.transfer(_msgSender(), withdrawAmount);
         user.totalClaimed += withdrawAmount;
         totalClaimed += withdrawAmount;
+        if (!stake.isToken2) {
+            user.currentToken1Staked -= stake.amount;
+        }
 
         emit Claimed(
             _msgSender(),
@@ -176,6 +184,38 @@ contract Staking is AccessControl, Subscribable {
             stake.isToken2,
             block.timestamp
         );
+    }
+
+    function _assignRefRewards(address depositSender, uint256 amount) internal {
+        uint256 totalLevels = referralManager.getReferralLevels();
+        address currentLevelUser = depositSender;
+
+        for (uint256 level = 0; level < totalLevels; level++) {
+            address referrer = referralManager.getUserReferrer(
+                currentLevelUser
+            );
+
+            if (referrer != address(0)) {
+                if (referralManager.userHasSubscription(referrer, level)) {
+                    uint256 refReward = referralManager.calculateRefReward(
+                        amount,
+                        level
+                    );
+
+                    uint256 referrerActiveToken1Stakes = users[referrer]
+                        .currentToken1Staked;
+
+                    uint256 truncatedReward = min(
+                        refReward,
+                        referrerActiveToken1Stakes
+                    );
+
+                    referralManager.addUserDividends(referrer, truncatedReward);
+                }
+
+                currentLevelUser = referrer;
+            } else break;
+        }
     }
 
     function subscribe() public whenActive {
@@ -218,6 +258,7 @@ contract Staking is AccessControl, Subscribable {
             uint256 _totalStakedToken1,
             uint256 _totalStakedToken2,
             uint256 _totalClaimed,
+            uint256 _currentToken1Staked,
             bool _subscribed,
             uint256 _subscribedTill
         )
@@ -227,6 +268,7 @@ contract Staking is AccessControl, Subscribable {
         _totalStakedToken1 = user.totalStakedToken1;
         _totalStakedToken2 = user.totalStakedToken2;
         _totalClaimed = user.totalClaimed;
+        _currentToken1Staked = user.currentToken1Staked;
         _subscribed = isSubscriber(userAddr_);
         _subscribedTill = _subscriptionExpiration(userAddr_);
     }
@@ -277,6 +319,10 @@ contract Staking is AccessControl, Subscribable {
             (stake.timeEnd - stake.timeStart);
     }
 
+    function min(uint256 a, uint256 b) public pure returns (uint256) {
+        return a <= b ? a : b;
+    }
+
     modifier whenActive() {
         require(isActive, "Contract is not active");
         _;
@@ -296,11 +342,18 @@ contract Staking is AccessControl, Subscribable {
     }
 
     function updateToken1(address token1_) public onlyRole(DEFAULT_ADMIN_ROLE) {
-        token1 = Token1(token1_);
+        token1 = IERC20(token1_);
     }
 
     function updateToken2(address token2_) public onlyRole(DEFAULT_ADMIN_ROLE) {
-        token2 = Token2(token2_);
+        token2 = ERC20Burnable(token2_);
+    }
+
+    function updateReferralManager(address referralManager_)
+        public
+        onlyRole(DEFAULT_ADMIN_ROLE)
+    {
+        referralManager = IReferralManager(referralManager_);
     }
 
     function updatePercentDivider(uint256 divider_)

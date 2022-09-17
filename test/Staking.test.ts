@@ -7,73 +7,12 @@ import { expect } from "chai";
 import { ethers } from "hardhat";
 import { BigNumber } from "ethers";
 import {
-  Staking,
   Staking__factory,
-  Token1,
   Token1__factory,
-  Token2,
   Token2__factory,
+  ReferralManager__factory,
 } from "typechain-types";
-import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
-
-async function autoSubscribe(
-  acc: SignerWithAddress,
-  token: Token1,
-  tokenHolder: SignerWithAddress,
-  stakingContract: Staking,
-  adminAccount: SignerWithAddress
-) {
-  await token
-    .connect(tokenHolder)
-    .transfer(acc.address, await stakingContract.subscriptionCost());
-  await token
-    .connect(acc)
-    .approve(stakingContract.address, ethers.constants.MaxUint256);
-
-  await stakingContract.connect(adminAccount).setActive(true);
-  await stakingContract.connect(acc).subscribe();
-}
-
-async function autoStakeToken({
-  acc,
-  adminAccount,
-  token1,
-  token2,
-  token1Holder,
-  token2Holder,
-  stakingContract,
-  stakeAmount,
-  isToken2 = false,
-}: {
-  acc: SignerWithAddress;
-  adminAccount: SignerWithAddress;
-  token1: Token1;
-  token1Holder: SignerWithAddress;
-  stakingContract: Staking;
-  token2?: Token2;
-  token2Holder?: SignerWithAddress;
-  stakeAmount?: BigNumber;
-  isToken2?: boolean;
-}) {
-  await autoSubscribe(acc, token1, token1Holder, stakingContract, adminAccount);
-
-  const amount = stakeAmount || (await stakingContract.MIN_STAKE_LIMIT());
-  if (isToken2 && token2 && token2Holder) {
-    await token2.connect(token2Holder).transfer(acc.address, amount);
-    await token2
-      .connect(acc)
-      .approve(stakingContract.address, ethers.constants.MaxUint256);
-  } else {
-    await token1.connect(token1Holder).transfer(acc.address, amount);
-  }
-
-  await stakingContract.connect(acc).deposit(amount, isToken2);
-}
-
-async function waitForStakeFinished(days: number) {
-  await time.setNextBlockTimestamp((await time.latest()) + days * 60 * 60 * 24);
-  await mine();
-}
+import { autoStakeToken, autoSubscribe, waitForStakeFinished } from "./helpers";
 
 describe("Staking", function () {
   async function deployFixture() {
@@ -87,7 +26,7 @@ describe("Staking", function () {
     const [
       adminAccount,
       token1Holder,
-      rewardPool,
+      stakingRewardPool,
       token2Holder,
       ...restSigners
     ] = await ethers.getSigners();
@@ -99,7 +38,7 @@ describe("Staking", function () {
     await token1.deployed();
     await token1
       .connect(token1Holder)
-      .transfer(rewardPool.address, initialSupply.div(2));
+      .transfer(stakingRewardPool.address, initialSupply.div(2));
 
     const token2 = await new Token2__factory(adminAccount).deploy(
       initialSupply,
@@ -107,10 +46,22 @@ describe("Staking", function () {
     );
     await token2.deployed();
 
+    const referralManager = await new ReferralManager__factory(
+      adminAccount
+    ).deploy(
+      token1.address,
+      token2.address,
+      token2Holder.address,
+      BigNumber.from(10).pow(18).mul(5),
+      BigNumber.from(10).pow(18)
+    );
+    await referralManager.deployed();
+
     const stakingContract = await new Staking__factory(adminAccount).deploy(
       token1.address,
       token2.address,
-      rewardPool.address,
+      stakingRewardPool.address,
+      referralManager.address,
       durationDays,
       rewardPercent,
       subscriptionCost,
@@ -119,7 +70,7 @@ describe("Staking", function () {
     await stakingContract.deployed();
 
     await token1
-      .connect(rewardPool)
+      .connect(stakingRewardPool)
       .approve(stakingContract.address, ethers.constants.MaxUint256);
     await token2
       .connect(adminAccount)
@@ -133,7 +84,8 @@ describe("Staking", function () {
       adminAccount,
       token1Holder,
       token2Holder,
-      rewardPool,
+      stakingRewardPool,
+      referralManager,
       restSigners,
       durationDays,
       rewardPercent,
@@ -176,9 +128,13 @@ describe("Staking", function () {
     });
 
     it("Should not deploy with incorrect initial data", async () => {
-      const { token1, token2, rewardPool, adminAccount } = await loadFixture(
-        deployFixture
-      );
+      const {
+        token1,
+        token2,
+        stakingRewardPool,
+        adminAccount,
+        referralManager,
+      } = await loadFixture(deployFixture);
 
       const stakingContract = new Staking__factory(adminAccount);
 
@@ -186,7 +142,8 @@ describe("Staking", function () {
         stakingContract.deploy(
           ethers.constants.AddressZero,
           token2.address,
-          rewardPool.address,
+          stakingRewardPool.address,
+          referralManager.address,
           1,
           1,
           1,
@@ -198,7 +155,8 @@ describe("Staking", function () {
         stakingContract.deploy(
           token1.address,
           ethers.constants.AddressZero,
-          rewardPool.address,
+          stakingRewardPool.address,
+          referralManager.address,
           1,
           1,
           1,
@@ -211,6 +169,7 @@ describe("Staking", function () {
           token1.address,
           token2.address,
           ethers.constants.AddressZero,
+          referralManager.address,
           1,
           1,
           1,
@@ -222,7 +181,21 @@ describe("Staking", function () {
         stakingContract.deploy(
           token1.address,
           token2.address,
-          rewardPool.address,
+          stakingRewardPool.address,
+          ethers.constants.AddressZero,
+          1,
+          1,
+          1,
+          0
+        )
+      ).to.be.reverted;
+
+      await expect(
+        stakingContract.deploy(
+          token1.address,
+          token2.address,
+          stakingRewardPool.address,
+          referralManager.address,
           0,
           1,
           1,
@@ -234,7 +207,8 @@ describe("Staking", function () {
         stakingContract.deploy(
           token1.address,
           token2.address,
-          rewardPool.address,
+          stakingRewardPool.address,
+          referralManager.address,
           1,
           0,
           1,
@@ -246,7 +220,8 @@ describe("Staking", function () {
         stakingContract.deploy(
           token1.address,
           token2.address,
-          rewardPool.address,
+          stakingRewardPool.address,
+          referralManager.address,
           1,
           1,
           0,
@@ -258,7 +233,8 @@ describe("Staking", function () {
         stakingContract.deploy(
           token1.address,
           token2.address,
-          rewardPool.address,
+          stakingRewardPool.address,
+          referralManager.address,
           1,
           1,
           1,
@@ -379,13 +355,18 @@ describe("Staking", function () {
       await token1.connect(token1Holder).transfer(acc1.address, minStakeLimit);
 
       await expect(
-        stakingContract.connect(acc1).deposit(10, false)
+        stakingContract
+          .connect(acc1)
+          .deposit(10, false, ethers.constants.AddressZero)
       ).to.be.revertedWith("Contract is not active");
 
       await stakingContract.connect(adminAccount).setActive(true);
 
-      await expect(stakingContract.connect(acc1).deposit(minStakeLimit, false))
-        .not.to.be.reverted;
+      await expect(
+        stakingContract
+          .connect(acc1)
+          .deposit(minStakeLimit, false, ethers.constants.AddressZero)
+      ).not.to.be.reverted;
     });
 
     it("Should deposit only for subscribers", async () => {
@@ -404,7 +385,9 @@ describe("Staking", function () {
       await stakingContract.connect(adminAccount).setActive(true);
 
       await expect(
-        stakingContract.connect(acc1).deposit(10, false)
+        stakingContract
+          .connect(acc1)
+          .deposit(10, false, ethers.constants.AddressZero)
       ).to.be.revertedWith("Subscribable: you are not subscribed");
 
       await token1
@@ -415,8 +398,11 @@ describe("Staking", function () {
         .approve(stakingContract.address, subscriptionCost.add(minStakeLimit));
 
       await stakingContract.connect(acc2).subscribe();
-      await expect(stakingContract.connect(acc2).deposit(minStakeLimit, false))
-        .not.to.be.reverted;
+      await expect(
+        stakingContract
+          .connect(acc2)
+          .deposit(minStakeLimit, false, ethers.constants.AddressZero)
+      ).not.to.be.reverted;
     });
 
     it("Should deposit greater than min limit", async () => {
@@ -441,10 +427,15 @@ describe("Staking", function () {
       await token1.connect(token1Holder).transfer(acc1.address, minStakeLimit);
 
       await expect(
-        stakingContract.connect(acc1).deposit(minStakeLimit.sub(1), false)
+        stakingContract
+          .connect(acc1)
+          .deposit(minStakeLimit.sub(1), false, ethers.constants.AddressZero)
       ).to.be.revertedWith("Stake amount less than minimum value");
-      await expect(stakingContract.connect(acc1).deposit(minStakeLimit, false))
-        .not.to.be.reverted;
+      await expect(
+        stakingContract
+          .connect(acc1)
+          .deposit(minStakeLimit, false, ethers.constants.AddressZero)
+      ).not.to.be.reverted;
     });
 
     it("Should deposit only if reward is enough", async () => {
@@ -453,7 +444,7 @@ describe("Staking", function () {
         adminAccount,
         token1,
         token1Holder,
-        rewardPool,
+        stakingRewardPool,
         restSigners,
         minStakeLimit,
       } = await loadFixture(deployFixture);
@@ -471,19 +462,24 @@ describe("Staking", function () {
 
       const profit = await stakingContract.calculateStakeProfit(minStakeLimit);
       await token1
-        .connect(rewardPool)
+        .connect(stakingRewardPool)
         .transfer(
           acc2.address,
-          (await token1.balanceOf(rewardPool.address)).sub(profit).add(1)
+          (await token1.balanceOf(stakingRewardPool.address)).sub(profit).add(1)
         );
 
       await expect(
-        stakingContract.connect(acc1).deposit(minStakeLimit, false)
+        stakingContract
+          .connect(acc1)
+          .deposit(minStakeLimit, false, ethers.constants.AddressZero)
       ).to.be.revertedWith("Not enough tokens for reward");
 
-      await token1.connect(acc2).transfer(rewardPool.address, 1);
-      await expect(stakingContract.connect(acc1).deposit(minStakeLimit, false))
-        .not.to.be.reverted;
+      await token1.connect(acc2).transfer(stakingRewardPool.address, 1);
+      await expect(
+        stakingContract
+          .connect(acc1)
+          .deposit(minStakeLimit, false, ethers.constants.AddressZero)
+      ).not.to.be.reverted;
     });
 
     it("Should transfer token1 on deposit", async () => {
@@ -491,7 +487,7 @@ describe("Staking", function () {
         stakingContract,
         adminAccount,
         token1,
-        rewardPool,
+        stakingRewardPool,
         token1Holder,
         restSigners,
         minStakeLimit,
@@ -501,7 +497,7 @@ describe("Staking", function () {
 
       expect(await token1.balanceOf(stakingContract.address)).to.be.eq(0);
 
-      const currentBalance = await token1.balanceOf(rewardPool.address);
+      const currentBalance = await token1.balanceOf(stakingRewardPool.address);
       const profit = await stakingContract.calculateStakeProfit(minStakeLimit);
 
       await autoStakeToken({
@@ -515,7 +511,7 @@ describe("Staking", function () {
       expect(await token1.balanceOf(stakingContract.address)).to.be.eq(
         minStakeLimit.add(profit)
       );
-      expect(await token1.balanceOf(rewardPool.address)).to.be.eq(
+      expect(await token1.balanceOf(stakingRewardPool.address)).to.be.eq(
         currentBalance.sub(profit)
       );
     });
@@ -526,7 +522,7 @@ describe("Staking", function () {
         adminAccount,
         token1,
         token2,
-        rewardPool,
+        stakingRewardPool,
         token1Holder,
         token2Holder,
         restSigners,
@@ -537,7 +533,7 @@ describe("Staking", function () {
 
       expect(await token1.balanceOf(stakingContract.address)).to.be.eq(0);
 
-      const currentBalance = await token1.balanceOf(rewardPool.address);
+      const currentBalance = await token1.balanceOf(stakingRewardPool.address);
       const profit = await stakingContract.calculateStakeProfit(minStakeLimit);
 
       await autoStakeToken({
@@ -553,7 +549,7 @@ describe("Staking", function () {
 
       expect(await token1.balanceOf(stakingContract.address)).to.be.eq(profit);
       expect(await token2.totalBurn()).to.be.eq(minStakeLimit);
-      expect(await token1.balanceOf(rewardPool.address)).to.be.eq(
+      expect(await token1.balanceOf(stakingRewardPool.address)).to.be.eq(
         currentBalance.sub(profit)
       );
     });
@@ -589,10 +585,15 @@ describe("Staking", function () {
       });
 
       const userData = await stakingContract.getUserInfo(acc.address);
-      expect(userData[0]).to.be.eq(minStakeLimit.mul(3).add(10));
-      expect(userData[1]).to.be.eq(BigNumber.from(0));
-      expect(userData[2]).to.be.eq(BigNumber.from(0));
-      expect(userData[3]).to.be.eq(true);
+      expect(userData._totalStakedToken1).to.be.eq(
+        minStakeLimit.mul(3).add(10)
+      );
+      expect(userData._currentToken1Staked).to.be.eq(
+        minStakeLimit.mul(3).add(10)
+      );
+      expect(userData._totalStakedToken2).to.be.eq(BigNumber.from(0));
+      expect(userData._totalClaimed).to.be.eq(BigNumber.from(0));
+      expect(userData._subscribed).to.be.eq(true);
     });
 
     it("Should update user info on deposit token2", async () => {
@@ -631,10 +632,13 @@ describe("Staking", function () {
       });
 
       const userData = await stakingContract.getUserInfo(acc.address);
-      expect(userData[0]).to.be.eq(BigNumber.from(0));
-      expect(userData[1]).to.be.eq(minStakeLimit.mul(3).add(10));
-      expect(userData[2]).to.be.eq(BigNumber.from(0));
-      expect(userData[3]).to.be.eq(true);
+      expect(userData._totalStakedToken1).to.be.eq(BigNumber.from(0));
+      expect(userData._currentToken1Staked).to.be.eq(BigNumber.from(0));
+      expect(userData._totalStakedToken2).to.be.eq(
+        minStakeLimit.mul(3).add(10)
+      );
+      expect(userData._totalClaimed).to.be.eq(BigNumber.from(0));
+      expect(userData._subscribed).to.be.eq(true);
     });
 
     it("Should update contract info on deposit", async () => {
@@ -915,6 +919,7 @@ describe("Staking", function () {
       );
       expect(userInfo._totalStakedToken2).to.be.eq(minStakeLimit.add(10));
       expect(userInfo._totalClaimed).to.be.eq(profit);
+      expect(userInfo._currentToken1Staked).to.be.eq(0);
 
       const contractInfo = await stakingContract.getContractInfo();
       expect(contractInfo._totalStakedToken1).to.be.eq(
@@ -1187,6 +1192,35 @@ describe("Staking", function () {
         newToken.address
       );
     });
+
+    it("Should update referral manager only by Admin", async () => {
+      const { stakingContract, adminAccount, restSigners } = await loadFixture(
+        deployFixture
+      );
+
+      const [acc1, acc2, newReferralManager] = restSigners;
+
+      await expect(
+        stakingContract
+          .connect(acc1)
+          .updateReferralManager(newReferralManager.address)
+      ).to.be.reverted;
+
+      const AdminRole = await stakingContract.DEFAULT_ADMIN_ROLE();
+      await stakingContract
+        .connect(adminAccount)
+        .grantRole(AdminRole, acc2.address);
+
+      await expect(
+        stakingContract
+          .connect(acc2)
+          .updateReferralManager(newReferralManager.address)
+      ).not.to.be.reverted;
+
+      expect(await stakingContract.referralManager()).to.be.eq(
+        newReferralManager.address
+      );
+    });
   });
 
   // */
@@ -1238,7 +1272,9 @@ describe("Staking", function () {
       await time.setNextBlockTimestamp(timestamp);
 
       await expect(
-        stakingContract.connect(acc).deposit(minStakeLimit.add(10), false)
+        stakingContract
+          .connect(acc)
+          .deposit(minStakeLimit.add(10), false, ethers.constants.AddressZero)
       )
         .to.emit(stakingContract, "Staked")
         .withArgs(
@@ -1254,7 +1290,9 @@ describe("Staking", function () {
       timestamp = (await time.latest()) + 100;
       await time.setNextBlockTimestamp(timestamp);
       await expect(
-        stakingContract.connect(acc).deposit(minStakeLimit.mul(3), false)
+        stakingContract
+          .connect(acc)
+          .deposit(minStakeLimit.mul(3), false, ethers.constants.AddressZero)
       )
         .to.emit(stakingContract, "Staked")
         .withArgs(
@@ -1274,7 +1312,11 @@ describe("Staking", function () {
       profit = await stakingContract.calculateStakeProfit(minStakeLimit);
       timestamp = (await time.latest()) + 100;
       await time.setNextBlockTimestamp(timestamp);
-      await expect(stakingContract.connect(acc).deposit(minStakeLimit, true))
+      await expect(
+        stakingContract
+          .connect(acc)
+          .deposit(minStakeLimit, true, ethers.constants.AddressZero)
+      )
         .to.emit(stakingContract, "Staked")
         .withArgs(acc.address, 2, minStakeLimit, profit, true, timestamp);
     });
@@ -1618,6 +1660,19 @@ describe("Staking", function () {
       expect(
         await stakingContract.calculateStakeReward(acc.address, 0)
       ).to.be.eq(0);
+    });
+
+    it("Should return correct min", async () => {
+      const { stakingContract } = await loadFixture(deployFixture);
+
+      expect(await stakingContract.min(1, 0)).to.be.equal(0);
+      expect(await stakingContract.min(1, 10)).to.be.equal(1);
+      expect(
+        await stakingContract.min(
+          BigNumber.from(10).pow(25),
+          BigNumber.from(10).pow(24).mul(9)
+        )
+      ).to.be.equal(BigNumber.from(10).pow(24).mul(9));
     });
   });
 });

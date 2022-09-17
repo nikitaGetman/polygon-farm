@@ -24,7 +24,11 @@ task("deposit-staking", "Deposit to staking contract")
     const tx = await token.approve(staking.address, taskArgs.amount);
     await tx.wait();
 
-    await staking.deposit(taskArgs.amount, taskArgs.isToken2);
+    await staking.deposit(
+      taskArgs.amount,
+      taskArgs.isToken2,
+      ethers.constants.AddressZero
+    );
 
     console.log(
       `Account (${taskArgs.account}) deposited ${taskArgs.amount} Tokens to staking contract (${taskArgs.contract})`
