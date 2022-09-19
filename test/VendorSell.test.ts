@@ -6,6 +6,7 @@ import {
   Token1__factory,
   ERC20BurnableMock__factory,
 } from "typechain-types";
+import { grantAdminRole } from "./helpers";
 
 describe("Vendor Contract", function () {
   async function deployContractFixture() {
@@ -63,14 +64,14 @@ describe("Vendor Contract", function () {
       deployContractFixture
     );
 
-    expect(await swapContract.getEquivalentTokenEstimate(100)).to.be.eq(
+    expect(await swapContract.getEquivalentTokenEstimate(100)).to.eq(
       ethers.BigNumber.from(100).mul(swapRate).div(swapRateDivider)
     );
-    expect(await swapContract.getEquivalentTokenEstimate(0)).to.be.eq(
+    expect(await swapContract.getEquivalentTokenEstimate(0)).to.eq(
       ethers.BigNumber.from(0).mul(swapRate).div(swapRateDivider)
     );
     const largeUint = ethers.constants.MaxUint256.div(1000);
-    expect(await swapContract.getEquivalentTokenEstimate(largeUint)).to.be.eq(
+    expect(await swapContract.getEquivalentTokenEstimate(largeUint)).to.eq(
       largeUint.mul(swapRate).div(swapRateDivider)
     );
   });
@@ -79,16 +80,16 @@ describe("Vendor Contract", function () {
       deployContractFixture
     );
 
-    expect(await swapContract.getEquivalentChangeTokenEstimate(100)).to.be.eq(
+    expect(await swapContract.getEquivalentChangeTokenEstimate(100)).to.eq(
       (100 * swapRateDivider) / swapRate
     );
-    expect(await swapContract.getEquivalentChangeTokenEstimate(0)).to.be.eq(
+    expect(await swapContract.getEquivalentChangeTokenEstimate(0)).to.eq(
       (0 * swapRateDivider) / swapRate
     );
     const largeUint = ethers.constants.MaxUint256.div(1000);
     expect(
       await swapContract.getEquivalentChangeTokenEstimate(largeUint)
-    ).to.be.eq(largeUint.mul(swapRateDivider).div(swapRate));
+    ).to.eq(largeUint.mul(swapRateDivider).div(swapRate));
   });
 
   it("Should revert if user allowance not enough", async function () {
@@ -363,7 +364,7 @@ describe("Vendor Contract", function () {
 
   it("Should disable sell on deploy", async function () {
     const { swapContract } = await loadFixture(deployContractFixture);
-    expect(await swapContract.isSellAvailable()).to.be.eq(false);
+    expect(await swapContract.isSellAvailable()).to.eq(false);
   });
 
   it("Should not swap tokens if paused", async function () {
@@ -438,27 +439,27 @@ describe("Vendor Contract", function () {
 
     const [acc1, acc2] = restSigners;
 
-    expect(await swapContract.isSellAvailable()).to.be.eq(false);
+    expect(await swapContract.isSellAvailable()).to.eq(false);
 
     await expect(swapContract.connect(acc1).enableSell()).to.be.reverted;
     await expect(swapContract.connect(adminAccount).enableSell()).not.to.be
       .reverted;
 
-    expect(await swapContract.isSellAvailable()).to.be.eq(true);
+    expect(await swapContract.isSellAvailable()).to.eq(true);
 
     await expect(swapContract.connect(acc1).disableSell()).to.be.reverted;
     await expect(swapContract.connect(adminAccount).disableSell()).not.to.be
       .reverted;
 
-    expect(await swapContract.isSellAvailable()).to.be.eq(false);
+    expect(await swapContract.isSellAvailable()).to.eq(false);
 
     const AdminRole = await swapContract.DEFAULT_ADMIN_ROLE();
     await swapContract.connect(adminAccount).grantRole(AdminRole, acc2.address);
 
     await expect(swapContract.connect(acc2).enableSell()).not.to.be.reverted;
-    expect(await swapContract.isSellAvailable()).to.be.eq(true);
+    expect(await swapContract.isSellAvailable()).to.eq(true);
     await expect(swapContract.connect(acc2).disableSell()).not.to.be.reverted;
-    expect(await swapContract.isSellAvailable()).to.be.eq(false);
+    expect(await swapContract.isSellAvailable()).to.eq(false);
 
     await swapContract
       .connect(adminAccount)
@@ -503,8 +504,8 @@ describe("Vendor Contract", function () {
       swapRateDivider,
     } = await loadFixture(deployContractFixture);
 
-    expect(await swapContract.getTokenReserve()).to.be.eq(initialSupply);
-    expect(await swapContract.getChangeTokenReserve()).to.be.eq(initialSupply);
+    expect(await swapContract.getTokenReserve()).to.eq(initialSupply);
+    expect(await swapContract.getChangeTokenReserve()).to.eq(initialSupply);
 
     const [acc1] = restSigners;
 
@@ -514,8 +515,8 @@ describe("Vendor Contract", function () {
     await swapContract.connect(adminAccount).enableSell();
     await expect(swapContract.connect(acc1).sellTokens(50)).not.to.be.reverted;
 
-    expect(await swapContract.getTokenReserve()).to.be.eq(initialSupply - 50);
-    expect(await swapContract.getChangeTokenReserve()).to.be.eq(
+    expect(await swapContract.getTokenReserve()).to.eq(initialSupply - 50);
+    expect(await swapContract.getChangeTokenReserve()).to.eq(
       initialSupply - (50 * swapRateDivider) / swapRate
     );
   });
@@ -540,13 +541,12 @@ describe("Vendor Contract", function () {
       swapContract.connect(acc1).updateChangeTokenPool(newPool.address)
     ).to.be.reverted;
 
-    expect(await swapContract.getTokenReserve()).to.be.eq(initialSupply);
-    expect(await swapContract.getChangeTokenReserve()).to.be.eq(initialSupply);
+    expect(await swapContract.getTokenReserve()).to.eq(initialSupply);
+    expect(await swapContract.getChangeTokenReserve()).to.eq(initialSupply);
     token.connect(tokenPoolAcc).transfer(newPool.address, 1000);
     changeToken.connect(changeTokenPoolAcc).transfer(newPool.address, 2000);
 
-    const AdminRole = await swapContract.DEFAULT_ADMIN_ROLE();
-    await swapContract.connect(adminAccount).grantRole(AdminRole, acc2.address);
+    await grantAdminRole(swapContract, adminAccount, acc2);
 
     await expect(swapContract.connect(acc2).updateTokenPool(newPool.address))
       .not.to.be.reverted;
@@ -554,8 +554,8 @@ describe("Vendor Contract", function () {
       swapContract.connect(acc2).updateChangeTokenPool(newPool.address)
     ).not.to.be.reverted;
 
-    expect(await swapContract.getTokenReserve()).to.be.eq(1000);
-    expect(await swapContract.getChangeTokenReserve()).to.be.eq(2000);
+    expect(await swapContract.getTokenReserve()).to.eq(1000);
+    expect(await swapContract.getChangeTokenReserve()).to.eq(2000);
   });
 
   it("Should change tokens only by admin", async function () {
@@ -570,13 +570,10 @@ describe("Vendor Contract", function () {
       swapContract.connect(acc1).updateChangeToken(newChangeToken.address)
     ).to.be.reverted;
 
-    expect(await swapContract.getTokenReserve()).to.be.eq(initialSupply);
-    expect(await swapContract.getChangeTokenReserve()).to.be.eq(initialSupply);
-    // token.connect(tokenPoolAcc).transfer(newPool.address, 1000);
-    // changeToken.connect(changeTokenPoolAcc).transfer(newPool.address, 2000);
+    expect(await swapContract.getTokenReserve()).to.eq(initialSupply);
+    expect(await swapContract.getChangeTokenReserve()).to.eq(initialSupply);
 
-    const AdminRole = await swapContract.DEFAULT_ADMIN_ROLE();
-    await swapContract.connect(adminAccount).grantRole(AdminRole, acc2.address);
+    await grantAdminRole(swapContract, adminAccount, acc2);
 
     await expect(swapContract.connect(acc2).updateToken(newToken.address)).not
       .to.be.reverted;
@@ -595,7 +592,7 @@ describe("Vendor Contract", function () {
     await expect(swapContract.connect(acc1).updateSwapRate(newSwapRate)).to.be
       .reverted;
 
-    expect(await swapContract.swapRate()).to.be.eq(swapRate);
+    expect(await swapContract.swapRate()).to.eq(swapRate);
 
     const AdminRole = await swapContract.DEFAULT_ADMIN_ROLE();
     await swapContract.connect(adminAccount).grantRole(AdminRole, acc2.address);
@@ -603,7 +600,7 @@ describe("Vendor Contract", function () {
     await expect(swapContract.connect(acc2).updateSwapRate(newSwapRate)).not.to
       .be.reverted;
 
-    expect(await swapContract.swapRate()).to.be.eq(newSwapRate);
+    expect(await swapContract.swapRate()).to.eq(newSwapRate);
   });
 
   it("Should emit event on buy token", async function () {

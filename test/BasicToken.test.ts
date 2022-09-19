@@ -36,12 +36,12 @@ describe("BasicToken", function () {
       const adminBalance = await token.balanceOf(adminAccount.address);
       const holderBalance = await token.balanceOf(holderAccount.address);
 
-      expect(adminBalance).to.be.eq(BigNumber.from(0));
-      expect(holderBalance).to.be.eq(initialSupply);
+      expect(adminBalance).to.eq(BigNumber.from(0));
+      expect(holderBalance).to.eq(initialSupply);
 
-      expect(await token.totalSupply()).to.be.eq(initialSupply);
-      expect(await token.totalMinted()).to.be.eq(initialSupply);
-      expect(await token.totalBurn()).to.be.eq(BigNumber.from(0));
+      expect(await token.totalSupply()).to.eq(initialSupply);
+      expect(await token.totalMinted()).to.eq(initialSupply);
+      expect(await token.totalBurn()).to.eq(BigNumber.from(0));
     });
 
     it("Should deploy with correct rights for admin", async function () {
@@ -52,16 +52,12 @@ describe("BasicToken", function () {
       const AdminRole = await token.DEFAULT_ADMIN_ROLE();
       const PauserRole = await token.PAUSER_ROLE();
 
-      expect(await token.hasRole(AdminRole, adminAccount.address)).to.be.eq(
-        true
-      );
-      expect(await token.hasRole(PauserRole, adminAccount.address)).to.be.eq(
-        true
-      );
-      expect(await token.hasRole(AdminRole, holderAccount.address)).to.be.eq(
+      expect(await token.hasRole(AdminRole, adminAccount.address)).to.eq(true);
+      expect(await token.hasRole(PauserRole, adminAccount.address)).to.eq(true);
+      expect(await token.hasRole(AdminRole, holderAccount.address)).to.eq(
         false
       );
-      expect(await token.hasRole(PauserRole, holderAccount.address)).to.be.eq(
+      expect(await token.hasRole(PauserRole, holderAccount.address)).to.eq(
         false
       );
     });
@@ -135,8 +131,8 @@ describe("BasicToken", function () {
         token.connect(acc2).transferFrom(acc1.address, acc3.address, 101)
       ).to.be.reverted;
 
-      expect(await token.balanceOf(acc1.address)).to.be.eq(100);
-      expect(await token.balanceOf(acc3.address)).to.be.eq(0);
+      expect(await token.balanceOf(acc1.address)).to.eq(100);
+      expect(await token.balanceOf(acc3.address)).to.eq(0);
     });
 
     it("Should not decrease allowance if set to max(uint256)", async function () {
@@ -165,9 +161,9 @@ describe("BasicToken", function () {
         [-100, 100]
       );
 
-      expect(
-        await token.allowance(holderAccount.address, acc1.address)
-      ).to.be.eq(initialAllowance);
+      expect(await token.allowance(holderAccount.address, acc1.address)).to.eq(
+        initialAllowance
+      );
     });
 
     it("Should not burn more than have", async function () {
@@ -202,19 +198,19 @@ describe("BasicToken", function () {
       const [acc1] = restSigners;
 
       const initialSupply = await token.totalMinted();
-      expect(await token.totalSupply()).to.be.eq(initialSupply);
-      expect(await token.totalBurn()).to.be.eq(0);
+      expect(await token.totalSupply()).to.eq(initialSupply);
+      expect(await token.totalBurn()).to.eq(0);
 
       await token.connect(holderAccount).burn(100);
-      expect(await token.totalMinted()).to.be.eq(initialSupply);
-      expect(await token.totalSupply()).to.be.eq(initialSupply.sub(100));
-      expect(await token.totalBurn()).to.be.eq(100);
+      expect(await token.totalMinted()).to.eq(initialSupply);
+      expect(await token.totalSupply()).to.eq(initialSupply.sub(100));
+      expect(await token.totalBurn()).to.eq(100);
 
       await token.connect(holderAccount).approve(acc1.address, 100);
       await token.connect(acc1).burnFrom(holderAccount.address, 100);
-      expect(await token.totalMinted()).to.be.eq(initialSupply);
-      expect(await token.totalSupply()).to.be.eq(initialSupply.sub(200));
-      expect(await token.totalBurn()).to.be.eq(200);
+      expect(await token.totalMinted()).to.eq(initialSupply);
+      expect(await token.totalSupply()).to.eq(initialSupply.sub(200));
+      expect(await token.totalBurn()).to.eq(200);
     });
   });
 
@@ -274,13 +270,13 @@ describe("BasicToken", function () {
       await token
         .connect(adminAccount)
         .addToBlacklist([acc1.address, acc2.address]);
-      expect(await token.isAddressInBlacklist(acc1.address)).to.be.eq(true);
-      expect(await token.isAddressInBlacklist(acc2.address)).to.be.eq(true);
-      expect(await token.isAddressInBlacklist(acc3.address)).to.be.eq(false);
+      expect(await token.isAddressInBlacklist(acc1.address)).to.eq(true);
+      expect(await token.isAddressInBlacklist(acc2.address)).to.eq(true);
+      expect(await token.isAddressInBlacklist(acc3.address)).to.eq(false);
 
       await expect(token.connect(holderAccount).addToBlacklist([acc3.address]))
         .to.be.reverted;
-      expect(await token.isAddressInBlacklist(acc3.address)).to.be.eq(false);
+      expect(await token.isAddressInBlacklist(acc3.address)).to.eq(false);
     });
 
     it("Should remove from blacklist only by Admin", async function () {
@@ -295,14 +291,14 @@ describe("BasicToken", function () {
 
       await token.removeFromBlacklist([acc1.address, acc2.address]);
 
-      expect(await token.isAddressInBlacklist(acc1.address)).to.be.eq(false);
-      expect(await token.isAddressInBlacklist(acc2.address)).to.be.eq(false);
-      expect(await token.isAddressInBlacklist(acc3.address)).to.be.eq(true);
+      expect(await token.isAddressInBlacklist(acc1.address)).to.eq(false);
+      expect(await token.isAddressInBlacklist(acc2.address)).to.eq(false);
+      expect(await token.isAddressInBlacklist(acc3.address)).to.eq(true);
 
       await expect(
         token.connect(holderAccount).removeFromBlacklist([acc3.address])
       ).to.be.reverted;
-      expect(await token.isAddressInBlacklist(acc3.address)).to.be.eq(true);
+      expect(await token.isAddressInBlacklist(acc3.address)).to.eq(true);
     });
 
     it("Should add to whitelist only by Admin", async function () {
@@ -314,13 +310,13 @@ describe("BasicToken", function () {
       await token
         .connect(adminAccount)
         .addToWhitelist([acc1.address, acc2.address]);
-      expect(await token.isAddressInWhiteList(acc1.address)).to.be.eq(true);
-      expect(await token.isAddressInWhiteList(acc2.address)).to.be.eq(true);
-      expect(await token.isAddressInWhiteList(acc3.address)).to.be.eq(false);
+      expect(await token.isAddressInWhiteList(acc1.address)).to.eq(true);
+      expect(await token.isAddressInWhiteList(acc2.address)).to.eq(true);
+      expect(await token.isAddressInWhiteList(acc3.address)).to.eq(false);
 
       await expect(token.connect(holderAccount).addToWhitelist([acc3.address]))
         .to.be.reverted;
-      expect(await token.isAddressInWhiteList(acc3.address)).to.be.eq(false);
+      expect(await token.isAddressInWhiteList(acc3.address)).to.eq(false);
     });
 
     it("Should remove from whitelist only by Admin", async function () {
@@ -335,14 +331,14 @@ describe("BasicToken", function () {
 
       await token.removeFromWhitelist([acc1.address, acc2.address]);
 
-      expect(await token.isAddressInWhiteList(acc1.address)).to.be.eq(false);
-      expect(await token.isAddressInWhiteList(acc2.address)).to.be.eq(false);
-      expect(await token.isAddressInWhiteList(acc3.address)).to.be.eq(true);
+      expect(await token.isAddressInWhiteList(acc1.address)).to.eq(false);
+      expect(await token.isAddressInWhiteList(acc2.address)).to.eq(false);
+      expect(await token.isAddressInWhiteList(acc3.address)).to.eq(true);
 
       await expect(
         token.connect(holderAccount).removeFromWhitelist([acc3.address])
       ).to.be.reverted;
-      expect(await token.isAddressInWhiteList(acc3.address)).to.be.eq(true);
+      expect(await token.isAddressInWhiteList(acc3.address)).to.eq(true);
     });
 
     it("Should toggle whitelist mode only by Admin", async function () {
@@ -352,19 +348,19 @@ describe("BasicToken", function () {
 
       const [acc1] = restSigners;
 
-      expect(await token.isWhitelistRestrictionMode()).to.be.eq(false);
+      expect(await token.isWhitelistRestrictionMode()).to.eq(false);
 
       await token.connect(adminAccount).onWhitelistMode();
-      expect(await token.isWhitelistRestrictionMode()).to.be.eq(true);
+      expect(await token.isWhitelistRestrictionMode()).to.eq(true);
 
       await expect(token.connect(acc1).offWhitelistMode()).to.be.reverted;
-      expect(await token.isWhitelistRestrictionMode()).to.be.eq(true);
+      expect(await token.isWhitelistRestrictionMode()).to.eq(true);
 
       await token.connect(adminAccount).offWhitelistMode();
-      expect(await token.isWhitelistRestrictionMode()).to.be.eq(false);
+      expect(await token.isWhitelistRestrictionMode()).to.eq(false);
 
       await expect(token.connect(acc1).onWhitelistMode()).to.be.reverted;
-      expect(await token.isWhitelistRestrictionMode()).to.be.eq(false);
+      expect(await token.isWhitelistRestrictionMode()).to.eq(false);
     });
   });
 

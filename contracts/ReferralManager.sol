@@ -9,7 +9,7 @@ import "./interfaces/IReferralManager.sol";
 contract ReferralManager is IReferralManager, AccessControl {
     uint256 public constant LEVELS = 10;
     uint256 public SUBSCRIPTION_PERIOD_DAYS = 365;
-    uint256[] public REFERAL_PERCENTS = [
+    uint256[] public REFERRAL_PERCENTS = [
         100,
         90,
         80,
@@ -251,7 +251,8 @@ contract ReferralManager is IReferralManager, AccessControl {
         view
         returns (uint256)
     {
-        return (amount * REFERAL_PERCENTS[level]) / 100;
+        require(level < LEVELS);
+        return (amount * REFERRAL_PERCENTS[level]) / 100;
     }
 
     function isAuthorized(address contractAddress) public view returns (bool) {
@@ -286,11 +287,12 @@ contract ReferralManager is IReferralManager, AccessControl {
         SUBSCRIPTION_PERIOD_DAYS = durationDays;
     }
 
-    function updateReferralPercent(uint256 percent, uint256 level)
+    function updateReferralPercent(uint256 level, uint256 percent)
         public
         onlyRole(DEFAULT_ADMIN_ROLE)
     {
-        REFERAL_PERCENTS[level] = percent;
+        require(level < LEVELS);
+        REFERRAL_PERCENTS[level] = percent;
     }
 
     function updateSubscriptionToken(address token)

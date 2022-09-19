@@ -6,6 +6,7 @@ import {
 import { ethers } from "hardhat";
 import { expect } from "chai";
 import { TokenVesting__factory, Token1__factory } from "typechain-types";
+import { grantAdminRole } from "./helpers";
 
 describe("TokenVesting", function () {
   async function deployFixture() {
@@ -50,13 +51,13 @@ describe("TokenVesting", function () {
         deployFixture
       );
       const vestingPoolBalance = await token.balanceOf(vestingPool.address);
-      expect(await token.totalSupply()).to.be.equal(vestingPoolBalance);
-      expect(await vesting.getToken()).to.be.equal(token.address);
+      expect(await token.totalSupply()).to.equal(vestingPoolBalance);
+      expect(await vesting.getToken()).to.equal(token.address);
 
       const AdminRole = await vesting.DEFAULT_ADMIN_ROLE();
-      expect(
-        await vesting.hasRole(AdminRole, adminAccount.address)
-      ).to.be.equal(true);
+      expect(await vesting.hasRole(AdminRole, adminAccount.address)).to.equal(
+        true
+      );
     });
 
     it("Should not deploy with incorrect params", async function () {
@@ -117,7 +118,7 @@ describe("TokenVesting", function () {
       expect(await vesting.getVestingSchedulesCount()).to.equal(1);
       expect(
         await vesting.getVestingSchedulesCountByBeneficiary(beneficiary.address)
-      ).to.be.equal(1);
+      ).to.equal(1);
       expect(await token.balanceOf(vestingPool.address)).to.equal(
         initialSupply - amount
       );
@@ -135,7 +136,7 @@ describe("TokenVesting", function () {
         await vesting
           .connect(beneficiary)
           .computeReleasableAmount(vestingScheduleId)
-      ).to.be.equal(0);
+      ).to.equal(0);
 
       // set time to half the vesting period
       const halfTime = baseTime + duration / 2;
@@ -147,7 +148,7 @@ describe("TokenVesting", function () {
         await vesting
           .connect(beneficiary)
           .computeReleasableAmount(vestingScheduleId)
-      ).to.be.equal(amount / 2);
+      ).to.equal(amount / 2);
 
       // check that only beneficiary can try to release vested tokens
       await expect(
@@ -173,11 +174,11 @@ describe("TokenVesting", function () {
         await vesting
           .connect(beneficiary)
           .computeReleasableAmount(vestingScheduleId)
-      ).to.be.equal(40);
+      ).to.equal(40);
       let vestingSchedule = await vesting.getVestingSchedule(vestingScheduleId);
 
       // check that the released amount is 10
-      expect(vestingSchedule.released).to.be.equal(10);
+      expect(vestingSchedule.released).to.equal(10);
 
       // set current time after the end of the vesting period
       await time.setNextBlockTimestamp(baseTime + duration + 1);
@@ -188,7 +189,7 @@ describe("TokenVesting", function () {
         await vesting
           .connect(beneficiary)
           .computeReleasableAmount(vestingScheduleId)
-      ).to.be.equal(90);
+      ).to.equal(90);
 
       // beneficiary release vested tokens (45)
       await expect(vesting.connect(beneficiary).release(vestingScheduleId, 45))
@@ -203,9 +204,7 @@ describe("TokenVesting", function () {
       );
 
       // grant admin role
-      const AdminRole = await vesting.DEFAULT_ADMIN_ROLE();
-      await vesting.connect(adminAccount).grantRole(AdminRole, acc3.address);
-      expect(await vesting.hasRole(AdminRole, acc3.address)).to.be.equal(true);
+      await grantAdminRole(vesting, adminAccount, acc3);
 
       // admin release vested tokens (45)
       await expect(vesting.connect(acc3).release(vestingScheduleId, 45))
@@ -214,14 +213,14 @@ describe("TokenVesting", function () {
 
       // check that the number of released tokens is 100
       vestingSchedule = await vesting.getVestingSchedule(vestingScheduleId);
-      expect(vestingSchedule.released).to.be.equal(100);
+      expect(vestingSchedule.released).to.equal(100);
 
       // check that the vested amount is 0
       expect(
         await vesting
           .connect(beneficiary)
           .computeReleasableAmount(vestingScheduleId)
-      ).to.be.equal(0);
+      ).to.equal(0);
 
       // check that anyone cannot revoke a vesting
       await expect(vesting.connect(acc2).revoke(vestingScheduleId)).to.be
@@ -300,7 +299,7 @@ describe("TokenVesting", function () {
       const vestingSchedule = await vesting.getVestingSchedule(
         vestingScheduleId
       );
-      expect(vestingSchedule.revoked).to.be.equal(true);
+      expect(vestingSchedule.revoked).to.equal(true);
 
       // set time to end of the vesting period
       await time.setNextBlockTimestamp(baseTime + duration + 1);
@@ -355,7 +354,7 @@ describe("TokenVesting", function () {
         await vesting
           .connect(beneficiary)
           .computeReleasableAmount(vestingScheduleId)
-      ).to.be.equal(0);
+      ).to.equal(0);
 
       // set time after cliff, before first slice
       const beforeFirstSliceTime = startTime + cliff + slicePeriodSeconds / 2;
@@ -366,7 +365,7 @@ describe("TokenVesting", function () {
         await vesting
           .connect(beneficiary)
           .computeReleasableAmount(vestingScheduleId)
-      ).to.be.equal(0);
+      ).to.equal(0);
 
       // set time after first slice
       const afterFirstSliceTime = startTime + cliff + slicePeriodSeconds * 1.5;
@@ -377,7 +376,7 @@ describe("TokenVesting", function () {
         await vesting
           .connect(beneficiary)
           .computeReleasableAmount(vestingScheduleId)
-      ).to.be.equal(100);
+      ).to.equal(100);
 
       // set time before last slice
       const beforeLastSliceTime = startTime + cliff + slicePeriodSeconds * 6.5;
@@ -388,7 +387,7 @@ describe("TokenVesting", function () {
         await vesting
           .connect(beneficiary)
           .computeReleasableAmount(vestingScheduleId)
-      ).to.be.equal(600);
+      ).to.equal(600);
 
       // set time after last slice
       const afterLastSliceTime = startTime + cliff + slicePeriodSeconds * 7.5;
@@ -399,7 +398,7 @@ describe("TokenVesting", function () {
         await vesting
           .connect(beneficiary)
           .computeReleasableAmount(vestingScheduleId)
-      ).to.be.equal(700);
+      ).to.equal(700);
     });
 
     it("Should compute vesting schedule index", async function () {
@@ -607,14 +606,14 @@ describe("TokenVesting", function () {
           500
         );
 
-      expect(await vesting.getVestingSchedulesCount()).to.be.equal(3);
-      expect(await vesting.getVestingSchedulesTotalAmount()).to.be.equal(800);
+      expect(await vesting.getVestingSchedulesCount()).to.equal(3);
+      expect(await vesting.getVestingSchedulesTotalAmount()).to.equal(800);
       expect(
         await vesting.getVestingSchedulesCountByBeneficiary(acc1.address)
-      ).to.be.equal(2);
+      ).to.equal(2);
       expect(
         await vesting.getVestingSchedulesCountByBeneficiary(acc2.address)
-      ).to.be.equal(1);
+      ).to.equal(1);
 
       const lastSchedule = await vesting.getLastVestingScheduleForHolder(
         acc1.address
@@ -624,7 +623,7 @@ describe("TokenVesting", function () {
         1
       );
 
-      expect(lastSchedule.amountTotal).to.be.equal(secondSchedule.amountTotal);
+      expect(lastSchedule.amountTotal).to.equal(secondSchedule.amountTotal);
 
       await expect(vesting.getVestingIdAtIndex(3)).to.be.revertedWith(
         "TokenVesting: index out of bounds"
@@ -634,7 +633,7 @@ describe("TokenVesting", function () {
         acc2.address,
         0
       );
-      expect(vestingId).to.be.equal(lastId);
+      expect(vestingId).to.equal(lastId);
     });
   });
 
@@ -655,13 +654,12 @@ describe("TokenVesting", function () {
       await expect(vesting.connect(acc1).updateVestingPool(newPoolAcc.address))
         .to.be.reverted;
 
-      const AdminRole = await vesting.DEFAULT_ADMIN_ROLE();
-      await vesting.grantRole(AdminRole, acc1.address);
+      await grantAdminRole(vesting, adminAccount, acc1);
 
       await expect(vesting.connect(acc1).updateVestingPool(newPoolAcc.address))
         .not.to.be.reverted;
 
-      expect(await vesting.getReservesBalance()).to.be.eq(0);
+      expect(await vesting.getReservesBalance()).to.eq(0);
     });
   });
 });

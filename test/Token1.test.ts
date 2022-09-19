@@ -32,10 +32,10 @@ describe("Token 1", function () {
       );
 
       const SnapshotRole = await token.SNAPSHOT_ROLE();
-      expect(await token.hasRole(SnapshotRole, adminAccount.address)).to.be.eq(
+      expect(await token.hasRole(SnapshotRole, adminAccount.address)).to.eq(
         true
       );
-      expect(await token.hasRole(SnapshotRole, holderAccount.address)).to.be.eq(
+      expect(await token.hasRole(SnapshotRole, holderAccount.address)).to.eq(
         false
       );
     });
@@ -76,7 +76,7 @@ describe("Token 1", function () {
         .withArgs(SnapshotRole, acc2.address, adminAccount.address);
 
       await expect(token.connect(acc2).snapshot()).to.be.reverted;
-      expect(await token.snapshotCount()).to.be.equal(2);
+      expect(await token.snapshotCount()).to.equal(2);
     });
   });
 });

@@ -12,7 +12,12 @@ import {
   Token2__factory,
   ReferralManager__factory,
 } from "typechain-types";
-import { autoStakeToken, autoSubscribe, waitForStakeFinished } from "./helpers";
+import {
+  autoStakeToken,
+  autoSubscribe,
+  grantAdminRole,
+  waitForStakeFinished,
+} from "./helpers";
 
 describe("Staking", function () {
   async function deployFixture() {
@@ -107,24 +112,24 @@ describe("Staking", function () {
         subscriptionPeriodDays,
       } = await loadFixture(deployFixture);
 
-      expect(await stakingContract.isActive()).to.be.eq(false);
+      expect(await stakingContract.isActive()).to.eq(false);
 
       const AdminRole = await stakingContract.DEFAULT_ADMIN_ROLE();
       expect(
         await stakingContract.hasRole(AdminRole, adminAccount.address)
-      ).to.be.eq(true);
+      ).to.eq(true);
 
       const userData = await stakingContract.getContractInfo();
-      expect(userData[0]).to.be.eq(BigNumber.from(durationDays));
-      expect(userData[1]).to.be.eq(rewardPercent);
-      expect(userData[2]).to.be.eq(false);
-      expect(userData[3]).to.be.eq(BigNumber.from(0));
-      expect(userData[4]).to.be.eq(BigNumber.from(0));
-      expect(userData[5]).to.be.eq(BigNumber.from(0));
-      expect(userData[6]).to.be.eq(BigNumber.from(0));
-      expect(userData[7]).to.be.eq(BigNumber.from(0));
-      expect(userData[8]).to.be.eq(subscriptionCost);
-      expect(userData[9]).to.be.eq(BigNumber.from(subscriptionPeriodDays));
+      expect(userData[0]).to.eq(BigNumber.from(durationDays));
+      expect(userData[1]).to.eq(rewardPercent);
+      expect(userData[2]).to.eq(false);
+      expect(userData[3]).to.eq(BigNumber.from(0));
+      expect(userData[4]).to.eq(BigNumber.from(0));
+      expect(userData[5]).to.eq(BigNumber.from(0));
+      expect(userData[6]).to.eq(BigNumber.from(0));
+      expect(userData[7]).to.eq(BigNumber.from(0));
+      expect(userData[8]).to.eq(subscriptionCost);
+      expect(userData[9]).to.eq(BigNumber.from(subscriptionPeriodDays));
     });
 
     it("Should not deploy with incorrect initial data", async () => {
@@ -257,7 +262,7 @@ describe("Staking", function () {
 
       const [acc1] = restSigners;
 
-      expect(await stakingContract.connect(acc1)["isSubscriber()"]()).to.be.eq(
+      expect(await stakingContract.connect(acc1)["isSubscriber()"]()).to.eq(
         false
       );
 
@@ -275,11 +280,11 @@ describe("Staking", function () {
 
       await stakingContract.connect(adminAccount).setActive(true);
       await stakingContract.connect(acc1).subscribe();
-      expect(await stakingContract.connect(acc1)["isSubscriber()"]()).to.be.eq(
+      expect(await stakingContract.connect(acc1)["isSubscriber()"]()).to.eq(
         true
       );
 
-      expect(await token1.totalBurn()).to.be.eq(subscriptionCost);
+      expect(await token1.totalBurn()).to.eq(subscriptionCost);
     });
 
     it("Should be unsubscribed after period expires", async () => {
@@ -309,7 +314,7 @@ describe("Staking", function () {
       await time.setNextBlockTimestamp(currentTimestamp + 100);
       await mine();
 
-      expect(await stakingContract.connect(acc1)["isSubscriber()"]()).to.be.eq(
+      expect(await stakingContract.connect(acc1)["isSubscriber()"]()).to.eq(
         true
       );
 
@@ -317,7 +322,7 @@ describe("Staking", function () {
         currentTimestamp - 1 + subscriptionPeriodDays * 60 * 60 * 24
       );
       await mine();
-      expect(await stakingContract.connect(acc1)["isSubscriber()"]()).to.be.eq(
+      expect(await stakingContract.connect(acc1)["isSubscriber()"]()).to.eq(
         true
       );
 
@@ -325,7 +330,7 @@ describe("Staking", function () {
         currentTimestamp + 1 + subscriptionPeriodDays * 60 * 60 * 24
       );
       await mine();
-      expect(await stakingContract.connect(acc1)["isSubscriber()"]()).to.be.eq(
+      expect(await stakingContract.connect(acc1)["isSubscriber()"]()).to.eq(
         false
       );
     });
@@ -495,7 +500,7 @@ describe("Staking", function () {
 
       const [acc] = restSigners;
 
-      expect(await token1.balanceOf(stakingContract.address)).to.be.eq(0);
+      expect(await token1.balanceOf(stakingContract.address)).to.eq(0);
 
       const currentBalance = await token1.balanceOf(stakingRewardPool.address);
       const profit = await stakingContract.calculateStakeProfit(minStakeLimit);
@@ -508,10 +513,10 @@ describe("Staking", function () {
         stakingContract,
       });
 
-      expect(await token1.balanceOf(stakingContract.address)).to.be.eq(
+      expect(await token1.balanceOf(stakingContract.address)).to.eq(
         minStakeLimit.add(profit)
       );
-      expect(await token1.balanceOf(stakingRewardPool.address)).to.be.eq(
+      expect(await token1.balanceOf(stakingRewardPool.address)).to.eq(
         currentBalance.sub(profit)
       );
     });
@@ -531,7 +536,7 @@ describe("Staking", function () {
 
       const [acc] = restSigners;
 
-      expect(await token1.balanceOf(stakingContract.address)).to.be.eq(0);
+      expect(await token1.balanceOf(stakingContract.address)).to.eq(0);
 
       const currentBalance = await token1.balanceOf(stakingRewardPool.address);
       const profit = await stakingContract.calculateStakeProfit(minStakeLimit);
@@ -547,9 +552,9 @@ describe("Staking", function () {
         isToken2: true,
       });
 
-      expect(await token1.balanceOf(stakingContract.address)).to.be.eq(profit);
-      expect(await token2.totalBurn()).to.be.eq(minStakeLimit);
-      expect(await token1.balanceOf(stakingRewardPool.address)).to.be.eq(
+      expect(await token1.balanceOf(stakingContract.address)).to.eq(profit);
+      expect(await token2.totalBurn()).to.eq(minStakeLimit);
+      expect(await token1.balanceOf(stakingRewardPool.address)).to.eq(
         currentBalance.sub(profit)
       );
     });
@@ -585,15 +590,11 @@ describe("Staking", function () {
       });
 
       const userData = await stakingContract.getUserInfo(acc.address);
-      expect(userData._totalStakedToken1).to.be.eq(
-        minStakeLimit.mul(3).add(10)
-      );
-      expect(userData._currentToken1Staked).to.be.eq(
-        minStakeLimit.mul(3).add(10)
-      );
-      expect(userData._totalStakedToken2).to.be.eq(BigNumber.from(0));
-      expect(userData._totalClaimed).to.be.eq(BigNumber.from(0));
-      expect(userData._subscribed).to.be.eq(true);
+      expect(userData._totalStakedToken1).to.eq(minStakeLimit.mul(3).add(10));
+      expect(userData._currentToken1Staked).to.eq(minStakeLimit.mul(3).add(10));
+      expect(userData._totalStakedToken2).to.eq(BigNumber.from(0));
+      expect(userData._totalClaimed).to.eq(BigNumber.from(0));
+      expect(userData._subscribed).to.eq(true);
     });
 
     it("Should update user info on deposit token2", async () => {
@@ -632,13 +633,11 @@ describe("Staking", function () {
       });
 
       const userData = await stakingContract.getUserInfo(acc.address);
-      expect(userData._totalStakedToken1).to.be.eq(BigNumber.from(0));
-      expect(userData._currentToken1Staked).to.be.eq(BigNumber.from(0));
-      expect(userData._totalStakedToken2).to.be.eq(
-        minStakeLimit.mul(3).add(10)
-      );
-      expect(userData._totalClaimed).to.be.eq(BigNumber.from(0));
-      expect(userData._subscribed).to.be.eq(true);
+      expect(userData._totalStakedToken1).to.eq(BigNumber.from(0));
+      expect(userData._currentToken1Staked).to.eq(BigNumber.from(0));
+      expect(userData._totalStakedToken2).to.eq(minStakeLimit.mul(3).add(10));
+      expect(userData._totalClaimed).to.eq(BigNumber.from(0));
+      expect(userData._subscribed).to.eq(true);
     });
 
     it("Should update contract info on deposit", async () => {
@@ -689,12 +688,12 @@ describe("Staking", function () {
       await mine();
 
       const userData = await stakingContract.getContractInfo();
-      expect(userData[2]).to.be.eq(true);
-      expect(userData[3]).to.be.eq(BigNumber.from(2));
-      expect(userData[4]).to.be.eq(BigNumber.from(2));
-      expect(userData[5]).to.be.eq(minStakeLimit.mul(3).add(10));
-      expect(userData[6]).to.be.eq(minStakeLimit.mul(3).add(20));
-      expect(userData[7]).to.be.eq(BigNumber.from(0));
+      expect(userData[2]).to.eq(true);
+      expect(userData[3]).to.eq(BigNumber.from(2));
+      expect(userData[4]).to.eq(BigNumber.from(2));
+      expect(userData[5]).to.eq(minStakeLimit.mul(3).add(10));
+      expect(userData[6]).to.eq(minStakeLimit.mul(3).add(20));
+      expect(userData[7]).to.eq(BigNumber.from(0));
     });
   });
 
@@ -814,10 +813,10 @@ describe("Staking", function () {
       await mine();
       await waitForStakeFinished(durationDays);
 
-      expect(await token1.balanceOf(acc.address)).to.be.eq(0);
+      expect(await token1.balanceOf(acc.address)).to.eq(0);
       await stakingContract.connect(acc).withdraw(0);
 
-      expect(await token1.balanceOf(acc.address)).to.be.eq(reward);
+      expect(await token1.balanceOf(acc.address)).to.eq(reward);
     });
 
     it("Should withdraw correct amount for token 2", async () => {
@@ -850,10 +849,10 @@ describe("Staking", function () {
       await mine();
       await waitForStakeFinished(durationDays);
 
-      expect(await token1.balanceOf(acc.address)).to.be.eq(0);
+      expect(await token1.balanceOf(acc.address)).to.eq(0);
       await stakingContract.connect(acc).withdraw(0);
 
-      expect(await token1.balanceOf(acc.address)).to.be.eq(reward);
+      expect(await token1.balanceOf(acc.address)).to.eq(reward);
     });
 
     it("Should update user and contract info on withdraw", async () => {
@@ -914,21 +913,19 @@ describe("Staking", function () {
       await stakingContract.connect(acc).withdraw(2);
 
       const userInfo = await stakingContract.getUserInfo(acc.address);
-      expect(userInfo._totalStakedToken1).to.be.eq(
-        minStakeLimit.mul(3).add(10)
-      );
-      expect(userInfo._totalStakedToken2).to.be.eq(minStakeLimit.add(10));
-      expect(userInfo._totalClaimed).to.be.eq(profit);
-      expect(userInfo._currentToken1Staked).to.be.eq(0);
+      expect(userInfo._totalStakedToken1).to.eq(minStakeLimit.mul(3).add(10));
+      expect(userInfo._totalStakedToken2).to.eq(minStakeLimit.add(10));
+      expect(userInfo._totalClaimed).to.eq(profit);
+      expect(userInfo._currentToken1Staked).to.eq(0);
 
       const contractInfo = await stakingContract.getContractInfo();
-      expect(contractInfo._totalStakedToken1).to.be.eq(
+      expect(contractInfo._totalStakedToken1).to.eq(
         minStakeLimit.mul(3).add(10)
       );
-      expect(contractInfo._totalStakedToken2).to.be.eq(minStakeLimit.add(10));
-      expect(contractInfo._totalStakesToken1No).to.be.eq(2);
-      expect(contractInfo._totalStakesToken2No).to.be.eq(1);
-      expect(contractInfo._totalClaimed).to.be.eq(profit);
+      expect(contractInfo._totalStakedToken2).to.eq(minStakeLimit.add(10));
+      expect(contractInfo._totalStakesToken1No).to.eq(2);
+      expect(contractInfo._totalStakesToken2No).to.eq(1);
+      expect(contractInfo._totalClaimed).to.eq(profit);
     });
   });
 
@@ -944,18 +941,15 @@ describe("Staking", function () {
 
       await expect(stakingContract.connect(acc1).setActive(true)).to.be
         .reverted;
-      expect(await stakingContract.isActive()).to.be.eq(false);
+      expect(await stakingContract.isActive()).to.eq(false);
 
-      const AdminRole = await stakingContract.DEFAULT_ADMIN_ROLE();
-      await stakingContract
-        .connect(adminAccount)
-        .grantRole(AdminRole, acc2.address);
+      await grantAdminRole(stakingContract, adminAccount, acc2);
 
       await expect(stakingContract.connect(acc2).setActive(true)).not.to.be
         .reverted;
-      expect(await stakingContract.isActive()).to.be.eq(true);
+      expect(await stakingContract.isActive()).to.eq(true);
       await stakingContract.connect(acc2).setActive(false);
-      expect(await stakingContract.isActive()).to.be.eq(false);
+      expect(await stakingContract.isActive()).to.eq(false);
     });
 
     it("Should update reward pool only by Admin", async () => {
@@ -969,10 +963,7 @@ describe("Staking", function () {
         stakingContract.connect(acc1).updateRewardPool(newPool.address)
       ).to.be.reverted;
 
-      const AdminRole = await stakingContract.DEFAULT_ADMIN_ROLE();
-      await stakingContract
-        .connect(adminAccount)
-        .grantRole(AdminRole, acc2.address);
+      await grantAdminRole(stakingContract, adminAccount, acc2);
 
       await expect(
         stakingContract.connect(acc2).updateRewardPool(newPool.address)
@@ -989,15 +980,12 @@ describe("Staking", function () {
       await expect(stakingContract.connect(acc1).updateToken1(newToken.address))
         .to.be.reverted;
 
-      const AdminRole = await stakingContract.DEFAULT_ADMIN_ROLE();
-      await stakingContract
-        .connect(adminAccount)
-        .grantRole(AdminRole, acc2.address);
+      await grantAdminRole(stakingContract, adminAccount, acc2);
 
       await expect(stakingContract.connect(acc2).updateToken1(newToken.address))
         .not.to.be.reverted;
 
-      expect(await stakingContract.token1()).to.be.eq(newToken.address);
+      expect(await stakingContract.token1()).to.eq(newToken.address);
     });
 
     it("Should update token 2 only by Admin", async () => {
@@ -1010,15 +998,12 @@ describe("Staking", function () {
       await expect(stakingContract.connect(acc1).updateToken2(newToken.address))
         .to.be.reverted;
 
-      const AdminRole = await stakingContract.DEFAULT_ADMIN_ROLE();
-      await stakingContract
-        .connect(adminAccount)
-        .grantRole(AdminRole, acc2.address);
+      await grantAdminRole(stakingContract, adminAccount, acc2);
 
       await expect(stakingContract.connect(acc2).updateToken2(newToken.address))
         .not.to.be.reverted;
 
-      expect(await stakingContract.token2()).to.be.eq(newToken.address);
+      expect(await stakingContract.token2()).to.eq(newToken.address);
     });
 
     it("Should update percent divider only by Admin", async () => {
@@ -1031,15 +1016,12 @@ describe("Staking", function () {
       await expect(stakingContract.connect(acc1).updatePercentDivider(10)).to.be
         .reverted;
 
-      const AdminRole = await stakingContract.DEFAULT_ADMIN_ROLE();
-      await stakingContract
-        .connect(adminAccount)
-        .grantRole(AdminRole, acc2.address);
+      await grantAdminRole(stakingContract, adminAccount, acc2);
 
       await expect(stakingContract.connect(acc2).updatePercentDivider(10000))
         .not.to.be.reverted;
 
-      expect(await stakingContract.PERCENTS_DIVIDER()).to.be.eq(10000);
+      expect(await stakingContract.PERCENTS_DIVIDER()).to.eq(10000);
     });
 
     it("Should update time step only by Admin", async () => {
@@ -1052,15 +1034,12 @@ describe("Staking", function () {
       await expect(stakingContract.connect(acc1).updateTimeStep(500)).to.be
         .reverted;
 
-      const AdminRole = await stakingContract.DEFAULT_ADMIN_ROLE();
-      await stakingContract
-        .connect(adminAccount)
-        .grantRole(AdminRole, acc2.address);
+      await grantAdminRole(stakingContract, adminAccount, acc2);
 
       await expect(stakingContract.connect(acc2).updateTimeStep(2500)).not.to.be
         .reverted;
 
-      expect(await stakingContract.TIME_STEP()).to.be.eq(2500);
+      expect(await stakingContract.TIME_STEP()).to.eq(2500);
     });
 
     it("Should update min stake limit only by Admin", async () => {
@@ -1073,15 +1052,12 @@ describe("Staking", function () {
       await expect(stakingContract.connect(acc1).updateMinStakeLimit(500)).to.be
         .reverted;
 
-      const AdminRole = await stakingContract.DEFAULT_ADMIN_ROLE();
-      await stakingContract
-        .connect(adminAccount)
-        .grantRole(AdminRole, acc2.address);
+      await grantAdminRole(stakingContract, adminAccount, acc2);
 
       await expect(stakingContract.connect(acc2).updateMinStakeLimit(2500)).not
         .to.be.reverted;
 
-      expect(await stakingContract.MIN_STAKE_LIMIT()).to.be.eq(2500);
+      expect(await stakingContract.MIN_STAKE_LIMIT()).to.eq(2500);
     });
 
     it("Should update duration days only by Admin", async () => {
@@ -1094,15 +1070,12 @@ describe("Staking", function () {
       await expect(stakingContract.connect(acc1).updateDurationDays(5)).to.be
         .reverted;
 
-      const AdminRole = await stakingContract.DEFAULT_ADMIN_ROLE();
-      await stakingContract
-        .connect(adminAccount)
-        .grantRole(AdminRole, acc2.address);
+      await grantAdminRole(stakingContract, adminAccount, acc2);
 
       await expect(stakingContract.connect(acc2).updateDurationDays(100)).not.to
         .be.reverted;
 
-      expect(await stakingContract.durationDays()).to.be.eq(100);
+      expect(await stakingContract.durationDays()).to.eq(100);
     });
 
     it("Should update reward only by Admin", async () => {
@@ -1115,15 +1088,12 @@ describe("Staking", function () {
       await expect(stakingContract.connect(acc1).updateReward(5)).to.be
         .reverted;
 
-      const AdminRole = await stakingContract.DEFAULT_ADMIN_ROLE();
-      await stakingContract
-        .connect(adminAccount)
-        .grantRole(AdminRole, acc2.address);
+      await grantAdminRole(stakingContract, adminAccount, acc2);
 
       await expect(stakingContract.connect(acc2).updateReward(100)).not.to.be
         .reverted;
 
-      expect(await stakingContract.reward()).to.be.eq(100);
+      expect(await stakingContract.reward()).to.eq(100);
     });
 
     it("Should update subscription cost only by Admin", async () => {
@@ -1136,15 +1106,12 @@ describe("Staking", function () {
       await expect(stakingContract.connect(acc1).updateSubscriptionCost(5)).to
         .be.reverted;
 
-      const AdminRole = await stakingContract.DEFAULT_ADMIN_ROLE();
-      await stakingContract
-        .connect(adminAccount)
-        .grantRole(AdminRole, acc2.address);
+      await grantAdminRole(stakingContract, adminAccount, acc2);
 
       await expect(stakingContract.connect(acc2).updateSubscriptionCost(100))
         .not.to.be.reverted;
 
-      expect(await stakingContract.subscriptionCost()).to.be.eq(100);
+      expect(await stakingContract.subscriptionCost()).to.eq(100);
     });
 
     it("Should update subscription period only by Admin", async () => {
@@ -1157,15 +1124,12 @@ describe("Staking", function () {
       await expect(stakingContract.connect(acc1).updateSubscriptionPeriod(5)).to
         .be.reverted;
 
-      const AdminRole = await stakingContract.DEFAULT_ADMIN_ROLE();
-      await stakingContract
-        .connect(adminAccount)
-        .grantRole(AdminRole, acc2.address);
+      await grantAdminRole(stakingContract, adminAccount, acc2);
 
       await expect(stakingContract.connect(acc2).updateSubscriptionPeriod(100))
         .not.to.be.reverted;
 
-      expect(await stakingContract.subscriptionPeriodDays()).to.be.eq(100);
+      expect(await stakingContract.subscriptionPeriodDays()).to.eq(100);
     });
 
     it("Should update subscription token only by Admin", async () => {
@@ -1179,18 +1143,13 @@ describe("Staking", function () {
         stakingContract.connect(acc1).updateSubscriptionToken(newToken.address)
       ).to.be.reverted;
 
-      const AdminRole = await stakingContract.DEFAULT_ADMIN_ROLE();
-      await stakingContract
-        .connect(adminAccount)
-        .grantRole(AdminRole, acc2.address);
+      await grantAdminRole(stakingContract, adminAccount, acc2);
 
       await expect(
         stakingContract.connect(acc2).updateSubscriptionToken(newToken.address)
       ).not.to.be.reverted;
 
-      expect(await stakingContract.subscriptionToken()).to.be.eq(
-        newToken.address
-      );
+      expect(await stakingContract.subscriptionToken()).to.eq(newToken.address);
     });
 
     it("Should update referral manager only by Admin", async () => {
@@ -1206,10 +1165,7 @@ describe("Staking", function () {
           .updateReferralManager(newReferralManager.address)
       ).to.be.reverted;
 
-      const AdminRole = await stakingContract.DEFAULT_ADMIN_ROLE();
-      await stakingContract
-        .connect(adminAccount)
-        .grantRole(AdminRole, acc2.address);
+      await grantAdminRole(stakingContract, adminAccount, acc2);
 
       await expect(
         stakingContract
@@ -1217,7 +1173,7 @@ describe("Staking", function () {
           .updateReferralManager(newReferralManager.address)
       ).not.to.be.reverted;
 
-      expect(await stakingContract.referralManager()).to.be.eq(
+      expect(await stakingContract.referralManager()).to.eq(
         newReferralManager.address
       );
     });
@@ -1439,48 +1395,48 @@ describe("Staking", function () {
       let profit = await stakingContract.calculateStakeProfit(
         minStakeLimit.add(10)
       );
-      expect(userStakes[0].stakeId).to.be.eq(0);
-      expect(userStakes[0].amount).to.be.eq(minStakeLimit.add(10));
+      expect(userStakes[0].stakeId).to.eq(0);
+      expect(userStakes[0].amount).to.eq(minStakeLimit.add(10));
       expect(userStakes[0].timeStart)
         .to.be.greaterThan(startTime)
         .and.be.lessThan(startTime + 1000);
       expect(userStakes[0].timeEnd)
         .to.be.greaterThan(endTime)
         .and.be.lessThan(endTime + 1000);
-      expect(userStakes[0].percent).to.be.eq(rewardPercent);
-      expect(userStakes[0].profit).to.be.eq(profit);
-      expect(userStakes[0].isToken2).to.be.eq(false);
-      expect(userStakes[0].isClaimed).to.be.eq(false);
+      expect(userStakes[0].percent).to.eq(rewardPercent);
+      expect(userStakes[0].profit).to.eq(profit);
+      expect(userStakes[0].isToken2).to.eq(false);
+      expect(userStakes[0].isClaimed).to.eq(false);
 
       profit = await stakingContract.calculateStakeProfit(minStakeLimit.mul(2));
-      expect(userStakes[1].stakeId).to.be.eq(1);
-      expect(userStakes[1].amount).to.be.eq(minStakeLimit.mul(2));
+      expect(userStakes[1].stakeId).to.eq(1);
+      expect(userStakes[1].amount).to.eq(minStakeLimit.mul(2));
       expect(userStakes[1].timeStart)
         .to.be.greaterThan(startTime)
         .and.be.lessThan(startTime + 1000);
       expect(userStakes[1].timeEnd)
         .to.be.greaterThan(endTime)
         .and.be.lessThan(endTime + 1000);
-      expect(userStakes[1].percent).to.be.eq(rewardPercent);
-      expect(userStakes[1].profit).to.be.eq(profit);
-      expect(userStakes[1].isToken2).to.be.eq(false);
-      expect(userStakes[1].isClaimed).to.be.eq(true);
+      expect(userStakes[1].percent).to.eq(rewardPercent);
+      expect(userStakes[1].profit).to.eq(profit);
+      expect(userStakes[1].isToken2).to.eq(false);
+      expect(userStakes[1].isClaimed).to.eq(true);
 
       profit = await stakingContract.calculateStakeProfit(
         minStakeLimit.add(50)
       );
-      expect(userStakes[2].stakeId).to.be.eq(2);
-      expect(userStakes[2].amount).to.be.eq(minStakeLimit.add(50));
+      expect(userStakes[2].stakeId).to.eq(2);
+      expect(userStakes[2].amount).to.eq(minStakeLimit.add(50));
       expect(userStakes[2].timeStart)
         .to.be.greaterThan(startTime)
         .and.be.lessThan(startTime + 1000);
       expect(userStakes[2].timeEnd)
         .to.be.greaterThan(endTime)
         .and.be.lessThan(endTime + 1000);
-      expect(userStakes[2].percent).to.be.eq(rewardPercent);
-      expect(userStakes[2].profit).to.be.eq(profit);
-      expect(userStakes[2].isToken2).to.be.eq(true);
-      expect(userStakes[2].isClaimed).to.be.eq(false);
+      expect(userStakes[2].percent).to.eq(rewardPercent);
+      expect(userStakes[2].profit).to.eq(profit);
+      expect(userStakes[2].isToken2).to.eq(true);
+      expect(userStakes[2].isClaimed).to.eq(false);
     });
     // getTimestamp
     it("Should return correct timestamp", async () => {
@@ -1490,7 +1446,7 @@ describe("Staking", function () {
       await time.setNextBlockTimestamp(nextTime);
       await mine();
 
-      expect(await stakingContract.getTimestamp()).to.be.eq(nextTime);
+      expect(await stakingContract.getTimestamp()).to.eq(nextTime);
     });
     // calculateStakeProfit
     it("Should return correct stake profit", async () => {
@@ -1502,7 +1458,7 @@ describe("Staking", function () {
       const percentsDivider = await stakingContract.PERCENTS_DIVIDER();
       const profit = await stakingContract.calculateStakeProfit(amount);
       const expectedProfit = amount.mul(rewardPercent).div(percentsDivider);
-      expect(profit).to.be.eq(expectedProfit);
+      expect(profit).to.eq(expectedProfit);
     });
     // calculateStakeReward
     it("Should return correct stake reward for token 1", async () => {
@@ -1548,9 +1504,9 @@ describe("Staking", function () {
         .sub(stake.timeStart)
         .mul(minStakeLimit.add(profit))
         .div(stake.timeEnd.sub(stake.timeStart));
-      expect(
-        await stakingContract.calculateStakeReward(acc.address, 0)
-      ).to.be.eq(expectedReward);
+      expect(await stakingContract.calculateStakeReward(acc.address, 0)).to.eq(
+        expectedReward
+      );
 
       // A bit later
       await time.setNextBlockTimestamp((await time.latest()) + 10000);
@@ -1561,24 +1517,24 @@ describe("Staking", function () {
         .mul(minStakeLimit.add(profit))
         .div(stake.timeEnd.sub(stake.timeStart));
 
-      expect(
-        await stakingContract.calculateStakeReward(acc.address, 0)
-      ).to.be.eq(expectedReward);
+      expect(await stakingContract.calculateStakeReward(acc.address, 0)).to.eq(
+        expectedReward
+      );
 
       // After ending
       await waitForStakeFinished(durationDays);
       await time.setNextBlockTimestamp((await time.latest()) + 10000);
       await mine();
 
-      expect(
-        await stakingContract.calculateStakeReward(acc.address, 0)
-      ).to.be.eq(minStakeLimit.add(profit));
+      expect(await stakingContract.calculateStakeReward(acc.address, 0)).to.eq(
+        minStakeLimit.add(profit)
+      );
 
       // Claimed
       await stakingContract.connect(acc).withdraw(0);
-      expect(
-        await stakingContract.calculateStakeReward(acc.address, 0)
-      ).to.be.eq(0);
+      expect(await stakingContract.calculateStakeReward(acc.address, 0)).to.eq(
+        0
+      );
     });
 
     it("Should return correct stake reward for token 1", async () => {
@@ -1629,9 +1585,9 @@ describe("Staking", function () {
         .sub(stake.timeStart)
         .mul(profit)
         .div(stake.timeEnd.sub(stake.timeStart));
-      expect(
-        await stakingContract.calculateStakeReward(acc.address, 0)
-      ).to.be.eq(expectedReward);
+      expect(await stakingContract.calculateStakeReward(acc.address, 0)).to.eq(
+        expectedReward
+      );
 
       // A bit later
       await time.setNextBlockTimestamp((await time.latest()) + 10000);
@@ -1642,37 +1598,37 @@ describe("Staking", function () {
         .mul(profit)
         .div(stake.timeEnd.sub(stake.timeStart));
 
-      expect(
-        await stakingContract.calculateStakeReward(acc.address, 0)
-      ).to.be.eq(expectedReward);
+      expect(await stakingContract.calculateStakeReward(acc.address, 0)).to.eq(
+        expectedReward
+      );
 
       // After ending
       await waitForStakeFinished(durationDays);
       await time.setNextBlockTimestamp((await time.latest()) + 10000);
       await mine();
 
-      expect(
-        await stakingContract.calculateStakeReward(acc.address, 0)
-      ).to.be.eq(profit);
+      expect(await stakingContract.calculateStakeReward(acc.address, 0)).to.eq(
+        profit
+      );
 
       // Claimed
       await stakingContract.connect(acc).withdraw(0);
-      expect(
-        await stakingContract.calculateStakeReward(acc.address, 0)
-      ).to.be.eq(0);
+      expect(await stakingContract.calculateStakeReward(acc.address, 0)).to.eq(
+        0
+      );
     });
 
     it("Should return correct min", async () => {
       const { stakingContract } = await loadFixture(deployFixture);
 
-      expect(await stakingContract.min(1, 0)).to.be.equal(0);
-      expect(await stakingContract.min(1, 10)).to.be.equal(1);
+      expect(await stakingContract.min(1, 0)).to.equal(0);
+      expect(await stakingContract.min(1, 10)).to.equal(1);
       expect(
         await stakingContract.min(
           BigNumber.from(10).pow(25),
           BigNumber.from(10).pow(24).mul(9)
         )
-      ).to.be.equal(BigNumber.from(10).pow(24).mul(9));
+      ).to.equal(BigNumber.from(10).pow(24).mul(9));
     });
   });
 });
