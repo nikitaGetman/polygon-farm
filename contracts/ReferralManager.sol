@@ -29,6 +29,7 @@ contract ReferralManager is IReferralManager, AccessControl {
         uint256 totalRefDividendsClaimed;
         address[] referrals_1_lvl;
         uint256[LEVELS] refCount;
+        bool isActive;
     }
 
     struct Referral {
@@ -75,8 +76,8 @@ contract ReferralManager is IReferralManager, AccessControl {
     }
 
     function subscribeToLevels(uint256 levels) public {
-        require(levels > 0, "Too low required levels");
-        require(levels < LEVELS, "Too much required levels");
+        require(levels > 0, "Too low levels");
+        require(levels <= LEVELS, "Too much levels");
 
         uint256 price = levels * levelSubscriptionCost;
         subscriptionToken.burnFrom(_msgSender(), price);
@@ -111,14 +112,15 @@ contract ReferralManager is IReferralManager, AccessControl {
         public
         onlyAuthorizedContracts
     {
-        require(referrer != address(0), "Referrer is required");
+        require(user != address(0), "User is zero address");
+        require(referrer != address(0), "Referrer is zero address");
         require(referrer != user, "Referrer can not be user");
         require(
             users[user].referrer == address(0),
             "Referrer is already specified"
         );
         require(
-            userHasSubscription(referrer, 0),
+            userHasSubscription(referrer, 1),
             "Referrer has no subscription"
         );
 
@@ -128,8 +130,10 @@ contract ReferralManager is IReferralManager, AccessControl {
         address nextReferrer = referrer;
         for (uint256 i = 0; i < LEVELS; i++) {
             User storage ref = users[nextReferrer];
-            ref.refCount[i] += 1;
-            nextReferrer = ref.referrer;
+            if (ref.isActive) {
+                ref.refCount[i] += 1;
+                nextReferrer = ref.referrer;
+            } else break;
         }
 
         emit ReferralAdded(referrer, user);
@@ -140,9 +144,11 @@ contract ReferralManager is IReferralManager, AccessControl {
             SUBSCRIPTION_PERIOD_DAYS *
             1 days;
 
-        for (uint256 i = 0; i < levels - 1; i++) {
+        for (uint256 i = 0; i < levels; i++) {
             users[subscriber].activeLevels[i] = subscriptionEnd;
         }
+
+        users[subscriber].isActive = true;
 
         emit Subscribed(subscriber, levels, block.timestamp);
     }
@@ -192,14 +198,14 @@ contract ReferralManager is IReferralManager, AccessControl {
         User storage user = users[userAddress];
         uint256 referralCounter = 0;
 
-        for (uint256 i = currentLevel; i < LEVELS; i++) {
+        for (uint256 i = 0; i < LEVELS - currentLevel; i++) {
             referralCounter += user.refCount[i];
         }
 
         return referralCounter;
     }
 
-    // TODO: добавить инфу о стейкингах в получение рефералов
+    // TODO: add staking info to referrals
     function getUserReferrals(address userAddress, uint256 currentLevel)
         public
         view
@@ -218,7 +224,7 @@ contract ReferralManager is IReferralManager, AccessControl {
         for (uint256 i = 0; i < level1Referrals.length; i++) {
             referrals[nextReferralIndex] = Referral(
                 level1Referrals[i],
-                currentLevel
+                currentLevel + 1
             );
             nextReferralIndex++;
 
@@ -229,7 +235,7 @@ contract ReferralManager is IReferralManager, AccessControl {
                 );
 
                 for (uint256 j = 0; j < theirReferrals.length; j++) {
-                    referrals[nextReferralIndex] = theirReferrals[i];
+                    referrals[nextReferralIndex] = theirReferrals[j];
                     nextReferralIndex++;
                 }
             }
@@ -243,7 +249,7 @@ contract ReferralManager is IReferralManager, AccessControl {
         view
         returns (bool)
     {
-        return users[user].activeLevels[level] > block.timestamp;
+        return users[user].activeLevels[level - 1] > block.timestamp;
     }
 
     function calculateRefReward(uint256 amount, uint256 level)
@@ -251,8 +257,9 @@ contract ReferralManager is IReferralManager, AccessControl {
         view
         returns (uint256)
     {
-        require(level < LEVELS);
-        return (amount * REFERRAL_PERCENTS[level]) / 100;
+        require(level > 0);
+        require(level <= LEVELS);
+        return (amount * REFERRAL_PERCENTS[level - 1]) / 100;
     }
 
     function isAuthorized(address contractAddress) public view returns (bool) {
@@ -291,8 +298,9 @@ contract ReferralManager is IReferralManager, AccessControl {
         public
         onlyRole(DEFAULT_ADMIN_ROLE)
     {
-        require(level < LEVELS);
-        REFERRAL_PERCENTS[level] = percent;
+        require(level > 0);
+        require(level <= LEVELS);
+        REFERRAL_PERCENTS[level - 1] = percent;
     }
 
     function updateSubscriptionToken(address token)

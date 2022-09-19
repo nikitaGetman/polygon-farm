@@ -23,6 +23,18 @@ export async function autoSubscribe(
   await stakingContract.connect(acc).subscribe();
 }
 
+export type StakeTokenParams = {
+  acc: SignerWithAddress;
+  adminAccount: SignerWithAddress;
+  token1: Token1;
+  token1Holder: SignerWithAddress;
+  stakingContract: Staking;
+  token2?: Token2;
+  token2Holder?: SignerWithAddress;
+  stakeAmount?: BigNumber;
+  isToken2?: boolean;
+  referrer?: SignerWithAddress;
+};
 export async function autoStakeToken({
   acc,
   adminAccount,
@@ -33,19 +45,8 @@ export async function autoStakeToken({
   stakingContract,
   stakeAmount,
   isToken2 = false,
-  referrer = ethers.constants.AddressZero,
-}: {
-  acc: SignerWithAddress;
-  adminAccount: SignerWithAddress;
-  token1: Token1;
-  token1Holder: SignerWithAddress;
-  stakingContract: Staking;
-  token2?: Token2;
-  token2Holder?: SignerWithAddress;
-  stakeAmount?: BigNumber;
-  isToken2?: boolean;
-  referrer?: Address;
-}) {
+  referrer,
+}: StakeTokenParams) {
   await autoSubscribe(acc, token1, token1Holder, stakingContract, adminAccount);
 
   const amount = stakeAmount || (await stakingContract.MIN_STAKE_LIMIT());
@@ -58,7 +59,13 @@ export async function autoStakeToken({
     await token1.connect(token1Holder).transfer(acc.address, amount);
   }
 
-  await stakingContract.connect(acc).deposit(amount, isToken2, referrer);
+  await stakingContract
+    .connect(acc)
+    .deposit(
+      amount,
+      isToken2,
+      referrer?.address || ethers.constants.AddressZero
+    );
 }
 
 export async function waitForStakeFinished(days: number) {

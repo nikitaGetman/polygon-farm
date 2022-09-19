@@ -190,7 +190,7 @@ contract Staking is AccessControl, Subscribable {
         uint256 totalLevels = referralManager.getReferralLevels();
         address currentLevelUser = depositSender;
 
-        for (uint256 level = 0; level < totalLevels; level++) {
+        for (uint256 level = 1; level <= totalLevels; level++) {
             address referrer = referralManager.getUserReferrer(
                 currentLevelUser
             );
@@ -202,12 +202,9 @@ contract Staking is AccessControl, Subscribable {
                         level
                     );
 
-                    uint256 referrerActiveToken1Stakes = users[referrer]
-                        .currentToken1Staked;
-
                     uint256 truncatedReward = min(
                         refReward,
-                        referrerActiveToken1Stakes
+                        users[referrer].currentToken1Staked
                     );
 
                     referralManager.addUserDividends(referrer, truncatedReward);
