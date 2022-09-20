@@ -10,6 +10,8 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
 
   const token1Address = (await deployments.get("Token1")).address;
   const token2Address = (await deployments.get("Token2")).address;
+  const referralManagerAddress = (await deployments.get("ReferralManager"))
+    .address;
 
   for (let i = 0; i < STAKINGS.length; i++) {
     const staking = STAKINGS[i];
@@ -25,6 +27,7 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
       subscriptionPeriodDays: staking.subscriptionDurationDays,
       account: deployer,
       contractName,
+      referralManager: referralManagerAddress,
     });
 
     await deployments.save(contractName, stakingDeploy);
@@ -38,5 +41,5 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   }
 };
 func.tags = ["Staking"];
-func.dependencies = ["Token1", "Token2"];
+func.dependencies = ["Token1", "Token2", "ReferralManager"];
 export default func;

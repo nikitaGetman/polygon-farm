@@ -1,4 +1,8 @@
-import { loadFixture, time } from "@nomicfoundation/hardhat-network-helpers";
+import {
+  loadFixture,
+  mine,
+  time,
+} from "@nomicfoundation/hardhat-network-helpers";
 import { expect } from "chai";
 import { ethers } from "hardhat";
 import { BigNumber } from "ethers";
@@ -10,6 +14,8 @@ import {
   Staking,
 } from "typechain-types";
 import {
+  autoStakeToken,
+  autoSubscribeToStaking,
   autoSubscribeToReferral,
   createReferralChain,
   grantAdminRole,
@@ -112,7 +118,7 @@ describe("ReferralManager", () => {
       .approve(referralManager.address, ethers.constants.MaxUint256);
     await token2
       .connect(adminAccount)
-      .addToWhitelist([referralManager.address]);
+      .addToWhitelist([referralRewardPool.address]);
 
     return {
       adminAccount,
@@ -132,7 +138,7 @@ describe("ReferralManager", () => {
       minStakeLimit,
     };
   }
-
+  //*
   describe("Deployment", () => {
     it("Should not deploy with incorrect initial data", async () => {
       const {
@@ -584,16 +590,390 @@ describe("ReferralManager", () => {
       expect(referral3Info.referrals_1_lvl).to.eq(0);
     });
   });
-
+  //* /
   describe("Referral rewards", () => {
-    // default rewards (for 1-10 levels)
-    // no rewards for 11 lvl
-    // should truncate reward with current locked token1
-    // no rewards if subscription expired
-    // ref rewards withdraw
-    // can add user dividends only by authorized contracts
-  });
+    //*
+    // default rewards (for 1 level)
+    it("Should assign referral dividends and claim rewards", async () => {
+      const {
+        referralManager,
+        restSigners,
+        adminAccount,
+        token1,
+        token1Holder,
+        stakings,
+      } = await loadFixture(deployFixture);
 
+      const [acc, referrer] = restSigners;
+      const stakingContract = stakings[0].contract;
+      const amount = await stakingContract.MIN_STAKE_LIMIT();
+
+      await referralManager
+        .connect(adminAccount)
+        .authorizeContract(stakingContract.address);
+
+      await autoSubscribeToReferral({
+        referralManager,
+        token: token1,
+        tokenHolder: token1Holder,
+        account: referrer,
+      });
+
+      await autoStakeToken({
+        acc: referrer,
+        adminAccount,
+        token1,
+        token1Holder,
+        stakingContract,
+        stakeAmount: amount,
+      });
+
+      await autoSubscribeToStaking(
+        acc,
+        token1,
+        token1Holder,
+        stakingContract,
+        adminAccount
+      );
+
+      await token1.connect(token1Holder).transfer(acc.address, amount);
+      await token1
+        .connect(acc)
+        .approve(stakingContract.address, ethers.constants.MaxUint256);
+
+      await expect(
+        stakingContract.connect(acc).deposit(amount, false, acc.address)
+      ).to.be.revertedWith("Referrer can not be sender");
+
+      await expect(
+        stakingContract.connect(acc).deposit(amount, false, referrer.address)
+      ).to.emit(referralManager, "ReferralAdded");
+
+      let userInfo = await referralManager.getUserInfo(referrer.address);
+      const waitedReward = await referralManager.calculateRefReward(amount, 1);
+      expect(userInfo.totalDividends).to.eq(waitedReward);
+      expect(userInfo.totalClaimedDividends).to.eq(0);
+
+      await expect(
+        referralManager.connect(referrer).claimDividends(waitedReward.add(1))
+      ).to.be.revertedWith("Insufficient amount");
+
+      await referralManager.connect(referrer).claimDividends(0);
+      userInfo = await referralManager.getUserInfo(referrer.address);
+      expect(userInfo.totalClaimedDividends).to.eq(0);
+
+      await referralManager
+        .connect(referrer)
+        .claimDividends(waitedReward.div(10));
+      userInfo = await referralManager.getUserInfo(referrer.address);
+      expect(userInfo.totalClaimedDividends).to.eq(waitedReward.div(10));
+
+      await referralManager
+        .connect(referrer)
+        .claimDividends(waitedReward.div(10).mul(9));
+      userInfo = await referralManager.getUserInfo(referrer.address);
+      expect(userInfo.totalClaimedDividends).to.eq(waitedReward);
+      expect(userInfo.totalDividends).to.eq(waitedReward);
+
+      await expect(
+        referralManager.connect(referrer).claimDividends(1)
+      ).to.be.revertedWith("Insufficient amount");
+    });
+    // default rewards (for 10 levels), no rewards for 11 lvl
+    it("Should assign referral dividends till 10 lvl", async () => {
+      const {
+        referralManager,
+        restSigners,
+        adminAccount,
+        token1,
+        token1Holder,
+        stakings,
+      } = await loadFixture(deployFixture);
+
+      const [referrer] = restSigners;
+      const stakingContract = stakings[0].contract;
+      const amount = await stakingContract.MIN_STAKE_LIMIT();
+
+      await referralManager
+        .connect(adminAccount)
+        .authorizeContract(stakingContract.address);
+
+      await autoStakeToken({
+        acc: referrer,
+        adminAccount,
+        token1,
+        token1Holder,
+        stakingContract,
+        stakeAmount: amount.mul(100),
+      });
+
+      await createReferralChain({
+        token: token1,
+        tokenHolder: token1Holder,
+        referralManager,
+        stakingContract,
+        signers: restSigners,
+        adminAccount,
+        levels: 12,
+      });
+
+      const userInfo = await referralManager.getUserInfo(referrer.address);
+
+      expect(userInfo.totalDividends).to.eq(BigNumber.from(10).pow(16).mul(55));
+      expect(userInfo.totalReferrals).to.eq(10);
+    });
+    //* /
+    // should truncate reward with current locked token1
+    it("Should truncate reward with current locked token1", async () => {
+      const {
+        referralManager,
+        restSigners,
+        adminAccount,
+        token1,
+        token1Holder,
+        stakings,
+      } = await loadFixture(deployFixture);
+
+      const [referrer] = restSigners;
+      const stakingContract = stakings[0].contract;
+      const amount = await stakingContract.MIN_STAKE_LIMIT();
+
+      await referralManager
+        .connect(adminAccount)
+        .authorizeContract(stakingContract.address);
+
+      await autoStakeToken({
+        acc: referrer,
+        adminAccount,
+        token1,
+        token1Holder,
+        stakingContract,
+        stakeAmount: amount,
+      });
+
+      const getStakeParams = (level: number, params: any) => {
+        return { ...params, stakeAmount: amount.mul(100) };
+      };
+
+      await createReferralChain({
+        token: token1,
+        tokenHolder: token1Holder,
+        referralManager,
+        stakingContract,
+        signers: restSigners,
+        adminAccount,
+        getStakeParams,
+      });
+
+      const userInfo = await referralManager.getUserInfo(referrer.address);
+      expect(userInfo.totalDividends).to.eq(amount.mul(10)); // cause 10 referrals
+      expect(userInfo.totalReferrals).to.eq(10);
+    });
+    // no rewards if subscription expired
+    it("Should not assign reward if subscription expired", async () => {
+      const {
+        referralManager,
+        restSigners,
+        adminAccount,
+        token1,
+        token1Holder,
+        stakings,
+      } = await loadFixture(deployFixture);
+
+      const [acc, referrer] = restSigners;
+      const stakingContract = stakings[0].contract;
+      const amount = await stakingContract.MIN_STAKE_LIMIT();
+
+      await referralManager
+        .connect(adminAccount)
+        .authorizeContract(stakingContract.address);
+
+      await autoSubscribeToReferral({
+        referralManager,
+        token: token1,
+        tokenHolder: token1Holder,
+        account: referrer,
+      });
+
+      await autoStakeToken({
+        acc: referrer,
+        adminAccount,
+        token1,
+        token1Holder,
+        stakingContract,
+        stakeAmount: amount.mul(3),
+      });
+
+      await autoSubscribeToStaking(
+        acc,
+        token1,
+        token1Holder,
+        stakingContract,
+        adminAccount
+      );
+
+      // This stake should be Ok
+      await token1.connect(token1Holder).transfer(acc.address, amount.mul(3));
+      await token1
+        .connect(acc)
+        .approve(stakingContract.address, ethers.constants.MaxUint256);
+
+      await expect(
+        stakingContract
+          .connect(acc)
+          .deposit(amount.mul(2), false, referrer.address)
+      ).to.emit(referralManager, "ReferralAdded");
+
+      // There referrer has expired subscription
+      await time.increase(365 * secondsInDay + 10);
+      await autoSubscribeToStaking(
+        acc,
+        token1,
+        token1Holder,
+        stakingContract,
+        adminAccount
+      );
+      await stakingContract
+        .connect(acc)
+        .deposit(amount, false, referrer.address);
+
+      const userInfo = await referralManager.getUserInfo(referrer.address);
+      const waitedReward = await referralManager.calculateRefReward(
+        amount.mul(2),
+        1
+      );
+      expect(userInfo.totalDividends).to.eq(waitedReward);
+      expect(userInfo.totalClaimedDividends).to.eq(0);
+    });
+
+    it("Should assign reward only for token1 stakes", async () => {
+      const {
+        referralManager,
+        restSigners,
+        adminAccount,
+        token1,
+        token1Holder,
+        stakings,
+        token2,
+        referralRewardPool,
+      } = await loadFixture(deployFixture);
+
+      const [acc, referrer] = restSigners;
+      const stakingContract = stakings[0].contract;
+      const amount = await stakingContract.MIN_STAKE_LIMIT();
+
+      await referralManager
+        .connect(adminAccount)
+        .authorizeContract(stakingContract.address);
+
+      await autoSubscribeToReferral({
+        referralManager,
+        token: token1,
+        tokenHolder: token1Holder,
+        account: referrer,
+      });
+
+      await autoStakeToken({
+        acc: referrer,
+        adminAccount,
+        token1,
+        token1Holder,
+        stakingContract,
+        stakeAmount: amount,
+      });
+
+      await autoSubscribeToStaking(
+        acc,
+        token1,
+        token1Holder,
+        stakingContract,
+        adminAccount
+      );
+
+      await token2
+        .connect(referralRewardPool)
+        .transfer(acc.address, amount.mul(2));
+      await token2
+        .connect(acc)
+        .approve(stakingContract.address, ethers.constants.MaxUint256);
+
+      await expect(
+        stakingContract.connect(acc).deposit(amount, true, referrer.address)
+      ).not.to.emit(referralManager, "ReferralAdded");
+
+      let userInfo = await referralManager.getUserInfo(referrer.address);
+      expect(userInfo.totalDividends).to.eq(0);
+
+      await stakingContract
+        .connect(adminAccount)
+        .updateShouldAddReferrerOnToken2Stake(true);
+
+      await expect(
+        stakingContract.connect(acc).deposit(amount, true, referrer.address)
+      ).to.emit(referralManager, "ReferralAdded");
+
+      userInfo = await referralManager.getUserInfo(referrer.address);
+      const waitedReward = await referralManager.calculateRefReward(amount, 1);
+      expect(userInfo.totalDividends).to.eq(waitedReward);
+      expect(userInfo.totalClaimedDividends).to.eq(0);
+    });
+    // can add user dividends only by authorized contracts
+    it("Should add user dividends only by authorized contracts", async () => {
+      const {
+        referralManager,
+        restSigners,
+        adminAccount,
+        token1,
+        token1Holder,
+        stakings,
+      } = await loadFixture(deployFixture);
+
+      const [acc, referrer] = restSigners;
+      const stakingContract = stakings[0].contract;
+
+      await referralManager
+        .connect(adminAccount)
+        .authorizeContract(stakingContract.address);
+
+      await autoSubscribeToReferral({
+        referralManager,
+        token: token1,
+        tokenHolder: token1Holder,
+        account: referrer,
+      });
+
+      await autoSubscribeToStaking(
+        acc,
+        token1,
+        token1Holder,
+        stakingContract,
+        adminAccount
+      );
+
+      const amount = (await stakingContract.MIN_STAKE_LIMIT()).mul(2);
+      await token1.connect(token1Holder).transfer(acc.address, amount);
+      await token1
+        .connect(acc)
+        .approve(stakingContract.address, ethers.constants.MaxUint256);
+
+      await expect(
+        stakingContract
+          .connect(acc)
+          .deposit(amount.div(2), false, referrer.address)
+      ).to.emit(referralManager, "ReferralAdded");
+
+      await referralManager
+        .connect(adminAccount)
+        .removeContractAuthorization(stakingContract.address);
+
+      await expect(
+        stakingContract
+          .connect(acc)
+          .deposit(amount.div(2), false, referrer.address)
+      ).to.be.revertedWith("Address not authorized");
+    });
+  });
+  //*
   describe("Roles / Administration", () => {
     it("Should authorize contract only by admin", async () => {
       const { referralManager, adminAccount, restSigners } = await loadFixture(
@@ -685,6 +1065,8 @@ describe("ReferralManager", () => {
 
       await grantAdminRole(referralManager, adminAccount, acc2);
 
+      await expect(referralManager.connect(acc2).updateReferralPercent(0, 300))
+        .to.be.reverted;
       await expect(referralManager.connect(acc2).updateReferralPercent(1, 300))
         .not.to.be.reverted;
 
@@ -808,11 +1190,85 @@ describe("ReferralManager", () => {
   });
 
   describe("Events", () => {
-    it("Should emit Subscribed on level subscription", async () => {});
-    it("Should emit Subscribed on full subscription", async () => {});
-    it("Should emit ReferralAdded", async () => {});
-  });
+    it("Should emit Subscribed on level subscription", async () => {
+      const {
+        referralManager,
+        restSigners,
+        referralLevels,
+        token1,
+        token1Holder,
+        levelSubscriptionCost,
+      } = await loadFixture(deployFixture);
 
+      const [acc] = restSigners;
+      const subscriptionCost = levelSubscriptionCost.mul(100);
+      await token1
+        .connect(token1Holder)
+        .transfer(acc.address, subscriptionCost);
+      await token1
+        .connect(acc)
+        .approve(referralManager.address, ethers.constants.MaxInt256);
+
+      let timestamp = (await time.latest()) + 100;
+      await time.setNextBlockTimestamp(timestamp);
+      await expect(referralManager.connect(acc).subscribeToLevels(5))
+        .to.emit(referralManager, "Subscribed")
+        .withArgs(acc.address, 5, timestamp);
+
+      await mine();
+      timestamp = (await time.latest()) + 100;
+      await time.setNextBlockTimestamp(timestamp);
+      await expect(referralManager.connect(acc).subscribeToAllLevels())
+        .to.emit(referralManager, "Subscribed")
+        .withArgs(acc.address, referralLevels, timestamp);
+    });
+    it("Should emit ReferralAdded", async () => {
+      const {
+        referralManager,
+        restSigners,
+        adminAccount,
+        token1,
+        token1Holder,
+        stakings,
+      } = await loadFixture(deployFixture);
+
+      const [acc, referrer] = restSigners;
+      const stakingContract = stakings[0].contract;
+
+      await referralManager
+        .connect(adminAccount)
+        .authorizeContract(stakingContract.address);
+
+      await autoSubscribeToReferral({
+        referralManager,
+        token: token1,
+        tokenHolder: token1Holder,
+        account: referrer,
+      });
+
+      await autoSubscribeToStaking(
+        acc,
+        token1,
+        token1Holder,
+        stakingContract,
+        adminAccount
+      );
+
+      const amount = await stakingContract.MIN_STAKE_LIMIT();
+      await token1.connect(token1Holder).transfer(acc.address, amount);
+      await token1
+        .connect(acc)
+        .approve(stakingContract.address, ethers.constants.MaxUint256);
+
+      await expect(
+        stakingContract.connect(acc).deposit(amount, false, referrer.address)
+      )
+        .to.emit(referralManager, "ReferralAdded")
+        .withArgs(referrer.address, acc.address);
+    });
+  });
+  // */
+  //*
   describe("Helpers", () => {
     // getReferralLevels
     it("Should return referral levels", async () => {
@@ -1036,6 +1492,7 @@ describe("ReferralManager", () => {
     it("Should calculate referrer reward", async () => {
       const { referralManager } = await loadFixture(deployFixture);
 
+      await expect(referralManager.calculateRefReward(100, 0)).to.be.reverted;
       expect(await referralManager.calculateRefReward(100, 1)).to.eq(100);
       expect(await referralManager.calculateRefReward(100, 2)).to.eq(90);
       expect(await referralManager.calculateRefReward(100, 3)).to.eq(80);
@@ -1075,4 +1532,5 @@ describe("ReferralManager", () => {
       );
     });
   });
+  //* /
 });

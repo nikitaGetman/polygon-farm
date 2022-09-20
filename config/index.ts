@@ -30,3 +30,11 @@ export const TOKEN1_INITIAL_SUPPLY = ethers.BigNumber.from(10)
 export const TOKEN2_INITIAL_SUPPLY = ethers.BigNumber.from(10)
   .pow(18)
   .mul(3_500_000);
+
+// 5 tokens
+export const REFERRAL_MANAGER_FULL_SUBSCRIPTION_COST = ethers.BigNumber.from(10)
+  .pow(18)
+  .mul(5);
+// 1 token
+export const REFERRAL_MANAGER_LEVEL_SUBSCRIPTION_COST =
+  ethers.BigNumber.from(10).pow(18);

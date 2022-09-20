@@ -6,6 +6,7 @@ task("deploy-staking", "Deploy staking contract with params")
   .addParam("token1", "Token1 address")
   .addParam("token2", "Token2 address")
   .addParam("rewardPool", "Reward pool address")
+  .addParam("referralManager", "Referral manager address")
   .addParam("durationDays", "Staking duration (days)", 0, types.int)
   .addParam("rewardPercent", "Reward for staking (percents)", 0, types.int)
   .addParam("subscriptionCost", "Cost of subscription", "0", types.string)
@@ -44,6 +45,7 @@ task("deploy-staking", "Deploy staking contract with params")
         taskArgs.token1,
         taskArgs.token2,
         rewardPoolAddress,
+        taskArgs.referralManager,
         taskArgs.durationDays,
         rewardPercent,
         taskArgs.subscriptionCost,

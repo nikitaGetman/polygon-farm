@@ -29,6 +29,7 @@ export async function autoSubscribeToReferral({
 
 type ReferralChainParams = Omit<SubscribeParams, "account"> & {
   levels?: number;
+  subscriptionLevels?: number;
   signers: SignerWithAddress[];
   adminAccount: SignerWithAddress;
   getStakeParams?: (
@@ -42,12 +43,13 @@ export async function createReferralChain({
   referralManager,
   stakingContract,
   levels,
+  subscriptionLevels,
   signers,
   adminAccount,
   getStakeParams,
 }: ReferralChainParams) {
-  const levelsToSubscribe =
-    levels || (await referralManager.getReferralLevels());
+  const referralLevels = (await referralManager.getReferralLevels()).toNumber();
+  const levelsToSubscribe = levels || referralLevels;
 
   await referralManager
     .connect(adminAccount)
@@ -66,6 +68,7 @@ export async function createReferralChain({
       tokenHolder,
       account: referrer,
       referralManager,
+      levels: Math.min(subscriptionLevels || levelsToSubscribe, referralLevels),
     });
 
     const defaultParams = {

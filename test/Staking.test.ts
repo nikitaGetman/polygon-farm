@@ -14,7 +14,7 @@ import {
 } from "typechain-types";
 import {
   autoStakeToken,
-  autoSubscribe,
+  autoSubscribeToStaking,
   grantAdminRole,
   waitForStakeFinished,
 } from "./helpers";
@@ -191,7 +191,7 @@ describe("Staking", function () {
           1,
           1,
           1,
-          0
+          1
         )
       ).to.be.reverted;
 
@@ -349,7 +349,7 @@ describe("Staking", function () {
 
       const [acc1] = restSigners;
 
-      await autoSubscribe(
+      await autoSubscribeToStaking(
         acc1,
         token1,
         token1Holder,
@@ -422,7 +422,7 @@ describe("Staking", function () {
 
       const [acc1] = restSigners;
 
-      await autoSubscribe(
+      await autoSubscribeToStaking(
         acc1,
         token1,
         token1Holder,
@@ -456,7 +456,7 @@ describe("Staking", function () {
 
       const [acc1, acc2] = restSigners;
 
-      await autoSubscribe(
+      await autoSubscribeToStaking(
         acc1,
         token1,
         token1Holder,
@@ -1177,6 +1177,28 @@ describe("Staking", function () {
         newReferralManager.address
       );
     });
+
+    it("Should update shouldAddReferrerOnToken2Stake flag only by Admin", async () => {
+      const { stakingContract, adminAccount, restSigners } = await loadFixture(
+        deployFixture
+      );
+
+      const [acc1, acc2] = restSigners;
+
+      await expect(
+        stakingContract.connect(acc1).updateShouldAddReferrerOnToken2Stake(true)
+      ).to.be.reverted;
+
+      await grantAdminRole(stakingContract, adminAccount, acc2);
+
+      await expect(
+        stakingContract.connect(acc2).updateShouldAddReferrerOnToken2Stake(true)
+      ).not.to.be.reverted;
+
+      expect(await stakingContract.shouldAddReferrerOnToken2Stake()).to.eq(
+        true
+      );
+    });
   });
 
   // */
@@ -1209,7 +1231,7 @@ describe("Staking", function () {
       } = await loadFixture(deployFixture);
 
       const [acc] = restSigners;
-      await autoSubscribe(
+      await autoSubscribeToStaking(
         acc,
         token1,
         token1Holder,

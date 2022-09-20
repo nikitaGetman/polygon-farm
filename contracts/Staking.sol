@@ -37,6 +37,7 @@ contract Staking is AccessControl, Subscribable {
     uint256 public reward; // percents, e.g. 70 == 7%
 
     bool public isActive;
+    bool public shouldAddReferrerOnToken2Stake;
 
     uint256 public totalStakesToken1No;
     uint256 public totalStakesToken2No;
@@ -142,12 +143,15 @@ contract Staking is AccessControl, Subscribable {
             totalStakedToken1 += depositAmount_;
             totalStakesToken1No++;
         }
-
-        address userReferrer = referralManager.getUserReferrer(_msgSender());
-        if (userReferrer == address(0) && referrer != address(0)) {
-            referralManager.setUserReferrer(_msgSender(), referrer);
+        if (!isToken2_ || shouldAddReferrerOnToken2Stake) {
+            address userReferrer = referralManager.getUserReferrer(
+                _msgSender()
+            );
+            if (userReferrer == address(0) && referrer != address(0)) {
+                referralManager.setUserReferrer(_msgSender(), referrer);
+            }
+            _assignRefRewards(_msgSender(), depositAmount_);
         }
-        _assignRefRewards(_msgSender(), depositAmount_);
 
         emit Staked(
             _msgSender(),
@@ -329,6 +333,13 @@ contract Staking is AccessControl, Subscribable {
     function setActive(bool value_) public onlyRole(DEFAULT_ADMIN_ROLE) {
         isActive = value_;
         emit ActivityChanged(value_, _msgSender());
+    }
+
+    function updateShouldAddReferrerOnToken2Stake(bool value)
+        public
+        onlyRole(DEFAULT_ADMIN_ROLE)
+    {
+        shouldAddReferrerOnToken2Stake = value;
     }
 
     function updateRewardPool(address poolAddress_)

@@ -5,7 +5,7 @@ import { ethers } from "hardhat";
 import { BigNumber } from "ethers";
 import { Address } from "hardhat-deploy/types";
 
-export async function autoSubscribe(
+export async function autoSubscribeToStaking(
   acc: SignerWithAddress,
   token: Token1,
   tokenHolder: SignerWithAddress,
@@ -47,7 +47,13 @@ export async function autoStakeToken({
   isToken2 = false,
   referrer,
 }: StakeTokenParams) {
-  await autoSubscribe(acc, token1, token1Holder, stakingContract, adminAccount);
+  await autoSubscribeToStaking(
+    acc,
+    token1,
+    token1Holder,
+    stakingContract,
+    adminAccount
+  );
 
   const amount = stakeAmount || (await stakingContract.MIN_STAKE_LIMIT());
   if (isToken2 && token2 && token2Holder) {
