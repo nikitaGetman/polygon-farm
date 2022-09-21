@@ -75,19 +75,31 @@ contract ReferralManager is IReferralManager, AccessControl {
         levelSubscriptionCost = levelSubscriptionCost_;
     }
 
-    function subscribeToLevels(uint256 levels) public {
-        require(levels > 0, "Too low levels");
-        require(levels <= LEVELS, "Too much levels");
+    function subscribeToLevel(uint256 level) public {
+        require(level > 0, "Too low level");
+        require(level <= LEVELS, "Too big level");
 
-        uint256 price = levels * levelSubscriptionCost;
-        subscriptionToken.burnFrom(_msgSender(), price);
+        address subscriber = _msgSender();
 
-        _setSubscription(_msgSender(), levels);
+        subscriptionToken.burnFrom(subscriber, levelSubscriptionCost);
+        users[subscriber].activeLevels[level - 1] = _getSubscriptionEnd();
+
+        users[subscriber].isActive = true;
+        emit Subscribed(subscriber, level, block.timestamp);
     }
 
     function subscribeToAllLevels() public {
-        subscriptionToken.burnFrom(_msgSender(), fullSubscriptionCost);
-        _setSubscription(_msgSender(), LEVELS);
+        address subscriber = _msgSender();
+
+        subscriptionToken.burnFrom(subscriber, fullSubscriptionCost);
+        uint256 subscriptionEnd = _getSubscriptionEnd();
+
+        for (uint256 i = 0; i < LEVELS; i++) {
+            users[subscriber].activeLevels[i] = subscriptionEnd;
+        }
+
+        users[subscriber].isActive = true;
+        emit Subscribed(subscriber, LEVELS + 1, block.timestamp);
     }
 
     function addUserDividends(address user, uint256 reward)
@@ -129,6 +141,7 @@ contract ReferralManager is IReferralManager, AccessControl {
 
         address nextReferrer = referrer;
         for (uint256 i = 0; i < LEVELS; i++) {
+            require(nextReferrer != user, "Cyclic chain!");
             User storage ref = users[nextReferrer];
             if (ref.isActive) {
                 ref.refCount[i] += 1;
@@ -139,18 +152,8 @@ contract ReferralManager is IReferralManager, AccessControl {
         emit ReferralAdded(referrer, user);
     }
 
-    function _setSubscription(address subscriber, uint256 levels) internal {
-        uint256 subscriptionEnd = block.timestamp +
-            SUBSCRIPTION_PERIOD_DAYS *
-            1 days;
-
-        for (uint256 i = 0; i < levels; i++) {
-            users[subscriber].activeLevels[i] = subscriptionEnd;
-        }
-
-        users[subscriber].isActive = true;
-
-        emit Subscribed(subscriber, levels, block.timestamp);
+    function _getSubscriptionEnd() internal view returns (uint256) {
+        return block.timestamp + SUBSCRIPTION_PERIOD_DAYS * 1 days;
     }
 
     // --------- Helper functions ---------
@@ -175,11 +178,19 @@ contract ReferralManager is IReferralManager, AccessControl {
         totalDividends = user.totalRefDividends;
         totalClaimedDividends = user.totalRefDividendsClaimed;
         referrals_1_lvl = user.referrals_1_lvl.length;
-        totalReferrals = _getUserReferralsCount(userAddress, 0);
+        totalReferrals = _getUserTotalReferralsCount(userAddress, 0);
     }
 
     function getUserReferrer(address user) public view returns (address) {
         return users[user].referrer;
+    }
+
+    function getUserLvlReferralsCount(address userAddress, uint256 level)
+        public
+        view
+        returns (uint256)
+    {
+        return users[userAddress].refCount[level - 1];
     }
 
     function getUser1LvlReferrals(address userAddress)
@@ -190,11 +201,10 @@ contract ReferralManager is IReferralManager, AccessControl {
         return users[userAddress].referrals_1_lvl;
     }
 
-    function _getUserReferralsCount(address userAddress, uint256 currentLevel)
-        internal
-        view
-        returns (uint256)
-    {
+    function _getUserTotalReferralsCount(
+        address userAddress,
+        uint256 currentLevel
+    ) internal view returns (uint256) {
         User storage user = users[userAddress];
         uint256 referralCounter = 0;
 
@@ -211,7 +221,7 @@ contract ReferralManager is IReferralManager, AccessControl {
         view
         returns (Referral[] memory)
     {
-        uint256 referralsCount = _getUserReferralsCount(
+        uint256 referralsCount = _getUserTotalReferralsCount(
             userAddress,
             currentLevel
         );

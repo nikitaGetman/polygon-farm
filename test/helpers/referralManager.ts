@@ -24,7 +24,9 @@ export async function autoSubscribeToReferral({
     .connect(account)
     .approve(referralManager.address, subscriptionCost);
 
-  await referralManager.connect(account).subscribeToLevels(levelsToSubscribe);
+  for (let i = 1; i <= levelsToSubscribe; i++) {
+    await referralManager.connect(account).subscribeToLevel(i);
+  }
 }
 
 type ReferralChainParams = Omit<SubscribeParams, "account"> & {

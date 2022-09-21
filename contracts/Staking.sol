@@ -27,7 +27,7 @@ contract Staking is AccessControl, Subscribable {
         uint256 currentToken1Staked;
     }
 
-    mapping(address => User) public users;
+    mapping(address => User) private users;
 
     uint256 public PERCENTS_DIVIDER = 1000;
     uint256 public TIME_STEP = 1 days;
@@ -104,10 +104,10 @@ contract Staking is AccessControl, Subscribable {
             depositAmount_ >= MIN_STAKE_LIMIT,
             "Stake amount less than minimum value"
         );
-        uint256 profit = calculateStakeProfit(depositAmount_);
+        uint256 stakingReward = calculateStakeProfit(depositAmount_);
 
         require(
-            profit <= token1.balanceOf(_rewardPool),
+            stakingReward <= token1.balanceOf(_rewardPool),
             "Not enough tokens for reward"
         );
         if (isToken2_) {
@@ -115,7 +115,7 @@ contract Staking is AccessControl, Subscribable {
         } else {
             token1.transferFrom(_msgSender(), address(this), depositAmount_);
         }
-        token1.transferFrom(_rewardPool, address(this), profit);
+        token1.transferFrom(_rewardPool, address(this), stakingReward);
 
         User storage user = users[_msgSender()];
         uint256 stakeId = user.stakes.length;
@@ -126,7 +126,7 @@ contract Staking is AccessControl, Subscribable {
             block.timestamp,
             block.timestamp + durationDays * TIME_STEP,
             reward,
-            profit,
+            stakingReward,
             false,
             isToken2_
         );
@@ -150,7 +150,7 @@ contract Staking is AccessControl, Subscribable {
             if (userReferrer == address(0) && referrer != address(0)) {
                 referralManager.setUserReferrer(_msgSender(), referrer);
             }
-            _assignRefRewards(_msgSender(), depositAmount_);
+            _assignRefRewards(_msgSender(), stakingReward);
         }
 
         emit Staked(
@@ -190,7 +190,9 @@ contract Staking is AccessControl, Subscribable {
         );
     }
 
-    function _assignRefRewards(address depositSender, uint256 amount) internal {
+    function _assignRefRewards(address depositSender, uint256 stakingReward)
+        internal
+    {
         uint256 totalLevels = referralManager.getReferralLevels();
         address currentLevelUser = depositSender;
 
@@ -202,7 +204,7 @@ contract Staking is AccessControl, Subscribable {
             if (referrer != address(0)) {
                 if (referralManager.userHasSubscription(referrer, level)) {
                     uint256 refReward = referralManager.calculateRefReward(
-                        amount,
+                        stakingReward,
                         level
                     );
 

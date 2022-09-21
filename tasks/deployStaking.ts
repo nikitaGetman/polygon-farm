@@ -22,7 +22,7 @@ task("deploy-staking", "Deploy staking contract with params")
     "deployer",
     types.string
   )
-  .addOptionalParam("contractName", "Account name or address")
+  .addOptionalParam("contractName", "Account name or address", "", types.string)
   .setAction(async (taskArgs, { ethers, getNamedAccounts, deployments }) => {
     const deployer =
       (await getNamedAccounts())[taskArgs.account] || taskArgs.account;
@@ -53,6 +53,7 @@ task("deploy-staking", "Deploy staking contract with params")
       ],
       log: true,
       autoMine: true,
+      gasPrice: ethers.BigNumber.from(10).pow(10),
     });
 
     // Approve staking pool tokens for staking contract
@@ -68,6 +69,13 @@ task("deploy-staking", "Deploy staking contract with params")
       await ethers.getSigner(admin)
     );
     await token2.addToWhitelist([staking.address]);
+
+    // Authorize staking contract for referral manager
+    const referralManager = await ethers.getContract(
+      "ReferralManager",
+      await ethers.getSigner(admin)
+    );
+    await referralManager.authorizeContract(staking.address);
 
     console.log(
       `Staking contract deployed to "${staking.address}". Duration: ${taskArgs.durationDays}. Reward: ${taskArgs.rewardPercent}. Reward pool: "${rewardPoolAddress}"`
