@@ -28,6 +28,7 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
       account: deployer,
       contractName,
       referralManager: referralManagerAddress,
+      squadsManager: ethers.constants.AddressZero,
     });
 
     await deployments.save(contractName, stakingDeploy);

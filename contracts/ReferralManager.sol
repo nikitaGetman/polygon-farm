@@ -120,10 +120,18 @@ contract ReferralManager is IReferralManager, AccessControl {
         rewardToken.transferFrom(rewardPool, _msgSender(), amount);
     }
 
+    function setMyReferrer(address referrer) public {
+        return _setUserReferrer(_msgSender(), referrer);
+    }
+
     function setUserReferrer(address user, address referrer)
         public
         onlyAuthorizedContracts
     {
+        return _setUserReferrer(user, referrer);
+    }
+
+    function _setUserReferrer(address user, address referrer) internal {
         require(user != address(0), "User is zero address");
         require(referrer != address(0), "Referrer is zero address");
         require(referrer != user, "Referrer can not be user");
@@ -150,10 +158,6 @@ contract ReferralManager is IReferralManager, AccessControl {
         }
 
         emit ReferralAdded(referrer, user);
-    }
-
-    function _getSubscriptionEnd() internal view returns (uint256) {
-        return block.timestamp + SUBSCRIPTION_PERIOD_DAYS * 1 days;
     }
 
     // --------- Helper functions ---------
@@ -270,6 +274,10 @@ contract ReferralManager is IReferralManager, AccessControl {
         require(level > 0);
         require(level <= LEVELS);
         return (amount * REFERRAL_PERCENTS[level - 1]) / 100;
+    }
+
+    function _getSubscriptionEnd() internal view returns (uint256) {
+        return block.timestamp + SUBSCRIPTION_PERIOD_DAYS * 1 days;
     }
 
     function isAuthorized(address contractAddress) public view returns (bool) {

@@ -1,5 +1,5 @@
 import { ethers } from "ethers";
-import { Staking } from "types/index";
+import { Squad, Staking } from "types/index";
 
 export const STAKINGS: Staking[] = [
   {
@@ -20,6 +20,30 @@ export const STAKINGS: Staking[] = [
   //   subscriptionCost: ethers.BigNumber.from(10).pow(18).mul(20).toString(),
   //   subscriptionDurationDays: 365,
   // },
+];
+
+export const SQUADS: Squad[] = [
+  {
+    subscriptionCost: ethers.BigNumber.from(10).pow(18).toString(), // 1 tokens
+    reward: ethers.BigNumber.from(10).pow(20).toString(), // 100 tokens
+    stakingThreshold: ethers.BigNumber.from(10).pow(20).toString(), // from 100 tokens
+    squadSize: 6,
+    authorizedStakingIndex: 1,
+  },
+  {
+    subscriptionCost: ethers.BigNumber.from(10).pow(18).mul(5).toString(), // 5 tokens
+    reward: ethers.BigNumber.from(10).pow(20).mul(5).toString(), // 500 tokens
+    stakingThreshold: ethers.BigNumber.from(10).pow(20).mul(5).toString(), // from 500 tokens
+    squadSize: 6,
+    authorizedStakingIndex: 1,
+  },
+  {
+    subscriptionCost: ethers.BigNumber.from(10).pow(19).toString(), // 10 tokens
+    reward: ethers.BigNumber.from(10).pow(21).toString(), // 1000 tokens
+    stakingThreshold: ethers.BigNumber.from(10).pow(21).toString(), // from 1000 tokens
+    squadSize: 6,
+    authorizedStakingIndex: 1,
+  },
 ];
 
 export const VENDOR_SELL_SWAP_RATE = 1000; // = 1, swap rate divider is 1000

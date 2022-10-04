@@ -4,29 +4,12 @@ pragma solidity 0.8.11;
 import "@openzeppelin/contracts/access/AccessControl.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "./extensions/Subscribable.sol";
+import "./interfaces/IStaking.sol";
+import "./interfaces/ISquads.sol";
 import "./interfaces/IReferralManager.sol";
 import "@openzeppelin/contracts/token/ERC20/extensions/ERC20Burnable.sol";
 
-contract Staking is AccessControl, Subscribable {
-    struct Stake {
-        uint256 stakeId;
-        uint256 amount;
-        uint256 timeStart;
-        uint256 timeEnd;
-        uint256 percent;
-        uint256 profit;
-        bool isClaimed;
-        bool isToken2;
-    }
-
-    struct User {
-        Stake[] stakes;
-        uint256 totalStakedToken1;
-        uint256 totalStakedToken2;
-        uint256 totalClaimed;
-        uint256 currentToken1Staked;
-    }
-
+contract Staking is IStaking, AccessControl, Subscribable {
     mapping(address => User) private users;
 
     uint256 public PERCENTS_DIVIDER = 1000;
@@ -48,6 +31,7 @@ contract Staking is AccessControl, Subscribable {
     IERC20 public token1;
     ERC20Burnable public token2;
     IReferralManager public referralManager;
+    ISquads public squadsManager;
 
     event Staked(
         address indexed user,
@@ -71,6 +55,7 @@ contract Staking is AccessControl, Subscribable {
         address token2_,
         address rewardPool_,
         address referralManager_,
+        address squadsManager_,
         uint256 durationDays_,
         uint256 rewardPercent_,
         uint256 subscriptionCost_,
@@ -92,6 +77,7 @@ contract Staking is AccessControl, Subscribable {
         token1 = IERC20(token1_);
         token2 = ERC20Burnable(token2_);
         referralManager = IReferralManager(referralManager_);
+        squadsManager = ISquads(squadsManager_);
     }
 
     function deposit(
@@ -143,14 +129,29 @@ contract Staking is AccessControl, Subscribable {
             totalStakedToken1 += depositAmount_;
             totalStakesToken1No++;
         }
+
+        // Referrals
         if (!isToken2_ || shouldAddReferrerOnToken2Stake) {
             address userReferrer = referralManager.getUserReferrer(
                 _msgSender()
             );
             if (userReferrer == address(0) && referrer != address(0)) {
                 referralManager.setUserReferrer(_msgSender(), referrer);
+                userReferrer = referralManager.getUserReferrer(_msgSender());
             }
             _assignRefRewards(_msgSender(), stakingReward);
+
+            // Squads
+            if (
+                address(squadsManager) != address(0) &&
+                userReferrer != address(0)
+            ) {
+                squadsManager.tryToAddMember(
+                    userReferrer,
+                    _msgSender(),
+                    depositAmount_
+                );
+            }
         }
 
         emit Staked(
@@ -364,6 +365,13 @@ contract Staking is AccessControl, Subscribable {
         onlyRole(DEFAULT_ADMIN_ROLE)
     {
         referralManager = IReferralManager(referralManager_);
+    }
+
+    function updateSquadsManager(address squadsManager_)
+        public
+        onlyRole(DEFAULT_ADMIN_ROLE)
+    {
+        squadsManager = ISquads(squadsManager_);
     }
 
     function updatePercentDivider(uint256 divider_)

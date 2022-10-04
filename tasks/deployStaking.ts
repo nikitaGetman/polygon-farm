@@ -11,6 +11,12 @@ task("deploy-staking", "Deploy staking contract with params")
   .addParam("rewardPercent", "Reward for staking (percents)", 0, types.int)
   .addParam("subscriptionCost", "Cost of subscription", "0", types.string)
   .addOptionalParam(
+    "squadsManager",
+    "Squads manager address",
+    "0x0000000000000000000000000000000000000000",
+    types.string
+  )
+  .addOptionalParam(
     "subscriptionPeriodDays",
     "Period of subscription",
     365,
@@ -46,6 +52,7 @@ task("deploy-staking", "Deploy staking contract with params")
         taskArgs.token2,
         rewardPoolAddress,
         taskArgs.referralManager,
+        taskArgs.squadsManager,
         taskArgs.durationDays,
         rewardPercent,
         taskArgs.subscriptionCost,

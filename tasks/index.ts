@@ -9,3 +9,4 @@ import "./subscribeToStaking";
 import "./depositStaking";
 import "./snapshot";
 import "./roles";
+import "./setupSquads";

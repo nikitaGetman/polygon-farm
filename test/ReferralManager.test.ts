@@ -3,141 +3,22 @@ import {
   mine,
   time,
 } from "@nomicfoundation/hardhat-network-helpers";
-import { assert, expect } from "chai";
+import { expect } from "chai";
 import { ethers } from "hardhat";
 import { BigNumber } from "ethers";
-import {
-  Staking__factory,
-  Token1__factory,
-  Token2__factory,
-  ReferralManager__factory,
-  Staking,
-} from "typechain-types";
+import { ReferralManager__factory } from "typechain-types";
 import {
   autoStakeToken,
   autoSubscribeToStaking,
   autoSubscribeToReferral,
   createReferralChain,
   grantAdminRole,
+  deployReferralManagerFixture,
 } from "./helpers";
 
 const secondsInDay = 60 * 60 * 24;
 
 describe("ReferralManager", () => {
-  async function deployFixture() {
-    const [
-      adminAccount,
-      token1Holder,
-      stakingRewardPool,
-      token2Holder,
-      referralRewardPool,
-      ...restSigners
-    ] = await ethers.getSigners();
-
-    // Deploy Tokens
-    const initialSupply = BigNumber.from(10).pow(18).mul(21_000_000);
-    const token1 = await new Token1__factory(adminAccount).deploy(
-      initialSupply,
-      token1Holder.address
-    );
-    await token1.deployed();
-    await token1
-      .connect(token1Holder)
-      .transfer(stakingRewardPool.address, initialSupply.div(100));
-
-    const token2 = await new Token2__factory(adminAccount).deploy(
-      initialSupply,
-      token2Holder.address
-    );
-    await token2.deployed();
-    await token2
-      .connect(token2Holder)
-      .transfer(referralRewardPool.address, initialSupply);
-
-    // Deploy ReferralManager
-    const referralLevels = 10;
-    const fullSubscriptionCost = BigNumber.from(10).pow(18).mul(5);
-    const levelSubscriptionCost = BigNumber.from(10).pow(18);
-
-    const referralManager = await new ReferralManager__factory(
-      adminAccount
-    ).deploy(
-      token1.address,
-      token2.address,
-      referralRewardPool.address,
-      fullSubscriptionCost,
-      levelSubscriptionCost
-    );
-    await referralManager.deployed();
-
-    // Deploy Staking contracts
-    const minStakeLimit = BigNumber.from(10).pow(17);
-    const stakings = [
-      {
-        durationDays: 1,
-        rewardPercent: 100,
-        subscriptionCost: BigNumber.from(10).pow(18),
-        subscriptionPeriod: 365,
-        contract: {} as Staking,
-      },
-      {
-        durationDays: 3,
-        rewardPercent: 300,
-        subscriptionCost: BigNumber.from(10).pow(18),
-        subscriptionPeriod: 365,
-        contract: {} as Staking,
-      },
-    ];
-
-    for (let i = 0; i < stakings.length; i++) {
-      const stakingContract = await new Staking__factory(adminAccount).deploy(
-        token1.address,
-        token2.address,
-        stakingRewardPool.address,
-        referralManager.address,
-        stakings[i].durationDays,
-        stakings[i].rewardPercent,
-        stakings[i].subscriptionCost,
-        stakings[i].subscriptionPeriod
-      );
-      await stakingContract.deployed();
-
-      await token1
-        .connect(stakingRewardPool)
-        .approve(stakingContract.address, ethers.constants.MaxUint256);
-      await token2
-        .connect(adminAccount)
-        .addToWhitelist([stakingContract.address, referralManager.address]);
-
-      stakings[i].contract = stakingContract;
-    }
-
-    // Add Approves
-    await token2
-      .connect(referralRewardPool)
-      .approve(referralManager.address, ethers.constants.MaxUint256);
-    await token2
-      .connect(adminAccount)
-      .addToWhitelist([referralRewardPool.address]);
-
-    return {
-      adminAccount,
-      token1Holder,
-      token2Holder,
-      token1,
-      token2,
-      initialSupply,
-      referralManager,
-      fullSubscriptionCost,
-      levelSubscriptionCost,
-      referralLevels,
-      stakings,
-      stakingRewardPool,
-      referralRewardPool,
-      restSigners,
-      minStakeLimit,
-    };
-  }
   //*
   describe("Deployment", () => {
     it("Should not deploy with incorrect initial data", async () => {
@@ -148,7 +29,7 @@ describe("ReferralManager", () => {
         adminAccount,
         fullSubscriptionCost,
         levelSubscriptionCost,
-      } = await loadFixture(deployFixture);
+      } = await loadFixture(deployReferralManagerFixture);
 
       const referralManager = new ReferralManager__factory(adminAccount);
 
@@ -207,7 +88,7 @@ describe("ReferralManager", () => {
         adminAccount,
         fullSubscriptionCost,
         levelSubscriptionCost,
-      } = await loadFixture(deployFixture);
+      } = await loadFixture(deployReferralManagerFixture);
 
       const referralManager = await new ReferralManager__factory(
         adminAccount
@@ -243,7 +124,7 @@ describe("ReferralManager", () => {
         token1,
         token1Holder,
         fullSubscriptionCost,
-      } = await loadFixture(deployFixture);
+      } = await loadFixture(deployReferralManagerFixture);
 
       const [acc] = restSigners;
 
@@ -286,7 +167,7 @@ describe("ReferralManager", () => {
         token1,
         token1Holder,
         levelSubscriptionCost,
-      } = await loadFixture(deployFixture);
+      } = await loadFixture(deployReferralManagerFixture);
 
       const [acc] = restSigners;
       await token1
@@ -330,7 +211,7 @@ describe("ReferralManager", () => {
         token1Holder,
         fullSubscriptionCost,
         levelSubscriptionCost,
-      } = await loadFixture(deployFixture);
+      } = await loadFixture(deployReferralManagerFixture);
 
       const [acc1, acc2, acc3] = restSigners;
 
@@ -423,7 +304,7 @@ describe("ReferralManager", () => {
         adminAccount,
         token1,
         token1Holder,
-      } = await loadFixture(deployFixture);
+      } = await loadFixture(deployReferralManagerFixture);
 
       const [acc, referrer, notAuthorizedAcc, authorizedAcc] = restSigners;
 
@@ -464,7 +345,7 @@ describe("ReferralManager", () => {
         adminAccount,
         token1,
         token1Holder,
-      } = await loadFixture(deployFixture);
+      } = await loadFixture(deployReferralManagerFixture);
 
       const [acc, referrer, authorizedAcc] = restSigners;
 
@@ -534,7 +415,7 @@ describe("ReferralManager", () => {
         adminAccount,
         token1,
         token1Holder,
-      } = await loadFixture(deployFixture);
+      } = await loadFixture(deployReferralManagerFixture);
 
       const [acc1, acc2, acc3, referrer, authorizedAcc] = restSigners;
 
@@ -604,6 +485,32 @@ describe("ReferralManager", () => {
       expect(referral3Info.totalReferrals).to.eq(0);
       expect(referral3Info.referrals_1_lvl).to.eq(0);
     });
+
+    it("Should set my referrer", async () => {
+      const { referralManager, restSigners, token1, token1Holder } =
+        await loadFixture(deployReferralManagerFixture);
+
+      const [referrer, acc] = restSigners;
+
+      await autoSubscribeToReferral({
+        referralManager,
+        token: token1,
+        tokenHolder: token1Holder,
+        account: referrer,
+      });
+
+      await referralManager.connect(acc).setMyReferrer(referrer.address);
+
+      const referrerInfo = await referralManager.getUserInfo(referrer.address);
+      const referralInfo = await referralManager.getUserInfo(acc.address);
+
+      expect(referrerInfo.totalReferrals).to.eq(1);
+      expect(referrerInfo.referrals_1_lvl).to.eq(1);
+
+      expect(referralInfo.referrer).to.eq(referrer.address);
+      expect(referralInfo.totalReferrals).to.eq(0);
+      expect(referralInfo.referrals_1_lvl).to.eq(0);
+    });
   });
   // */
   describe("Referral rewards", () => {
@@ -617,7 +524,7 @@ describe("ReferralManager", () => {
         token1,
         token1Holder,
         stakings,
-      } = await loadFixture(deployFixture);
+      } = await loadFixture(deployReferralManagerFixture);
 
       const [acc, referrer] = restSigners;
       const stakingContract = stakings[0].contract;
@@ -710,7 +617,7 @@ describe("ReferralManager", () => {
         token1,
         token1Holder,
         stakings,
-      } = await loadFixture(deployFixture);
+      } = await loadFixture(deployReferralManagerFixture);
 
       const [referrer] = restSigners;
       const stakingContract = stakings[0].contract;
@@ -762,7 +669,7 @@ describe("ReferralManager", () => {
         token1,
         token1Holder,
         stakings,
-      } = await loadFixture(deployFixture);
+      } = await loadFixture(deployReferralManagerFixture);
 
       const [referrer] = restSigners;
       const stakingContract = stakings[0].contract;
@@ -809,7 +716,7 @@ describe("ReferralManager", () => {
         token1,
         token1Holder,
         stakings,
-      } = await loadFixture(deployFixture);
+      } = await loadFixture(deployReferralManagerFixture);
 
       const [referrer] = restSigners;
       const stakingContract = stakings[0].contract;
@@ -855,7 +762,7 @@ describe("ReferralManager", () => {
         token1,
         token1Holder,
         stakings,
-      } = await loadFixture(deployFixture);
+      } = await loadFixture(deployReferralManagerFixture);
 
       const [acc, referrer] = restSigners;
       const stakingContract = stakings[0].contract;
@@ -936,7 +843,7 @@ describe("ReferralManager", () => {
         stakings,
         token2,
         referralRewardPool,
-      } = await loadFixture(deployFixture);
+      } = await loadFixture(deployReferralManagerFixture);
 
       const [acc, referrer] = restSigners;
       const stakingContract = stakings[0].contract;
@@ -1010,7 +917,7 @@ describe("ReferralManager", () => {
         token1,
         token1Holder,
         stakings,
-      } = await loadFixture(deployFixture);
+      } = await loadFixture(deployReferralManagerFixture);
 
       const [acc, referrer] = restSigners;
       const stakingContract = stakings[0].contract;
@@ -1062,7 +969,7 @@ describe("ReferralManager", () => {
   describe("Roles / Administration", () => {
     it("Should authorize contract only by admin", async () => {
       const { referralManager, adminAccount, restSigners } = await loadFixture(
-        deployFixture
+        deployReferralManagerFixture
       );
 
       const [acc1, acc2, newContract] = restSigners;
@@ -1087,7 +994,7 @@ describe("ReferralManager", () => {
 
     it("Should remove contract authorization only by admin", async () => {
       const { referralManager, adminAccount, restSigners } = await loadFixture(
-        deployFixture
+        deployReferralManagerFixture
       );
 
       const [acc1, acc2, newContract] = restSigners;
@@ -1120,7 +1027,7 @@ describe("ReferralManager", () => {
 
     it("Should update subscription period only by admin", async () => {
       const { referralManager, adminAccount, restSigners } = await loadFixture(
-        deployFixture
+        deployReferralManagerFixture
       );
 
       const [acc1, acc2] = restSigners;
@@ -1139,7 +1046,7 @@ describe("ReferralManager", () => {
 
     it("Should update referral percent only by admin", async () => {
       const { referralManager, adminAccount, restSigners } = await loadFixture(
-        deployFixture
+        deployReferralManagerFixture
       );
 
       const [acc1, acc2] = restSigners;
@@ -1163,7 +1070,7 @@ describe("ReferralManager", () => {
 
     it("Should update subscription token only by admin", async () => {
       const { referralManager, adminAccount, restSigners, token1 } =
-        await loadFixture(deployFixture);
+        await loadFixture(deployReferralManagerFixture);
 
       const [acc1, acc2, newToken] = restSigners;
 
@@ -1183,7 +1090,7 @@ describe("ReferralManager", () => {
 
     it("Should update reward token only by admin", async () => {
       const { referralManager, adminAccount, restSigners, token2 } =
-        await loadFixture(deployFixture);
+        await loadFixture(deployReferralManagerFixture);
 
       const [acc1, acc2, newToken] = restSigners;
 
@@ -1203,7 +1110,7 @@ describe("ReferralManager", () => {
 
     it("Should update reward pool only by admin", async () => {
       const { referralManager, adminAccount, restSigners } = await loadFixture(
-        deployFixture
+        deployReferralManagerFixture
       );
 
       const [acc1, acc2, newPool] = restSigners;
@@ -1225,7 +1132,7 @@ describe("ReferralManager", () => {
         adminAccount,
         restSigners,
         levelSubscriptionCost,
-      } = await loadFixture(deployFixture);
+      } = await loadFixture(deployReferralManagerFixture);
 
       const [acc1, acc2] = restSigners;
       const newCost = BigNumber.from(10).pow(10);
@@ -1252,7 +1159,7 @@ describe("ReferralManager", () => {
         adminAccount,
         restSigners,
         fullSubscriptionCost,
-      } = await loadFixture(deployFixture);
+      } = await loadFixture(deployReferralManagerFixture);
 
       const [acc1, acc2] = restSigners;
       const newCost = BigNumber.from(10).pow(10);
@@ -1283,7 +1190,7 @@ describe("ReferralManager", () => {
         token1,
         token1Holder,
         levelSubscriptionCost,
-      } = await loadFixture(deployFixture);
+      } = await loadFixture(deployReferralManagerFixture);
 
       const [acc] = restSigners;
       const subscriptionCost = levelSubscriptionCost.mul(100);
@@ -1315,7 +1222,7 @@ describe("ReferralManager", () => {
         token1,
         token1Holder,
         stakings,
-      } = await loadFixture(deployFixture);
+      } = await loadFixture(deployReferralManagerFixture);
 
       const [acc, referrer] = restSigners;
       const stakingContract = stakings[0].contract;
@@ -1358,7 +1265,7 @@ describe("ReferralManager", () => {
     // getReferralLevels
     it("Should return referral levels", async () => {
       const { referralManager, referralLevels } = await loadFixture(
-        deployFixture
+        deployReferralManagerFixture
       );
 
       expect(await referralManager.getReferralLevels()).to.eq(referralLevels);
@@ -1373,7 +1280,7 @@ describe("ReferralManager", () => {
         token1,
         token1Holder,
         stakings,
-      } = await loadFixture(deployFixture);
+      } = await loadFixture(deployReferralManagerFixture);
 
       let secondLevelPartners = 3;
       const getStakeParams = (level: number, params: any) => {
@@ -1399,8 +1306,6 @@ describe("ReferralManager", () => {
       expect(accInfo.totalReferrals).to.eq(6);
       expect(accInfo.referrals_1_lvl).to.eq(3);
       expect(accInfo.referrer).to.eq(referrer.address);
-      // TODO: why is zero?
-      expect(accInfo.totalClaimedDividends).to.eq(0);
       expect(accInfo.totalClaimedDividends).to.eq(0);
     });
     // getUserReferrer
@@ -1411,7 +1316,7 @@ describe("ReferralManager", () => {
         adminAccount,
         token1,
         token1Holder,
-      } = await loadFixture(deployFixture);
+      } = await loadFixture(deployReferralManagerFixture);
 
       const [acc, referrer, authorizedAcc] = restSigners;
 
@@ -1446,7 +1351,7 @@ describe("ReferralManager", () => {
         token1,
         token1Holder,
         stakings,
-      } = await loadFixture(deployFixture);
+      } = await loadFixture(deployReferralManagerFixture);
 
       let firstLevelPartners = 5;
       const getStakeParams = (level: number, params: any) => {
@@ -1491,7 +1396,7 @@ describe("ReferralManager", () => {
         token1,
         token1Holder,
         stakings,
-      } = await loadFixture(deployFixture);
+      } = await loadFixture(deployReferralManagerFixture);
 
       let firstLevelPartners = 3;
       const getStakeParams = (level: number, params: any) => {
@@ -1546,7 +1451,7 @@ describe("ReferralManager", () => {
         referralLevels,
         token1,
         token1Holder,
-      } = await loadFixture(deployFixture);
+      } = await loadFixture(deployReferralManagerFixture);
 
       const [acc] = restSigners;
 
@@ -1575,7 +1480,9 @@ describe("ReferralManager", () => {
     });
     // calculateRefReward
     it("Should calculate referrer reward", async () => {
-      const { referralManager } = await loadFixture(deployFixture);
+      const { referralManager } = await loadFixture(
+        deployReferralManagerFixture
+      );
 
       await expect(referralManager.calculateRefReward(100, 0)).to.be.reverted;
       expect(await referralManager.calculateRefReward(100, 1)).to.eq(100);
@@ -1593,7 +1500,7 @@ describe("ReferralManager", () => {
     // isAuthorized
     it("Should return is contract authorized", async () => {
       const { referralManager, adminAccount, restSigners } = await loadFixture(
-        deployFixture
+        deployReferralManagerFixture
       );
 
       const [newContract] = restSigners;

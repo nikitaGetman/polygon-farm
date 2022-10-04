@@ -6,100 +6,16 @@ import {
 import { expect } from "chai";
 import { ethers } from "hardhat";
 import { BigNumber } from "ethers";
-import {
-  Staking__factory,
-  Token1__factory,
-  Token2__factory,
-  ReferralManager__factory,
-} from "typechain-types";
+import { Staking__factory } from "typechain-types";
 import {
   autoStakeToken,
   autoSubscribeToStaking,
+  deployStaking,
   grantAdminRole,
   waitForStakeFinished,
 } from "./helpers";
 
 describe("Staking", function () {
-  async function deployFixture() {
-    const initialSupply = BigNumber.from(10).pow(18).mul(21_000_000);
-    const durationDays = 1;
-    const rewardPercent = 100; // 10%
-    const subscriptionCost = BigNumber.from(10).pow(18);
-    const subscriptionPeriodDays = 10;
-    const minStakeLimit = BigNumber.from(10).pow(17);
-
-    const [
-      adminAccount,
-      token1Holder,
-      stakingRewardPool,
-      token2Holder,
-      ...restSigners
-    ] = await ethers.getSigners();
-
-    const token1 = await new Token1__factory(adminAccount).deploy(
-      initialSupply,
-      token1Holder.address
-    );
-    await token1.deployed();
-    await token1
-      .connect(token1Holder)
-      .transfer(stakingRewardPool.address, initialSupply.div(2));
-
-    const token2 = await new Token2__factory(adminAccount).deploy(
-      initialSupply,
-      token2Holder.address
-    );
-    await token2.deployed();
-
-    const referralManager = await new ReferralManager__factory(
-      adminAccount
-    ).deploy(
-      token1.address,
-      token2.address,
-      token2Holder.address,
-      BigNumber.from(10).pow(18).mul(5),
-      BigNumber.from(10).pow(18)
-    );
-    await referralManager.deployed();
-
-    const stakingContract = await new Staking__factory(adminAccount).deploy(
-      token1.address,
-      token2.address,
-      stakingRewardPool.address,
-      referralManager.address,
-      durationDays,
-      rewardPercent,
-      subscriptionCost,
-      subscriptionPeriodDays
-    );
-    await stakingContract.deployed();
-
-    await token1
-      .connect(stakingRewardPool)
-      .approve(stakingContract.address, ethers.constants.MaxUint256);
-    await token2
-      .connect(adminAccount)
-      .addToWhitelist([stakingContract.address]);
-
-    return {
-      stakingContract,
-      token1,
-      token2,
-      initialSupply,
-      adminAccount,
-      token1Holder,
-      token2Holder,
-      stakingRewardPool,
-      referralManager,
-      restSigners,
-      durationDays,
-      rewardPercent,
-      subscriptionCost,
-      subscriptionPeriodDays,
-      minStakeLimit,
-    };
-  }
-
   //*
   describe("Deploy", () => {
     it("Should deploy with correct initial data", async () => {
@@ -110,7 +26,7 @@ describe("Staking", function () {
         rewardPercent,
         subscriptionCost,
         subscriptionPeriodDays,
-      } = await loadFixture(deployFixture);
+      } = await loadFixture(deployStaking);
 
       expect(await stakingContract.isActive()).to.eq(false);
 
@@ -139,7 +55,7 @@ describe("Staking", function () {
         stakingRewardPool,
         adminAccount,
         referralManager,
-      } = await loadFixture(deployFixture);
+      } = await loadFixture(deployStaking);
 
       const stakingContract = new Staking__factory(adminAccount);
 
@@ -149,6 +65,7 @@ describe("Staking", function () {
           token2.address,
           stakingRewardPool.address,
           referralManager.address,
+          ethers.constants.AddressZero,
           1,
           1,
           1,
@@ -162,6 +79,7 @@ describe("Staking", function () {
           ethers.constants.AddressZero,
           stakingRewardPool.address,
           referralManager.address,
+          ethers.constants.AddressZero,
           1,
           1,
           1,
@@ -175,6 +93,7 @@ describe("Staking", function () {
           token2.address,
           ethers.constants.AddressZero,
           referralManager.address,
+          ethers.constants.AddressZero,
           1,
           1,
           1,
@@ -187,6 +106,7 @@ describe("Staking", function () {
           token1.address,
           token2.address,
           stakingRewardPool.address,
+          ethers.constants.AddressZero,
           ethers.constants.AddressZero,
           1,
           1,
@@ -201,6 +121,7 @@ describe("Staking", function () {
           token2.address,
           stakingRewardPool.address,
           referralManager.address,
+          ethers.constants.AddressZero,
           0,
           1,
           1,
@@ -214,6 +135,7 @@ describe("Staking", function () {
           token2.address,
           stakingRewardPool.address,
           referralManager.address,
+          ethers.constants.AddressZero,
           1,
           0,
           1,
@@ -227,6 +149,7 @@ describe("Staking", function () {
           token2.address,
           stakingRewardPool.address,
           referralManager.address,
+          ethers.constants.AddressZero,
           1,
           1,
           0,
@@ -240,6 +163,7 @@ describe("Staking", function () {
           token2.address,
           stakingRewardPool.address,
           referralManager.address,
+          ethers.constants.AddressZero,
           1,
           1,
           1,
@@ -258,7 +182,7 @@ describe("Staking", function () {
         token1,
         subscriptionCost,
         adminAccount,
-      } = await loadFixture(deployFixture);
+      } = await loadFixture(deployStaking);
 
       const [acc1] = restSigners;
 
@@ -296,7 +220,7 @@ describe("Staking", function () {
         subscriptionCost,
         subscriptionPeriodDays,
         adminAccount,
-      } = await loadFixture(deployFixture);
+      } = await loadFixture(deployStaking);
 
       const [acc1] = restSigners;
 
@@ -345,7 +269,7 @@ describe("Staking", function () {
         token1Holder,
         restSigners,
         minStakeLimit,
-      } = await loadFixture(deployFixture);
+      } = await loadFixture(deployStaking);
 
       const [acc1] = restSigners;
 
@@ -383,7 +307,7 @@ describe("Staking", function () {
         restSigners,
         subscriptionCost,
         minStakeLimit,
-      } = await loadFixture(deployFixture);
+      } = await loadFixture(deployStaking);
 
       const [acc1, acc2] = restSigners;
 
@@ -418,7 +342,7 @@ describe("Staking", function () {
         token1Holder,
         restSigners,
         minStakeLimit,
-      } = await loadFixture(deployFixture);
+      } = await loadFixture(deployStaking);
 
       const [acc1] = restSigners;
 
@@ -452,7 +376,7 @@ describe("Staking", function () {
         stakingRewardPool,
         restSigners,
         minStakeLimit,
-      } = await loadFixture(deployFixture);
+      } = await loadFixture(deployStaking);
 
       const [acc1, acc2] = restSigners;
 
@@ -496,7 +420,7 @@ describe("Staking", function () {
         token1Holder,
         restSigners,
         minStakeLimit,
-      } = await loadFixture(deployFixture);
+      } = await loadFixture(deployStaking);
 
       const [acc] = restSigners;
 
@@ -532,7 +456,7 @@ describe("Staking", function () {
         token2Holder,
         restSigners,
         minStakeLimit,
-      } = await loadFixture(deployFixture);
+      } = await loadFixture(deployStaking);
 
       const [acc] = restSigners;
 
@@ -567,7 +491,7 @@ describe("Staking", function () {
         token1Holder,
         restSigners,
         minStakeLimit,
-      } = await loadFixture(deployFixture);
+      } = await loadFixture(deployStaking);
 
       const [acc] = restSigners;
 
@@ -607,7 +531,7 @@ describe("Staking", function () {
         token2Holder,
         restSigners,
         minStakeLimit,
-      } = await loadFixture(deployFixture);
+      } = await loadFixture(deployStaking);
 
       const [acc] = restSigners;
 
@@ -650,7 +574,7 @@ describe("Staking", function () {
         token2Holder,
         restSigners,
         minStakeLimit,
-      } = await loadFixture(deployFixture);
+      } = await loadFixture(deployStaking);
 
       const [acc] = restSigners;
 
@@ -706,7 +630,7 @@ describe("Staking", function () {
         token1Holder,
         restSigners,
         durationDays,
-      } = await loadFixture(deployFixture);
+      } = await loadFixture(deployStaking);
 
       const [acc] = restSigners;
 
@@ -738,7 +662,7 @@ describe("Staking", function () {
         token1Holder,
         restSigners,
         durationDays,
-      } = await loadFixture(deployFixture);
+      } = await loadFixture(deployStaking);
 
       const [acc] = restSigners;
 
@@ -765,7 +689,7 @@ describe("Staking", function () {
         token1Holder,
         restSigners,
         durationDays,
-      } = await loadFixture(deployFixture);
+      } = await loadFixture(deployStaking);
 
       const [acc] = restSigners;
 
@@ -795,7 +719,7 @@ describe("Staking", function () {
         restSigners,
         durationDays,
         minStakeLimit,
-      } = await loadFixture(deployFixture);
+      } = await loadFixture(deployStaking);
 
       const [acc] = restSigners;
 
@@ -830,7 +754,7 @@ describe("Staking", function () {
         restSigners,
         durationDays,
         minStakeLimit,
-      } = await loadFixture(deployFixture);
+      } = await loadFixture(deployStaking);
 
       const [acc] = restSigners;
 
@@ -866,7 +790,7 @@ describe("Staking", function () {
         restSigners,
         durationDays,
         minStakeLimit,
-      } = await loadFixture(deployFixture);
+      } = await loadFixture(deployStaking);
 
       const [acc] = restSigners;
 
@@ -934,7 +858,7 @@ describe("Staking", function () {
   describe("Roles / Administration", () => {
     it("Should update activity only by Admin", async () => {
       const { stakingContract, adminAccount, restSigners } = await loadFixture(
-        deployFixture
+        deployStaking
       );
 
       const [acc1, acc2] = restSigners;
@@ -954,7 +878,7 @@ describe("Staking", function () {
 
     it("Should update reward pool only by Admin", async () => {
       const { stakingContract, adminAccount, restSigners } = await loadFixture(
-        deployFixture
+        deployStaking
       );
 
       const [acc1, acc2, newPool] = restSigners;
@@ -972,7 +896,7 @@ describe("Staking", function () {
 
     it("Should update token 1 only by Admin", async () => {
       const { stakingContract, adminAccount, restSigners } = await loadFixture(
-        deployFixture
+        deployStaking
       );
 
       const [acc1, acc2, newToken] = restSigners;
@@ -990,7 +914,7 @@ describe("Staking", function () {
 
     it("Should update token 2 only by Admin", async () => {
       const { stakingContract, adminAccount, restSigners } = await loadFixture(
-        deployFixture
+        deployStaking
       );
 
       const [acc1, acc2, newToken] = restSigners;
@@ -1008,7 +932,7 @@ describe("Staking", function () {
 
     it("Should update percent divider only by Admin", async () => {
       const { stakingContract, adminAccount, restSigners } = await loadFixture(
-        deployFixture
+        deployStaking
       );
 
       const [acc1, acc2] = restSigners;
@@ -1026,7 +950,7 @@ describe("Staking", function () {
 
     it("Should update time step only by Admin", async () => {
       const { stakingContract, adminAccount, restSigners } = await loadFixture(
-        deployFixture
+        deployStaking
       );
 
       const [acc1, acc2] = restSigners;
@@ -1044,7 +968,7 @@ describe("Staking", function () {
 
     it("Should update min stake limit only by Admin", async () => {
       const { stakingContract, adminAccount, restSigners } = await loadFixture(
-        deployFixture
+        deployStaking
       );
 
       const [acc1, acc2] = restSigners;
@@ -1062,7 +986,7 @@ describe("Staking", function () {
 
     it("Should update duration days only by Admin", async () => {
       const { stakingContract, adminAccount, restSigners } = await loadFixture(
-        deployFixture
+        deployStaking
       );
 
       const [acc1, acc2] = restSigners;
@@ -1080,7 +1004,7 @@ describe("Staking", function () {
 
     it("Should update reward only by Admin", async () => {
       const { stakingContract, adminAccount, restSigners } = await loadFixture(
-        deployFixture
+        deployStaking
       );
 
       const [acc1, acc2] = restSigners;
@@ -1098,7 +1022,7 @@ describe("Staking", function () {
 
     it("Should update subscription cost only by Admin", async () => {
       const { stakingContract, adminAccount, restSigners } = await loadFixture(
-        deployFixture
+        deployStaking
       );
 
       const [acc1, acc2] = restSigners;
@@ -1116,7 +1040,7 @@ describe("Staking", function () {
 
     it("Should update subscription period only by Admin", async () => {
       const { stakingContract, adminAccount, restSigners } = await loadFixture(
-        deployFixture
+        deployStaking
       );
 
       const [acc1, acc2] = restSigners;
@@ -1134,7 +1058,7 @@ describe("Staking", function () {
 
     it("Should update subscription token only by Admin", async () => {
       const { stakingContract, adminAccount, restSigners } = await loadFixture(
-        deployFixture
+        deployStaking
       );
 
       const [acc1, acc2, newToken] = restSigners;
@@ -1154,7 +1078,7 @@ describe("Staking", function () {
 
     it("Should update referral manager only by Admin", async () => {
       const { stakingContract, adminAccount, restSigners } = await loadFixture(
-        deployFixture
+        deployStaking
       );
 
       const [acc1, acc2, newReferralManager] = restSigners;
@@ -1180,7 +1104,7 @@ describe("Staking", function () {
 
     it("Should update shouldAddReferrerOnToken2Stake flag only by Admin", async () => {
       const { stakingContract, adminAccount, restSigners } = await loadFixture(
-        deployFixture
+        deployStaking
       );
 
       const [acc1, acc2] = restSigners;
@@ -1206,7 +1130,7 @@ describe("Staking", function () {
   describe("Events", () => {
     it("Should emit ActivityChanged", async () => {
       const { stakingContract, adminAccount } = await loadFixture(
-        deployFixture
+        deployStaking
       );
 
       await expect(stakingContract.connect(adminAccount).setActive(true))
@@ -1228,7 +1152,7 @@ describe("Staking", function () {
         token2Holder,
         restSigners,
         minStakeLimit,
-      } = await loadFixture(deployFixture);
+      } = await loadFixture(deployStaking);
 
       const [acc] = restSigners;
       await autoSubscribeToStaking(
@@ -1310,7 +1234,7 @@ describe("Staking", function () {
         restSigners,
         minStakeLimit,
         durationDays,
-      } = await loadFixture(deployFixture);
+      } = await loadFixture(deployStaking);
 
       const [acc] = restSigners;
 
@@ -1379,7 +1303,7 @@ describe("Staking", function () {
         durationDays,
         minStakeLimit,
         rewardPercent,
-      } = await loadFixture(deployFixture);
+      } = await loadFixture(deployStaking);
 
       const [acc] = restSigners;
 
@@ -1462,7 +1386,7 @@ describe("Staking", function () {
     });
     // getTimestamp
     it("Should return correct timestamp", async () => {
-      const { stakingContract } = await loadFixture(deployFixture);
+      const { stakingContract } = await loadFixture(deployStaking);
 
       const nextTime = (await time.latest()) + 100;
       await time.setNextBlockTimestamp(nextTime);
@@ -1473,7 +1397,7 @@ describe("Staking", function () {
     // calculateStakeProfit
     it("Should return correct stake profit", async () => {
       const { stakingContract, rewardPercent } = await loadFixture(
-        deployFixture
+        deployStaking
       );
 
       const amount = BigNumber.from(345_987_000_000);
@@ -1492,7 +1416,7 @@ describe("Staking", function () {
         restSigners,
         durationDays,
         minStakeLimit,
-      } = await loadFixture(deployFixture);
+      } = await loadFixture(deployStaking);
 
       const [acc] = restSigners;
 
@@ -1570,7 +1494,7 @@ describe("Staking", function () {
         restSigners,
         durationDays,
         minStakeLimit,
-      } = await loadFixture(deployFixture);
+      } = await loadFixture(deployStaking);
 
       const [acc] = restSigners;
 
@@ -1641,7 +1565,7 @@ describe("Staking", function () {
     });
 
     it("Should return correct min", async () => {
-      const { stakingContract } = await loadFixture(deployFixture);
+      const { stakingContract } = await loadFixture(deployStaking);
 
       expect(await stakingContract.min(1, 0)).to.equal(0);
       expect(await stakingContract.min(1, 10)).to.equal(1);
