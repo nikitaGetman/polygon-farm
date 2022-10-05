@@ -69,8 +69,7 @@ contract Squads is ISquads, AccessControl {
 
         subscriptionToken.burnFrom(subscriber, plan.subscriptionCost);
 
-        uint256 squadIndex = userSubscriptions[subscriber][planId].squadsFilled;
-        squadMembers[subscriber][squadIndex] = new address[](0);
+        squadMembers[subscriber][planId] = new address[](0);
         userSubscriptions[subscriber][planId]
             .subscription = _getSubscriptionEnd();
 
@@ -93,15 +92,14 @@ contract Squads is ISquads, AccessControl {
             userHasSufficientStaking(user, planId) &&
             !_isMemberInSquad(user, planId, member)
         ) {
-            Squad storage partner = userSubscriptions[user][planId];
-
-            squadMembers[user][partner.squadsFilled].push(member);
-            uint256 membersAmount = squadMembers[user][partner.squadsFilled]
-                .length;
+            squadMembers[user][planId].push(member);
+            uint256 membersAmount = squadMembers[user][planId].length;
 
             emit MemberAdded(user, planId, member, membersAmount);
 
             if (membersAmount >= plans[planId].squadSize) {
+                Squad storage partner = userSubscriptions[user][planId];
+
                 partner.squadsFilled += 1;
                 partner.subscription = 0;
 
@@ -165,7 +163,8 @@ contract Squads is ISquads, AccessControl {
             if (
                 stakes[i].timeEnd > block.timestamp &&
                 !stakes[i].isToken2 &&
-                stakes[i].amount >= plans[planId].stakingThreshold
+                getSufficientPlanIdByStakingAmount(stakes[i].amount) ==
+                int256(planId)
             ) return true;
         }
 
@@ -197,8 +196,7 @@ contract Squads is ISquads, AccessControl {
         uint256 planId,
         address member
     ) internal view returns (bool) {
-        uint256 squadIndex = userSubscriptions[user][planId].squadsFilled;
-        address[] memory squad = squadMembers[user][squadIndex];
+        address[] memory squad = squadMembers[user][planId];
 
         for (uint256 i = 0; i < squad.length; i++) {
             if (squad[i] == member) return true;

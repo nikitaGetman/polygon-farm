@@ -75,7 +75,7 @@ task("deploy-staking", "Deploy staking contract with params")
       "Token2",
       await ethers.getSigner(admin)
     );
-    await token2.addToWhitelist([staking.address]);
+    await token2.addToWhitelist([rewardPoolAddress]);
 
     // Authorize staking contract for referral manager
     const referralManager = await ethers.getContract(
@@ -87,7 +87,7 @@ task("deploy-staking", "Deploy staking contract with params")
     console.log(
       `Staking contract deployed to "${staking.address}". Duration: ${taskArgs.durationDays}. Reward: ${taskArgs.rewardPercent}. Reward pool: "${rewardPoolAddress}"`
     );
-    console.log("Staking contract added to Token2 Whitelist");
+    console.log("Reward Pool address added to Token2 Whitelist");
 
     return staking;
   });

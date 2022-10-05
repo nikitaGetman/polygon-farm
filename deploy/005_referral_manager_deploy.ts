@@ -34,7 +34,9 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   await token2
     .connect(referralRewardPoolSigner)
     .approve(referralManager.address, ethers.constants.MaxUint256);
-  await token2.connect(adminSigner).addToWhitelist([referralManager.address]);
+  await token2
+    .connect(adminSigner)
+    .addToWhitelist([referralRewardPoolSigner.address]);
 };
 func.tags = ["ReferralManager"];
 func.dependencies = ["Token1", "Token2"];

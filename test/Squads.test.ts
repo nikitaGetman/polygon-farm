@@ -174,7 +174,7 @@ describe("Squads", () => {
       token1Holder,
     } = await loadFixture(deployFixture);
 
-    const [referrer, acc1, acc2] = restSigners;
+    const [referrer, acc1, acc2, acc3, acc4] = restSigners;
 
     const squadPlanIndex = 0;
     const squadPlan = SQUADS[squadPlanIndex];
@@ -205,6 +205,13 @@ describe("Squads", () => {
       referrer,
       stakeAmount,
     };
+    // staking sufficient for other plan
+    await autoStakeToken({
+      ...commonStakingProps,
+      stakeAmount: BigNumber.from(SQUADS[2].stakingThreshold),
+      referrer: undefined,
+      acc: referrer,
+    });
 
     await autoStakeToken({ ...commonStakingProps, acc: acc1 });
 
@@ -329,6 +336,52 @@ describe("Squads", () => {
 
     members = await squadsManager.getUserSquadMembers(referrer.address, 1);
     expect(members.length).to.eq(0);
+
+    // Should add only first level referrals in team
+    await autoSubscribeToReferral({
+      token: token1,
+      tokenHolder: token1Holder,
+      referralManager,
+      account: acc3,
+      levels: 1,
+    });
+
+    await autoSubscribeToSquad({
+      token: token1,
+      tokenHolder: token1Holder,
+      account: acc3,
+      squadsManager,
+      planId: squadPlanIndex,
+    });
+
+    await autoStakeToken({ ...commonStakingProps, acc: acc3 });
+
+    members = await squadsManager.getUserSquadMembers(
+      referrer.address,
+      squadPlanIndex
+    );
+    expect(members.length).to.eq(3);
+    expect(members[0]).to.eq(acc1.address);
+    expect(members[1]).to.eq(acc2.address);
+    expect(members[2]).to.eq(acc3.address);
+
+    await autoStakeToken({ ...commonStakingProps, referrer: acc3, acc: acc4 });
+
+    members = await squadsManager.getUserSquadMembers(
+      referrer.address,
+      squadPlanIndex
+    );
+    expect(members.length).to.eq(3);
+    expect(members[0]).to.eq(acc1.address);
+    expect(members[1]).to.eq(acc2.address);
+    expect(members[2]).to.eq(acc3.address);
+
+    members = await squadsManager.getUserSquadMembers(
+      acc3.address,
+      squadPlanIndex
+    );
+    expect(members.length).to.eq(1);
+    expect(members[0]).to.eq(acc4.address);
   });
 
   it("Should fill squad and add reward", async () => {
@@ -388,7 +441,7 @@ describe("Squads", () => {
     await autoStakeToken({ ...commonStakingProps, acc: acc4 });
     await autoStakeToken({ ...commonStakingProps, acc: acc5 });
 
-    const members = await squadsManager.getUserSquadMembers(
+    let members = await squadsManager.getUserSquadMembers(
       referrer.address,
       squadPlanIndex
     );
@@ -431,6 +484,18 @@ describe("Squads", () => {
     const squadReward = refRewardInfo.totalDividends.sub(refReward.mul(6));
     expect(squadReward).to.eq(squadPlan.reward);
 
+    members = await squadsManager.getUserSquadMembers(
+      referrer.address,
+      squadPlanIndex
+    );
+    expect(members.length).to.eq(6);
+    expect(members[0]).to.eq(acc1.address);
+    expect(members[1]).to.eq(acc2.address);
+    expect(members[2]).to.eq(acc3.address);
+    expect(members[3]).to.eq(acc4.address);
+    expect(members[4]).to.eq(acc5.address);
+    expect(members[5]).to.eq(acc6.address);
+
     await referralManager
       .connect(referrer)
       .claimDividends(refRewardInfo.totalDividends);
@@ -451,6 +516,17 @@ describe("Squads", () => {
     await autoStakeToken({ ...commonStakingProps, acc: acc3 });
     await autoStakeToken({ ...commonStakingProps, acc: acc4 });
     await autoStakeToken({ ...commonStakingProps, acc: acc5 });
+
+    members = await squadsManager.getUserSquadMembers(
+      referrer.address,
+      squadPlanIndex
+    );
+    expect(members.length).to.eq(5);
+    expect(members[0]).to.eq(acc1.address);
+    expect(members[1]).to.eq(acc2.address);
+    expect(members[2]).to.eq(acc3.address);
+    expect(members[3]).to.eq(acc4.address);
+    expect(members[4]).to.eq(acc5.address);
 
     // Add last member
     await autoSubscribeToStaking(
@@ -473,6 +549,25 @@ describe("Squads", () => {
     await referralManager
       .connect(referrer)
       .claimDividends(refReward.mul(6).add(squadPlan.reward));
+
+    squadInfo = await squadsManager.getUserSquadInfo(
+      referrer.address,
+      squadPlanIndex
+    );
+    expect(squadInfo.subscription).to.eq(0);
+    expect(squadInfo.squadsFilled).to.eq(2);
+
+    members = await squadsManager.getUserSquadMembers(
+      referrer.address,
+      squadPlanIndex
+    );
+    expect(members.length).to.eq(6);
+    expect(members[0]).to.eq(acc1.address);
+    expect(members[1]).to.eq(acc2.address);
+    expect(members[2]).to.eq(acc3.address);
+    expect(members[3]).to.eq(acc4.address);
+    expect(members[4]).to.eq(acc5.address);
+    expect(members[5]).to.eq(acc6.address);
 
     // -----------------
     // Filling new squad after referral subscription expires
@@ -554,6 +649,27 @@ describe("Squads", () => {
     expect(squadsInfo[1].squadsFilled).to.eq(1);
     expect(squadsInfo[2].subscription).to.eq(0);
     expect(squadsInfo[2].squadsFilled).to.eq(0);
+
+    members = await squadsManager.getUserSquadMembers(
+      referrer.address,
+      squadPlanIndex
+    );
+    expect(members.length).to.eq(6);
+    expect(members[0]).to.eq(acc1.address);
+    expect(members[1]).to.eq(acc2.address);
+    expect(members[2]).to.eq(acc3.address);
+    expect(members[3]).to.eq(acc4.address);
+    expect(members[4]).to.eq(acc5.address);
+    expect(members[5]).to.eq(acc6.address);
+
+    members = await squadsManager.getUserSquadMembers(referrer.address, 0);
+    expect(members.length).to.eq(6);
+    expect(members[0]).to.eq(acc1.address);
+    expect(members[1]).to.eq(acc2.address);
+    expect(members[2]).to.eq(acc3.address);
+    expect(members[3]).to.eq(acc4.address);
+    expect(members[4]).to.eq(acc5.address);
+    expect(members[5]).to.eq(acc6.address);
   });
 
   it("Should return sufficient planId by staking amount", async () => {

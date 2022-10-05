@@ -10,6 +10,7 @@ task(
   const adminSigner = await ethers.getSigner(admin);
 
   const squadsManager = await ethers.getContract("Squads", adminSigner);
+  const stakingContracts: string[] = [];
 
   for (let i = 0; i < SQUADS.length; i++) {
     const {
@@ -33,7 +34,17 @@ task(
       stakingContract.address
     );
 
+    if (!stakingContracts.includes(stakingContract.address)) {
+      stakingContracts.push(stakingName);
+    }
+  }
+
+  for (let i = 0; i < stakingContracts.length; i++) {
+    const stakingContract = await ethers.getContract(
+      stakingContracts[i],
+      adminSigner
+    );
     await stakingContract.updateSquadsManager(squadsManager.address);
-    console.log("Plan added. Staking contract updated.");
+    console.log(`Squad manager added to "${stakingContracts[i]}" contract.`);
   }
 });
