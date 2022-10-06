@@ -63,31 +63,37 @@ task("deploy-staking", "Deploy staking contract with params")
       gasPrice: ethers.BigNumber.from(10).pow(10),
     });
 
-    // Approve staking pool tokens for staking contract
-    const token1 = await ethers.getContract(
-      "Token1",
-      await ethers.getSigner(rewardPoolAddress)
-    );
-    await token1.approve(staking.address, ethers.constants.MaxUint256);
+    console.log("newlyDeployed", staking.newlyDeployed);
 
-    // Add staking contract to Token2 whitelist
-    const token2 = await ethers.getContract<Token2>(
-      "Token2",
-      await ethers.getSigner(admin)
-    );
-    await token2.addToWhitelist([rewardPoolAddress]);
+    if (staking.newlyDeployed) {
+      console.log(
+        `Staking contract deployed to "${staking.address}". Duration: ${taskArgs.durationDays}. Reward: ${taskArgs.rewardPercent}. Reward pool: "${rewardPoolAddress}"`
+      );
 
-    // Authorize staking contract for referral manager
-    const referralManager = await ethers.getContract(
-      "ReferralManager",
-      await ethers.getSigner(admin)
-    );
-    await referralManager.authorizeContract(staking.address);
+      // Approve staking pool tokens for staking contract
+      const token1 = await ethers.getContract(
+        "Token1",
+        await ethers.getSigner(rewardPoolAddress)
+      );
+      await token1.approve(staking.address, ethers.constants.MaxUint256);
 
-    console.log(
-      `Staking contract deployed to "${staking.address}". Duration: ${taskArgs.durationDays}. Reward: ${taskArgs.rewardPercent}. Reward pool: "${rewardPoolAddress}"`
-    );
-    console.log("Reward Pool address added to Token2 Whitelist");
+      // Add staking contract to Token2 whitelist
+      const token2 = await ethers.getContract<Token2>(
+        "Token2",
+        await ethers.getSigner(admin)
+      );
+      await token2.addToWhitelist([staking.address]);
+      console.log("Staking address added to Token2 Whitelist");
+
+      // Authorize staking contract for referral manager
+      const referralManager = await ethers.getContract(
+        "ReferralManager",
+        await ethers.getSigner(admin)
+      );
+      await referralManager.authorizeContract(staking.address);
+
+      console.log("Staking authorized in ReferralManager");
+    }
 
     return staking;
   });
