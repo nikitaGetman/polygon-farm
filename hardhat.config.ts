@@ -6,6 +6,7 @@ import "@nomiclabs/hardhat-etherscan";
 import "@nomiclabs/hardhat-waffle";
 import "@typechain/hardhat";
 import "hardhat-gas-reporter";
+import "hardhat-contract-sizer";
 import "solidity-coverage";
 import "hardhat-deploy";
 import "tsconfig-paths/register";
@@ -101,6 +102,9 @@ const config: HardhatUserConfig = {
     enabled: process.env.REPORT_GAS === "true",
     coinmarketcap: process.env.COIN_MARKET_CAP_KEY,
     currency: "USD",
+  },
+  contractSizer: {
+    runOnCompile: true,
   },
 };
 
