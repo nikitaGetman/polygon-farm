@@ -37,14 +37,15 @@ contract ReferralManager is IReferralManager, AccessControl {
         uint256 level;
     }
 
+    uint256 public levelSubscriptionCost;
+    uint256 public fullSubscriptionCost;
+
     mapping(address => User) private users;
     mapping(address => bool) private authorizedContracts;
 
     ERC20Burnable public subscriptionToken;
     IERC20 public rewardToken;
     address private rewardPool;
-    uint256 public levelSubscriptionCost;
-    uint256 public fullSubscriptionCost;
 
     event Subscribed(
         address indexed subscriber,

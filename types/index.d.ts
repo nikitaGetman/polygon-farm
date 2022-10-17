@@ -1,14 +1,16 @@
-export type Staking = {
+import { BigNumber } from "ethers";
+
+export type StakingPlan = {
   durationDays: number;
   rewardPercent: number;
-  subscriptionCost: number | string; // BigNumber
+  subscriptionCost: BigNumber; // BigNumber
   subscriptionDurationDays: number;
 };
 
-export type Squad = {
-  subscriptionCost: number | string;
-  reward: number | string;
-  stakingThreshold: number | string;
+export type SquadPlan = {
+  subscriptionCost: BigNumber;
+  reward: BigNumber;
+  stakingThreshold: BigNumber;
   squadSize: number;
-  authorizedStakingIndex: number;
+  stakingPlanId: number;
 };
