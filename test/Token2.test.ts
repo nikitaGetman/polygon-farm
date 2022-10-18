@@ -2,7 +2,7 @@ import { loadFixture } from "@nomicfoundation/hardhat-network-helpers";
 import { expect } from "chai";
 import { ethers } from "hardhat";
 import { BigNumber } from "ethers";
-import { Token2__factory } from "typechain-types";
+import { deployToken2 } from "./helpers/deployments";
 
 describe("Token 2", function () {
   async function deployTokenFixture() {
@@ -11,11 +11,12 @@ describe("Token 2", function () {
     const [adminAccount, holderAccount, ...restSigners] =
       await ethers.getSigners();
 
-    const token = await new Token2__factory(adminAccount).deploy(
+    const token = await deployToken2({
+      admin: adminAccount,
       initialSupply,
-      holderAccount.address
-    );
-    await token.deployed();
+      initialHolder: holderAccount.address,
+    });
+
     return {
       token,
       initialSupply,

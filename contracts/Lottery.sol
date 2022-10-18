@@ -18,8 +18,8 @@ contract Lottery is VRFConsumerBaseV2, AccessControl {
         uint256 totalPrize;
         uint256 maxTicketsFromOneMember;
         uint256 tokensForOneTicket;
-        uint256 levels;
-        uint256 totalWinners;
+        // uint256 levels;
+        // uint256 totalWinners;
         uint256[] winnersForLevel;
         uint256[] prizeForLevel;
         uint256 totalTickets;
@@ -115,10 +115,10 @@ contract Lottery is VRFConsumerBaseV2, AccessControl {
         uint256 levels = winnersForLevel.length;
         address[][] memory winners = new address[][](levels);
 
-        uint256 totalWinners = 0;
+        // uint256 totalWinners = 0;
         uint256 totalPrizePercents = 0;
         for (uint256 i = 0; i < winnersForLevel.length; i++) {
-            totalWinners += winnersForLevel[i];
+            // totalWinners += winnersForLevel[i];
             totalPrizePercents += prizeForLevel[i];
             winners[i] = new address[](winnersForLevel[i]);
         }
@@ -135,8 +135,8 @@ contract Lottery is VRFConsumerBaseV2, AccessControl {
             totalPrize: 0,
             maxTicketsFromOneMember: maxTicketsFromOneMember,
             tokensForOneTicket: tokensForOneTicket,
-            levels: levels,
-            totalWinners: totalWinners,
+            // levels: levels,
+            // totalWinners: totalWinners,
             winnersForLevel: winnersForLevel,
             prizeForLevel: prizeForLevel,
             totalTickets: 0,

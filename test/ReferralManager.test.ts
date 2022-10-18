@@ -15,6 +15,7 @@ import {
   grantAdminRole,
   deployReferralManagerFixture,
 } from "./helpers";
+import { deployReferralManager } from "./helpers/deployments";
 
 const secondsInDay = 60 * 60 * 24;
 
@@ -90,15 +91,15 @@ describe("ReferralManager", () => {
         levelSubscriptionCost,
       } = await loadFixture(deployReferralManagerFixture);
 
-      const referralManager = await new ReferralManager__factory(
-        adminAccount
-      ).deploy(
-        token1.address,
-        token2.address,
-        referralRewardPool.address,
+      const referralManager = await deployReferralManager({
+        admin: adminAccount,
         fullSubscriptionCost,
-        levelSubscriptionCost
-      );
+        levelSubscriptionCost,
+        token1Address: token1.address,
+        token2,
+        referralRewardPool,
+      });
+
       const AdminRole = await referralManager.DEFAULT_ADMIN_ROLE();
       expect(
         await referralManager.hasRole(AdminRole, adminAccount.address)
@@ -523,12 +524,12 @@ describe("ReferralManager", () => {
         adminAccount,
         token1,
         token1Holder,
-        stakings,
+        stakingContract,
       } = await loadFixture(deployReferralManagerFixture);
 
       const [acc, referrer] = restSigners;
-      const stakingContract = stakings[0].contract;
       const amount = await stakingContract.MIN_STAKE_LIMIT();
+      const stakingPlanId = 0;
 
       await referralManager
         .connect(adminAccount)
@@ -542,8 +543,8 @@ describe("ReferralManager", () => {
       });
 
       await autoStakeToken({
+        planId: stakingPlanId,
         acc: referrer,
-        adminAccount,
         token1,
         token1Holder,
         stakingContract,
@@ -551,11 +552,11 @@ describe("ReferralManager", () => {
       });
 
       await autoSubscribeToStaking(
+        stakingPlanId,
         acc,
         token1,
         token1Holder,
-        stakingContract,
-        adminAccount
+        stakingContract
       );
 
       await token1.connect(token1Holder).transfer(acc.address, amount);
@@ -564,15 +565,22 @@ describe("ReferralManager", () => {
         .approve(stakingContract.address, ethers.constants.MaxUint256);
 
       await expect(
-        stakingContract.connect(acc).deposit(amount, false, acc.address)
+        stakingContract
+          .connect(acc)
+          .deposit(stakingPlanId, amount, false, acc.address)
       ).to.be.revertedWith("Referrer can not be sender");
 
       await expect(
-        stakingContract.connect(acc).deposit(amount, false, referrer.address)
+        stakingContract
+          .connect(acc)
+          .deposit(stakingPlanId, amount, false, referrer.address)
       ).to.emit(referralManager, "ReferralAdded");
 
       let userInfo = await referralManager.getUserInfo(referrer.address);
-      const stakingReward = await stakingContract.calculateStakeProfit(amount);
+      const stakingReward = await stakingContract.calculateStakeProfit(
+        stakingPlanId,
+        amount
+      );
       const waitedReward = await referralManager.calculateRefReward(
         stakingReward.toString(),
         1
@@ -616,20 +624,20 @@ describe("ReferralManager", () => {
         adminAccount,
         token1,
         token1Holder,
-        stakings,
+        stakingContract,
       } = await loadFixture(deployReferralManagerFixture);
 
       const [referrer] = restSigners;
-      const stakingContract = stakings[0].contract;
       const amount = await stakingContract.MIN_STAKE_LIMIT();
+      const stakingPlanId = 0;
 
       await referralManager
         .connect(adminAccount)
         .authorizeContract(stakingContract.address);
 
       await autoStakeToken({
+        planId: stakingPlanId,
         acc: referrer,
-        adminAccount,
         token1,
         token1Holder,
         stakingContract,
@@ -668,20 +676,20 @@ describe("ReferralManager", () => {
         adminAccount,
         token1,
         token1Holder,
-        stakings,
+        stakingContract,
       } = await loadFixture(deployReferralManagerFixture);
 
       const [referrer] = restSigners;
-      const stakingContract = stakings[0].contract;
       const amount = await stakingContract.MIN_STAKE_LIMIT();
+      const stakingPlanId = 0;
 
       await referralManager
         .connect(adminAccount)
         .authorizeContract(stakingContract.address);
 
       await autoStakeToken({
+        planId: stakingPlanId,
         acc: referrer,
-        adminAccount,
         token1,
         token1Holder,
         stakingContract,
@@ -703,7 +711,7 @@ describe("ReferralManager", () => {
       await expect(
         stakingContract
           .connect(referrer)
-          .deposit(amount, false, lastPartner.address)
+          .deposit(stakingPlanId, amount, false, lastPartner.address)
       ).to.be.revertedWith("Cyclic chain!");
     });
     //* /
@@ -715,20 +723,20 @@ describe("ReferralManager", () => {
         adminAccount,
         token1,
         token1Holder,
-        stakings,
+        stakingContract,
       } = await loadFixture(deployReferralManagerFixture);
 
       const [referrer] = restSigners;
-      const stakingContract = stakings[0].contract;
       const amount = await stakingContract.MIN_STAKE_LIMIT();
+      const stakingPlanId = 0;
 
       await referralManager
         .connect(adminAccount)
         .authorizeContract(stakingContract.address);
 
       await autoStakeToken({
+        planId: stakingPlanId,
         acc: referrer,
-        adminAccount,
         token1,
         token1Holder,
         stakingContract,
@@ -761,12 +769,12 @@ describe("ReferralManager", () => {
         adminAccount,
         token1,
         token1Holder,
-        stakings,
+        stakingContract,
       } = await loadFixture(deployReferralManagerFixture);
 
       const [acc, referrer] = restSigners;
-      const stakingContract = stakings[0].contract;
       const amount = await stakingContract.MIN_STAKE_LIMIT();
+      const stakingPlanId = 0;
 
       await referralManager
         .connect(adminAccount)
@@ -780,8 +788,8 @@ describe("ReferralManager", () => {
       });
 
       await autoStakeToken({
+        planId: stakingPlanId,
         acc: referrer,
-        adminAccount,
         token1,
         token1Holder,
         stakingContract,
@@ -789,11 +797,11 @@ describe("ReferralManager", () => {
       });
 
       await autoSubscribeToStaking(
+        stakingPlanId,
         acc,
         token1,
         token1Holder,
-        stakingContract,
-        adminAccount
+        stakingContract
       );
 
       // This stake should be Ok
@@ -805,24 +813,25 @@ describe("ReferralManager", () => {
       await expect(
         stakingContract
           .connect(acc)
-          .deposit(amount.mul(2), false, referrer.address)
+          .deposit(stakingPlanId, amount.mul(2), false, referrer.address)
       ).to.emit(referralManager, "ReferralAdded");
 
       // There referrer has expired subscription
       await time.increase(365 * secondsInDay + 10);
       await autoSubscribeToStaking(
+        stakingPlanId,
         acc,
         token1,
         token1Holder,
-        stakingContract,
-        adminAccount
+        stakingContract
       );
       await stakingContract
         .connect(acc)
-        .deposit(amount, false, referrer.address);
+        .deposit(stakingPlanId, amount, false, referrer.address);
 
       const userInfo = await referralManager.getUserInfo(referrer.address);
       const stakingReward = await stakingContract.calculateStakeProfit(
+        stakingPlanId,
         amount.mul(2)
       );
       const waitedReward = await referralManager.calculateRefReward(
@@ -840,14 +849,14 @@ describe("ReferralManager", () => {
         adminAccount,
         token1,
         token1Holder,
-        stakings,
+        stakingContract,
         token2,
         referralRewardPool,
       } = await loadFixture(deployReferralManagerFixture);
 
       const [acc, referrer] = restSigners;
-      const stakingContract = stakings[0].contract;
       const amount = await stakingContract.MIN_STAKE_LIMIT();
+      const stakingPlanId = 1;
 
       await referralManager
         .connect(adminAccount)
@@ -861,8 +870,8 @@ describe("ReferralManager", () => {
       });
 
       await autoStakeToken({
+        planId: stakingPlanId,
         acc: referrer,
-        adminAccount,
         token1,
         token1Holder,
         stakingContract,
@@ -870,11 +879,11 @@ describe("ReferralManager", () => {
       });
 
       await autoSubscribeToStaking(
+        stakingPlanId,
         acc,
         token1,
         token1Holder,
-        stakingContract,
-        adminAccount
+        stakingContract
       );
 
       await token2
@@ -885,7 +894,9 @@ describe("ReferralManager", () => {
         .approve(stakingContract.address, ethers.constants.MaxUint256);
 
       await expect(
-        stakingContract.connect(acc).deposit(amount, true, referrer.address)
+        stakingContract
+          .connect(acc)
+          .deposit(stakingPlanId, amount, true, referrer.address)
       ).not.to.emit(referralManager, "ReferralAdded");
 
       let userInfo = await referralManager.getUserInfo(referrer.address);
@@ -896,11 +907,16 @@ describe("ReferralManager", () => {
         .updateShouldAddReferrerOnToken2Stake(true);
 
       await expect(
-        stakingContract.connect(acc).deposit(amount, true, referrer.address)
+        stakingContract
+          .connect(acc)
+          .deposit(stakingPlanId, amount, true, referrer.address)
       ).to.emit(referralManager, "ReferralAdded");
 
       userInfo = await referralManager.getUserInfo(referrer.address);
-      const stakingReward = await stakingContract.calculateStakeProfit(amount);
+      const stakingReward = await stakingContract.calculateStakeProfit(
+        stakingPlanId,
+        amount
+      );
       const waitedReward = await referralManager.calculateRefReward(
         stakingReward.toString(),
         1
@@ -916,11 +932,11 @@ describe("ReferralManager", () => {
         adminAccount,
         token1,
         token1Holder,
-        stakings,
+        stakingContract,
       } = await loadFixture(deployReferralManagerFixture);
 
       const [acc, referrer] = restSigners;
-      const stakingContract = stakings[0].contract;
+      const stakingPlanId = 1;
 
       await referralManager
         .connect(adminAccount)
@@ -934,11 +950,11 @@ describe("ReferralManager", () => {
       });
 
       await autoSubscribeToStaking(
+        stakingPlanId,
         acc,
         token1,
         token1Holder,
-        stakingContract,
-        adminAccount
+        stakingContract
       );
 
       const amount = (await stakingContract.MIN_STAKE_LIMIT()).mul(2);
@@ -950,7 +966,7 @@ describe("ReferralManager", () => {
       await expect(
         stakingContract
           .connect(acc)
-          .deposit(amount.div(2), false, referrer.address)
+          .deposit(stakingPlanId, amount.div(2), false, referrer.address)
       ).to.emit(referralManager, "ReferralAdded");
 
       await referralManager
@@ -960,7 +976,7 @@ describe("ReferralManager", () => {
       await expect(
         stakingContract
           .connect(acc)
-          .deposit(amount.div(2), false, referrer.address)
+          .deposit(stakingPlanId, amount.div(2), false, referrer.address)
       ).to.be.revertedWith("Address not authorized");
     });
     // */
@@ -1221,11 +1237,11 @@ describe("ReferralManager", () => {
         adminAccount,
         token1,
         token1Holder,
-        stakings,
+        stakingContract,
       } = await loadFixture(deployReferralManagerFixture);
 
       const [acc, referrer] = restSigners;
-      const stakingContract = stakings[0].contract;
+      const stakingPlanId = 0;
 
       await referralManager
         .connect(adminAccount)
@@ -1239,11 +1255,11 @@ describe("ReferralManager", () => {
       });
 
       await autoSubscribeToStaking(
+        stakingPlanId,
         acc,
         token1,
         token1Holder,
-        stakingContract,
-        adminAccount
+        stakingContract
       );
 
       const amount = await stakingContract.MIN_STAKE_LIMIT();
@@ -1253,7 +1269,9 @@ describe("ReferralManager", () => {
         .approve(stakingContract.address, ethers.constants.MaxUint256);
 
       await expect(
-        stakingContract.connect(acc).deposit(amount, false, referrer.address)
+        stakingContract
+          .connect(acc)
+          .deposit(stakingPlanId, amount, false, referrer.address)
       )
         .to.emit(referralManager, "ReferralAdded")
         .withArgs(referrer.address, acc.address);
@@ -1279,7 +1297,7 @@ describe("ReferralManager", () => {
         adminAccount,
         token1,
         token1Holder,
-        stakings,
+        stakingContract,
       } = await loadFixture(deployReferralManagerFixture);
 
       let secondLevelPartners = 3;
@@ -1295,7 +1313,7 @@ describe("ReferralManager", () => {
         token: token1,
         tokenHolder: token1Holder,
         referralManager,
-        stakingContract: stakings[0].contract,
+        stakingContract,
         signers: restSigners,
         adminAccount,
         getStakeParams,
@@ -1350,7 +1368,7 @@ describe("ReferralManager", () => {
         adminAccount,
         token1,
         token1Holder,
-        stakings,
+        stakingContract,
       } = await loadFixture(deployReferralManagerFixture);
 
       let firstLevelPartners = 5;
@@ -1366,7 +1384,7 @@ describe("ReferralManager", () => {
         token: token1,
         tokenHolder: token1Holder,
         referralManager,
-        stakingContract: stakings[0].contract,
+        stakingContract,
         levels: 3,
         signers: restSigners,
         adminAccount,
@@ -1395,7 +1413,7 @@ describe("ReferralManager", () => {
         adminAccount,
         token1,
         token1Holder,
-        stakings,
+        stakingContract,
       } = await loadFixture(deployReferralManagerFixture);
 
       let firstLevelPartners = 3;
@@ -1411,7 +1429,7 @@ describe("ReferralManager", () => {
         token: token1,
         tokenHolder: token1Holder,
         referralManager,
-        stakingContract: stakings[0].contract,
+        stakingContract,
         signers: restSigners,
         adminAccount,
         getStakeParams,

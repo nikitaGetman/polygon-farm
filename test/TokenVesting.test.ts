@@ -5,8 +5,9 @@ import {
 } from "@nomicfoundation/hardhat-network-helpers";
 import { ethers } from "hardhat";
 import { expect } from "chai";
-import { TokenVesting__factory, Token1__factory } from "typechain-types";
+import { TokenVesting__factory } from "typechain-types";
 import { grantAdminRole } from "./helpers";
+import { deployToken1 } from "./helpers/deployments";
 
 describe("TokenVesting", function () {
   async function deployFixture() {
@@ -15,11 +16,11 @@ describe("TokenVesting", function () {
 
     const initialSupply = 1_000_000_000_000;
 
-    const token = await new Token1__factory(adminAccount).deploy(
+    const token = await deployToken1({
+      admin: adminAccount,
       initialSupply,
-      vestingPool.address
-    );
-    await token.deployed();
+      initialHolder: vestingPool.address,
+    });
 
     const vesting = await new TokenVesting__factory(adminAccount).deploy(
       token.address,

@@ -9,6 +9,7 @@ import {
   autoSubscribeToSquad,
   autoSubscribeToStaking,
   deployReferralManagerFixture,
+  deploySquadsFixture,
   grantAdminRole,
 } from "./helpers";
 import { SQUADS } from "config";
@@ -16,73 +17,44 @@ import { SQUADS } from "config";
 const ONE_YEAR_SECS = 60 * 60 * 24 * 365;
 
 describe("Squads", () => {
-  async function deployFixture() {
-    const { adminAccount, referralManager, token1, stakings, ...params } =
-      await loadFixture(deployReferralManagerFixture);
-
-    const stakingContract = stakings[0].contract;
-
-    const squadsManager = await new Squads__factory(adminAccount).deploy(
-      token1.address,
-      referralManager.address
-    );
-
-    await squadsManager.deployed();
-
-    for (let i = 0; i < SQUADS.length; i++) {
-      const { subscriptionCost, reward, stakingThreshold, squadSize } =
-        SQUADS[i];
-
-      await squadsManager
-        .connect(adminAccount)
-        .addPlan(
-          subscriptionCost,
-          reward,
-          stakingThreshold,
-          squadSize,
-          stakingContract.address
-        );
-    }
-
-    await stakingContract
-      .connect(adminAccount)
-      .updateSquadsManager(squadsManager.address);
-
-    await referralManager
-      .connect(adminAccount)
-      .authorizeContract(squadsManager.address);
-
-    return {
-      squads: SQUADS,
-      squadsManager,
-      adminAccount,
-      referralManager,
-      token1,
-      stakingContract,
-      ...params,
-    };
-  }
-
+  //*
   it("Should deploy with correct params", async () => {
-    const { adminAccount, referralManager, token1 } = await loadFixture(
-      deployReferralManagerFixture
-    );
+    const { adminAccount, referralManager, token1, stakingContract } =
+      await loadFixture(deployReferralManagerFixture);
 
     const squadsManager = new Squads__factory(adminAccount);
 
     await expect(
       squadsManager.deploy(
         ethers.constants.AddressZero,
-        referralManager.address
+        referralManager.address,
+        stakingContract.address
       )
     ).to.be.reverted;
 
     await expect(
-      squadsManager.deploy(token1.address, ethers.constants.AddressZero)
+      squadsManager.deploy(
+        token1.address,
+        ethers.constants.AddressZero,
+        stakingContract.address
+      )
     ).to.be.reverted;
 
-    await expect(squadsManager.deploy(token1.address, referralManager.address))
-      .not.to.be.reverted;
+    await expect(
+      squadsManager.deploy(
+        token1.address,
+        referralManager.address,
+        ethers.constants.AddressZero
+      )
+    ).to.be.reverted;
+
+    await expect(
+      squadsManager.deploy(
+        token1.address,
+        referralManager.address,
+        stakingContract.address
+      )
+    ).not.to.be.reverted;
   });
 
   it("Should subscribe", async () => {
@@ -93,7 +65,7 @@ describe("Squads", () => {
       restSigners,
       token1,
       token1Holder,
-    } = await loadFixture(deployFixture);
+    } = await loadFixture(deploySquadsFixture);
 
     const [acc1] = restSigners;
 
@@ -162,7 +134,7 @@ describe("Squads", () => {
       await expect(squadsManager.connect(acc1).subscribe(0)).not.to.be.reverted;
     }
   });
-
+  // */
   it("Should add member in squad", async () => {
     const {
       squadsManager,
@@ -172,9 +144,9 @@ describe("Squads", () => {
       restSigners,
       token1,
       token1Holder,
-    } = await loadFixture(deployFixture);
+    } = await loadFixture(deploySquadsFixture);
 
-    const [referrer, acc1, acc2, acc3, acc4] = restSigners;
+    const [referrer, acc1, acc2, acc3, acc4, newStaking] = restSigners;
 
     const squadPlanIndex = 0;
     const squadPlan = SQUADS[squadPlanIndex];
@@ -198,6 +170,7 @@ describe("Squads", () => {
 
     // Should not add member if user has no sufficient staking
     const commonStakingProps = {
+      planId: 1,
       token1,
       token1Holder,
       stakingContract,
@@ -247,6 +220,19 @@ describe("Squads", () => {
     );
     expect(members.length).to.eq(0);
 
+    // Should not add member if it stakes in wrong staking plan
+    await autoStakeToken({
+      ...commonStakingProps,
+      acc: acc1,
+      planId: 0,
+    });
+
+    members = await squadsManager.getUserSquadMembers(
+      referrer.address,
+      squadPlanIndex
+    );
+    expect(members.length).to.eq(0);
+
     // Should add member if it stakes enough
     await autoStakeToken({ ...commonStakingProps, acc: acc1 });
 
@@ -257,13 +243,20 @@ describe("Squads", () => {
     expect(members.length).to.eq(1);
     expect(members[0]).to.eq(acc1.address);
 
+    // Should not add member if member is zero address
+    await expect(
+      squadsManager.tryToAddMember(
+        0,
+        referrer.address,
+        ethers.constants.AddressZero,
+        stakeAmount
+      )
+    ).to.be.reverted;
+
     // Should not add member if staking contract not authorized
     await squadsManager
       .connect(adminAccount)
-      .updatePlanAuthorizedContract(
-        squadPlanIndex,
-        ethers.constants.AddressZero
-      );
+      .updateStakingContract(ethers.constants.AddressZero);
 
     await autoStakeToken({ ...commonStakingProps, acc: acc2 });
 
@@ -276,22 +269,22 @@ describe("Squads", () => {
 
     await squadsManager
       .connect(adminAccount)
-      .updatePlanAuthorizedContract(squadPlanIndex, stakingContract.address);
+      .updateStakingContract(stakingContract.address);
 
     // Set staking manually for acc2
     await autoSubscribeToStaking(
+      1,
       acc2,
       token1,
       token1Holder,
-      stakingContract,
-      adminAccount
+      stakingContract
     );
     await token1.connect(token1Holder).transfer(acc2.address, stakeAmount);
 
     await expect(
       stakingContract
         .connect(acc2)
-        .deposit(stakeAmount, false, referrer.address)
+        .deposit(1, stakeAmount, false, referrer.address)
     )
       .to.emit(squadsManager, "MemberAdded")
       .withArgs(referrer.address, squadPlanIndex, acc2.address, 2);
@@ -306,10 +299,10 @@ describe("Squads", () => {
 
     // Should not add member if it already in squad
     await autoStakeToken({
+      planId: 1,
       token1,
       token1Holder,
       stakingContract,
-      adminAccount,
       acc: acc1,
       referrer,
       stakeAmount,
@@ -393,7 +386,7 @@ describe("Squads", () => {
       restSigners,
       token1,
       token1Holder,
-    } = await loadFixture(deployFixture);
+    } = await loadFixture(deploySquadsFixture);
 
     const [referrer, acc1, acc2, acc3, acc4, acc5, acc6] = restSigners;
 
@@ -418,16 +411,17 @@ describe("Squads", () => {
     });
 
     await autoStakeToken({
+      planId: 1,
       token1,
       token1Holder,
       stakingContract,
-      adminAccount,
       acc: referrer,
       stakeAmount,
     });
 
     // Fill squad
     const commonStakingProps = {
+      planId: 1,
       token1,
       token1Holder,
       stakingContract,
@@ -454,32 +448,35 @@ describe("Squads", () => {
 
     // Add last member
     await autoSubscribeToStaking(
+      1,
       acc6,
       token1,
       token1Holder,
-      stakingContract,
-      adminAccount
+      stakingContract
     );
     await token1.connect(token1Holder).transfer(acc6.address, stakeAmount);
 
     await expect(
       stakingContract
         .connect(acc6)
-        .deposit(stakeAmount, false, referrer.address)
+        .deposit(1, stakeAmount, false, referrer.address)
     )
       .to.emit(squadsManager, "SquadFilled")
       .withArgs(referrer.address, squadPlanIndex, 1);
 
     // Subscription expires after team filled
     let squadInfo = await squadsManager.getUserSquadInfo(
-      referrer.address,
-      squadPlanIndex
+      squadPlanIndex,
+      referrer.address
     );
     expect(squadInfo.subscription).to.eq(0);
     expect(squadInfo.squadsFilled).to.eq(1);
 
     let refRewardInfo = await referralManager.getUserInfo(referrer.address);
-    const stakeProfit = await stakingContract.calculateStakeProfit(stakeAmount);
+    const stakeProfit = await stakingContract.calculateStakeProfit(
+      1,
+      stakeAmount
+    );
     const refReward = await referralManager.calculateRefReward(stakeProfit, 1);
     const squadReward = refRewardInfo.totalDividends.sub(refReward.mul(6));
     expect(squadReward).to.eq(squadPlan.reward);
@@ -530,18 +527,18 @@ describe("Squads", () => {
 
     // Add last member
     await autoSubscribeToStaking(
+      1,
       acc6,
       token1,
       token1Holder,
-      stakingContract,
-      adminAccount
+      stakingContract
     );
     await token1.connect(token1Holder).transfer(acc6.address, stakeAmount);
 
     await expect(
       stakingContract
         .connect(acc6)
-        .deposit(stakeAmount, false, referrer.address)
+        .deposit(1, stakeAmount, false, referrer.address)
     )
       .to.emit(squadsManager, "SquadFilled")
       .withArgs(referrer.address, squadPlanIndex, 2);
@@ -551,8 +548,8 @@ describe("Squads", () => {
       .claimDividends(refReward.mul(6).add(squadPlan.reward));
 
     squadInfo = await squadsManager.getUserSquadInfo(
-      referrer.address,
-      squadPlanIndex
+      squadPlanIndex,
+      referrer.address
     );
     expect(squadInfo.subscription).to.eq(0);
     expect(squadInfo.squadsFilled).to.eq(2);
@@ -592,10 +589,10 @@ describe("Squads", () => {
     });
 
     await autoStakeToken({
+      planId: 1,
       token1,
       token1Holder,
       stakingContract,
-      adminAccount,
       acc: referrer,
       stakeAmount,
     });
@@ -608,26 +605,26 @@ describe("Squads", () => {
 
     // Add last member
     await autoSubscribeToStaking(
+      1,
       acc6,
       token1,
       token1Holder,
-      stakingContract,
-      adminAccount
+      stakingContract
     );
     await token1.connect(token1Holder).transfer(acc6.address, stakeAmount);
 
     await expect(
       stakingContract
         .connect(acc6)
-        .deposit(stakeAmount, false, referrer.address)
+        .deposit(1, stakeAmount, false, referrer.address)
     )
       .to.emit(squadsManager, "SquadFilled")
       .withArgs(referrer.address, squadPlanIndex, 1);
 
     // Subscription expires after team filled
     squadInfo = await squadsManager.getUserSquadInfo(
-      referrer.address,
-      squadPlanIndex
+      squadPlanIndex,
+      referrer.address
     );
     expect(squadInfo.subscription).to.eq(0);
     expect(squadInfo.squadsFilled).to.eq(1);
@@ -673,7 +670,7 @@ describe("Squads", () => {
   });
 
   it("Should return sufficient planId by staking amount", async () => {
-    const { squads, squadsManager } = await loadFixture(deployFixture);
+    const { squads, squadsManager } = await loadFixture(deploySquadsFixture);
 
     expect(await squadsManager.getSufficientPlanIdByStakingAmount(0)).to.eq(-1);
 
@@ -703,15 +700,15 @@ describe("Squads", () => {
       ).to.eq(i);
     }
   });
-
+  //*
   describe("Roles / Administration", () => {
     // addPlan + getPlans
     it("Should add plan only by Admin", async () => {
       const { squadsManager, restSigners, adminAccount } = await loadFixture(
-        deployFixture
+        deploySquadsFixture
       );
 
-      const [acc, newStakingContract] = restSigners;
+      const [acc] = restSigners;
 
       const plans = await squadsManager.getPlans();
 
@@ -719,7 +716,7 @@ describe("Squads", () => {
       const stakingThreshold = BigNumber.from(10).pow(18).mul(750);
       const reward = stakingThreshold;
       const squadSize = 10;
-      const authorizeContract = newStakingContract.address;
+      const stakingPlanId = 2;
 
       await expect(
         squadsManager
@@ -729,7 +726,7 @@ describe("Squads", () => {
             reward,
             stakingThreshold,
             squadSize,
-            authorizeContract
+            stakingPlanId
           )
       ).to.be.reverted;
 
@@ -743,9 +740,18 @@ describe("Squads", () => {
             reward,
             stakingThreshold,
             squadSize,
-            authorizeContract
+            stakingPlanId
           )
-      ).not.to.be.reverted;
+      )
+        .to.emit(squadsManager, "SquadPlanCreated")
+        .withArgs(
+          3,
+          subscriptionCost,
+          reward,
+          stakingThreshold,
+          squadSize,
+          stakingPlanId
+        );
 
       const newPlans = await squadsManager.getPlans();
       const lastPlan = newPlans[newPlans.length - 1];
@@ -755,7 +761,7 @@ describe("Squads", () => {
       expect(lastPlan.stakingThreshold).to.eq(stakingThreshold);
       expect(lastPlan.reward).to.eq(reward);
       expect(lastPlan.squadSize).to.eq(squadSize);
-      expect(lastPlan.authorizedStaking).to.eq(authorizeContract);
+      expect(lastPlan.stakingPlanId).to.eq(stakingPlanId);
     });
 
     it("Should update plan params only by Admin", async () => {
@@ -765,17 +771,18 @@ describe("Squads", () => {
       // updatePlanSquadSize
       // updatePlanAuthorizedContract
       // updatePlanActivity
-      const { squadsManager, restSigners, adminAccount, stakingContract } =
-        await loadFixture(deployFixture);
+      const { squadsManager, restSigners, adminAccount } = await loadFixture(
+        deploySquadsFixture
+      );
 
-      const [acc, newStakingContract] = restSigners;
+      const [acc] = restSigners;
 
       const planId = 1;
       const subscriptionCost = BigNumber.from(10).pow(18).mul(250);
       const stakingThreshold = BigNumber.from(10).pow(18).mul(750);
       const reward = stakingThreshold;
       const squadSize = 10;
-      const authorizeContract = newStakingContract.address;
+      const stakingPlanId = 1;
 
       await expect(
         squadsManager
@@ -792,11 +799,8 @@ describe("Squads", () => {
       await expect(
         squadsManager.connect(acc).updatePlanSquadSize(planId, squadSize)
       ).to.be.reverted;
-      await expect(
-        squadsManager
-          .connect(acc)
-          .updatePlanAuthorizedContract(planId, authorizeContract)
-      ).to.be.reverted;
+      await expect(squadsManager.connect(acc).updatePlanStakingId(planId, 0)).to
+        .be.reverted;
       await expect(squadsManager.connect(acc).updatePlanActivity(planId, false))
         .to.be.reverted;
 
@@ -807,7 +811,7 @@ describe("Squads", () => {
       expect(plan.stakingThreshold).to.eq(SQUADS[planId].stakingThreshold);
       expect(plan.reward).to.eq(SQUADS[planId].reward);
       expect(plan.squadSize).to.eq(SQUADS[planId].squadSize);
-      expect(plan.authorizedStaking).to.eq(stakingContract.address);
+      expect(plan.stakingPlanId).to.eq(stakingPlanId);
 
       await grantAdminRole(squadsManager, adminAccount, acc);
 
@@ -819,10 +823,10 @@ describe("Squads", () => {
         .connect(acc)
         .updatePlanStakingThreshold(planId, stakingThreshold);
       await squadsManager.connect(acc).updatePlanSquadSize(planId, squadSize);
-      await squadsManager
-        .connect(acc)
-        .updatePlanAuthorizedContract(planId, authorizeContract);
-      await squadsManager.connect(acc).updatePlanActivity(planId, false);
+      await squadsManager.connect(acc).updatePlanStakingId(planId, 0);
+      await expect(squadsManager.connect(acc).updatePlanActivity(planId, false))
+        .to.emit(squadsManager, "SquadActivityChanged")
+        .withArgs(planId, false);
 
       const newPlans = await squadsManager.getPlans();
       const newPlan = newPlans[planId];
@@ -831,13 +835,13 @@ describe("Squads", () => {
       expect(newPlan.stakingThreshold).to.eq(stakingThreshold);
       expect(newPlan.reward).to.eq(reward);
       expect(newPlan.squadSize).to.eq(squadSize);
-      expect(newPlan.authorizedStaking).to.eq(authorizeContract);
+      expect(newPlan.stakingPlanId).to.eq(0);
     });
 
     it("Should change contract params only by admin", async () => {
       // updateSubscriptionPeriod + updateSubscriptionToken + updateSubscriptionPeriod
       const { squadsManager, restSigners, adminAccount } = await loadFixture(
-        deployFixture
+        deploySquadsFixture
       );
 
       const [acc, newToken, newRefManager] = restSigners;
@@ -873,4 +877,5 @@ describe("Squads", () => {
       );
     });
   });
+  // */
 });

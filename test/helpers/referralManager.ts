@@ -1,15 +1,14 @@
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
 import { BigNumber } from "ethers";
 import { ethers } from "hardhat";
+import { Token1, ReferralManager } from "typechain-types";
+import { StakingPlan } from "types";
 import {
-  Token1,
-  ReferralManager,
-  Staking__factory,
-  Staking,
-  ReferralManager__factory,
-  Token2__factory,
-  Token1__factory,
-} from "typechain-types";
+  deployReferralManager,
+  deployStaking,
+  deployToken1,
+  deployToken2,
+} from "./deployments";
 import { autoStakeToken, StakeTokenParams } from "./staking";
 
 type SubscribeParams = {
@@ -63,10 +62,6 @@ export async function createReferralChain({
   const referralLevels = (await referralManager.getReferralLevels()).toNumber();
   const levelsToSubscribe = levels || referralLevels;
 
-  // await referralManager
-  //   .connect(adminAccount)
-  //   .authorizeContract(stakingContract.address);
-
   const chainAccounts = [];
 
   let [referrer, ...restSigners] = signers;
@@ -84,6 +79,7 @@ export async function createReferralChain({
     });
 
     const defaultParams = {
+      planId: 0,
       acc,
       adminAccount,
       token1: token,
@@ -121,20 +117,20 @@ export async function deployReferralManagerFixture() {
 
   // Deploy Tokens
   const initialSupply = BigNumber.from(10).pow(18).mul(21_000_000);
-  const token1 = await new Token1__factory(adminAccount).deploy(
+  const token1 = await deployToken1({
+    admin: adminAccount,
     initialSupply,
-    token1Holder.address
-  );
-  await token1.deployed();
+    initialHolder: token1Holder.address,
+  });
   await token1
     .connect(token1Holder)
     .transfer(stakingRewardPool.address, initialSupply.div(100));
 
-  const token2 = await new Token2__factory(adminAccount).deploy(
+  const token2 = await deployToken2({
+    admin: adminAccount,
     initialSupply,
-    token2Holder.address
-  );
-  await token2.deployed();
+    initialHolder: token2Holder.address,
+  });
   await token2
     .connect(token2Holder)
     .transfer(referralRewardPool.address, initialSupply);
@@ -144,71 +140,40 @@ export async function deployReferralManagerFixture() {
   const fullSubscriptionCost = BigNumber.from(10).pow(18).mul(5);
   const levelSubscriptionCost = BigNumber.from(10).pow(18);
 
-  const referralManager = await new ReferralManager__factory(
-    adminAccount
-  ).deploy(
-    token1.address,
-    token2.address,
-    referralRewardPool.address,
+  const referralManager = await deployReferralManager({
+    admin: adminAccount,
     fullSubscriptionCost,
-    levelSubscriptionCost
-  );
-  await referralManager.deployed();
+    levelSubscriptionCost,
+    token1Address: token1.address,
+    token2,
+    referralRewardPool,
+  });
 
-  // Deploy Staking contracts
+  // Deploy Staking contract
   const minStakeLimit = BigNumber.from(10).pow(17);
-  const stakings = [
+  const stakingPlans: StakingPlan[] = [
     {
       durationDays: 1,
       rewardPercent: 100,
       subscriptionCost: BigNumber.from(10).pow(18),
-      subscriptionPeriod: 365,
-      contract: {} as Staking,
+      subscriptionDurationDays: 365,
     },
     {
       durationDays: 3,
       rewardPercent: 300,
       subscriptionCost: BigNumber.from(10).pow(18),
-      subscriptionPeriod: 365,
-      contract: {} as Staking,
+      subscriptionDurationDays: 365,
     },
   ];
 
-  for (let i = 0; i < stakings.length; i++) {
-    const stakingContract = await new Staking__factory(adminAccount).deploy(
-      token1.address,
-      token2.address,
-      stakingRewardPool.address,
-      referralManager.address,
-      ethers.constants.AddressZero,
-      stakings[i].durationDays,
-      stakings[i].rewardPercent,
-      stakings[i].subscriptionCost,
-      stakings[i].subscriptionPeriod
-    );
-    await stakingContract.deployed();
-
-    await token1
-      .connect(stakingRewardPool)
-      .approve(stakingContract.address, ethers.constants.MaxUint256);
-    await token2
-      .connect(adminAccount)
-      .addToWhitelist([stakingContract.address, referralManager.address]);
-
-    await referralManager
-      .connect(adminAccount)
-      .authorizeContract(stakingContract.address);
-
-    stakings[i].contract = stakingContract;
-  }
-
-  // Add Approves
-  await token2
-    .connect(referralRewardPool)
-    .approve(referralManager.address, ethers.constants.MaxUint256);
-  await token2
-    .connect(adminAccount)
-    .addToWhitelist([referralRewardPool.address]);
+  const stakingContract = await deployStaking({
+    admin: adminAccount,
+    stakingPlans,
+    token1,
+    token2,
+    stakingRewardPool,
+    referralManager,
+  });
 
   return {
     adminAccount,
@@ -221,7 +186,8 @@ export async function deployReferralManagerFixture() {
     fullSubscriptionCost,
     levelSubscriptionCost,
     referralLevels,
-    stakings,
+    stakingContract,
+    stakingPlans,
     stakingRewardPool,
     referralRewardPool,
     restSigners,

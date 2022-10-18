@@ -1,137 +1,133 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.11;
 
+import "@openzeppelin/contracts/token/ERC20/extensions/ERC20Burnable.sol";
 import "@openzeppelin/contracts/access/AccessControl.sol";
-import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
-import "./extensions/Subscribable.sol";
 import "./interfaces/IStaking.sol";
 import "./interfaces/ISquads.sol";
 import "./interfaces/IReferralManager.sol";
-import "@openzeppelin/contracts/token/ERC20/extensions/ERC20Burnable.sol";
 
-contract Staking is IStaking, AccessControl, Subscribable {
-    mapping(address => User) private users;
+contract Staking is IStaking, AccessControl {
+    StakingPlan[] public stakingPlans;
+
+    mapping(uint256 => mapping(address => Staker)) private users;
 
     uint256 public PERCENTS_DIVIDER = 1000;
     uint256 public TIME_STEP = 1 days;
     uint256 public MIN_STAKE_LIMIT = 1 * 1e17; // 0.1 Token
-    address private _rewardPool;
-    uint256 public durationDays;
-    uint256 public reward; // percents, e.g. 70 == 7%
 
-    bool public isActive;
     bool public shouldAddReferrerOnToken2Stake;
 
-    uint256 public totalStakesToken1No;
-    uint256 public totalStakesToken2No;
-    uint256 public totalStakedToken1;
-    uint256 public totalStakedToken2;
-    uint256 public totalClaimed;
-
-    IERC20 public token1;
+    ERC20Burnable public token1;
     ERC20Burnable public token2;
     IReferralManager public referralManager;
     ISquads public squadsManager;
+    address private rewardPool;
 
     event Staked(
         address indexed user,
+        uint256 indexed planId,
         uint256 indexed stakeIndex,
         uint256 amount,
         uint256 profit,
         bool isToken2,
-        uint256 indexed timestamp
+        uint256 timestamp
     );
     event Claimed(
         address indexed user,
+        uint256 indexed planId,
         uint256 indexed stakeIndex,
         uint256 amount,
         bool isToken2,
-        uint256 indexed timestamp
+        uint256 timestamp
     );
-    event ActivityChanged(bool isActive, address admin);
+    event StakingPlanCreated(
+        uint256 indexed planId,
+        uint256 duration,
+        uint256 rewardPercent
+    );
+    event ActivityChanged(uint256 indexed planId, bool isActive);
+    event Subscribed(address indexed user, uint256 indexed planId);
 
     constructor(
         address token1_,
         address token2_,
         address rewardPool_,
         address referralManager_,
-        address squadsManager_,
-        uint256 durationDays_,
-        uint256 rewardPercent_,
-        uint256 subscriptionCost_,
-        uint256 subscriptionPeriodDays_
-    ) Subscribable(token1_, subscriptionCost_, subscriptionPeriodDays_) {
+        address squadsManager_
+    ) {
         require(token1_ != address(0));
         require(token2_ != address(0));
         require(rewardPool_ != address(0));
         require(referralManager_ != address(0));
-        require(durationDays_ > 0);
-        require(rewardPercent_ > 0);
 
         _grantRole(DEFAULT_ADMIN_ROLE, _msgSender());
 
-        _rewardPool = rewardPool_;
-        durationDays = durationDays_;
-        reward = rewardPercent_;
+        rewardPool = rewardPool_;
 
-        token1 = IERC20(token1_);
+        token1 = ERC20Burnable(token1_);
         token2 = ERC20Burnable(token2_);
         referralManager = IReferralManager(referralManager_);
         squadsManager = ISquads(squadsManager_);
     }
 
     function deposit(
-        uint256 depositAmount_,
-        bool isToken2_,
+        uint256 planId,
+        uint256 depositAmount,
+        bool isToken2,
         address referrer
-    ) public whenActive subscribersOnly {
-        require(referrer != _msgSender(), "Referrer can not be sender");
+    ) public {
+        require(stakingPlans[planId].isActive, "Staking plan is not active");
         require(
-            depositAmount_ >= MIN_STAKE_LIMIT,
+            hasSubscription(planId, _msgSender()),
+            "You are not subscriber"
+        );
+        require(
+            depositAmount >= MIN_STAKE_LIMIT,
             "Stake amount less than minimum value"
         );
-        uint256 stakingReward = calculateStakeProfit(depositAmount_);
+        require(referrer != _msgSender(), "Referrer can not be sender");
+        uint256 stakingProfit = calculateStakeProfit(planId, depositAmount);
 
         require(
-            stakingReward <= token1.balanceOf(_rewardPool),
+            stakingProfit <= token1.balanceOf(rewardPool),
             "Not enough tokens for reward"
         );
-        if (isToken2_) {
-            token2.burnFrom(_msgSender(), depositAmount_);
+        if (isToken2) {
+            token2.burnFrom(_msgSender(), depositAmount);
         } else {
-            token1.transferFrom(_msgSender(), address(this), depositAmount_);
+            token1.transferFrom(_msgSender(), address(this), depositAmount);
         }
-        token1.transferFrom(_rewardPool, address(this), stakingReward);
+        token1.transferFrom(rewardPool, address(this), stakingProfit);
 
-        User storage user = users[_msgSender()];
-        uint256 stakeId = user.stakes.length;
+        StakingPlan storage plan = stakingPlans[planId];
+        Staker storage user = users[planId][_msgSender()];
 
-        Stake memory newStake = Stake(
-            stakeId,
-            depositAmount_,
-            block.timestamp,
-            block.timestamp + durationDays * TIME_STEP,
-            reward,
-            stakingReward,
-            false,
-            isToken2_
-        );
+        Stake memory newStake = Stake({
+            amount: depositAmount,
+            timeStart: getTimestamp(),
+            timeEnd: getTimestamp() + plan.stakingDuration * TIME_STEP,
+            profitPercent: plan.profitPercent,
+            profit: stakingProfit,
+            isClaimed: false,
+            isToken2: isToken2
+        });
 
         user.stakes.push(newStake);
 
-        if (isToken2_) {
-            user.totalStakedToken2 += depositAmount_;
-            totalStakedToken2 += depositAmount_;
-            totalStakesToken2No++;
+        if (isToken2) {
+            user.totalStakedToken2 += depositAmount;
+            plan.totalStakedToken2 += depositAmount;
+            plan.totalStakesToken2No += 1;
         } else {
-            user.totalStakedToken1 += depositAmount_;
-            user.currentToken1Staked += depositAmount_;
-            totalStakedToken1 += depositAmount_;
-            totalStakesToken1No++;
+            user.totalStakedToken1 += depositAmount;
+            user.currentToken1Staked += depositAmount;
+            plan.totalStakedToken1 += depositAmount;
+            plan.totalStakesToken1No += 1;
         }
 
         // Referrals
-        if (!isToken2_ || shouldAddReferrerOnToken2Stake) {
+        if (!isToken2 || shouldAddReferrerOnToken2Stake) {
             address userReferrer = referralManager.getUserReferrer(
                 _msgSender()
             );
@@ -139,61 +135,64 @@ contract Staking is IStaking, AccessControl, Subscribable {
                 referralManager.setUserReferrer(_msgSender(), referrer);
                 userReferrer = referralManager.getUserReferrer(_msgSender());
             }
-            _assignRefRewards(_msgSender(), stakingReward);
+            _assignRefRewards(planId, _msgSender(), stakingProfit);
 
             // Squads
-            if (
-                address(squadsManager) != address(0) &&
-                userReferrer != address(0)
-            ) {
-                squadsManager.tryToAddMember(
-                    userReferrer,
-                    _msgSender(),
-                    depositAmount_
-                );
+            if (address(squadsManager) != address(0)) {
+                try
+                    squadsManager.tryToAddMember(
+                        planId,
+                        userReferrer,
+                        _msgSender(),
+                        depositAmount
+                    )
+                {} catch {}
             }
         }
-
         emit Staked(
             _msgSender(),
-            newStake.stakeId,
+            planId,
+            user.stakes.length - 1,
             newStake.amount,
             newStake.profit,
             newStake.isToken2,
-            block.timestamp
+            getTimestamp()
         );
     }
 
-    function withdraw(uint256 stakeId_) public {
-        User storage user = users[_msgSender()];
-        require(stakeId_ < user.stakes.length, "Invalid stake id");
+    function withdraw(uint256 planId, uint256 stakeId) public {
+        StakingPlan storage plan = stakingPlans[planId];
+        Staker storage user = users[planId][_msgSender()];
+        Stake storage stake = user.stakes[stakeId];
 
-        Stake storage stake = user.stakes[stakeId_];
         require(!stake.isClaimed, "Stake is already claimed");
-        require(stake.timeEnd <= block.timestamp, "Stake is not ready yet");
+        require(stake.timeEnd <= getTimestamp(), "Stake is not ready yet");
 
-        uint256 withdrawAmount = _calculateStakeReward(stake);
+        uint256 withdrawAmount = _getAvailableStakeReward(stake);
         stake.isClaimed = true;
 
         token1.transfer(_msgSender(), withdrawAmount);
         user.totalClaimed += withdrawAmount;
-        totalClaimed += withdrawAmount;
+        plan.totalClaimed += withdrawAmount;
         if (!stake.isToken2) {
             user.currentToken1Staked -= stake.amount;
         }
 
         emit Claimed(
             _msgSender(),
-            stake.stakeId,
+            planId,
+            stakeId,
             withdrawAmount,
             stake.isToken2,
-            block.timestamp
+            getTimestamp()
         );
     }
 
-    function _assignRefRewards(address depositSender, uint256 stakingReward)
-        internal
-    {
+    function _assignRefRewards(
+        uint256 planId,
+        address depositSender,
+        uint256 stakingReward
+    ) internal {
         uint256 totalLevels = referralManager.getReferralLevels();
         address currentLevelUser = depositSender;
 
@@ -208,11 +207,12 @@ contract Staking is IStaking, AccessControl, Subscribable {
                         stakingReward,
                         level
                     );
+                    uint256 currentToken1Staked = users[planId][referrer]
+                        .currentToken1Staked;
 
-                    uint256 truncatedReward = min(
-                        refReward,
-                        users[referrer].currentToken1Staked
-                    );
+                    uint256 truncatedReward = refReward <= currentToken1Staked
+                        ? refReward
+                        : currentToken1Staked;
 
                     referralManager.addUserDividends(referrer, truncatedReward);
                 }
@@ -222,90 +222,59 @@ contract Staking is IStaking, AccessControl, Subscribable {
         }
     }
 
-    function subscribe() public whenActive {
-        _subscribe(_msgSender());
+    function subscribe(uint256 planId) public {
+        StakingPlan storage plan = stakingPlans[planId];
+        require(plan.isActive, "Staking plan is not active");
+
+        token1.burnFrom(_msgSender(), plan.subscriptionCost);
+        users[planId][_msgSender()].subscription =
+            getTimestamp() +
+            plan.subscriptionDuration *
+            TIME_STEP;
+
+        emit Subscribed(_msgSender(), planId);
     }
 
-    // --------- Helper functions ---------
-    function getContractInfo()
-        public
-        view
-        returns (
-            uint256 _durationDays,
-            uint256 _reward,
-            bool _isActive,
-            uint256 _totalStakesToken1No,
-            uint256 _totalStakesToken2No,
-            uint256 _totalStakedToken1,
-            uint256 _totalStakedToken2,
-            uint256 _totalClaimed,
-            uint256 _subscriptionCost,
-            uint256 _subscriptionPeriodDays
-        )
-    {
-        _durationDays = durationDays;
-        _reward = reward;
-        _isActive = isActive;
-        _totalStakesToken1No = totalStakesToken1No;
-        _totalStakesToken2No = totalStakesToken2No;
-        _totalStakedToken1 = totalStakedToken1;
-        _totalStakedToken2 = totalStakedToken2;
-        _totalClaimed = totalClaimed;
-        _subscriptionCost = subscriptionCost;
-        _subscriptionPeriodDays = subscriptionPeriodDays;
+    function addStakingPlan(
+        uint256 subscriptionCost,
+        uint256 subscriptionDuration,
+        uint256 stakingDuration,
+        uint256 profitPercent
+    ) public onlyRole(DEFAULT_ADMIN_ROLE) {
+        require(stakingDuration > 0, "Insufficient duration");
+        require(profitPercent > 0, "Insufficient profit percent");
+
+        StakingPlan memory plan = StakingPlan({
+            isActive: true,
+            subscriptionCost: subscriptionCost,
+            subscriptionDuration: subscriptionDuration,
+            stakingDuration: stakingDuration,
+            profitPercent: profitPercent,
+            totalStakesToken1No: 0,
+            totalStakesToken2No: 0,
+            totalStakedToken1: 0,
+            totalStakedToken2: 0,
+            totalClaimed: 0
+        });
+
+        stakingPlans.push(plan);
+
+        emit StakingPlanCreated(
+            stakingPlans.length - 1,
+            stakingDuration,
+            profitPercent
+        );
     }
 
-    function getUserInfo(address userAddr_)
-        public
-        view
-        returns (
-            uint256 _totalStakedToken1,
-            uint256 _totalStakedToken2,
-            uint256 _totalClaimed,
-            uint256 _currentToken1Staked,
-            bool _subscribed,
-            uint256 _subscribedTill
-        )
-    {
-        User storage user = users[userAddr_];
-
-        _totalStakedToken1 = user.totalStakedToken1;
-        _totalStakedToken2 = user.totalStakedToken2;
-        _totalClaimed = user.totalClaimed;
-        _currentToken1Staked = user.currentToken1Staked;
-        _subscribed = isSubscriber(userAddr_);
-        _subscribedTill = _subscriptionExpiration(userAddr_);
-    }
-
-    function getUserStakes(address userAddr_)
-        public
-        view
-        returns (Stake[] memory stakes)
-    {
-        return users[userAddr_].stakes;
-    }
-
-    function getTimestamp() public view returns (uint256) {
-        return block.timestamp;
-    }
-
-    function calculateStakeProfit(uint256 amount_)
+    function calculateStakeProfit(uint256 planId, uint256 amount)
         public
         view
         returns (uint256)
     {
-        return (amount_ * reward) / PERCENTS_DIVIDER;
+        return (amount * stakingPlans[planId].profitPercent) / PERCENTS_DIVIDER;
     }
 
-    function calculateStakeReward(address userAddr_, uint256 stakeId_)
-        public
-        view
-        returns (uint256)
-    {
-        return _calculateStakeReward(users[userAddr_].stakes[stakeId_]);
-    }
-
-    function _calculateStakeReward(Stake storage stake)
+    function _getAvailableStakeReward(Stake storage stake)
         internal
         view
         returns (uint256)
@@ -316,28 +285,80 @@ contract Staking is IStaking, AccessControl, Subscribable {
             ? stake.profit
             : stake.amount + stake.profit;
 
-        if (stake.timeEnd <= block.timestamp) return stakeReward;
+        if (stake.timeEnd <= getTimestamp()) return stakeReward;
 
         return
-            ((block.timestamp - stake.timeStart) * stakeReward) /
+            ((getTimestamp() - stake.timeStart) * stakeReward) /
             (stake.timeEnd - stake.timeStart);
     }
 
-    function min(uint256 a, uint256 b) public pure returns (uint256) {
-        return a <= b ? a : b;
+    // --------- Helper functions ---------
+    function getContractInfo() public view returns (StakingPlan[] memory) {
+        return stakingPlans;
     }
 
-    modifier whenActive() {
-        require(isActive, "Contract is not active");
-        _;
+    function getStakingPlan(uint256 planId)
+        public
+        view
+        returns (StakingPlan memory)
+    {
+        return stakingPlans[planId];
+    }
+
+    function getUserPlanInfo(uint256 planId, address userAddress)
+        public
+        view
+        returns (
+            uint256 totalStakedToken1,
+            uint256 totalStakedToken2,
+            uint256 totalClaimed,
+            uint256 currentToken1Staked,
+            bool isSubscribed,
+            uint256 subscribedTill
+        )
+    {
+        Staker storage user = users[planId][userAddress];
+
+        totalStakedToken1 = user.totalStakedToken1;
+        totalStakedToken2 = user.totalStakedToken2;
+        totalClaimed = user.totalClaimed;
+        currentToken1Staked = user.currentToken1Staked;
+        isSubscribed = hasSubscription(planId, userAddress);
+        subscribedTill = user.subscription;
+    }
+
+    function getUserStakes(uint256 planId, address userAddress)
+        public
+        view
+        returns (Stake[] memory stakes)
+    {
+        return users[planId][userAddress].stakes;
+    }
+
+    function getTimestamp() public view returns (uint256) {
+        return block.timestamp;
+    }
+
+    function getAvailableStakeReward(
+        uint256 planId,
+        address userAddress,
+        uint256 stakeId
+    ) public view returns (uint256) {
+        return
+            _getAvailableStakeReward(
+                users[planId][userAddress].stakes[stakeId]
+            );
+    }
+
+    function hasSubscription(uint256 planId, address user)
+        public
+        view
+        returns (bool)
+    {
+        return users[planId][user].subscription > getTimestamp();
     }
 
     // --------- Administrative functions ---------
-    function setActive(bool value_) public onlyRole(DEFAULT_ADMIN_ROLE) {
-        isActive = value_;
-        emit ActivityChanged(value_, _msgSender());
-    }
-
     function updateShouldAddReferrerOnToken2Stake(bool value)
         public
         onlyRole(DEFAULT_ADMIN_ROLE)
@@ -349,11 +370,11 @@ contract Staking is IStaking, AccessControl, Subscribable {
         public
         onlyRole(DEFAULT_ADMIN_ROLE)
     {
-        _rewardPool = poolAddress_;
+        rewardPool = poolAddress_;
     }
 
     function updateToken1(address token1_) public onlyRole(DEFAULT_ADMIN_ROLE) {
-        token1 = IERC20(token1_);
+        token1 = ERC20Burnable(token1_);
     }
 
     function updateToken2(address token2_) public onlyRole(DEFAULT_ADMIN_ROLE) {
@@ -392,38 +413,40 @@ contract Staking is IStaking, AccessControl, Subscribable {
         MIN_STAKE_LIMIT = minLimit_;
     }
 
-    function updateDurationDays(uint256 duration_)
+    function updatePlanActivity(uint256 planId, bool isActive)
         public
         onlyRole(DEFAULT_ADMIN_ROLE)
     {
-        durationDays = duration_;
+        stakingPlans[planId].isActive = isActive;
+
+        emit ActivityChanged(planId, isActive);
     }
 
-    function updateReward(uint256 newReward_)
+    function updatePlanDurationDays(uint256 planId, uint256 duration)
         public
         onlyRole(DEFAULT_ADMIN_ROLE)
     {
-        reward = newReward_;
+        stakingPlans[planId].stakingDuration = duration;
     }
 
-    function updateSubscriptionCost(uint256 cost_)
+    function updatePlanReward(uint256 planId, uint256 percent)
         public
         onlyRole(DEFAULT_ADMIN_ROLE)
     {
-        _updateSubscriptionCost(cost_);
+        stakingPlans[planId].profitPercent = percent;
     }
 
-    function updateSubscriptionPeriod(uint256 periodDays_)
+    function updatePlanSubscriptionCost(uint256 planId, uint256 cost)
         public
         onlyRole(DEFAULT_ADMIN_ROLE)
     {
-        _updateSubscriptionPeriod(periodDays_);
+        stakingPlans[planId].subscriptionCost = cost;
     }
 
-    function updateSubscriptionToken(address token_)
-        public
-        onlyRole(DEFAULT_ADMIN_ROLE)
-    {
-        _updateSubscriptionToken(token_);
+    function updatePlanSubscriptionPeriod(
+        uint256 planId,
+        uint256 subscriptionDuration
+    ) public onlyRole(DEFAULT_ADMIN_ROLE) {
+        stakingPlans[planId].subscriptionDuration = subscriptionDuration;
     }
 }

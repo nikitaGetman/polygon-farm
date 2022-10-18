@@ -3,10 +3,10 @@ import { expect } from "chai";
 import { ethers } from "hardhat";
 import {
   VendorSell__factory,
-  Token1__factory,
   ERC20BurnableMock__factory,
 } from "typechain-types";
 import { grantAdminRole } from "./helpers";
+import { deployToken1 } from "./helpers/deployments";
 
 describe("Vendor Contract", function () {
   async function deployContractFixture() {
@@ -17,15 +17,16 @@ describe("Vendor Contract", function () {
     const swapRateDivider = 1000;
     const initialSupply = 1_000_000_000_000;
 
-    const token = await new Token1__factory(adminAccount).deploy(
+    const token = await deployToken1({
+      admin: adminAccount,
       initialSupply,
-      tokenPoolAcc.address
-    );
+      initialHolder: tokenPoolAcc.address,
+    });
+
     const changeToken = await new ERC20BurnableMock__factory(
       changeTokenPoolAcc
     ).deploy("Test Token", "TTN", initialSupply);
 
-    await token.deployed();
     await changeToken.deployed();
 
     const swapContract = await new VendorSell__factory(adminAccount).deploy(

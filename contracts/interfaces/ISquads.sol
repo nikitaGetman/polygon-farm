@@ -5,6 +5,7 @@ interface ISquads {
     function subscribe(uint256 planId) external;
 
     function tryToAddMember(
+        uint256 stakingPlanId,
         address user,
         address member,
         uint256 amount

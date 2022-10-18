@@ -1,38 +1,36 @@
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
-import {
-  Token1,
-  Staking,
-  Token2,
-  Token1__factory,
-  Token2__factory,
-  ReferralManager__factory,
-  Staking__factory,
-} from "typechain-types";
-import { time, mine } from "@nomicfoundation/hardhat-network-helpers";
+import { Token1, Staking, Token2 } from "typechain-types";
+import { time } from "@nomicfoundation/hardhat-network-helpers";
 import { ethers } from "hardhat";
 import { BigNumber } from "ethers";
+import { StakingPlan } from "types/index";
+import {
+  deployReferralManager,
+  deployStaking,
+  deployToken1,
+  deployToken2,
+} from "./deployments";
 
 export async function autoSubscribeToStaking(
+  planId: number,
   acc: SignerWithAddress,
   token: Token1,
   tokenHolder: SignerWithAddress,
-  stakingContract: Staking,
-  adminAccount: SignerWithAddress
+  stakingContract: Staking
 ) {
-  await token
-    .connect(tokenHolder)
-    .transfer(acc.address, await stakingContract.subscriptionCost());
+  const plan = await stakingContract.stakingPlans(planId);
+
+  await token.connect(tokenHolder).transfer(acc.address, plan.subscriptionCost);
   await token
     .connect(acc)
     .approve(stakingContract.address, ethers.constants.MaxUint256);
 
-  await stakingContract.connect(adminAccount).setActive(true);
-  await stakingContract.connect(acc).subscribe();
+  await stakingContract.connect(acc).subscribe(planId);
 }
 
 export type StakeTokenParams = {
+  planId: number;
   acc: SignerWithAddress;
-  adminAccount: SignerWithAddress;
   token1: Token1;
   token1Holder: SignerWithAddress;
   stakingContract: Staking;
@@ -43,8 +41,8 @@ export type StakeTokenParams = {
   referrer?: SignerWithAddress;
 };
 export async function autoStakeToken({
+  planId,
   acc,
-  adminAccount,
   token1,
   token2,
   token1Holder,
@@ -55,11 +53,11 @@ export async function autoStakeToken({
   referrer,
 }: StakeTokenParams) {
   await autoSubscribeToStaking(
+    planId,
     acc,
     token1,
     token1Holder,
-    stakingContract,
-    adminAccount
+    stakingContract
   );
 
   const amount = stakeAmount || (await stakingContract.MIN_STAKE_LIMIT());
@@ -75,6 +73,7 @@ export async function autoStakeToken({
   await stakingContract
     .connect(acc)
     .deposit(
+      planId,
       amount,
       isToken2,
       referrer?.address || ethers.constants.AddressZero
@@ -82,17 +81,34 @@ export async function autoStakeToken({
 }
 
 export async function waitForStakeFinished(days: number) {
-  await time.setNextBlockTimestamp((await time.latest()) + days * 60 * 60 * 24);
-  await mine();
+  await time.increase(days * 60 * 60 * 24 + 100);
 }
 
-export async function deployStaking() {
+export const STAKING_PLANS: StakingPlan[] = [
+  {
+    durationDays: 1,
+    rewardPercent: 100, // 10%
+    subscriptionCost: BigNumber.from(10).pow(18), // 1 token
+    subscriptionDurationDays: 10,
+  },
+  {
+    durationDays: 5,
+    rewardPercent: 500, // 50%
+    subscriptionCost: BigNumber.from(10).pow(19), // 10 tokens
+    subscriptionDurationDays: 15,
+  },
+  {
+    durationDays: 10,
+    rewardPercent: 1000, // 100%
+    subscriptionCost: BigNumber.from(10).pow(20), // 100 tokens
+    subscriptionDurationDays: 30,
+  },
+];
+
+export async function deployStakingFixture() {
   const initialSupply = BigNumber.from(10).pow(18).mul(21_000_000);
-  const durationDays = 1;
-  const rewardPercent = 100; // 10%
-  const subscriptionCost = BigNumber.from(10).pow(18);
-  const subscriptionPeriodDays = 10;
   const minStakeLimit = BigNumber.from(10).pow(17);
+  const stakingPlans = STAKING_PLANS;
 
   const [
     adminAccount,
@@ -102,53 +118,38 @@ export async function deployStaking() {
     ...restSigners
   ] = await ethers.getSigners();
 
-  const token1 = await new Token1__factory(adminAccount).deploy(
+  const token1 = await deployToken1({
+    admin: adminAccount,
     initialSupply,
-    token1Holder.address
-  );
-  await token1.deployed();
+    initialHolder: token1Holder.address,
+  });
   await token1
     .connect(token1Holder)
     .transfer(stakingRewardPool.address, initialSupply.div(2));
 
-  const token2 = await new Token2__factory(adminAccount).deploy(
+  const token2 = await deployToken2({
+    admin: adminAccount,
     initialSupply,
-    token2Holder.address
-  );
-  await token2.deployed();
+    initialHolder: token2Holder.address,
+  });
 
-  const referralManager = await new ReferralManager__factory(
-    adminAccount
-  ).deploy(
-    token1.address,
-    token2.address,
-    token2Holder.address,
-    BigNumber.from(10).pow(18).mul(5),
-    BigNumber.from(10).pow(18)
-  );
-  await referralManager.deployed();
+  const referralManager = await deployReferralManager({
+    admin: adminAccount,
+    fullSubscriptionCost: BigNumber.from(10).pow(18).mul(5),
+    levelSubscriptionCost: BigNumber.from(10).pow(18),
+    token1Address: token1.address,
+    token2,
+    referralRewardPool: token2Holder,
+  });
 
-  const stakingContract = await new Staking__factory(adminAccount).deploy(
-    token1.address,
-    token2.address,
-    stakingRewardPool.address,
-    referralManager.address,
-    ethers.constants.AddressZero,
-    durationDays,
-    rewardPercent,
-    subscriptionCost,
-    subscriptionPeriodDays
-  );
-  await stakingContract.deployed();
-
-  await token1
-    .connect(stakingRewardPool)
-    .approve(stakingContract.address, ethers.constants.MaxUint256);
-  await token2.connect(adminAccount).addToWhitelist([stakingContract.address]);
-
-  await referralManager
-    .connect(adminAccount)
-    .authorizeContract(stakingContract.address);
+  const stakingContract = await deployStaking({
+    admin: adminAccount,
+    stakingPlans,
+    token1,
+    token2,
+    stakingRewardPool,
+    referralManager,
+  });
 
   return {
     stakingContract,
@@ -161,10 +162,7 @@ export async function deployStaking() {
     stakingRewardPool,
     referralManager,
     restSigners,
-    durationDays,
-    rewardPercent,
-    subscriptionCost,
-    subscriptionPeriodDays,
+    stakingPlans,
     minStakeLimit,
   };
 }
