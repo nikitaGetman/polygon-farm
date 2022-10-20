@@ -68,7 +68,6 @@ contract Ticket is
     }
 
     // The following functions are overrides required by Solidity.
-
     function supportsInterface(bytes4 interfaceId)
         public
         view

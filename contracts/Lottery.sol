@@ -44,15 +44,11 @@ contract Lottery is VRFConsumerBaseV2, AccessControl {
     IERC20 rewardToken;
     address rewardPool;
 
-    // 0x7a1BaC17Ccc5b313516C5E16fb24f7659aA5ebed - mumbai coordinator
-    // 0xAE975071Be8F8eE67addBC1A82488F1C24858067 - mainnet coordinator
     // @see: https://docs.chain.link/docs/vrf/v2/subscription/supported-networks/#configurations
     VRFCoordinatorV2Interface COORDINATOR;
     mapping(uint256 => uint256) public oracleRequests; /* requestId --> roundId */
     uint64 oracleSubscriptionId;
     bytes32 oracleKeyHash;
-    // 0x4b09e658ed251bcafeebbc69400383d49f344ace09b9576fe248bb02c003fe9f; // 500 gwei key hash mumbai
-    // 0xcc294a196eeeb44da2888d17c0625cc88d70d9760a69d58d853ba6581a9ab0cd - 500 gwei mainnet
     uint32 oracleCallbackGasLimit = 100000;
     uint16 oracleRequestConfirmations = 3;
     bool enableWinnerCalculationInOracleResponse = false;

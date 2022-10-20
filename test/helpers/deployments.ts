@@ -2,17 +2,22 @@ import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
 import { BigNumber } from "ethers";
 import { ethers } from "hardhat";
 import {
+  Lottery__factory,
   ReferralManager,
   ReferralManager__factory,
   Squads__factory,
   Staking,
   Staking__factory,
+  Ticket,
+  Ticket__factory,
   Token1,
   Token1__factory,
   Token2,
   Token2__factory,
 } from "typechain-types";
+import { VRFCoordinatorMock__factory } from "typechain-types/factories/contracts/mocks/VRFCoordinatorMock__factory";
 import { SquadPlan, StakingPlan } from "types";
+import { grantRole } from "./common";
 
 type DeployTokenProps = {
   admin: SignerWithAddress;
@@ -173,4 +178,70 @@ export async function deploySquads({
   await referralManager.connect(admin).authorizeContract(squadsManager.address);
 
   return squadsManager;
+}
+
+type DeployTicketTokenProps = {
+  admin: SignerWithAddress;
+};
+export async function deployTicketToken({ admin }: DeployTicketTokenProps) {
+  const token = await new Ticket__factory(admin).deploy();
+  await token.deployed();
+  return token;
+}
+
+type DeployLotteryProps = {
+  admin: SignerWithAddress;
+  rewardPool: SignerWithAddress;
+  rewardToken: Token2;
+  paymentToken: Token1;
+  ticketToken: Ticket;
+  deployParams: {
+    ticketPrice: BigNumber;
+    ticketId: number;
+    daysStreakForTicket: number;
+    subscriptionId: number;
+    keyHash: string;
+  };
+};
+export async function deployLottery({
+  admin,
+  rewardPool,
+  rewardToken,
+  paymentToken,
+  ticketToken,
+  deployParams: {
+    ticketPrice,
+    ticketId,
+    daysStreakForTicket,
+    subscriptionId,
+    keyHash,
+  },
+}: DeployLotteryProps) {
+  const vrfCoordinator = await new VRFCoordinatorMock__factory(admin).deploy();
+  await vrfCoordinator.deployed();
+
+  const lottery = await new Lottery__factory(admin).deploy(
+    ticketPrice,
+    ticketId,
+    daysStreakForTicket,
+    ticketToken.address,
+    paymentToken.address,
+    rewardToken.address,
+    rewardPool.address,
+    vrfCoordinator.address,
+    subscriptionId,
+    keyHash
+  );
+  await lottery.deployed();
+
+  await rewardToken
+    .connect(rewardPool)
+    .approve(lottery.address, ethers.constants.MaxUint256);
+
+  await grantRole(ticketToken, admin, lottery.address, "MINTER_ROLE");
+
+  return {
+    vrfCoordinator,
+    lottery,
+  };
 }
