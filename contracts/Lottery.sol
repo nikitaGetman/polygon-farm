@@ -18,8 +18,6 @@ contract Lottery is VRFConsumerBaseV2, AccessControl {
         uint256 totalPrize;
         uint256 maxTicketsFromOneMember;
         uint256 tokensForOneTicket;
-        // uint256 levels;
-        // uint256 totalWinners;
         uint256[] winnersForLevel;
         uint256[] prizeForLevel;
         uint256 totalTickets;
@@ -28,7 +26,7 @@ contract Lottery is VRFConsumerBaseV2, AccessControl {
         address[][] winners;
     }
 
-    bytes32 constant OPERATOR_ROLE = keccak256("OPERATOR_ROLE");
+    bytes32 public constant OPERATOR_ROLE = keccak256("OPERATOR_ROLE");
 
     Round[] public rounds;
     mapping(uint256 => mapping(address => uint256)) roundMembers;
@@ -93,20 +91,20 @@ contract Lottery is VRFConsumerBaseV2, AccessControl {
     }
 
     function createLotteryRound(
-        uint256 initialPrize,
         uint256 startTime,
         uint256 duration,
-        uint256 maxTicketsFromOneMember,
+        uint256 initialPrize,
         uint256 tokensForOneTicket,
+        uint256 maxTicketsFromOneMember,
         uint256[] memory winnersForLevel,
         uint256[] memory prizeForLevel
     ) public onlyRole(OPERATOR_ROLE) {
-        require(initialPrize > 0 || tokensForOneTicket > 0);
-        require(winnersForLevel.length == prizeForLevel.length);
-        require(winnersForLevel.length > 0);
-        require(maxTicketsFromOneMember > 0);
-        require(startTime >= block.timestamp);
-        require(duration > 0);
+        require(initialPrize > 0 || tokensForOneTicket > 0, "EC1");
+        require(winnersForLevel.length == prizeForLevel.length, "EC2");
+        require(winnersForLevel.length > 0, "EC3");
+        require(maxTicketsFromOneMember > 0, "EC4");
+        require(startTime >= block.timestamp, "EC5");
+        require(duration > 0, "EC6");
 
         uint256 levels = winnersForLevel.length;
         address[][] memory winners = new address[][](levels);
@@ -119,7 +117,7 @@ contract Lottery is VRFConsumerBaseV2, AccessControl {
             winners[i] = new address[](winnersForLevel[i]);
         }
 
-        require(totalPrizePercents == 100, "Incorrect prize percents sum");
+        require(totalPrizePercents == 100, "EC7");
 
         Round memory newRound = Round({
             startTime: startTime,
@@ -131,8 +129,6 @@ contract Lottery is VRFConsumerBaseV2, AccessControl {
             totalPrize: 0,
             maxTicketsFromOneMember: maxTicketsFromOneMember,
             tokensForOneTicket: tokensForOneTicket,
-            // levels: levels,
-            // totalWinners: totalWinners,
             winnersForLevel: winnersForLevel,
             prizeForLevel: prizeForLevel,
             totalTickets: 0,
@@ -219,12 +215,9 @@ contract Lottery is VRFConsumerBaseV2, AccessControl {
     {
         uint256 roundId = oracleRequests[requestId];
 
-        require(
-            roundId < rounds.length &&
-                rounds[roundId].isClosed &&
-                !rounds[roundId].isOracleFulfilled,
-            "Round not found"
-        );
+        require(roundId < rounds.length, "EC10");
+        require(rounds[roundId].isClosed, "EC11");
+        require(!rounds[roundId].isOracleFulfilled, "EC12");
 
         Round storage round = rounds[roundId];
 
@@ -250,18 +243,28 @@ contract Lottery is VRFConsumerBaseV2, AccessControl {
 
         require(round.isOracleFulfilled, "Round is not fulfilled");
 
-        uint256 random = round.randomWord %
-            (round.randomWord % block.timestamp);
+        rounds[roundId].isFinished = true;
+        emit RoundFinished(roundId);
+
+        if (round.totalTickets == 0) {
+            return;
+        }
+
+        uint256 random = round.randomWord;
 
         for (uint256 i = 0; i < round.winners.length; i++) {
             uint256 totalLevelPrize = (round.totalPrize / 100) *
                 round.prizeForLevel[i];
 
             for (uint256 j = 0; j < round.winners[i].length; j++) {
+                random = ((random * (i + 1) * (j + 1)) % block.timestamp) + 1;
+                address winner = round.winners[i][j];
+
+                if (round.totalTickets == 0) break;
+
                 if (round.winners[i][j] == address(0)) {
                     // winner ticket is from 1 to round.totalTickets
                     uint256 winnerTicket = (random % round.totalTickets) + 1;
-                    address winner;
 
                     for (uint256 k = 0; k < round.members.length; k++) {
                         address member = round.members[k];
@@ -278,17 +281,12 @@ contract Lottery is VRFConsumerBaseV2, AccessControl {
                     }
 
                     rounds[roundId].winners[i][j] = winner;
-
-                    uint256 prizeAmount = totalLevelPrize /
-                        round.winners[i].length;
-                    // TODO: need approve for reward pool
-                    rewardToken.transferFrom(rewardPool, winner, prizeAmount);
                 }
+
+                uint256 prizeAmount = totalLevelPrize / round.winners[i].length;
+                rewardToken.transferFrom(rewardPool, winner, prizeAmount);
             }
         }
-
-        rounds[roundId].isFinished = true;
-        emit RoundFinished(roundId);
     }
 
     function buyTickets(uint256 amount) public {
@@ -321,9 +319,7 @@ contract Lottery is VRFConsumerBaseV2, AccessControl {
     }
 
     function _mintTicket(address user, uint256 amount) internal {
-        // TODO: need role minter in Ticket token contract
         ticketToken.mint(user, TICKET_ID, amount, "");
-
         emit TicketsCollected(_msgSender(), amount);
     }
 
@@ -333,26 +329,74 @@ contract Lottery is VRFConsumerBaseV2, AccessControl {
     }
 
     function getActiveRounds() public view returns (Round[] memory) {
-        // iterate thraw all rounds and check isClosed flag
+        // TODO: how to optimize this?
+        uint256 totalActiveRounds = 0;
+        bool[] memory activeRoundsFlags = new bool[](rounds.length);
+        for (uint256 i = 0; i < rounds.length; i++) {
+            if (rounds[i].startTime + rounds[i].duration > block.timestamp) {
+                activeRoundsFlags[i] = true;
+                totalActiveRounds += 1;
+            }
+        }
+
+        Round[] memory activeRounds = new Round[](totalActiveRounds);
+        for (uint256 i = rounds.length; i > 0; i--) {
+            if (activeRoundsFlags[i - 1]) {
+                totalActiveRounds -= 1;
+                activeRounds[totalActiveRounds] = rounds[i - 1];
+                if (totalActiveRounds == 0) break;
+            }
+        }
+
+        return activeRounds;
     }
 
-    function getLastFinishedRounds(uint256 length)
+    function getLastFinishedRounds(uint256 length, uint256 offset)
         public
         view
         returns (Round[] memory)
     {
-        // iterate from the end and collect if isClosed true
-    }
+        // TODO: how to optimize this?
+        Round[] memory finishedRounds = new Round[](length);
 
-    function getRoundMembers(uint256 id) public view {}
+        uint256 remainingRounds = length;
+        uint256 remainingOffset = offset;
+        for (uint256 i = rounds.length; i > 0; i--) {
+            if (rounds[i - 1].isFinished) {
+                if (remainingOffset > 0) {
+                    remainingOffset -= 1;
+                } else {
+                    remainingRounds -= 1;
+                    finishedRounds[remainingRounds] = rounds[i - 1];
+                }
+            }
+        }
+
+        // return if find required amount of rounds
+        if (remainingRounds == 0) return finishedRounds;
+
+        // else cut empty round items
+        uint256 roundsFound = length - remainingRounds;
+        Round[] memory foundFinishedRounds = new Round[](roundsFound);
+
+        for (uint256 i = 0; i < roundsFound; i++) {
+            foundFinishedRounds[i] = finishedRounds[i + remainingRounds];
+        }
+
+        return foundFinishedRounds;
+    }
 
     function isClaimedToday(address user) public view returns (bool) {
         uint256[] storage userClaims = claims[user];
+
+        if (userClaims.length == 0) return false;
+        if (userClaims[0] == 0) return false;
+
         uint256 today = block.timestamp / CLAIM_PERIOD;
 
-        for (uint256 i = userClaims.length - 1; i >= 0; i--) {
-            if (userClaims[i] > 0) {
-                return userClaims[i] / CLAIM_PERIOD == today;
+        for (uint256 i = userClaims.length; i > 0; i--) {
+            if (userClaims[i - 1] > 0) {
+                return userClaims[i - 1] / CLAIM_PERIOD == today;
             }
         }
 
@@ -362,6 +406,7 @@ contract Lottery is VRFConsumerBaseV2, AccessControl {
     function getClaimStreak(address user) public view returns (uint256) {
         uint256[] storage userClaims = claims[user];
 
+        if (userClaims.length == 0) return 0;
         if (userClaims[0] == 0) return 0;
 
         uint256 streak = 1;
@@ -406,11 +451,11 @@ contract Lottery is VRFConsumerBaseV2, AccessControl {
         DAYS_STREAK_FOR_TICKET = daysNum;
     }
 
-    function updateClaimPeriod(uint256 secs)
+    function updateClaimPeriod(uint256 sec)
         public
         onlyRole(DEFAULT_ADMIN_ROLE)
     {
-        CLAIM_PERIOD = secs;
+        CLAIM_PERIOD = sec;
     }
 
     function updateTicketToken(address token)

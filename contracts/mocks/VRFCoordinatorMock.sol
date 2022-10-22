@@ -28,7 +28,7 @@ contract VRFCoordinatorMock {
         );
 
         requests.push(request);
-        return requests.length;
+        return requests.length - 1;
     }
 
     function fulfillRequest(uint256 requestId) public {
