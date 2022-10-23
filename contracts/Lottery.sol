@@ -215,9 +215,7 @@ contract Lottery is VRFConsumerBaseV2, AccessControl {
     {
         uint256 roundId = oracleRequests[requestId];
 
-        require(roundId < rounds.length, "EC10");
-        require(rounds[roundId].isClosed, "EC11");
-        require(!rounds[roundId].isOracleFulfilled, "EC12");
+        require(!rounds[roundId].isOracleFulfilled, "EC10");
 
         Round storage round = rounds[roundId];
 
@@ -242,6 +240,7 @@ contract Lottery is VRFConsumerBaseV2, AccessControl {
         Round memory round = rounds[roundId];
 
         require(round.isOracleFulfilled, "Round is not fulfilled");
+        require(!round.isFinished, "Round is already finished");
 
         rounds[roundId].isFinished = true;
         emit RoundFinished(roundId);
@@ -259,8 +258,6 @@ contract Lottery is VRFConsumerBaseV2, AccessControl {
             for (uint256 j = 0; j < round.winners[i].length; j++) {
                 random = ((random * (i + 1) * (j + 1)) % block.timestamp) + 1;
                 address winner = round.winners[i][j];
-
-                if (round.totalTickets == 0) break;
 
                 if (round.winners[i][j] == address(0)) {
                     // winner ticket is from 1 to round.totalTickets
@@ -390,7 +387,6 @@ contract Lottery is VRFConsumerBaseV2, AccessControl {
         uint256[] storage userClaims = claims[user];
 
         if (userClaims.length == 0) return false;
-        if (userClaims[0] == 0) return false;
 
         uint256 today = block.timestamp / CLAIM_PERIOD;
 
@@ -407,7 +403,6 @@ contract Lottery is VRFConsumerBaseV2, AccessControl {
         uint256[] storage userClaims = claims[user];
 
         if (userClaims.length == 0) return 0;
-        if (userClaims[0] == 0) return 0;
 
         uint256 streak = 1;
         uint256 lastClaim = userClaims[0] / CLAIM_PERIOD;
@@ -484,13 +479,6 @@ contract Lottery is VRFConsumerBaseV2, AccessControl {
         onlyRole(DEFAULT_ADMIN_ROLE)
     {
         rewardPool = pool;
-    }
-
-    function updateCoordinator(address coordinator)
-        public
-        onlyRole(DEFAULT_ADMIN_ROLE)
-    {
-        COORDINATOR = VRFCoordinatorV2Interface(coordinator);
     }
 
     function updateSubscriptionId(uint64 id)

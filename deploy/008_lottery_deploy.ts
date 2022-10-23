@@ -54,6 +54,12 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
 
   await token2.approve(lottery.address, ethers.constants.MaxUint256);
 
+  const isWhitelisted = await token2.isAddressInWhiteList(referralRewardPool);
+  if (!isWhitelisted) {
+    const adminSigner = await ethers.getSigner(admin);
+    await token2.connect(adminSigner).addToWhitelist([referralRewardPool]);
+  }
+
   const ticketToken = await ethers.getContract<Ticket>("Ticket", admin);
   const MinterRole = await ticketToken.MINTER_ROLE();
   await ticketToken.grantRole(MinterRole, lottery.address);

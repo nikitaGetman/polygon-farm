@@ -427,6 +427,8 @@ describe("Lottery", () => {
 
     await expect(lottery.connect(operator).finishLotteryRound(0, [])).to.be
       .reverted;
+    await expect(lottery.connect(operator).manuallyGetWinners(0)).to.be
+      .reverted;
 
     await grantRole(lottery, adminAccount, operator.address, "OPERATOR_ROLE");
 
@@ -445,6 +447,10 @@ describe("Lottery", () => {
     await expect(
       lottery.connect(operator).finishLotteryRound(0, [])
     ).to.be.revertedWith("Round is already closed");
+
+    await expect(
+      lottery.connect(operator).manuallyGetWinners(0)
+    ).to.be.revertedWith("Round is not fulfilled");
 
     // Second lottery
     await time.increaseTo(rounds[1].startTimestamp);
@@ -520,18 +526,18 @@ describe("Lottery", () => {
         tokensForOneTicket: 2,
       },
       {
+        // be active
+        ...commonRoundProps,
+        startTimestamp: startTimestamp + 1000,
+        duration: 100000,
+        tokensForOneTicket: 3,
+      },
+      {
         // be finished
         ...commonRoundProps,
         initialPrize: 0,
         startTimestamp: startTimestamp,
         duration: 100,
-        tokensForOneTicket: 3,
-      },
-      {
-        // be active
-        ...commonRoundProps,
-        startTimestamp: startTimestamp + 1000,
-        duration: 100000,
         tokensForOneTicket: 4,
       },
       {
@@ -556,30 +562,41 @@ describe("Lottery", () => {
 
     const activeRounds = await lottery.getActiveRounds();
     expect(activeRounds.length).to.eq(3);
-    expect(activeRounds[0].tokensForOneTicket).to.eq(4);
+    expect(activeRounds[0].tokensForOneTicket).to.eq(3);
     expect(activeRounds[1].tokensForOneTicket).to.eq(5);
     expect(activeRounds[2].tokensForOneTicket).to.eq(6);
 
     await vrfCoordinator.setRandomWords([1]);
     await lottery.connect(adminAccount).updateWinnerCalculationInRequest(true);
+
     await lottery.connect(adminAccount).finishLotteryRound(0, []);
     await expect(vrfCoordinator.fulfillRequest(0))
       .to.emit(lottery, "OracleRequestFulfilled")
       .withArgs(0, 0, 1);
+    await expect(vrfCoordinator.fulfillRequest(0)).to.be.revertedWith("EC10");
+
     await lottery.connect(adminAccount).finishLotteryRound(1, []);
     await expect(vrfCoordinator.fulfillRequest(1))
       .to.emit(lottery, "OracleRequestFulfilled")
       .withArgs(1, 1, 1);
-    await lottery.connect(adminAccount).finishLotteryRound(2, []);
+    await lottery.connect(adminAccount).finishLotteryRound(3, []);
+    await lottery.connect(adminAccount).updateWinnerCalculationInRequest(false);
     await expect(vrfCoordinator.fulfillRequest(2))
       .to.emit(lottery, "OracleRequestFulfilled")
-      .withArgs(2, 2, 1);
+      .withArgs(3, 2, 1);
+    await expect(lottery.connect(adminAccount).manuallyGetWinners(3))
+      .to.emit(lottery, "RoundFinished")
+      .withArgs(3);
+
+    await expect(
+      lottery.connect(adminAccount).manuallyGetWinners(3)
+    ).to.be.revertedWith("Round is already finished");
 
     let finishedRounds = await lottery.getLastFinishedRounds(10, 0);
     expect(finishedRounds.length).to.eq(3);
     expect(finishedRounds[0].tokensForOneTicket).to.eq(1);
     expect(finishedRounds[1].tokensForOneTicket).to.eq(2);
-    expect(finishedRounds[2].tokensForOneTicket).to.eq(3);
+    expect(finishedRounds[2].tokensForOneTicket).to.eq(4);
 
     finishedRounds = await lottery.getLastFinishedRounds(3, 1);
     expect(finishedRounds.length).to.eq(2);
@@ -901,9 +918,6 @@ describe("Lottery", () => {
     // updateRewardPool
     await expect(lottery.connect(acc).updateRewardPool(newRewardPool.address))
       .to.be.reverted;
-    // updateCoordinator
-    await expect(lottery.connect(acc).updateCoordinator(newCoordinator.address))
-      .to.be.reverted;
     // updateSubscriptionId
     await expect(lottery.connect(acc).updateSubscriptionId(33)).to.be.reverted;
     // updateKeyHash
@@ -932,7 +946,6 @@ describe("Lottery", () => {
     await lottery.connect(acc).updatePaymentToken(newPaymentToken.address);
     await lottery.connect(acc).updateRewardToken(newRewardToken.address);
     await lottery.connect(acc).updateRewardPool(newRewardPool.address);
-    await lottery.connect(acc).updateCoordinator(newCoordinator.address);
     await lottery.connect(acc).updateSubscriptionId(33);
     await lottery
       .connect(acc)
