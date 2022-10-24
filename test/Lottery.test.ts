@@ -249,12 +249,18 @@ describe("Lottery", () => {
 
     await time.increase(oneDayMs);
 
-    for (let i = 0; i < lotteryDeployParams.daysStreakForTicket - 1; i++) {
+    for (let i = 0; i < lotteryDeployParams.daysStreakForTicket; i++) {
       await lottery.connect(acc).claimDay();
       await time.increase(oneDayMs);
       expect(await lottery.getClaimStreak(acc.address)).to.eq(i + 1);
     }
 
+    await lottery.connect(acc).claimDay();
+    await time.increase(oneDayMs);
+    await lottery.connect(acc).claimDay();
+    await time.increase(oneDayMs);
+
+    expect(await lottery.getClaimStreak(acc.address)).to.eq(2);
     expect(
       await ticketToken.balanceOf(acc.address, lotteryDeployParams.ticketId)
     ).to.eq(2);

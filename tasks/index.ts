@@ -10,3 +10,4 @@ import "./snapshot";
 import "./roles";
 import "./addStakingPlan";
 import "./addSquadPlan";
+import "./finishLotteryRound";

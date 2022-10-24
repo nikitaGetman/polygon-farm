@@ -301,6 +301,7 @@ contract Lottery is VRFConsumerBaseV2, AccessControl {
 
         if (streak >= DAYS_STREAK_FOR_TICKET || streak == 0) {
             claims[_msgSender()] = new uint256[](DAYS_STREAK_FOR_TICKET);
+            streak = 0;
         }
 
         for (uint256 i = 0; i < claims[_msgSender()].length; i++) {
@@ -310,7 +311,7 @@ contract Lottery is VRFConsumerBaseV2, AccessControl {
             }
         }
 
-        if (streak + 1 >= DAYS_STREAK_FOR_TICKET) {
+        if (streak + 1 == DAYS_STREAK_FOR_TICKET) {
             _mintTicket(_msgSender(), 1);
         }
     }
