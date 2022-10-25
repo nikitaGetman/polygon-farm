@@ -1,0 +1,14 @@
+@import './normalize.css';
+@import './vars.scss';
+
+* {
+}
+
+html {
+  font-family: $default-font-family;
+}
+
+.App {
+  min-height: 100vh;
+  background-color: $color-green-back;
+}

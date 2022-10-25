@@ -1,0 +1,12 @@
+@import '../../assets/styles/vars.scss';
+
+.app-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 13px 0;
+
+  background: $color-header-background;
+  border-bottom: 1px solid rgba($color-white, 0.5);
+  backdrop-filter: blur(7.5px);
+}
