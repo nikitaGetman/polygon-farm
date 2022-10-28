@@ -1,5 +1,5 @@
 import React, { FC } from 'react';
-import './button.scss';
+import './Button.scss';
 
 type Props = {
   type?: 'primary' | 'secondary';
