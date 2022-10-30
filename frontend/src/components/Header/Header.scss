@@ -6,7 +6,11 @@
   align-items: center;
   padding: 13px 0;
 
-  background: $color-header-background;
-  border-bottom: 1px solid rgba($color-white, 0.5);
+  background-color: var(--chakra-colors-headerBg);
+  border-bottom: 1px solid rgba(var(--chakra-colors-white), 0.5);
   backdrop-filter: blur(7.5px);
+
+  &__logo {
+    display: inline-block;
+  }
 }
