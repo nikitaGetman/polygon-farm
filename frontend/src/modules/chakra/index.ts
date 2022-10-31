@@ -34,10 +34,10 @@ const semanticTokens = {
       default: 'white.200',
     },
     // success: 'green.500',
-    // primary: {
-    //   default: 'red.500',
-    //   _dark: 'red.400',
-    // },
+    primary: {
+      default: 'green.400',
+      // _dark: 'red.400',
+    },
     // secondary: {
     //   default: 'red.800',
     //   _dark: 'red.700',
@@ -82,6 +82,12 @@ const textStyles = {
   text1: {
     fontSize: ['18px'],
     fontWeight: '500',
+    lineHeight: '130%',
+    color: 'white',
+  },
+  menuDefault: {
+    fontSize: ['26px'],
+    fontWeight: '600',
     lineHeight: '130%',
     color: 'white',
   },
