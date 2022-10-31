@@ -18,6 +18,6 @@ const dashboardLayout = defineStyle({
 export const containerTheme = defineStyleConfig({
   variants: { dashboardLayout },
   defaultProps: {
-    variant: 'dashboardLayout',
+    // variant: 'dashboardLayout',
   },
 });

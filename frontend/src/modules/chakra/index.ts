@@ -71,10 +71,17 @@ const textStyles = {
     fontWeight: 'bold',
     lineHeight: '130%',
     color: 'white',
+    textTransform: 'uppercase',
   },
   h2: {
     fontSize: ['38px'],
     fontWeight: 'bold',
+    lineHeight: '130%',
+    color: 'white',
+  },
+  text1: {
+    fontSize: ['18px'],
+    fontWeight: '500',
     lineHeight: '130%',
     color: 'white',
   },
