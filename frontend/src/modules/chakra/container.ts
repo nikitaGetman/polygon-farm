@@ -1,14 +1,23 @@
 import { defineStyle, defineStyleConfig } from '@chakra-ui/react';
 
-const dashboardLayout = defineStyle({
-  width: [
-    '100%',
-    'container.sm',
-    'container.md',
-    'container.lg',
-    'container.xl',
-    'var(--chakra-sizes-container-2xl)',
-  ],
+const layoutWidth = [
+  '100%',
+  'container.sm',
+  'container.md',
+  'container.lg',
+  'container.xl',
+  'var(--chakra-sizes-container-2xl)',
+];
+
+const dashboard = defineStyle({
+  width: layoutWidth,
+  maxWidth: 'unset',
+  display: 'flex',
+  flexDirection: 'column',
+});
+
+const header = defineStyle({
+  width: layoutWidth,
   maxWidth: 'unset',
   display: 'flex',
   alignItems: 'center',
@@ -16,8 +25,8 @@ const dashboardLayout = defineStyle({
 });
 
 export const containerTheme = defineStyleConfig({
-  variants: { dashboardLayout },
+  variants: { dashboard, header },
   defaultProps: {
-    // variant: 'dashboardLayout',
+    // variant: 'dashboard',
   },
 });

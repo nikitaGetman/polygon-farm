@@ -30,18 +30,10 @@ const colors = {
 const semanticTokens = {
   colors: {
     error: 'red',
-    text: {
-      default: 'white.200',
-    },
+
     // success: 'green.500',
-    primary: {
-      default: 'green.400',
-      // _dark: 'red.400',
-    },
-    // secondary: {
-    //   default: 'red.800',
-    //   _dark: 'red.700',
-    // },
+    primary: 'green.400',
+    secondary: 'green.100',
   },
   sizes: {
     'container-sm': '320px',
@@ -60,30 +52,41 @@ const semanticTokens = {
 // можно задать значения для всех разрешений через массив
 // @see: https://chakra-ui.com/docs/styled-system/text-and-layer-styles#text-styles
 const textStyles = {
-  // h1: {
-  //   fontSize: ['90px'],
-  //   fontWeight: 'bold',
-  //   lineHeight: '110%',
-  //   color: 'white',
-  // },
   h1: {
     fontSize: ['52px'],
     fontWeight: 'bold',
     lineHeight: '130%',
-    color: 'white',
     textTransform: 'uppercase',
   },
   h2: {
     fontSize: ['38px'],
     fontWeight: 'bold',
     lineHeight: '130%',
-    color: 'white',
   },
   text1: {
     fontSize: ['18px'],
     fontWeight: '500',
     lineHeight: '130%',
-    color: 'white',
+  },
+  button: {
+    fontSize: ['16px'],
+    fontWeight: '600',
+    lineHeight: '20px',
+    textTransform: 'uppercase',
+  },
+};
+
+// border radius
+const radii = {
+  sm: '5px',
+  md: '10px',
+};
+
+const styles = {
+  global: {
+    body: {
+      color: 'white',
+    },
   },
   menuSubtitle: {
     fontSize: ['18px'],
@@ -109,4 +112,6 @@ export const theme = extendTheme({
   semanticTokens,
   colors,
   textStyles,
+  radii,
+  styles,
 });

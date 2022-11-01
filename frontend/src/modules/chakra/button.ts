@@ -1,12 +1,8 @@
 import { defineStyle, defineStyleConfig } from '@chakra-ui/react';
 
 const commonProps = {
-  textTransform: 'uppercase',
+  textStyle: 'button',
   color: 'white',
-  fontWeight: 600,
-  fontSize: 16,
-  lineHeight: '20px',
-  borderRadius: 10,
   height: '50px',
 };
 
