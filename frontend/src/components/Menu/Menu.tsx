@@ -106,7 +106,7 @@ const NavMenuItem = ({
           {hasAlert && <Circle size="10px" bg="red" position="absolute" right="-7px" top="-3px" />}
           {text}
         </Text>
-        {disabled && (
+        {subtitle && (
           <>
             <Text textStyle="menuSubtitle" w="100%">
               {subtitle}
