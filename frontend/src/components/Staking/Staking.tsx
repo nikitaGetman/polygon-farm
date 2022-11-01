@@ -2,7 +2,7 @@ import React from 'react';
 import { Container, Box, Text } from '@chakra-ui/react';
 
 export const Staking = () => {
-  const { address, isConnected, connector } = useAccount();
+  // const { address, isConnected, connector } = useAccount();
 
   return (
     <Container variant="dashboard">

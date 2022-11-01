@@ -23,6 +23,7 @@ const colors = {
   grey: '#4d6655',
   bgGreen: {
     200: '#1f3e2c',
+    600: '#1a725c',
   },
   headerBg: 'rgba(12, 34, 14, 0.2)',
 };
@@ -66,6 +67,17 @@ const textStyles = {
   text1: {
     fontSize: ['18px'],
     fontWeight: '500',
+    lineHeight: '130%',
+  },
+  textMedium: {
+    fontSize: ['26px'],
+    fontWeight: '500',
+    lineHeight: '130%',
+  },
+  textSansCommon: {
+    fontFamily: 'PT Sans',
+    fontSize: ['18px'],
+    fontWeight: '700',
     lineHeight: '130%',
   },
   button: {
