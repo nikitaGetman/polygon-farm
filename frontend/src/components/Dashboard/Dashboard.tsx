@@ -1,10 +1,11 @@
 import React from 'react';
 import { Container, Text, Box } from '@chakra-ui/react';
+import { Staking } from '@/components/Staking/Staking';
 import './Dashboard.scss';
 
 export const Dashboard = () => {
   return (
-    <Container variant="dashboardLayout">
+    <Container variant="dashboard">
       <Box
         mt="50px"
         w="100%"
@@ -33,6 +34,8 @@ export const Dashboard = () => {
           Wallet portfolio
         </Box>
       </Box>
+
+      <Staking />
     </Container>
   );
 };
