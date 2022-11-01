@@ -1,13 +1,16 @@
 import React from 'react';
-import { Container, Text, Box } from '@chakra-ui/react';
+import { Container, Text, Box, Button, Flex } from '@chakra-ui/react';
 import { Staking } from '@/components/Staking/Staking';
 import './Dashboard.scss';
+import { ReactComponent as BoxIcon } from '@/assets/images/icons/box.svg';
+import { WalletPortfolio } from '@/components/WalletPortfolio/WalletPortfolio';
 
 export const Dashboard = () => {
   return (
     <Container variant="dashboard">
       <Box
         mt="50px"
+        mb="150"
         w="100%"
         p="50px 40px"
         display="flex"
@@ -24,15 +27,21 @@ export const Dashboard = () => {
             <br />
             investors
           </Text>
-          <Text textStyle="text1" mt={5}>
+          <Text textStyle="text1" mt={5} maxW="490px">
             Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum
             has been the industry's standard dummy.
           </Text>
+          <Flex alignItems="center" mt="68">
+            <Text textStyle="textMedium" mr="40px">
+              SAV = 00 USDT
+            </Text>
+            <Text textStyle="textMedium">SAVR = 00 USDT</Text>
+          </Flex>
+          <Button mt="5" rightIcon={<BoxIcon />}>
+            Buy SAV
+          </Button>
         </Box>
-
-        <Box background="rgba(0, 0, 0, 0.2)" borderRadius="10px" flex="1 1 510px">
-          Wallet portfolio
-        </Box>
+        <WalletPortfolio />
       </Box>
 
       <Staking />

@@ -68,6 +68,18 @@ const textStyles = {
     fontWeight: '500',
     lineHeight: '130%',
   },
+  textMedium: {
+    fontSize: ['26px'],
+    fontWeight: '500',
+    lineHeight: '130%',
+    textTransform: 'uppercase',
+  },
+  textList: {
+    fontFamily: 'PT Sans',
+    fontSize: ['18px'],
+    fontWeight: '700',
+    lineHeight: '130%',
+  },
   button: {
     fontSize: ['16px'],
     fontWeight: '600',
