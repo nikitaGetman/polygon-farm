@@ -85,6 +85,12 @@ const textStyles = {
     lineHeight: '130%',
     color: 'white',
   },
+  menuSubtitle: {
+    fontSize: ['18px'],
+    fontWeight: '500',
+    lineHeight: 'normal',
+    color: 'gray',
+  },
   menuDefault: {
     fontSize: ['26px'],
     fontWeight: '600',

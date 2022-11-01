@@ -48,18 +48,18 @@ export const Menu = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => void
           <NavMenuItem
             text="Staking"
             icon={<GraphIcon />}
-            isAlert
+            hasAlert
             textAlert="Check your subscription!"
           />
           <NavMenuItem text="Team" icon={<StarsIcon />} />
           <NavMenuItem
             text="Play everyday"
             icon={<GameboyIcon />}
-            isMuted
-            textMuted="Coming soon"
+            disabled
+            subtitle="Coming soon"
           />
           <NavMenuItem text="Lottery" icon={<RocketIcon />} />
-          <Divider mb="30px" borderBottomWidth="2px" borderColor="#fff"></Divider>
+          <Divider mb="30px" borderBottomWidth="2px" borderColor="white"></Divider>
           <NavMenuItem text="Buy token" icon={<WalletIcon />} />
           <NavMenuItem text="Whitepaper" icon={<TabletIcon />} />
         </DrawerBody>
@@ -71,24 +71,24 @@ export const Menu = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => void
 const NavMenuItem = ({
   text,
   icon,
-  isAlert,
+  hasAlert,
   textAlert,
-  isMuted,
-  textMuted,
+  disabled,
+  subtitle,
 }: {
   text: string;
   textAlert?: string;
-  textMuted?: string;
+  subtitle?: string;
   icon: any;
-  isAlert?: boolean;
-  isMuted?: boolean;
+  hasAlert?: boolean;
+  disabled?: boolean;
 }) => (
   <>
     <Link
       display="flex"
       w="100%"
       alignItems="center"
-      color={isMuted ? 'gray' : 'green.400'}
+      color={disabled ? 'gray' : 'green.400'}
       mb="30px"
       _hover={{ textDecoration: 'none' }}
     >
@@ -98,23 +98,25 @@ const NavMenuItem = ({
       <Text
         ml={5}
         textStyle="menuDefault"
-        color={isMuted ? 'gray' : 'white'}
+        color={disabled ? 'gray' : 'white'}
         display="flex"
         flexWrap="wrap"
       >
-        {text}
-        {isAlert && (
+        <Text position="relative">
+          {hasAlert && <Circle size="10px" bg="red" position="absolute" right="-7px" top="-3px" />}
+          {text}
+        </Text>
+        {disabled && (
           <>
-            <Text color={'red'} ml="25px" position="relative">
-              <Circle size="10px" bg="red" position="absolute" left="-25px" top="-3px" />
-              {textAlert}
+            <Text textStyle="menuSubtitle" w="100%">
+              {subtitle}
             </Text>
           </>
         )}
-        {isMuted && (
+        {hasAlert && (
           <>
-            <Text fontWeight="500" fontSize="18px" color="gray" w="100%" lineHeight="normal">
-              {textMuted}
+            <Text color={'red'} ml="25px" position="relative">
+              {textAlert}
             </Text>
           </>
         )}
