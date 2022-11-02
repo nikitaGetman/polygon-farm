@@ -10,7 +10,7 @@ import { useAddTokens } from '@/hooks/useAddTokens';
 import Contracts from '@/config/contracts.json';
 import { bigNumberToString } from '@/utils/number';
 import { ethers } from 'ethers';
-import { savABI, savrABI } from '@/config/contracts';
+import { CONTRACTS, TOKEN_SAV, TOKEN_SAVR } from '@/config/contracts';
 import { ReactComponent as BoxIcon } from '@/assets/images/icons/box.svg';
 
 const savAddress = Contracts[80001][0].contracts.Token1.address;
@@ -25,24 +25,24 @@ export const WalletPortfolio = () => {
     contracts: [
       {
         address: savAddress,
-        abi: savABI,
+        abi: CONTRACTS[TOKEN_SAV].abi,
         functionName: 'balanceOf',
         args: [userAddress],
       },
       {
         address: savAddress,
-        abi: savABI,
+        abi: CONTRACTS[TOKEN_SAV].abi,
         functionName: 'decimals',
       },
       {
         address: savrAddress,
-        abi: savrABI,
+        abi: CONTRACTS[TOKEN_SAVR].abi,
         functionName: 'balanceOf',
         args: [userAddress],
       },
       {
         address: savrAddress,
-        abi: savrABI,
+        abi: CONTRACTS[TOKEN_SAVR].abi,
         functionName: 'decimals',
       },
     ],

@@ -13,9 +13,8 @@ const breakpoints = {
 const colors = {
   yellow: '#d6d873',
   green: {
-    100: '#0d923a',
-    400: '#6bc95b',
-    900: 'rgba(107, 201, 91)',
+    100: '#0d923a', // rgb(13, 146, 58)
+    400: '#6bc95b', // rgb(107, 201, 91)
   },
   turquoise: '#2d969a',
   blue: '#1adce2',
@@ -35,6 +34,8 @@ const semanticTokens = {
     // success: 'green.500',
     primary: 'green.400',
     secondary: 'green.100',
+
+    stakingHeader: 'rgb(13, 146, 58, 0.5)',
   },
   sizes: {
     'container-sm': '320px',
@@ -74,17 +75,25 @@ const textStyles = {
     fontWeight: '500',
     lineHeight: '130%',
   },
-  textSansCommon: {
-    fontFamily: 'PT Sans',
+  textBald: {
     fontSize: ['18px'],
     fontWeight: '700',
     lineHeight: '130%',
+  },
+  textSansCommon: {
+    textStyle: 'textBald',
+    fontFamily: 'PT Sans',
   },
   button: {
     fontSize: ['16px'],
     fontWeight: '600',
     lineHeight: '20px',
     textTransform: 'uppercase',
+  },
+  menuDefault: {
+    fontSize: ['26px'],
+    fontWeight: '600',
+    lineHeight: '130%',
   },
 };
 
@@ -99,18 +108,6 @@ const styles = {
     body: {
       color: 'white',
     },
-  },
-  menuSubtitle: {
-    fontSize: ['18px'],
-    fontWeight: '500',
-    lineHeight: 'normal',
-    color: 'gray',
-  },
-  menuDefault: {
-    fontSize: ['26px'],
-    fontWeight: '600',
-    lineHeight: '130%',
-    color: 'white',
   },
 };
 

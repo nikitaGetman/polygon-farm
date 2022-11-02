@@ -9,6 +9,7 @@ import {
   Text,
   Link,
   Box,
+  Flex,
   Divider,
   Circle,
 } from '@chakra-ui/react';
@@ -50,6 +51,7 @@ export const Menu = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => void
             icon={<GraphIcon />}
             hasAlert
             textAlert="Check your subscription!"
+            subtitle="Subtitle is here"
           />
           <NavMenuItem text="Team" icon={<StarsIcon />} />
           <NavMenuItem
@@ -95,32 +97,31 @@ const NavMenuItem = ({
       <Box w="8" h="8" display="flex" alignItems="center" justifyContent="center">
         {icon}
       </Box>
-      <Text
-        ml={5}
-        textStyle="menuDefault"
-        color={disabled ? 'gray' : 'white'}
-        display="flex"
-        flexWrap="wrap"
-      >
-        <Text position="relative">
-          {hasAlert && <Circle size="10px" bg="red" position="absolute" right="-7px" top="-3px" />}
-          {text}
-        </Text>
-        {subtitle && (
-          <>
-            <Text textStyle="menuSubtitle" w="100%">
-              {subtitle}
+      <Flex ml={5} color={disabled ? 'gray' : 'white'}>
+        <Flex direction="column">
+          <Flex alignItems="center">
+            <Text as="span" position="relative" textStyle="menuDefault">
+              {text}
+              {hasAlert && (
+                <Circle
+                  as="span"
+                  size="10px"
+                  bg="red"
+                  position="absolute"
+                  right="-10px"
+                  top="-3px"
+                />
+              )}
             </Text>
-          </>
-        )}
-        {hasAlert && (
-          <>
-            <Text color={'red'} ml="25px" position="relative">
-              {textAlert}
-            </Text>
-          </>
-        )}
-      </Text>
+            {textAlert && (
+              <Text color="red" ml="25px" position="relative" textStyle="textBald">
+                {textAlert}
+              </Text>
+            )}
+          </Flex>
+          {subtitle && <Text textStyle="text1">{subtitle}</Text>}
+        </Flex>
+      </Flex>
     </Link>
   </>
 );

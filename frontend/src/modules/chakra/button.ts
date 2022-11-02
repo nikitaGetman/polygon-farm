@@ -3,7 +3,6 @@ import { defineStyle, defineStyleConfig } from '@chakra-ui/react';
 const commonProps = {
   textStyle: 'button',
   color: 'white',
-  height: '50px',
 };
 
 const primary = defineStyle({
@@ -53,7 +52,16 @@ const secondary = defineStyle({
 
 export const buttonTheme = defineStyleConfig({
   variants: { primary, secondary },
+  sizes: {
+    lg: {
+      height: '50px',
+    },
+    md: {
+      height: '40px',
+    },
+  },
   defaultProps: {
     variant: 'primary',
+    size: 'lg',
   },
 });
