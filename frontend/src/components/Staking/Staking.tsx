@@ -1,4 +1,4 @@
-import React, { FC, useCallback } from 'react';
+import React, { FC, ReactElement, useCallback } from 'react';
 import {
   Container,
   Box,
@@ -13,6 +13,9 @@ import {
 } from '@chakra-ui/react';
 import { ConnectWalletButton } from '@/components/ConnectWalletButton/ConnectWalletButton';
 import { useAccount } from 'wagmi';
+import { useStakingInfo } from '@/hooks/useStakingInfo';
+import { useStakingContract } from '@/hooks/contracts/useStakingContract';
+import { BigNumber, ethers } from 'ethers';
 
 const stakingPlansData = [
   {
@@ -60,8 +63,19 @@ const stakingPlansData = [
 export const Staking = () => {
   const { address, isConnected, connector } = useAccount();
 
+  const { contract, deposit, withdraw } = useStakingContract();
+  // const stakingInfoData = useStakingInfo();
+
+  // console.log('stakingInfoData', stakingInfoData);
+
   const onSubscribe = useCallback(() => {}, []);
-  const onDeposit = useCallback(() => {}, []);
+  const onDeposit = useCallback(() => {
+    deposit({
+      planId: 0,
+      amount: BigNumber.from(10).pow(19),
+      isToken2: false,
+    });
+  }, [deposit]);
   const onClaim = useCallback(() => {}, []);
 
   return (
@@ -125,34 +139,64 @@ const StakingPlan: FC<StakingPlanProps> = ({
   return (
     <Box borderRadius="md" overflow="hidden" filter="drop-shadow(0px 4px 4px rgba(0, 0, 0, 0.25))">
       <Flex
-        bgColor={isSubscribed ? 'green.100' : 'grey'}
-        opacity="0.5"
+        bgColor={isSubscribed ? 'green.10050' : 'grey'}
         p="10px 20px"
         justifyContent="flex-end"
         height="60px"
         alignItems="center"
       >
         {isSubscribed ? (
-          <Text textStyle="textSansCommon" px="44px">
+          <Text textStyle="textSansBald" px="44px">
             Active
           </Text>
         ) : (
           <>
-            <Text textStyle="textSansCommon">{subscriptionCost}</Text>
-            <Button onClick={onSubscribe} size="md">
+            <Text textStyle="textSansBald">{subscriptionCost}</Text>
+            <Button onClick={onSubscribe} size="md" ml={5}>
               Activate
             </Button>
           </>
         )}
       </Flex>
 
-      <Box
-        bgColor="rgba(38, 71, 55, 0.5)"
-        boxShadow="0px 6px 11px rgba(0, 0, 0, 0.25)"
-        p="10px 20px"
-      >
-        Some other text
+      <Box bgColor="rgba(38, 71, 55, 0.5)" boxShadow="0px 6px 11px rgba(0, 0, 0, 0.25)" p="20px">
+        <Flex alignItems="center" gap={5}>
+          <Box flexGrow={1}>
+            <Flex justifyContent="space-between" gap={2} mb={7}>
+              <StakingParameter title="Locking period">{stakingDuration}</StakingParameter>
+              <StakingParameter title="Pool size">{poolSize}M</StakingParameter>
+              <StakingParameter title="APR">{apr}%</StakingParameter>
+            </Flex>
+            <Flex justifyContent="space-between">
+              <StakingParameter title="Your Stake">
+                <Box as="span" ml={3} mr={6}>
+                  {userStakeSav} SAV
+                </Box>
+                <Box as="span">{userStakeSavR} SAVR</Box>
+              </StakingParameter>
+              <StakingParameter title="Your rewards">{userReward} SAV</StakingParameter>
+            </Flex>
+          </Box>
+
+          <Flex direction="column" flex="0 0 140px" gap={4}>
+            <Button onClick={onDeposit} variant="outlined" disabled={!isSubscribed}>
+              Deposit
+            </Button>
+            <Button onClick={onClaim} variant="outlined" disabled={!userReward}>
+              Claim
+            </Button>
+          </Flex>
+        </Flex>
       </Box>
     </Box>
+  );
+};
+
+const StakingParameter = ({ title, children }: { title: string; children: any }) => {
+  return (
+    <Flex alignItems="center">
+      <Text textStyle="textSansSmall" mr="10px">{`${title}`}</Text>
+      <Text textStyle="textSansBald">{children}</Text>
+    </Flex>
   );
 };

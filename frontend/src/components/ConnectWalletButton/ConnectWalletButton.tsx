@@ -1,11 +1,13 @@
 import React from 'react';
-import { useConnect } from 'wagmi';
+import { useConnect, useAccount } from 'wagmi';
 import { InjectedConnector } from 'wagmi/connectors/injected';
 import { Button } from '@chakra-ui/react';
 
 export const ConnectWalletButton = () => {
+  const { isConnected } = useAccount();
   const { connect } = useConnect({
     connector: new InjectedConnector(),
   });
-  return <Button onClick={() => connect()}>Connect wallet</Button>;
+  // TODO: add toast for info and edge cases
+  return <Button onClick={() => !isConnected && connect()}>Connect wallet</Button>;
 };

@@ -1,52 +1,22 @@
 import React from 'react';
 import { Text, Box, Flex, Button } from '@chakra-ui/react';
-import { useAccount, useContractReads } from 'wagmi';
+import { useAccount } from 'wagmi';
 import './WalletPortfolio.scss';
 import { ReactComponent as PuzzlesIcon } from '@/assets/images/icons/puzzles.svg';
 import { ReactComponent as ForkIcon } from '@/assets/images/icons/fork.svg';
 import { ReactComponent as PlusIcon } from '@/assets/images/icons/plus.svg';
 import { ConnectWalletButton } from '@/components/ConnectWalletButton/ConnectWalletButton';
 import { useAddTokens } from '@/hooks/useAddTokens';
-import Contracts from '@/config/contracts.json';
 import { bigNumberToString } from '@/utils/number';
-import { ethers } from 'ethers';
-import { CONTRACTS, TOKEN_SAV, TOKEN_SAVR } from '@/config/contracts';
 import { ReactComponent as BoxIcon } from '@/assets/images/icons/box.svg';
-
-const savAddress = Contracts[80001][0].contracts.Token1.address;
-const savrAddress = Contracts[80001][0].contracts.Token2.address;
+import { useSavBalance, useSavRBalance } from '@/hooks/useTokenBalance';
 
 export const WalletPortfolio = () => {
-  const { isConnected, address } = useAccount();
+  const { isConnected } = useAccount();
   const { addSAV, addSAVR } = useAddTokens();
 
-  const userAddress = address ?? ethers.constants.AddressZero;
-  const { data: balancesData } = useContractReads({
-    contracts: [
-      {
-        address: savAddress,
-        abi: CONTRACTS[TOKEN_SAV].abi,
-        functionName: 'balanceOf',
-        args: [userAddress],
-      },
-      {
-        address: savAddress,
-        abi: CONTRACTS[TOKEN_SAV].abi,
-        functionName: 'decimals',
-      },
-      {
-        address: savrAddress,
-        abi: CONTRACTS[TOKEN_SAVR].abi,
-        functionName: 'balanceOf',
-        args: [userAddress],
-      },
-      {
-        address: savrAddress,
-        abi: CONTRACTS[TOKEN_SAVR].abi,
-        functionName: 'decimals',
-      },
-    ],
-  });
+  const { data: savBalance } = useSavBalance();
+  const { data: savrBalance } = useSavRBalance();
 
   return (
     <Flex
@@ -83,7 +53,7 @@ export const WalletPortfolio = () => {
           Wallet portfolio
         </Text>
 
-        {isConnected && balancesData ? (
+        {isConnected ? (
           <>
             <Box h="220px">
               <ForkIcon />
@@ -92,9 +62,9 @@ export const WalletPortfolio = () => {
               <Flex flexWrap="wrap" maxW="200px">
                 <Flex alignItems="baseline" color="green.400">
                   <Text mr="2" textStyle="textMedium">
-                    {bigNumberToString(balancesData[0], balancesData[1])}
+                    {savBalance ? bigNumberToString(savBalance, 18) : '---'}
                   </Text>
-                  <Text textStyle="textSansCommon">SAV</Text>
+                  <Text textStyle="textSansBald">SAV</Text>
                 </Flex>
                 <Button mt="18px" rightIcon={<PlusIcon />} onClick={addSAV}>
                   Add to wallet
@@ -103,9 +73,9 @@ export const WalletPortfolio = () => {
               <Flex flexWrap="wrap" maxW="200px">
                 <Flex alignItems="baseline" color="blue">
                   <Text mr="2" textStyle="textMedium">
-                    {bigNumberToString(balancesData[2], balancesData[1])}
+                    {savrBalance ? bigNumberToString(savrBalance, 18) : '---'}
                   </Text>
-                  <Text textStyle="textSansCommon">SAVR</Text>
+                  <Text textStyle="textSansBald">SAVR</Text>
                 </Flex>
                 <Button mt="18px" rightIcon={<PlusIcon />} onClick={addSAVR}>
                   Add to wallet
@@ -125,13 +95,13 @@ export const WalletPortfolio = () => {
             </Box>
             <Flex mt="23px" mb="22px" justifyContent="space-between">
               <Flex>
-                <Text mr="2" textStyle="textSansCommon">
+                <Text mr="2" textStyle="textSansBald">
                   Total Value Locked
                 </Text>
                 <Text textStyle="text1">0.000</Text>
               </Flex>
               <Flex>
-                <Text mr="2" textStyle="textSansCommon">
+                <Text mr="2" textStyle="textSansBald">
                   Total Claimed
                 </Text>
                 <Text textStyle="text1">0.000</Text>

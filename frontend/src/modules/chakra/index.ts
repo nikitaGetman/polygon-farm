@@ -14,6 +14,9 @@ const colors = {
   yellow: '#d6d873',
   green: {
     100: '#0d923a', // rgb(13, 146, 58)
+    // TODO: как добавить прозрачность существующему цвету?
+    // возможно стоит вынести цвет в переменную и использовать сторонние утилиты для изменения алфа канала
+    10050: 'rgba(13, 146, 58, 0.5)',
     400: '#6bc95b', // rgb(107, 201, 91)
   },
   turquoise: '#2d969a',
@@ -70,6 +73,11 @@ const textStyles = {
     fontWeight: '500',
     lineHeight: '130%',
   },
+  textRegular: {
+    fontSize: ['18px'],
+    fontWeight: '400',
+    lineHeight: '130%',
+  },
   textMedium: {
     fontSize: ['26px'],
     fontWeight: '500',
@@ -80,8 +88,15 @@ const textStyles = {
     fontWeight: '700',
     lineHeight: '130%',
   },
-  textSansCommon: {
-    textStyle: 'textBald',
+  textSansBald: {
+    fontSize: ['18px'],
+    fontWeight: '700',
+    lineHeight: '130%',
+    fontFamily: 'PT Sans',
+  },
+  textSansSmall: {
+    fontSize: ['12px'],
+    lineHeight: '130%',
     fontFamily: 'PT Sans',
   },
   button: {
@@ -111,7 +126,15 @@ const styles = {
   },
 };
 
+const shadows = {
+  outline: '0 0 0 3px var(--chakra-colors-pink-200) !important',
+};
+
 export const theme = extendTheme({
+  config: {
+    useSystemColorMode: false,
+  },
+  shadows,
   components: {
     Button: buttonTheme,
     IconButton: buttonTheme,

@@ -6,6 +6,8 @@ import { Header } from '@/components/Header/Header';
 import { Dashboard } from '@/components/Dashboard/Dashboard';
 import { theme } from '@/modules/chakra';
 import { client } from '@/modules/wagmi';
+import { QueryClientProvider } from '@tanstack/react-query';
+import { queryClient } from './modules/query';
 
 import '@/assets/styles/index.scss';
 
@@ -14,12 +16,14 @@ function App() {
     <div className="App">
       <WagmiConfig client={client}>
         <ChakraProvider theme={theme}>
-          <Router>
-            <Header />
-            <Routes>
-              <Route path="/" element={<Dashboard />} />
-            </Routes>
-          </Router>
+          <QueryClientProvider client={queryClient}>
+            <Router>
+              <Header />
+              <Routes>
+                <Route path="/" element={<Dashboard />} />
+              </Routes>
+            </Router>
+          </QueryClientProvider>
         </ChakraProvider>
       </WagmiConfig>
     </div>

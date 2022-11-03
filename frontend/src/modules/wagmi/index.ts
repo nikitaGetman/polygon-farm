@@ -1,13 +1,22 @@
 import { createClient, configureChains, chain } from 'wagmi';
 import { publicProvider } from 'wagmi/providers/public';
 import { alchemyProvider } from 'wagmi/providers/alchemy';
+import { jsonRpcProvider } from 'wagmi/providers/jsonRpc';
 // import { InjectedConnector } from 'wagmi/connectors/injected';
 import { MetaMaskConnector } from 'wagmi/connectors/metaMask';
 import { WalletConnectConnector } from 'wagmi/connectors/walletConnect';
 
 const { chains, provider, webSocketProvider } = configureChains(
-  [chain.polygon, chain.polygonMumbai, chain.localhost],
-  [alchemyProvider({ apiKey: process.env.REACT_APP_ALCHEMY_KEY }), publicProvider()],
+  [chain.hardhat, chain.polygonMumbai, chain.polygon],
+  [
+    alchemyProvider({ apiKey: process.env.REACT_APP_ALCHEMY_KEY }),
+    publicProvider(),
+    jsonRpcProvider({
+      rpc: () => ({
+        http: process.env.REACT_APP_PUBLIC_RPC_URL || 'http://localhost:8545',
+      }),
+    }),
+  ],
   {
     pollingInterval: 4_000, // default
   }
@@ -35,4 +44,4 @@ const client = createClient({
   webSocketProvider,
 });
 
-export { client };
+export { client, chains };
