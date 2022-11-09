@@ -5,10 +5,31 @@ import { ContractsEnum, useContractAbi } from './useContractAbi';
 import { useSavContract } from './useSavContract';
 import { useSavRContract } from './useSavRContract';
 
+// type StakingPlan = {
+//   isActive: boolean;
+//   profitPercent: BigNumber;
+//   stakingDuration: BigNumber;
+//   subscriptionCost: BigNumber;
+//   subscriptionDuration: BigNumber;
+//   totalClaimed: BigNumber;
+//   totalStakedToken1: BigNumber;
+//   totalStakedToken2: BigNumber;
+//   totalStakesToken1No: BigNumber;
+//   totalStakesToken2No: BigNumber;
+// };
+
+export enum StakingEvent {
+  Staked = 'Staked',
+  Claimed = 'Claimed',
+  StakingPlanCreated = 'StakingPlanCreated',
+  ActivityChanged = 'ActivityChanged',
+  Subscribed = 'Subscribed',
+}
+
 export const useStakingContract = () => {
   const { data: signer } = useSigner();
   const provider = useProvider();
-  const { address: accountAddress } = useAccount();
+  const { address: account } = useAccount();
 
   const { address: contractAddress, abi } = useContractAbi({ contract: ContractsEnum.Staking });
   const savToken = useSavContract();
@@ -19,6 +40,24 @@ export const useStakingContract = () => {
     abi,
     signerOrProvider: signer || provider,
   }) as Staking;
+
+  const getStakingPlans = async () => {
+    return contract.getStakingPlans();
+  };
+
+  const getUserStakingInfo = async (address: string) => {
+    return contract.getUserPlansInfo(address);
+  };
+
+  const subscribe = async (planId: number) => {
+    const tx = await contract.subscribe(planId);
+    await tx.wait();
+  };
+
+  const withdraw = async (planId: number, stakeId: number) => {
+    const tx = await contract.withdraw(planId, stakeId);
+    await tx.wait();
+  };
 
   const deposit = async ({
     planId,
@@ -32,12 +71,12 @@ export const useStakingContract = () => {
     referrer?: string;
   }): Promise<void> => {
     // TODO: what if call this method unauthorized
-    if (!accountAddress) return;
+    if (!account || !signer) return;
 
     const token = isToken2 ? savRToken : savToken;
 
-    const allowance = await token.allowance(accountAddress, contractAddress);
-    if (allowance < BigNumber.from(amount)) {
+    const allowance = await token.allowance(account, contractAddress);
+    if (allowance.lt(BigNumber.from(amount))) {
       await token.approve(contractAddress, ethers.constants.MaxUint256);
     }
 
@@ -50,22 +89,13 @@ export const useStakingContract = () => {
     await tx.wait();
   };
 
-  const withdraw = async (planId: number, stakeId: number) => {
-    return contract.withdraw(planId, stakeId);
-  };
-
-  const getContractInfo = async () => {
-    return contract.getContractInfo();
-  };
-
-  // hasSubscription
-  // subscribe
-
   return {
     contract,
     address: contractAddress,
     deposit,
     withdraw,
-    getContractInfo,
+    getStakingPlans,
+    getUserStakingInfo,
+    subscribe,
   };
 };

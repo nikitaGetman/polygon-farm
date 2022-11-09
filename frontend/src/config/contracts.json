@@ -332,7 +332,7 @@
           ]
         },
         "Lottery": {
-          "address": "0xc6e7DF5E7b4f2A278906862b61205850344D4e7d",
+          "address": "0x4ed7c70F96B99c776995fB64377f0d4aB3B0e1C1",
           "abi": [
             {
               "inputs": [
@@ -611,6 +611,19 @@
             },
             {
               "inputs": [],
+              "name": "OPERATOR_ROLE",
+              "outputs": [
+                {
+                  "internalType": "bytes32",
+                  "name": "",
+                  "type": "bytes32"
+                }
+              ],
+              "stateMutability": "view",
+              "type": "function"
+            },
+            {
+              "inputs": [],
               "name": "TICKET_ID",
               "outputs": [
                 {
@@ -659,11 +672,6 @@
               "inputs": [
                 {
                   "internalType": "uint256",
-                  "name": "initialPrize",
-                  "type": "uint256"
-                },
-                {
-                  "internalType": "uint256",
                   "name": "startTime",
                   "type": "uint256"
                 },
@@ -674,12 +682,17 @@
                 },
                 {
                   "internalType": "uint256",
-                  "name": "maxTicketsFromOneMember",
+                  "name": "initialPrize",
                   "type": "uint256"
                 },
                 {
                   "internalType": "uint256",
                   "name": "tokensForOneTicket",
+                  "type": "uint256"
+                },
+                {
+                  "internalType": "uint256",
+                  "name": "maxTicketsFromOneMember",
                   "type": "uint256"
                 },
                 {
@@ -848,6 +861,11 @@
                 {
                   "internalType": "uint256",
                   "name": "length",
+                  "type": "uint256"
+                },
+                {
+                  "internalType": "uint256",
+                  "name": "offset",
                   "type": "uint256"
                 }
               ],
@@ -1051,19 +1069,6 @@
                   "type": "tuple"
                 }
               ],
-              "stateMutability": "view",
-              "type": "function"
-            },
-            {
-              "inputs": [
-                {
-                  "internalType": "uint256",
-                  "name": "id",
-                  "type": "uint256"
-                }
-              ],
-              "name": "getRoundMembers",
-              "outputs": [],
               "stateMutability": "view",
               "type": "function"
             },
@@ -1319,24 +1324,11 @@
               "inputs": [
                 {
                   "internalType": "uint256",
-                  "name": "secs",
+                  "name": "sec",
                   "type": "uint256"
                 }
               ],
               "name": "updateClaimPeriod",
-              "outputs": [],
-              "stateMutability": "nonpayable",
-              "type": "function"
-            },
-            {
-              "inputs": [
-                {
-                  "internalType": "address",
-                  "name": "coordinator",
-                  "type": "address"
-                }
-              ],
-              "name": "updateCoordinator",
               "outputs": [],
               "stateMutability": "nonpayable",
               "type": "function"
@@ -2289,7 +2281,7 @@
           ]
         },
         "Squads": {
-          "address": "0xA51c1fc2f0D1a1b8494Ed1FE312d7C3a78Ed91C0",
+          "address": "0x9A676e781A523b5d0C0e43731313A708CB607508",
           "abi": [
             {
               "inputs": [
@@ -3626,8 +3618,27 @@
               "type": "function"
             },
             {
+              "inputs": [
+                {
+                  "internalType": "bytes32",
+                  "name": "role",
+                  "type": "bytes32"
+                }
+              ],
+              "name": "getRoleAdmin",
+              "outputs": [
+                {
+                  "internalType": "bytes32",
+                  "name": "",
+                  "type": "bytes32"
+                }
+              ],
+              "stateMutability": "view",
+              "type": "function"
+            },
+            {
               "inputs": [],
-              "name": "getContractInfo",
+              "name": "getStakingPlans",
               "outputs": [
                 {
                   "components": [
@@ -3691,96 +3702,6 @@
               "type": "function"
             },
             {
-              "inputs": [
-                {
-                  "internalType": "bytes32",
-                  "name": "role",
-                  "type": "bytes32"
-                }
-              ],
-              "name": "getRoleAdmin",
-              "outputs": [
-                {
-                  "internalType": "bytes32",
-                  "name": "",
-                  "type": "bytes32"
-                }
-              ],
-              "stateMutability": "view",
-              "type": "function"
-            },
-            {
-              "inputs": [
-                {
-                  "internalType": "uint256",
-                  "name": "planId",
-                  "type": "uint256"
-                }
-              ],
-              "name": "getStakingPlan",
-              "outputs": [
-                {
-                  "components": [
-                    {
-                      "internalType": "bool",
-                      "name": "isActive",
-                      "type": "bool"
-                    },
-                    {
-                      "internalType": "uint256",
-                      "name": "subscriptionCost",
-                      "type": "uint256"
-                    },
-                    {
-                      "internalType": "uint256",
-                      "name": "subscriptionDuration",
-                      "type": "uint256"
-                    },
-                    {
-                      "internalType": "uint256",
-                      "name": "stakingDuration",
-                      "type": "uint256"
-                    },
-                    {
-                      "internalType": "uint256",
-                      "name": "profitPercent",
-                      "type": "uint256"
-                    },
-                    {
-                      "internalType": "uint256",
-                      "name": "totalStakesToken1No",
-                      "type": "uint256"
-                    },
-                    {
-                      "internalType": "uint256",
-                      "name": "totalStakesToken2No",
-                      "type": "uint256"
-                    },
-                    {
-                      "internalType": "uint256",
-                      "name": "totalStakedToken1",
-                      "type": "uint256"
-                    },
-                    {
-                      "internalType": "uint256",
-                      "name": "totalStakedToken2",
-                      "type": "uint256"
-                    },
-                    {
-                      "internalType": "uint256",
-                      "name": "totalClaimed",
-                      "type": "uint256"
-                    }
-                  ],
-                  "internalType": "struct IStaking.StakingPlan",
-                  "name": "",
-                  "type": "tuple"
-                }
-              ],
-              "stateMutability": "view",
-              "type": "function"
-            },
-            {
               "inputs": [],
               "name": "getTimestamp",
               "outputs": [
@@ -3809,34 +3730,92 @@
               "name": "getUserPlanInfo",
               "outputs": [
                 {
-                  "internalType": "uint256",
-                  "name": "totalStakedToken1",
-                  "type": "uint256"
-                },
+                  "components": [
+                    {
+                      "internalType": "uint256",
+                      "name": "totalStakedToken1",
+                      "type": "uint256"
+                    },
+                    {
+                      "internalType": "uint256",
+                      "name": "totalStakedToken2",
+                      "type": "uint256"
+                    },
+                    {
+                      "internalType": "uint256",
+                      "name": "totalClaimed",
+                      "type": "uint256"
+                    },
+                    {
+                      "internalType": "uint256",
+                      "name": "currentToken1Staked",
+                      "type": "uint256"
+                    },
+                    {
+                      "internalType": "bool",
+                      "name": "isSubscribed",
+                      "type": "bool"
+                    },
+                    {
+                      "internalType": "uint256",
+                      "name": "subscribedTill",
+                      "type": "uint256"
+                    }
+                  ],
+                  "internalType": "struct IStaking.UserStakingInfo",
+                  "name": "",
+                  "type": "tuple"
+                }
+              ],
+              "stateMutability": "view",
+              "type": "function"
+            },
+            {
+              "inputs": [
                 {
-                  "internalType": "uint256",
-                  "name": "totalStakedToken2",
-                  "type": "uint256"
-                },
+                  "internalType": "address",
+                  "name": "userAddress",
+                  "type": "address"
+                }
+              ],
+              "name": "getUserPlansInfo",
+              "outputs": [
                 {
-                  "internalType": "uint256",
-                  "name": "totalClaimed",
-                  "type": "uint256"
-                },
-                {
-                  "internalType": "uint256",
-                  "name": "currentToken1Staked",
-                  "type": "uint256"
-                },
-                {
-                  "internalType": "bool",
-                  "name": "isSubscribed",
-                  "type": "bool"
-                },
-                {
-                  "internalType": "uint256",
-                  "name": "subscribedTill",
-                  "type": "uint256"
+                  "components": [
+                    {
+                      "internalType": "uint256",
+                      "name": "totalStakedToken1",
+                      "type": "uint256"
+                    },
+                    {
+                      "internalType": "uint256",
+                      "name": "totalStakedToken2",
+                      "type": "uint256"
+                    },
+                    {
+                      "internalType": "uint256",
+                      "name": "totalClaimed",
+                      "type": "uint256"
+                    },
+                    {
+                      "internalType": "uint256",
+                      "name": "currentToken1Staked",
+                      "type": "uint256"
+                    },
+                    {
+                      "internalType": "bool",
+                      "name": "isSubscribed",
+                      "type": "bool"
+                    },
+                    {
+                      "internalType": "uint256",
+                      "name": "subscribedTill",
+                      "type": "uint256"
+                    }
+                  ],
+                  "internalType": "struct IStaking.UserStakingInfo[]",
+                  "name": "",
+                  "type": "tuple[]"
                 }
               ],
               "stateMutability": "view",
@@ -4394,7 +4373,7 @@
           ]
         },
         "Ticket": {
-          "address": "0x68B1D87F95878fE05B998F19b66F4baba5De1aed",
+          "address": "0xc6e7DF5E7b4f2A278906862b61205850344D4e7d",
           "abi": [
             {
               "inputs": [],
@@ -7654,7 +7633,7 @@
           ]
         },
         "VRFCoordinatorMock": {
-          "address": "0x3Aa5ebB10DC797CAC828524e59A333d0A371443c",
+          "address": "0x59b670e9fA9D0A427751Af201D676719a970857b",
           "abi": [
             {
               "inputs": [],

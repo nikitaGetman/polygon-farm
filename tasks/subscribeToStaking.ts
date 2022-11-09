@@ -9,7 +9,7 @@ task("subscribe-to-staking", "Subscribe to staking plan")
       (await getNamedAccounts())[taskArgs.account] || taskArgs.account;
     const account = await ethers.getSigner(accountAddr);
     const staking = await ethers.getContract<Staking>("Staking", account);
-    const { subscriptionCost } = await staking.getStakingPlan(taskArgs.planId);
+    const { subscriptionCost } = await staking.stakingPlans(taskArgs.planId);
     const token = await ethers.getContract<Token1>("Token1", account);
     const tx = await token.approve(staking.address, subscriptionCost);
     await tx.wait();

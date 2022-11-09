@@ -3,8 +3,8 @@ import { QueryCache, QueryClient } from '@tanstack/react-query';
 export const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      //   refetchOnWindowFocus: false,
-      structuralSharing: false,
+      refetchOnWindowFocus: false,
+      structuralSharing: true,
     },
   },
   queryCache: new QueryCache({

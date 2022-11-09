@@ -4,6 +4,11 @@ import { ContractsEnum, useContractAbi } from './useContractAbi';
 
 import { Token2 } from '@/types';
 
+export enum SavREvent {
+  Transfer = 'Transfer',
+  Approval = 'Approval',
+}
+
 export const useSavRContract = () => {
   const { data: signer } = useSigner();
   const provider = useProvider();

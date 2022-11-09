@@ -34,6 +34,15 @@ interface IStaking {
         uint256 currentToken1Staked;
     }
 
+    struct UserStakingInfo {
+        uint256 totalStakedToken1;
+        uint256 totalStakedToken2;
+        uint256 totalClaimed;
+        uint256 currentToken1Staked;
+        bool isSubscribed;
+        uint256 subscribedTill;
+    }
+
     function deposit(
         uint256 planId,
         uint256 depositAmount,
@@ -49,14 +58,7 @@ interface IStaking {
     function getUserPlanInfo(uint256 planId, address userAddress)
         external
         view
-        returns (
-            uint256 totalStakedToken1,
-            uint256 totalStakedToken2,
-            uint256 totalClaimed,
-            uint256 currentToken1Staked,
-            bool isSubscribed,
-            uint256 subscribedTill
-        );
+        returns (UserStakingInfo memory);
 
     function getUserStakes(uint256 planId, address userAddress)
         external

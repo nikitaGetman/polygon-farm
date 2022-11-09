@@ -20,7 +20,7 @@ describe("Staking", function () {
         deployStakingFixture
       );
 
-      const contractData = await stakingContract.getContractInfo();
+      const contractData = await stakingContract.getStakingPlans();
       const firstPlanData = contractData[0];
 
       expect(firstPlanData.isActive).to.eq(true);
@@ -624,7 +624,7 @@ describe("Staking", function () {
       expect(userData.isSubscribed).to.eq(true);
 
       // Check contract info
-      let contractData = await stakingContract.getStakingPlan(0);
+      let contractData = await stakingContract.stakingPlans(0);
       expect(contractData.isActive).to.eq(true);
       expect(contractData.totalStakesToken1No).to.eq(3);
       expect(contractData.totalStakesToken2No).to.eq(1);
@@ -636,7 +636,7 @@ describe("Staking", function () {
         minStakeLimit.add(10).add(profit).add(profit) // 1 token1 stake + 1 token2 stake
       );
 
-      contractData = await stakingContract.getStakingPlan(1);
+      contractData = await stakingContract.stakingPlans(1);
       expect(contractData.isActive).to.eq(true);
       expect(contractData.totalStakesToken1No).to.eq(1);
       expect(contractData.totalStakesToken2No).to.eq(0);
@@ -644,7 +644,7 @@ describe("Staking", function () {
       expect(contractData.totalStakedToken2).to.eq(0);
       expect(contractData.totalClaimed).to.eq(0);
 
-      contractData = await stakingContract.getStakingPlan(2);
+      contractData = await stakingContract.stakingPlans(2);
       expect(contractData.isActive).to.eq(true);
       expect(contractData.totalStakesToken1No).to.eq(1);
       expect(contractData.totalStakesToken2No).to.eq(1);
@@ -951,7 +951,7 @@ describe("Staking", function () {
         .to.emit(stakingContract, "StakingPlanCreated")
         .withArgs(3, newStakingPlan.durationDays, newStakingPlan.rewardPercent);
 
-      const contractInfo = await stakingContract.getContractInfo();
+      const contractInfo = await stakingContract.getStakingPlans();
 
       expect(contractInfo[0].isActive).to.eq(false);
       expect(contractInfo[0].subscriptionCost).to.eq(20);
