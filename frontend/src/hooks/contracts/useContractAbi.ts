@@ -29,5 +29,5 @@ export const useContractAbi = ({
 
   const contractData = chainId ? (Contracts as any)[chainId][0].contracts[contract] : null;
 
-  return contractData;
+  return { ...contractData, chain };
 };

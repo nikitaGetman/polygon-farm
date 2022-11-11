@@ -64,7 +64,7 @@ export const WalletPortfolio = () => {
                   <Text mr="2" textStyle="textMedium">
                     {savBalance ? bigNumberToString(savBalance, 18) : '---'}
                   </Text>
-                  <Text textStyle="textSansBald">SAV</Text>
+                  <Text textStyle="textSansBold">SAV</Text>
                 </Flex>
                 <Button mt="18px" rightIcon={<PlusIcon />} onClick={addSAV}>
                   Add to wallet
@@ -75,7 +75,7 @@ export const WalletPortfolio = () => {
                   <Text mr="2" textStyle="textMedium">
                     {savrBalance ? bigNumberToString(savrBalance, 18) : '---'}
                   </Text>
-                  <Text textStyle="textSansBald">SAVR</Text>
+                  <Text textStyle="textSansBold">SAVR</Text>
                 </Flex>
                 <Button mt="18px" rightIcon={<PlusIcon />} onClick={addSAVR}>
                   Add to wallet
@@ -95,13 +95,13 @@ export const WalletPortfolio = () => {
             </Box>
             <Flex mt="23px" mb="22px" justifyContent="space-between">
               <Flex>
-                <Text mr="2" textStyle="textSansBald">
+                <Text mr="2" textStyle="textSansBold">
                   Total Value Locked
                 </Text>
                 <Text textStyle="text1">0.000</Text>
               </Flex>
               <Flex>
-                <Text mr="2" textStyle="textSansBald">
+                <Text mr="2" textStyle="textSansBold">
                   Total Claimed
                 </Text>
                 <Text textStyle="text1">0.000</Text>

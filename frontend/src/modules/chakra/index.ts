@@ -1,6 +1,9 @@
 import { extendTheme } from '@chakra-ui/react';
 import { buttonTheme } from './button';
 import { containerTheme } from './container';
+import { inputTheme } from './input';
+import { menuTheme } from './menu';
+import { modalTheme } from './modal';
 
 const breakpoints = {
   sm: '0px',
@@ -11,7 +14,9 @@ const breakpoints = {
 };
 
 const colors = {
-  yellow: '#d6d873',
+  yellow: {
+    200: '#d6d873',
+  },
   green: {
     100: '#0d923a', // rgb(13, 146, 58)
     // TODO: как добавить прозрачность существующему цвету?
@@ -22,10 +27,13 @@ const colors = {
   turquoise: '#2d969a',
   blue: '#1adce2',
   red: '#c95b5b',
-  grey: '#4d6655',
+  grey: {
+    200: '#4d6655',
+  },
   bgGreen: {
     200: '#1f3e2c',
     600: '#1a725c',
+    800: '#192219',
   },
   headerBg: 'rgba(12, 34, 14, 0.2)',
 };
@@ -83,12 +91,12 @@ const textStyles = {
     fontWeight: '500',
     lineHeight: '130%',
   },
-  textBald: {
+  textBold: {
     fontSize: ['18px'],
     fontWeight: '700',
     lineHeight: '130%',
   },
-  textSansBald: {
+  textSansBold: {
     fontSize: ['18px'],
     fontWeight: '700',
     lineHeight: '130%',
@@ -139,6 +147,9 @@ export const theme = extendTheme({
     Button: buttonTheme,
     IconButton: buttonTheme,
     Container: containerTheme,
+    Modal: modalTheme,
+    Menu: menuTheme,
+    Input: inputTheme,
   },
   breakpoints,
   semanticTokens,

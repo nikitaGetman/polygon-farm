@@ -5,7 +5,7 @@ const commonProps = {
   color: 'white',
 
   _disabled: {
-    bgColor: 'grey',
+    bgColor: 'grey.200',
     opacity: 1,
     color: 'rgba(255, 255, 255, 0.5)',
     border: 'none',
@@ -24,7 +24,7 @@ const primary = defineStyle({
   _hover: {
     boxShadow: '0px 4px 10px rgba(107, 201, 91, 0.5)',
     _disabled: {
-      background: 'grey',
+      background: 'grey.200',
       boxShadow: 'none',
     },
   },
@@ -41,7 +41,7 @@ const secondary = defineStyle({
     bgColor: 'green.400',
     borderColor: 'green.400',
     _disabled: {
-      background: 'grey',
+      background: 'grey.200',
     },
   },
 });
@@ -58,13 +58,29 @@ const outlined = defineStyle({
     bgColor: 'green.400',
     borderColor: 'green.400',
     _disabled: {
-      background: 'grey',
+      background: 'grey.200',
+    },
+  },
+});
+
+const outlinedWhite = defineStyle({
+  ...commonProps,
+  border: '1px solid white',
+  bgColor: 'transparent',
+  borderRadius: 'md',
+  borderWidth: '1px',
+
+  _hover: {
+    bgColor: 'green.400',
+    borderColor: 'green.400',
+    _disabled: {
+      background: 'grey.200',
     },
   },
 });
 
 export const buttonTheme = defineStyleConfig({
-  variants: { primary, secondary, outlined },
+  variants: { primary, secondary, outlined, 'outlined-white': outlinedWhite },
   sizes: {
     lg: {
       height: '50px',

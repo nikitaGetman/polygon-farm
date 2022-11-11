@@ -7,6 +7,8 @@ import { bigNumberToString, getReadableAmount } from '@/utils/number';
 
 type StakingPlanProps = {
   isSubscribed?: boolean;
+  isSubscriptionEnding?: boolean;
+  subscribedTill?: BigNumberish;
   subscriptionCost: BigNumberish;
   subscriptionDuration: BigNumberish;
   stakingDuration: BigNumberish;
@@ -22,6 +24,8 @@ type StakingPlanProps = {
 };
 export const StakingPlan: FC<StakingPlanProps> = ({
   isSubscribed,
+  isSubscriptionEnding,
+  subscribedTill,
   subscriptionCost,
   subscriptionDuration,
   stakingDuration,
@@ -34,22 +38,37 @@ export const StakingPlan: FC<StakingPlanProps> = ({
   onDeposit,
   onClaim,
 }) => {
+  const untilSubscriptionDate =
+    subscribedTill &&
+    new Date(BigNumber.from(subscribedTill).toNumber() * 1000).toLocaleDateString();
+
   return (
     <Box borderRadius="md" overflow="hidden" filter="drop-shadow(0px 4px 4px rgba(0, 0, 0, 0.25))">
       <Flex
-        bgColor={isSubscribed ? 'green.10050' : 'grey'}
+        bgColor={isSubscribed ? 'green.10050' : 'grey.200'}
         p="10px 20px"
         justifyContent="flex-end"
         height="60px"
         alignItems="center"
       >
         {isSubscribed ? (
-          <Text textStyle="textSansBald" px="44px">
-            Active
-          </Text>
+          isSubscriptionEnding ? (
+            <>
+              <Text textStyle="textSansBold">
+                <>Until {untilSubscriptionDate}</>
+              </Text>
+              <Button variant="outlined-white" onClick={onSubscribe} size="md" ml={5} w="140px">
+                Prolong
+              </Button>
+            </>
+          ) : (
+            <Text textStyle="textSansBold" px="44px">
+              Active
+            </Text>
+          )
         ) : (
           <>
-            <Text textStyle="textSansBald">
+            <Text textStyle="textSansBold">
               {bigNumberToString(subscriptionCost, 18, 0)} SAV /{' '}
               {getReadableDuration(subscriptionDuration)}
             </Text>
@@ -75,12 +94,12 @@ export const StakingPlan: FC<StakingPlanProps> = ({
             <Flex justifyContent="space-between">
               <StakingParameter title="Your Stake">
                 <Box as="span" ml={3} mr={6}>
-                  {BigNumber.from(userStakeSav).toString()} SAV
+                  {getReadableAmount(userStakeSav, 18)} SAV
                 </Box>
-                <Box as="span">{BigNumber.from(userStakeSavR).toString()} SAVR</Box>
+                <Box as="span">{getReadableAmount(userStakeSavR, 18)} SAVR</Box>
               </StakingParameter>
               <StakingParameter title="Your rewards">
-                {BigNumber.from(userReward).toString()} SAV
+                {getReadableAmount(userReward, 18)} SAV
               </StakingParameter>
             </Flex>
           </Box>
@@ -103,7 +122,7 @@ const StakingParameter = ({ title, children }: { title: string; children: any })
   return (
     <Flex alignItems="center">
       <Text textStyle="textSansSmall" mr="10px">{`${title}`}</Text>
-      <Text textStyle="textSansBald">{children}</Text>
+      <Text textStyle="textSansBold">{children}</Text>
     </Flex>
   );
 };

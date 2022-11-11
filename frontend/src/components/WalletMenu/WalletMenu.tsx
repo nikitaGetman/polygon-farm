@@ -48,7 +48,7 @@ export const WalletMenu: FC<Props> = ({ connector, disconnect, address }) => {
         {trimAddress(address)}
       </MenuButton>
       <Portal>
-        <MenuList bgColor="green.100" minWidth="150px" p="6px 8px" color="white" border="none">
+        <MenuList bgColor="green.100" minWidth="150px" p="6px 8px">
           <MenuItem {...menuItemStyle} onClick={onCopy} closeOnSelect={false}>
             {hasCopied ? 'Copied' : 'Copy address'}
           </MenuItem>

@@ -5,6 +5,7 @@ coverage.json
 typechain
 typechain-types
 deployments/localhost
+deployments/hardhat
 .vscode/*
 
 #Hardhat files

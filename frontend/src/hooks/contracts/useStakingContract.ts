@@ -29,11 +29,8 @@ export enum StakingEvent {
 export const useStakingContract = () => {
   const { data: signer } = useSigner();
   const provider = useProvider();
-  const { address: account } = useAccount();
 
   const { address: contractAddress, abi } = useContractAbi({ contract: ContractsEnum.Staking });
-  const savToken = useSavContract();
-  const savRToken = useSavRContract();
 
   const contract = useContract({
     address: contractAddress,
@@ -71,15 +68,6 @@ export const useStakingContract = () => {
     referrer?: string;
   }): Promise<void> => {
     // TODO: what if call this method unauthorized
-    if (!account || !signer) return;
-
-    const token = isToken2 ? savRToken : savToken;
-
-    const allowance = await token.allowance(account, contractAddress);
-    if (allowance.lt(BigNumber.from(amount))) {
-      await token.approve(contractAddress, ethers.constants.MaxUint256);
-    }
-
     const tx = await contract.deposit(
       planId,
       amount,

@@ -114,7 +114,7 @@ const NavMenuItem = ({
               )}
             </Text>
             {textAlert && (
-              <Text color="red" ml="25px" position="relative" textStyle="textBald">
+              <Text color="red" ml="25px" position="relative" textStyle="textBold">
                 {textAlert}
               </Text>
             )}

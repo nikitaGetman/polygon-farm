@@ -26,3 +26,7 @@ export const getReadableAmount = (
   if (amountFloat < 1000000) return `${(amountFloat / 1000).toFixed(precision)}k`;
   return `${(amountFloat / 1000000).toFixed(precision)}M`;
 };
+
+export const makeBigNumber = (value: BigNumberish) => {
+  return ethers.utils.parseEther(value.toString());
+};
