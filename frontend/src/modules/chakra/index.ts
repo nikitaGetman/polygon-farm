@@ -4,6 +4,7 @@ import { containerTheme } from './container';
 import { inputTheme } from './input';
 import { menuTheme } from './menu';
 import { modalTheme } from './modal';
+import { tableTheme } from './table';
 
 const breakpoints = {
   sm: '0px',
@@ -74,6 +75,11 @@ const textStyles = {
   h2: {
     fontSize: ['38px'],
     fontWeight: 'bold',
+    lineHeight: '130%',
+  },
+  h3: {
+    fontSize: ['26px'],
+    fontWeight: '700',
     lineHeight: '130%',
   },
   text1: {
@@ -150,6 +156,7 @@ export const theme = extendTheme({
     Modal: modalTheme,
     Menu: menuTheme,
     Input: inputTheme,
+    Table: tableTheme,
   },
   breakpoints,
   semanticTokens,

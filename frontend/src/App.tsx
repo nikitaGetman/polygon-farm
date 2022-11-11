@@ -8,6 +8,7 @@ import { theme } from '@/modules/chakra';
 import { client } from '@/modules/wagmi';
 import { QueryClientProvider } from '@tanstack/react-query';
 import { queryClient } from './modules/query';
+import { StakingPage } from './components/Staking/StakingPage';
 
 import '@/assets/styles/index.scss';
 
@@ -21,6 +22,7 @@ function App() {
               <Header />
               <Routes>
                 <Route path="/" element={<Dashboard />} />
+                <Route path="/staking" element={<StakingPage />} />
               </Routes>
             </Router>
           </QueryClientProvider>

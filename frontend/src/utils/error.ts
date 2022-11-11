@@ -5,6 +5,9 @@ export function getErrorMessage(error: unknown) {
 
 export function tryToGetError(error: unknown) {
   const message = getErrorMessage(error);
+
+  if (message.includes('user rejected transaction')) return 'Rejected by user';
+
   const hasReadableError = message.includes('reverted with reason string ');
 
   const errorReg = /reverted with reason string '(?<data>[\w|\s|\d]*)'/gm;

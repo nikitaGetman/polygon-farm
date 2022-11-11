@@ -14,6 +14,7 @@ const dashboard = defineStyle({
   maxWidth: 'unset',
   display: 'flex',
   flexDirection: 'column',
+  padding: 0,
 });
 
 const header = defineStyle({

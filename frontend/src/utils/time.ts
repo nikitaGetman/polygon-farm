@@ -8,3 +8,10 @@ export const getReadableDuration = (days: BigNumberish) => {
 
   return `${numberDays / 365} years`;
 };
+
+export const getLocalDateString = (timestamp: BigNumberish) => {
+  const t = BigNumber.from(timestamp).toNumber() * 1000;
+  const date = new Date(t);
+
+  return date.toLocaleString();
+};

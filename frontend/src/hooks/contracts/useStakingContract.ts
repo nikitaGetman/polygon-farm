@@ -46,6 +46,10 @@ export const useStakingContract = () => {
     return contract.getUserPlansInfo(address);
   };
 
+  const getUserStakesWithRewards = async (address: string, planId: number) => {
+    return contract.getUserStakesWithRewards(planId, address);
+  };
+
   const subscribe = async (planId: number) => {
     const tx = await contract.subscribe(planId);
     await tx.wait();
@@ -84,6 +88,7 @@ export const useStakingContract = () => {
     withdraw,
     getStakingPlans,
     getUserStakingInfo,
+    getUserStakesWithRewards,
     subscribe,
   };
 };

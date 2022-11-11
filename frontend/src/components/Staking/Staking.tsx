@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { FC, useCallback, useMemo, useState } from 'react';
 import {
   Container,
   Box,
@@ -15,18 +15,24 @@ import { WarningTwoIcon } from '@chakra-ui/icons';
 import { ConnectWalletButton } from '@/components/ConnectWalletButton/ConnectWalletButton';
 import { useAccount } from 'wagmi';
 import { useStaking } from '@/hooks/useStaking';
-import { getYearlyAPR, makeBigNumber } from '@/utils/number';
+import { getReadableAmount, getYearlyAPR, makeBigNumber } from '@/utils/number';
 import { StakingPlan } from './StakingPlan';
 import { useConnectWallet } from '@/hooks/useConnectWallet';
 import { StakingModal } from './StakingModal';
 import { TOKENS } from '@/hooks/useTokens';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { StatBlock } from '../ui/StatBlock/StatBlock';
+import { BigNumber } from 'ethers';
 
-export const Staking = () => {
+type StakingProps = {
+  isPageView?: boolean;
+};
+export const Staking: FC<StakingProps> = ({ isPageView }) => {
   const { isConnected } = useAccount();
   const { connect } = useConnectWallet();
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [selectedPlan, setSelectedPlan] = useState<number>();
+  const navigate = useNavigate();
 
   const { activeStakingPlans, hasEndingSubscription, subscribe, deposit } = useStaking();
 
@@ -60,7 +66,31 @@ export const Staking = () => {
     [deposit, connect, isConnected, selectedPlan, closeModal]
   );
 
-  const onClaim = useCallback(() => {}, []);
+  const onClaim = useCallback(() => {
+    if (isPageView) {
+      const element = document.getElementById('stakings-list');
+      element?.scrollIntoView();
+    } else {
+      navigate('/staking#stakings-list');
+    }
+  }, [navigate, isPageView]);
+
+  const totalStakeSav = useMemo(
+    () =>
+      activeStakingPlans.reduce(
+        (acc, plan) => acc.add(plan.currentToken1Staked || 0),
+        BigNumber.from(0)
+      ),
+    [activeStakingPlans]
+  );
+  const totalStakeSavR = useMemo(
+    () =>
+      activeStakingPlans.reduce(
+        (acc, plan) => acc.add(plan.currentToken2Staked || 0),
+        BigNumber.from(0)
+      ),
+    [activeStakingPlans]
+  );
 
   return (
     <Container variant="dashboard">
@@ -84,12 +114,14 @@ export const Staking = () => {
                   </>
                 </Text>
               )}
-              <Button as={Link} to="/staking">
-                My stake
-              </Button>
+              {!isPageView && (
+                <Button as={Link} to="/staking">
+                  My stake
+                </Button>
+              )}
             </Box>
           ) : (
-            <ConnectWalletButton />
+            !isPageView && <ConnectWalletButton />
           )}
         </Box>
       </Flex>
@@ -101,9 +133,41 @@ export const Staking = () => {
         </Text>
       </Box>
 
-      <Grid mt={10} gap={5} templateRows="repeat(2, 1fr)" templateColumns="repeat(2, 1fr)">
+      {isPageView && (
+        <Flex justifyContent="flex-end" mt="30px">
+          <StatBlock width="260px">
+            <Box textStyle="text1" mb="10px">
+              Total in Staking
+            </Box>
+            <Box textStyle="text1">
+              <Box as="span" textStyle="textSansBold" fontSize="26px" mr="6px">
+                {getReadableAmount(totalStakeSav)}
+              </Box>
+              SAV
+            </Box>
+          </StatBlock>
+          <StatBlock width="260px">
+            <Box textStyle="text1" mb="10px">
+              Total in Staking
+            </Box>
+            <Box textStyle="text1">
+              <Box as="span" textStyle="textSansBold" fontSize="26px" mr="6px">
+                {getReadableAmount(totalStakeSavR)}
+              </Box>
+              SAVR
+            </Box>
+          </StatBlock>
+        </Flex>
+      )}
+
+      <Grid
+        mt={isPageView ? '30px' : '40px'}
+        gap={5}
+        templateRows="repeat(2, 1fr)"
+        templateColumns="repeat(2, 1fr)"
+      >
         {activeStakingPlans.map((planData, index) => (
-          <GridItem colSpan={1} rowSpan={1} key={index}>
+          <GridItem colSpan={1} rowSpan={1} key={planData.planId}>
             <StakingPlan
               isSubscribed={planData.isSubscribed}
               isSubscriptionEnding={planData.isSubscriptionEnding}
@@ -111,14 +175,14 @@ export const Staking = () => {
               subscriptionCost={planData.subscriptionCost}
               subscriptionDuration={planData.subscriptionDuration}
               stakingDuration={planData.stakingDuration}
-              poolSize={planData.totalStakedToken1.add(planData.totalStakedToken2)}
+              poolSize={planData.currentToken1Locked.add(planData.currentToken2Locked)}
               apr={getYearlyAPR(planData.profitPercent, planData.stakingDuration)}
               userStakeSav={planData.currentToken1Staked || 0}
-              // userStakeSavR={planData.currentToken2Staked || 0}
-              userStakeSavR={0}
-              userReward={0}
-              onSubscribe={isConnected ? () => subscribe.mutate(index) : connect}
-              onDeposit={() => openModal(index)}
+              userStakeSavR={planData.currentToken2Staked || 0}
+              userReward={planData.currentReward}
+              isClaimAvailable={planData.hasReadyStakes}
+              onSubscribe={isConnected ? () => subscribe.mutate(planData.planId) : connect}
+              onDeposit={() => openModal(planData.planId)}
               onClaim={onClaim}
             />
           </GridItem>

@@ -1,6 +1,10 @@
 import { BigNumber, BigNumberish, ethers } from 'ethers';
 
-export const bigNumberToString = (value: BigNumberish, decimals: number, precision: number = 3) => {
+export const bigNumberToString = (
+  value: BigNumberish,
+  decimals: number = 18,
+  precision: number = 3
+) => {
   const parts = ethers.utils.formatUnits(value, decimals).split('.');
   const fractional = parts[1].slice(0, precision);
   return fractional ? `${parts[0]}.${fractional}` : `${parts[0]}`;
@@ -17,7 +21,7 @@ export const getYearlyAPR = (profit: BigNumberish, duration: BigNumberish) => {
 
 export const getReadableAmount = (
   amount: BigNumberish,
-  decimals: number,
+  decimals: number = 18,
   precision: number = 2
 ) => {
   const amountFloat = parseFloat(ethers.utils.formatUnits(amount, decimals));

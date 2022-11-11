@@ -16,7 +16,8 @@ type StakingPlanProps = {
   apr: number | string;
   userStakeSav: BigNumberish;
   userStakeSavR: BigNumberish;
-  userReward: BigNumberish;
+  userReward?: BigNumber;
+  isClaimAvailable?: boolean;
 
   onSubscribe: () => void;
   onDeposit: () => void;
@@ -34,6 +35,7 @@ export const StakingPlan: FC<StakingPlanProps> = ({
   userStakeSav,
   userStakeSavR,
   userReward,
+  isClaimAvailable,
   onSubscribe,
   onDeposit,
   onClaim,
@@ -86,20 +88,18 @@ export const StakingPlan: FC<StakingPlanProps> = ({
               <StakingParameter title="Locking period">
                 {getReadableDuration(stakingDuration)}
               </StakingParameter>
-              <StakingParameter title="Pool size">
-                {getReadableAmount(poolSize, 18)}
-              </StakingParameter>
+              <StakingParameter title="Pool size">{getReadableAmount(poolSize)}</StakingParameter>
               <StakingParameter title="APR">{apr}%</StakingParameter>
             </Flex>
             <Flex justifyContent="space-between">
               <StakingParameter title="Your Stake">
                 <Box as="span" ml={3} mr={6}>
-                  {getReadableAmount(userStakeSav, 18)} SAV
+                  {getReadableAmount(userStakeSav)} SAV
                 </Box>
-                <Box as="span">{getReadableAmount(userStakeSavR, 18)} SAVR</Box>
+                <Box as="span">{getReadableAmount(userStakeSavR)} SAVR</Box>
               </StakingParameter>
               <StakingParameter title="Your rewards">
-                {getReadableAmount(userReward, 18)} SAV
+                {getReadableAmount(userReward || 0)} SAV
               </StakingParameter>
             </Flex>
           </Box>
@@ -108,7 +108,7 @@ export const StakingPlan: FC<StakingPlanProps> = ({
             <Button onClick={onDeposit} variant="outlined" disabled={!isSubscribed}>
               Deposit
             </Button>
-            <Button onClick={onClaim} variant="outlined" disabled={!userReward}>
+            <Button onClick={onClaim} variant="outlined" disabled={!isClaimAvailable}>
               Claim
             </Button>
           </Flex>

@@ -12,6 +12,8 @@ interface IStaking {
         uint256 totalStakesToken2No;
         uint256 totalStakedToken1;
         uint256 totalStakedToken2;
+        uint256 currentToken1Locked;
+        uint256 currentToken2Locked;
         uint256 totalClaimed;
     }
 
@@ -28,19 +30,22 @@ interface IStaking {
     struct Staker {
         Stake[] stakes;
         uint256 subscription;
-        uint256 totalStakedToken1;
-        uint256 totalStakedToken2;
         uint256 totalClaimed;
         uint256 currentToken1Staked;
+        uint256 currentToken2Staked;
     }
 
     struct UserStakingInfo {
-        uint256 totalStakedToken1;
-        uint256 totalStakedToken2;
         uint256 totalClaimed;
         uint256 currentToken1Staked;
+        uint256 currentToken2Staked;
         bool isSubscribed;
         uint256 subscribedTill;
+    }
+
+    struct StakeWithRewardsInfo {
+        Stake stake;
+        uint256 reward;
     }
 
     function deposit(

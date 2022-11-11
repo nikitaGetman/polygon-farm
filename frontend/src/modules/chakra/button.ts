@@ -79,8 +79,19 @@ const outlinedWhite = defineStyle({
   },
 });
 
+const link = defineStyle({
+  ...commonProps,
+  border: 'none',
+  padding: '4px 8px',
+  bgColor: 'transparent',
+
+  _hover: {
+    _disabled: {},
+  },
+});
+
 export const buttonTheme = defineStyleConfig({
-  variants: { primary, secondary, outlined, 'outlined-white': outlinedWhite },
+  variants: { primary, secondary, outlined, 'outlined-white': outlinedWhite, link },
   sizes: {
     lg: {
       height: '50px',

@@ -44,6 +44,7 @@
     "tsconfig-paths": "^4.1.0"
   },
   "scripts": {
-    "force-deploy-local": "hh deploy --network hardhat --write true --reset --export-all ./frontend/src/config/contracts.json"
+    "force-deploy-local": "hh deploy --network hardhat --write true --reset --export-all ./frontend/src/config/contracts.json",
+    "export": "hh export --export-all ./frontend/src/config/contracts.json"
   }
 }
