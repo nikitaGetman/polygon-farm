@@ -72,7 +72,7 @@ export const useStaking = () => {
             );
 
             const hasReadyStakes = stakes?.some(
-              (stake) => stake.stake.timeEnd.toNumber() <= currentTime
+              (stake) => stake.stake.timeEnd.toNumber() <= currentTime && !stake.stake.isClaimed
             );
 
             return {
@@ -162,6 +162,26 @@ export const useStaking = () => {
     }
   );
 
+  const withdraw = useMutation(
+    [STAKING_CLAIM_MUTATION],
+    async ({ planId, stakeId }: { planId: number; stakeId: number }) => {
+      await stakingContract.withdraw(planId, stakeId);
+    },
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries({ queryKey: [STAKING_PLANS_REQUEST] });
+        queryClient.invalidateQueries({ queryKey: [USER_STAKING_INFO_REQUEST] });
+        queryClient.invalidateQueries({ queryKey: [USER_STAKES_REQUEST] });
+        queryClient.invalidateQueries({ queryKey: [SAV_BALANCE_REQUEST] });
+        success('Rewards claimed!');
+      },
+      onError: (err) => {
+        const errMessage = tryToGetError(err);
+        error(errMessage);
+      },
+    }
+  );
+
   return {
     stakingPlans,
     userPlansInfo,
@@ -170,6 +190,7 @@ export const useStaking = () => {
     hasEndingSubscription,
     subscribe,
     deposit,
+    withdraw,
     stakingContract,
   };
 };

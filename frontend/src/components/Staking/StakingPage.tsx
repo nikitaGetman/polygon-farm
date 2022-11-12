@@ -7,7 +7,7 @@ import { useStaking } from '@/hooks/useStaking';
 import { StakingTable } from './StakingTable';
 
 export const StakingPage = () => {
-  const { userStakes, stakingPlans } = useStaking();
+  const { userStakes, stakingPlans, withdraw } = useStaking();
 
   const stakesList = useMemo(
     () =>
@@ -24,9 +24,12 @@ export const StakingPage = () => {
     [userStakes, stakingPlans]
   );
 
-  const onClaim = useCallback((planId: number, stakeId: number) => {
-    console.log('claim', planId, stakeId);
-  }, []);
+  const onClaim = useCallback(
+    (planId: number, stakeId: number) => {
+      withdraw.mutate({ planId, stakeId });
+    },
+    [withdraw]
+  );
 
   return (
     <Container variant="dashboard" pt="60px">

@@ -45,6 +45,6 @@
   },
   "scripts": {
     "force-deploy-local": "hh deploy --network hardhat --write true --reset --export-all ./frontend/src/config/contracts.json",
-    "export": "hh export --export-all ./frontend/src/config/contracts.json"
+    "export-contracts": "hh export --export-all ./frontend/src/config/contracts.json"
   }
 }

@@ -18988,7 +18988,7 @@
           ]
         },
         "Squads": {
-          "address": "0x3BFbac48959adee4DC4EEC61867A06188128595D",
+          "address": "0x44C067E11330AabCf741a25682991eaf92969A89",
           "abi": [
             {
               "inputs": [
@@ -19900,7 +19900,7 @@
           ]
         },
         "Staking": {
-          "address": "0x2DF5295327e84D3e19Ba23cfAbf9F8bcD2E0f1Cc",
+          "address": "0xDda3efaee57f1B6CECBAF9ea9844D4f32ddEC7C1",
           "abi": [
             {
               "inputs": [
@@ -20325,71 +20325,6 @@
               "type": "function"
             },
             {
-              "inputs": [],
-              "name": "getContractInfo",
-              "outputs": [
-                {
-                  "components": [
-                    {
-                      "internalType": "bool",
-                      "name": "isActive",
-                      "type": "bool"
-                    },
-                    {
-                      "internalType": "uint256",
-                      "name": "subscriptionCost",
-                      "type": "uint256"
-                    },
-                    {
-                      "internalType": "uint256",
-                      "name": "subscriptionDuration",
-                      "type": "uint256"
-                    },
-                    {
-                      "internalType": "uint256",
-                      "name": "stakingDuration",
-                      "type": "uint256"
-                    },
-                    {
-                      "internalType": "uint256",
-                      "name": "profitPercent",
-                      "type": "uint256"
-                    },
-                    {
-                      "internalType": "uint256",
-                      "name": "totalStakesToken1No",
-                      "type": "uint256"
-                    },
-                    {
-                      "internalType": "uint256",
-                      "name": "totalStakesToken2No",
-                      "type": "uint256"
-                    },
-                    {
-                      "internalType": "uint256",
-                      "name": "totalStakedToken1",
-                      "type": "uint256"
-                    },
-                    {
-                      "internalType": "uint256",
-                      "name": "totalStakedToken2",
-                      "type": "uint256"
-                    },
-                    {
-                      "internalType": "uint256",
-                      "name": "totalClaimed",
-                      "type": "uint256"
-                    }
-                  ],
-                  "internalType": "struct IStaking.StakingPlan[]",
-                  "name": "",
-                  "type": "tuple[]"
-                }
-              ],
-              "stateMutability": "view",
-              "type": "function"
-            },
-            {
               "inputs": [
                 {
                   "internalType": "bytes32",
@@ -20409,14 +20344,8 @@
               "type": "function"
             },
             {
-              "inputs": [
-                {
-                  "internalType": "uint256",
-                  "name": "planId",
-                  "type": "uint256"
-                }
-              ],
-              "name": "getStakingPlan",
+              "inputs": [],
+              "name": "getStakingPlans",
               "outputs": [
                 {
                   "components": [
@@ -20467,13 +20396,23 @@
                     },
                     {
                       "internalType": "uint256",
+                      "name": "currentToken1Locked",
+                      "type": "uint256"
+                    },
+                    {
+                      "internalType": "uint256",
+                      "name": "currentToken2Locked",
+                      "type": "uint256"
+                    },
+                    {
+                      "internalType": "uint256",
                       "name": "totalClaimed",
                       "type": "uint256"
                     }
                   ],
-                  "internalType": "struct IStaking.StakingPlan",
+                  "internalType": "struct IStaking.StakingPlan[]",
                   "name": "",
-                  "type": "tuple"
+                  "type": "tuple[]"
                 }
               ],
               "stateMutability": "view",
@@ -20508,34 +20447,82 @@
               "name": "getUserPlanInfo",
               "outputs": [
                 {
-                  "internalType": "uint256",
-                  "name": "totalStakedToken1",
-                  "type": "uint256"
-                },
+                  "components": [
+                    {
+                      "internalType": "uint256",
+                      "name": "totalClaimed",
+                      "type": "uint256"
+                    },
+                    {
+                      "internalType": "uint256",
+                      "name": "currentToken1Staked",
+                      "type": "uint256"
+                    },
+                    {
+                      "internalType": "uint256",
+                      "name": "currentToken2Staked",
+                      "type": "uint256"
+                    },
+                    {
+                      "internalType": "bool",
+                      "name": "isSubscribed",
+                      "type": "bool"
+                    },
+                    {
+                      "internalType": "uint256",
+                      "name": "subscribedTill",
+                      "type": "uint256"
+                    }
+                  ],
+                  "internalType": "struct IStaking.UserStakingInfo",
+                  "name": "",
+                  "type": "tuple"
+                }
+              ],
+              "stateMutability": "view",
+              "type": "function"
+            },
+            {
+              "inputs": [
                 {
-                  "internalType": "uint256",
-                  "name": "totalStakedToken2",
-                  "type": "uint256"
-                },
+                  "internalType": "address",
+                  "name": "userAddress",
+                  "type": "address"
+                }
+              ],
+              "name": "getUserPlansInfo",
+              "outputs": [
                 {
-                  "internalType": "uint256",
-                  "name": "totalClaimed",
-                  "type": "uint256"
-                },
-                {
-                  "internalType": "uint256",
-                  "name": "currentToken1Staked",
-                  "type": "uint256"
-                },
-                {
-                  "internalType": "bool",
-                  "name": "isSubscribed",
-                  "type": "bool"
-                },
-                {
-                  "internalType": "uint256",
-                  "name": "subscribedTill",
-                  "type": "uint256"
+                  "components": [
+                    {
+                      "internalType": "uint256",
+                      "name": "totalClaimed",
+                      "type": "uint256"
+                    },
+                    {
+                      "internalType": "uint256",
+                      "name": "currentToken1Staked",
+                      "type": "uint256"
+                    },
+                    {
+                      "internalType": "uint256",
+                      "name": "currentToken2Staked",
+                      "type": "uint256"
+                    },
+                    {
+                      "internalType": "bool",
+                      "name": "isSubscribed",
+                      "type": "bool"
+                    },
+                    {
+                      "internalType": "uint256",
+                      "name": "subscribedTill",
+                      "type": "uint256"
+                    }
+                  ],
+                  "internalType": "struct IStaking.UserStakingInfo[]",
+                  "name": "",
+                  "type": "tuple[]"
                 }
               ],
               "stateMutability": "view",
@@ -20595,7 +20582,80 @@
                     }
                   ],
                   "internalType": "struct IStaking.Stake[]",
-                  "name": "stakes",
+                  "name": "",
+                  "type": "tuple[]"
+                }
+              ],
+              "stateMutability": "view",
+              "type": "function"
+            },
+            {
+              "inputs": [
+                {
+                  "internalType": "uint256",
+                  "name": "planId",
+                  "type": "uint256"
+                },
+                {
+                  "internalType": "address",
+                  "name": "userAddress",
+                  "type": "address"
+                }
+              ],
+              "name": "getUserStakesWithRewards",
+              "outputs": [
+                {
+                  "components": [
+                    {
+                      "components": [
+                        {
+                          "internalType": "uint256",
+                          "name": "amount",
+                          "type": "uint256"
+                        },
+                        {
+                          "internalType": "uint256",
+                          "name": "timeStart",
+                          "type": "uint256"
+                        },
+                        {
+                          "internalType": "uint256",
+                          "name": "timeEnd",
+                          "type": "uint256"
+                        },
+                        {
+                          "internalType": "uint256",
+                          "name": "profitPercent",
+                          "type": "uint256"
+                        },
+                        {
+                          "internalType": "uint256",
+                          "name": "profit",
+                          "type": "uint256"
+                        },
+                        {
+                          "internalType": "bool",
+                          "name": "isClaimed",
+                          "type": "bool"
+                        },
+                        {
+                          "internalType": "bool",
+                          "name": "isToken2",
+                          "type": "bool"
+                        }
+                      ],
+                      "internalType": "struct IStaking.Stake",
+                      "name": "stake",
+                      "type": "tuple"
+                    },
+                    {
+                      "internalType": "uint256",
+                      "name": "reward",
+                      "type": "uint256"
+                    }
+                  ],
+                  "internalType": "struct IStaking.StakeWithRewardsInfo[]",
+                  "name": "",
                   "type": "tuple[]"
                 }
               ],
@@ -20796,6 +20856,16 @@
                 {
                   "internalType": "uint256",
                   "name": "totalStakedToken2",
+                  "type": "uint256"
+                },
+                {
+                  "internalType": "uint256",
+                  "name": "currentToken1Locked",
+                  "type": "uint256"
+                },
+                {
+                  "internalType": "uint256",
+                  "name": "currentToken2Locked",
                   "type": "uint256"
                 },
                 {

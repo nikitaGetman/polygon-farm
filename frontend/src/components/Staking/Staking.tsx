@@ -194,7 +194,7 @@ export const Staking: FC<StakingProps> = ({ isPageView }) => {
             activeStakingPlans[selectedPlan].profitPercent,
             activeStakingPlans[selectedPlan].stakingDuration
           )}
-          lockPeriodDays={activeStakingPlans[selectedPlan].subscriptionDuration}
+          lockPeriodDays={activeStakingPlans[selectedPlan].stakingDuration}
           isLoading={deposit.isLoading}
           onClose={closeModal}
           onStake={onDeposit}
