@@ -18,6 +18,7 @@ type StakingPlanProps = {
   userStakeSavR: BigNumberish;
   userReward?: BigNumber;
   isClaimAvailable?: boolean;
+  isSubscribeLoading?: boolean;
 
   onSubscribe: () => void;
   onDeposit: () => void;
@@ -36,6 +37,7 @@ export const StakingPlan: FC<StakingPlanProps> = ({
   userStakeSavR,
   userReward,
   isClaimAvailable,
+  isSubscribeLoading,
   onSubscribe,
   onDeposit,
   onClaim,
@@ -59,7 +61,14 @@ export const StakingPlan: FC<StakingPlanProps> = ({
               <Text textStyle="textSansBold">
                 <>Until {untilSubscriptionDate}</>
               </Text>
-              <Button variant="outlined-white" onClick={onSubscribe} size="md" ml={5} w="140px">
+              <Button
+                variant="outlined-white"
+                onClick={onSubscribe}
+                isLoading={isSubscribeLoading}
+                size="md"
+                ml={5}
+                w="140px"
+              >
                 Prolong
               </Button>
             </>
@@ -74,7 +83,7 @@ export const StakingPlan: FC<StakingPlanProps> = ({
               {bigNumberToString(subscriptionCost, 18, 0)} SAV /{' '}
               {getReadableDuration(subscriptionDuration)}
             </Text>
-            <Button onClick={onSubscribe} size="md" ml={5}>
+            <Button onClick={onSubscribe} isLoading={isSubscribeLoading} size="md" ml={5}>
               Activate
             </Button>
           </>

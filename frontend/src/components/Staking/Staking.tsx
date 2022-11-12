@@ -10,6 +10,7 @@ import {
   Spacer,
   Button,
   useDisclosure,
+  Skeleton,
 } from '@chakra-ui/react';
 import { WarningTwoIcon } from '@chakra-ui/icons';
 import { ConnectWalletButton } from '@/components/ConnectWalletButton/ConnectWalletButton';
@@ -47,6 +48,14 @@ export const Staking: FC<StakingProps> = ({ isPageView }) => {
     setSelectedPlan(undefined);
     onClose();
   }, [setSelectedPlan, onClose]);
+
+  const onSubscribe = useCallback(
+    (planId: number) => {
+      setSelectedPlan(planId);
+      subscribe.mutate(planId);
+    },
+    [setSelectedPlan, subscribe]
+  );
 
   const onDeposit = useCallback(
     async (token: TOKENS, amount: number) => {
@@ -166,6 +175,16 @@ export const Staking: FC<StakingProps> = ({ isPageView }) => {
         templateRows="repeat(2, 1fr)"
         templateColumns="repeat(2, 1fr)"
       >
+        {!activeStakingPlans.length &&
+          Array.from({ length: 4 }).map((_, index) => (
+            <Skeleton
+              key={index}
+              height="210px"
+              borderRadius="md"
+              startColor="grey.200"
+              endColor="bgGreen.200"
+            />
+          ))}
         {activeStakingPlans.map((planData, index) => (
           <GridItem colSpan={1} rowSpan={1} key={planData.planId}>
             <StakingPlan
@@ -181,7 +200,8 @@ export const Staking: FC<StakingProps> = ({ isPageView }) => {
               userStakeSavR={planData.currentToken2Staked || 0}
               userReward={planData.currentReward}
               isClaimAvailable={planData.hasReadyStakes}
-              onSubscribe={isConnected ? () => subscribe.mutate(planData.planId) : connect}
+              onSubscribe={isConnected ? () => onSubscribe(planData.planId) : connect}
+              isSubscribeLoading={selectedPlan === planData.planId && subscribe.isLoading}
               onDeposit={() => openModal(planData.planId)}
               onClaim={onClaim}
             />
