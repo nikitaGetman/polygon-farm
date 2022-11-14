@@ -90,7 +90,7 @@ export const useStaking = () => {
   }, [stakingPlans, userPlansInfo, userStakes]);
 
   const hasEndingSubscription = useMemo(
-    () => activeStakingPlans.find((plan) => plan.isSubscriptionEnding),
+    () => activeStakingPlans.some((plan) => plan.isSubscriptionEnding),
     [activeStakingPlans]
   );
 

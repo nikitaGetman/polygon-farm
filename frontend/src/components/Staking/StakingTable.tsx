@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo } from 'react';
+import React, { useMemo } from 'react';
 import { Button, Center, Flex, Tbody, Td, Th, Thead, Tr, useDisclosure } from '@chakra-ui/react';
 import { Table } from '../ui/Table/Table';
 import { ReactComponent as SavIcon } from '@/assets/images/sav_icon.svg';
@@ -64,8 +64,7 @@ export const StakingTable = ({
           <Table>
             <Thead>
               <Tr>
-                <Th>Token</Th>
-                <Th isNumeric>Deposit</Th>
+                <Th>Deposit</Th>
                 <Th>Start Date</Th>
                 <Th>End Date</Th>
                 <Th>Period</Th>
@@ -82,17 +81,16 @@ export const StakingTable = ({
                       {stake.isToken2 ? (
                         <>
                           <SavrIcon />
-                          SAVR
+                          {getReadableAmount(stake.amount)} SAVR
                         </>
                       ) : (
                         <>
                           <SavIcon />
-                          SAV
+                          {getReadableAmount(stake.amount)} SAV
                         </>
                       )}
                     </Flex>
                   </Td>
-                  <Td isNumeric>{getReadableAmount(stake.amount)}</Td>
                   <Td>{getLocalDateString(stake.timeStart)}</Td>
                   <Td>{getLocalDateString(stake.timeEnd)}</Td>
                   <Td>{getReadableDuration(period)}</Td>

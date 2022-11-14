@@ -1,10 +1,10 @@
-import { useConnect } from 'wagmi';
-import { InjectedConnector } from 'wagmi/connectors/injected';
+import { useAppStateContext } from '@/contexts/AppContext';
+import { useCallback } from 'react';
 
 export const useConnectWallet = () => {
-  const { connect } = useConnect({
-    connector: new InjectedConnector(),
-  });
+  const { openConnectModal } = useAppStateContext();
 
-  return { connect };
+  const handleConnect = useCallback(() => openConnectModal(), [openConnectModal]);
+
+  return { connect: handleConnect };
 };

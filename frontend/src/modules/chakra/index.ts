@@ -35,8 +35,10 @@ const colors = {
     200: '#1f3e2c',
     600: '#1a725c',
     800: '#192219',
+    900: '#0B200B',
   },
-  headerBg: 'rgba(12, 34, 14, 0.2)',
+  // headerBg: 'rgba(12, 34, 14, 0.2)',
+  headerBg: '#1b3925e3',
 };
 
 const semanticTokens = {

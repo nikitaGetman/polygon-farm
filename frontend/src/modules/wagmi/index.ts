@@ -6,6 +6,8 @@ import { jsonRpcProvider } from 'wagmi/providers/jsonRpc';
 import { MetaMaskConnector } from 'wagmi/connectors/metaMask';
 import { WalletConnectConnector } from 'wagmi/connectors/walletConnect';
 
+window.Buffer = require('buffer/').Buffer;
+
 const { chains, provider, webSocketProvider } = configureChains(
   [chain.hardhat, chain.polygonMumbai, chain.polygon],
   [
@@ -22,7 +24,7 @@ const { chains, provider, webSocketProvider } = configureChains(
   }
 );
 
-const metamaskConnector = new MetaMaskConnector({
+export const metamaskConnector = new MetaMaskConnector({
   chains,
   options: {
     shimDisconnect: true,
@@ -30,7 +32,7 @@ const metamaskConnector = new MetaMaskConnector({
   },
 });
 
-const walletConnector = new WalletConnectConnector({
+export const walletConnector = new WalletConnectConnector({
   chains,
   options: {
     qrcode: true,
@@ -38,7 +40,7 @@ const walletConnector = new WalletConnectConnector({
 });
 
 const client = createClient({
-  autoConnect: true,
+  autoConnect: false,
   connectors: [metamaskConnector, walletConnector],
   provider,
   webSocketProvider,

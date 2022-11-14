@@ -78,9 +78,9 @@ export const Staking: FC<StakingProps> = ({ isPageView }) => {
   const onClaim = useCallback(() => {
     if (isPageView) {
       const element = document.getElementById('stakings-list');
-      element?.scrollIntoView();
+      element?.scrollIntoView({ behavior: 'smooth' });
     } else {
-      navigate('/staking#stakings-list');
+      navigate('/staking');
     }
   }, [navigate, isPageView]);
 

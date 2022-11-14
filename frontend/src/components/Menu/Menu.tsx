@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import {
   IconButton,
   Drawer,
@@ -13,6 +13,7 @@ import {
   Divider,
   Circle,
 } from '@chakra-ui/react';
+import { useNavigate } from 'react-router-dom';
 import { ReactComponent as CrossIcon } from '@/assets/images/icons/cross.svg';
 import { ReactComponent as HouseIcon } from '@/assets/images/icons/house.svg';
 import { ReactComponent as GraphIcon } from '@/assets/images/icons/graph.svg';
@@ -21,8 +22,20 @@ import { ReactComponent as GameboyIcon } from '@/assets/images/icons/gameboy.svg
 import { ReactComponent as RocketIcon } from '@/assets/images/icons/rocket.svg';
 import { ReactComponent as WalletIcon } from '@/assets/images/icons/wallet.svg';
 import { ReactComponent as TabletIcon } from '@/assets/images/icons/tablet.svg';
+import { useStaking } from '@/hooks/useStaking';
 
 export const Menu = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) => {
+  const { hasEndingSubscription } = useStaking();
+  const navigate = useNavigate();
+
+  const handleNavigate = useCallback(
+    (to: string) => {
+      navigate(to);
+      onClose();
+    },
+    [navigate, onClose]
+  );
+
   return (
     <Drawer isOpen={isOpen} onClose={onClose} size="lg">
       <DrawerOverlay backdropFilter="blur(4.5px)" background="rgba(13, 35, 16, 0.5)" />
@@ -45,23 +58,22 @@ export const Menu = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => void
         </DrawerHeader>
 
         <DrawerBody>
-          <NavMenuItem text="Home" icon={<HouseIcon />} />
+          <NavMenuItem text="Home" icon={<HouseIcon />} onClick={() => handleNavigate('/')} />
           <NavMenuItem
             text="Staking"
+            onClick={() => handleNavigate('/staking')}
             icon={<GraphIcon />}
-            hasAlert
-            textAlert="Check your subscription!"
-            subtitle="Subtitle is here"
+            hasAlert={hasEndingSubscription}
+            textAlert={hasEndingSubscription ? 'Check your subscription!' : undefined}
           />
-          <NavMenuItem text="Team" icon={<StarsIcon />} />
+          <NavMenuItem text="Team" icon={<StarsIcon />} onClick={() => handleNavigate('/squads')} />
+          <NavMenuItem text="Play everyday" icon={<GameboyIcon />} />
           <NavMenuItem
-            text="Play everyday"
-            icon={<GameboyIcon />}
-            disabled
-            subtitle="Coming soon"
+            text="Lottery"
+            icon={<RocketIcon />}
+            onClick={() => handleNavigate('/lottery')}
           />
-          <NavMenuItem text="Lottery" icon={<RocketIcon />} />
-          <Divider mb="30px" borderBottomWidth="2px" borderColor="white"></Divider>
+          <Divider mb="30px" borderBottomWidth="2px" borderColor="white" />
           <NavMenuItem text="Buy token" icon={<WalletIcon />} />
           <NavMenuItem text="Whitepaper" icon={<TabletIcon />} />
         </DrawerBody>
@@ -77,6 +89,7 @@ const NavMenuItem = ({
   textAlert,
   disabled,
   subtitle,
+  onClick,
 }: {
   text: string;
   textAlert?: string;
@@ -84,20 +97,28 @@ const NavMenuItem = ({
   icon: any;
   hasAlert?: boolean;
   disabled?: boolean;
+  onClick?: () => void;
 }) => (
   <>
     <Link
       display="flex"
       w="100%"
       alignItems="center"
-      color={disabled ? 'gray' : 'green.400'}
       mb="30px"
-      _hover={{ textDecoration: 'none' }}
+      onClick={onClick}
+      _hover={{ color: 'green.400' }}
     >
-      <Box w="8" h="8" display="flex" alignItems="center" justifyContent="center">
+      <Box
+        w="8"
+        h="8"
+        display="flex"
+        alignItems="center"
+        justifyContent="center"
+        color={disabled ? 'gray' : 'green.400'}
+      >
         {icon}
       </Box>
-      <Flex ml={5} color={disabled ? 'gray' : 'white'}>
+      <Flex ml={5} color={disabled ? 'gray' : 'inherit'}>
         <Flex direction="column">
           <Flex alignItems="center">
             <Text as="span" position="relative" textStyle="menuDefault">
