@@ -6,9 +6,37 @@
 
 html {
   font-family: $default-font-family;
+  background-color: $color-green-back;
 }
 
-.App {
-  min-height: 100vh;
+body {
   background-color: $color-green-back;
+}
+
+#root {
+  background-color: $color-green-back;
+  min-height: 100vh;
+}
+
+.route-transition-enter {
+  opacity: 0;
+  transform: scale(1.02);
+}
+.route-transition-enter-active {
+  opacity: 1;
+  transform: scale(1);
+  transition: all 250ms;
+}
+.route-transition-exit {
+  opacity: 1;
+  transform: scale(1);
+}
+.route-transition-exit-active {
+  opacity: 0;
+  transform: scale(0.98);
+  transition: all 250ms;
+}
+.route-transition--appear {
+}
+.route-transition--appear-active {
 }

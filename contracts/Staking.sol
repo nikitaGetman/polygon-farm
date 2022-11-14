@@ -116,13 +116,14 @@ contract Staking is IStaking, AccessControl {
         user.stakes.push(newStake);
 
         if (isToken2) {
-            user.totalStakedToken2 += depositAmount;
+            user.currentToken2Staked += depositAmount;
             plan.totalStakedToken2 += depositAmount;
+            plan.currentToken2Locked += depositAmount;
             plan.totalStakesToken2No += 1;
         } else {
-            user.totalStakedToken1 += depositAmount;
             user.currentToken1Staked += depositAmount;
             plan.totalStakedToken1 += depositAmount;
+            plan.currentToken1Locked += depositAmount;
             plan.totalStakesToken1No += 1;
         }
 
@@ -174,8 +175,12 @@ contract Staking is IStaking, AccessControl {
         token1.transfer(_msgSender(), withdrawAmount);
         user.totalClaimed += withdrawAmount;
         plan.totalClaimed += withdrawAmount;
-        if (!stake.isToken2) {
+        if (stake.isToken2) {
+            user.currentToken2Staked -= stake.amount;
+            plan.currentToken2Locked -= stake.amount;
+        } else {
             user.currentToken1Staked -= stake.amount;
+            plan.currentToken1Locked -= stake.amount;
         }
 
         emit Claimed(
@@ -254,6 +259,8 @@ contract Staking is IStaking, AccessControl {
             totalStakesToken2No: 0,
             totalStakedToken1: 0,
             totalStakedToken2: 0,
+            currentToken1Locked: 0,
+            currentToken2Locked: 0,
             totalClaimed: 0
         });
 
@@ -293,46 +300,73 @@ contract Staking is IStaking, AccessControl {
     }
 
     // --------- Helper functions ---------
-    function getContractInfo() public view returns (StakingPlan[] memory) {
+    function getStakingPlans() public view returns (StakingPlan[] memory) {
         return stakingPlans;
-    }
-
-    function getStakingPlan(uint256 planId)
-        public
-        view
-        returns (StakingPlan memory)
-    {
-        return stakingPlans[planId];
     }
 
     function getUserPlanInfo(uint256 planId, address userAddress)
         public
         view
-        returns (
-            uint256 totalStakedToken1,
-            uint256 totalStakedToken2,
-            uint256 totalClaimed,
-            uint256 currentToken1Staked,
-            bool isSubscribed,
-            uint256 subscribedTill
-        )
+        returns (UserStakingInfo memory)
     {
         Staker storage user = users[planId][userAddress];
 
-        totalStakedToken1 = user.totalStakedToken1;
-        totalStakedToken2 = user.totalStakedToken2;
-        totalClaimed = user.totalClaimed;
-        currentToken1Staked = user.currentToken1Staked;
-        isSubscribed = hasSubscription(planId, userAddress);
-        subscribedTill = user.subscription;
+        UserStakingInfo memory info = UserStakingInfo(
+            user.totalClaimed,
+            user.currentToken1Staked,
+            user.currentToken2Staked,
+            hasSubscription(planId, userAddress),
+            user.subscription
+        );
+
+        return info;
+    }
+
+    function getUserPlansInfo(address userAddress)
+        public
+        view
+        returns (UserStakingInfo[] memory)
+    {
+        UserStakingInfo[] memory plansInfo = new UserStakingInfo[](
+            stakingPlans.length
+        );
+
+        for (uint256 i = 0; i < stakingPlans.length; i++) {
+            plansInfo[i] = getUserPlanInfo(i, userAddress);
+        }
+
+        return plansInfo;
     }
 
     function getUserStakes(uint256 planId, address userAddress)
         public
         view
-        returns (Stake[] memory stakes)
+        returns (Stake[] memory)
     {
         return users[planId][userAddress].stakes;
+    }
+
+    // TODO: can i optimize it?
+    function getUserStakesWithRewards(uint256 planId, address userAddress)
+        public
+        view
+        returns (StakeWithRewardsInfo[] memory)
+    {
+        uint256 stakesLength = users[planId][userAddress].stakes.length;
+        StakeWithRewardsInfo[] memory stakesInfo = new StakeWithRewardsInfo[](
+            stakesLength
+        );
+
+        for (uint256 i = 0; i < stakesLength; i++) {
+            stakesInfo[i].stake = users[planId][userAddress].stakes[i];
+            if (!stakesInfo[i].stake.isClaimed) {
+                stakesInfo[i].reward = _getAvailableStakeReward(
+                    users[planId][userAddress].stakes[i]
+                );
+            }
+        }
+
+        return stakesInfo;
     }
 
     function getTimestamp() public view returns (uint256) {

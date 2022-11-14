@@ -11,7 +11,10 @@ export const Dashboard = () => {
       <Box mt="50px">
         <WalletPortfolio />
       </Box>
-      <Staking />
+
+      <Box mt="150px" mb="300px">
+        <Staking />
+      </Box>
     </Container>
   );
 };

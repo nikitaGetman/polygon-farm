@@ -42,5 +42,9 @@
   "dependencies": {
     "@chainlink/contracts": "^0.5.1",
     "tsconfig-paths": "^4.1.0"
+  },
+  "scripts": {
+    "force-deploy-local": "hh deploy --network hardhat --write true --reset --export-all ./frontend/src/config/contracts.json",
+    "export-contracts": "hh export --export-all ./frontend/src/config/contracts.json"
   }
 }

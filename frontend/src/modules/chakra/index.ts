@@ -1,6 +1,10 @@
 import { extendTheme } from '@chakra-ui/react';
 import { buttonTheme } from './button';
 import { containerTheme } from './container';
+import { inputTheme } from './input';
+import { menuTheme } from './menu';
+import { modalTheme } from './modal';
+import { tableTheme } from './table';
 
 const breakpoints = {
   sm: '0px',
@@ -11,21 +15,30 @@ const breakpoints = {
 };
 
 const colors = {
-  yellow: '#d6d873',
+  yellow: {
+    200: '#d6d873',
+  },
   green: {
-    100: '#0d923a',
-    400: '#6bc95b',
-    900: 'rgba(107, 201, 91)',
+    100: '#0d923a', // rgb(13, 146, 58)
+    // TODO: как добавить прозрачность существующему цвету?
+    // возможно стоит вынести цвет в переменную и использовать сторонние утилиты для изменения алфа канала
+    10050: 'rgba(13, 146, 58, 0.5)',
+    400: '#6bc95b', // rgb(107, 201, 91)
   },
   turquoise: '#2d969a',
   blue: '#1adce2',
   red: '#c95b5b',
-  grey: '#4d6655',
+  grey: {
+    200: '#4d6655',
+  },
   bgGreen: {
     200: '#1f3e2c',
     600: '#1a725c',
+    800: '#192219',
+    900: '#0B200B',
   },
-  headerBg: 'rgba(12, 34, 14, 0.2)',
+  // headerBg: 'rgba(12, 34, 14, 0.2)',
+  headerBg: '#1b3925e3',
 };
 
 const semanticTokens = {
@@ -35,6 +48,8 @@ const semanticTokens = {
     // success: 'green.500',
     primary: 'green.400',
     secondary: 'green.100',
+
+    stakingHeader: 'rgb(13, 146, 58, 0.5)',
   },
   sizes: {
     'container-sm': '320px',
@@ -64,9 +79,19 @@ const textStyles = {
     fontWeight: 'bold',
     lineHeight: '130%',
   },
+  h3: {
+    fontSize: ['26px'],
+    fontWeight: '700',
+    lineHeight: '130%',
+  },
   text1: {
     fontSize: ['18px'],
     fontWeight: '500',
+    lineHeight: '130%',
+  },
+  textRegular: {
+    fontSize: ['18px'],
+    fontWeight: '400',
     lineHeight: '130%',
   },
   textMedium: {
@@ -74,17 +99,32 @@ const textStyles = {
     fontWeight: '500',
     lineHeight: '130%',
   },
-  textSansCommon: {
-    fontFamily: 'PT Sans',
+  textBold: {
     fontSize: ['18px'],
     fontWeight: '700',
     lineHeight: '130%',
+  },
+  textSansBold: {
+    fontSize: ['18px'],
+    fontWeight: '700',
+    lineHeight: '130%',
+    fontFamily: 'PT Sans',
+  },
+  textSansSmall: {
+    fontSize: ['12px'],
+    lineHeight: '130%',
+    fontFamily: 'PT Sans',
   },
   button: {
     fontSize: ['16px'],
     fontWeight: '600',
     lineHeight: '20px',
     textTransform: 'uppercase',
+  },
+  menuDefault: {
+    fontSize: ['26px'],
+    fontWeight: '600',
+    lineHeight: '130%',
   },
 };
 
@@ -100,25 +140,25 @@ const styles = {
       color: 'white',
     },
   },
-  menuSubtitle: {
-    fontSize: ['18px'],
-    fontWeight: '500',
-    lineHeight: 'normal',
-    color: 'gray',
-  },
-  menuDefault: {
-    fontSize: ['26px'],
-    fontWeight: '600',
-    lineHeight: '130%',
-    color: 'white',
-  },
+};
+
+const shadows = {
+  outline: '0 0 0 3px var(--chakra-colors-pink-200) !important',
 };
 
 export const theme = extendTheme({
+  config: {
+    useSystemColorMode: false,
+  },
+  shadows,
   components: {
     Button: buttonTheme,
     IconButton: buttonTheme,
     Container: containerTheme,
+    Modal: modalTheme,
+    Menu: menuTheme,
+    Input: inputTheme,
+    Table: tableTheme,
   },
   breakpoints,
   semanticTokens,

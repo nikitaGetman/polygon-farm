@@ -1,17 +1,19 @@
 import React from 'react';
 import { useAccount, useDisconnect } from 'wagmi';
-import { Container, IconButton, useDisclosure } from '@chakra-ui/react';
+import { Box, Circle, Container, Flex, IconButton, useDisclosure } from '@chakra-ui/react';
 import { ConnectWalletButton } from '@/components/ConnectWalletButton/ConnectWalletButton';
 import { Menu } from '@/components/Menu/Menu';
 import { ReactComponent as BurgerIcon } from '@/assets/images/icons/burger.svg';
 import { WalletMenu } from '@/components/WalletMenu/WalletMenu';
 import Logo from '@/assets/images/logo.svg';
 import './Header.scss';
+import { useStaking } from '@/hooks/useStaking';
 
 export const Header = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const { address, isConnected, connector } = useAccount();
   const { disconnect } = useDisconnect();
+  const { hasEndingSubscription } = useStaking();
 
   return (
     <div className="app-header">
@@ -20,22 +22,27 @@ export const Header = () => {
           <img src={Logo} alt="Logo" />
         </div>
 
-        <div className="app-header__buttons">
+        <Flex>
           {isConnected ? (
             <WalletMenu address={address} connector={connector} disconnect={disconnect} />
           ) : (
             <ConnectWalletButton />
           )}
 
-          <IconButton
-            ml={5}
-            variant="secondary"
-            aria-label="Burger menu"
-            icon={<BurgerIcon />}
-            onClick={onOpen}
-            padding="7px"
-          />
-        </div>
+          <Box position="relative">
+            <IconButton
+              ml={5}
+              variant="secondary"
+              aria-label="Burger menu"
+              icon={<BurgerIcon />}
+              onClick={onOpen}
+              padding="7px"
+            />
+            {hasEndingSubscription && (
+              <Circle as="span" size="10px" bg="red" position="absolute" right="-2px" top="-2px" />
+            )}
+          </Box>
+        </Flex>
       </Container>
 
       <Menu isOpen={isOpen} onClose={onClose} />

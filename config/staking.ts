@@ -14,10 +14,16 @@ export const STAKINGS: StakingPlan[] = [
     subscriptionCost: ethers.BigNumber.from(10).pow(18).mul(15),
     subscriptionDurationDays: 365,
   },
-  // {
-  //   durationDays: 20,
-  //   rewardPercent: 100,
-  //   subscriptionCost: ethers.BigNumber.from(10).pow(18).mul(20).toString(),
-  //   subscriptionDurationDays: 365,
-  // },
+  {
+    durationDays: 30,
+    rewardPercent: 250,
+    subscriptionCost: ethers.BigNumber.from(10).pow(18).mul(25),
+    subscriptionDurationDays: 365,
+  },
+  {
+    durationDays: 60,
+    rewardPercent: 500,
+    subscriptionCost: ethers.BigNumber.from(10).pow(18).mul(50),
+    subscriptionDurationDays: 365,
+  },
 ];

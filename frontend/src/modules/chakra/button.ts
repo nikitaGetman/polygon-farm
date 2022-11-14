@@ -3,7 +3,14 @@ import { defineStyle, defineStyleConfig } from '@chakra-ui/react';
 const commonProps = {
   textStyle: 'button',
   color: 'white',
-  height: '50px',
+
+  _disabled: {
+    bgColor: 'grey.200',
+    opacity: 1,
+    color: 'rgba(255, 255, 255, 0.5)',
+    border: 'none',
+    filter: 'none',
+  },
 };
 
 const primary = defineStyle({
@@ -17,14 +24,9 @@ const primary = defineStyle({
   _hover: {
     boxShadow: '0px 4px 10px rgba(107, 201, 91, 0.5)',
     _disabled: {
-      background: 'grey',
+      background: 'grey.200',
       boxShadow: 'none',
     },
-  },
-  _disabled: {
-    bgColor: 'grey',
-    opacity: 1,
-    color: 'rgba(255, 255, 255, 0.5)',
   },
 });
 
@@ -39,21 +41,67 @@ const secondary = defineStyle({
     bgColor: 'green.400',
     borderColor: 'green.400',
     _disabled: {
-      background: 'grey',
+      background: 'grey.200',
     },
   },
-  _disabled: {
-    bgColor: 'grey',
-    opacity: 1,
-    color: 'rgba(255, 255, 255, 0.5)',
-    border: 'none',
-    filter: 'none',
+});
+
+const outlined = defineStyle({
+  ...commonProps,
+  bgColor: 'bgGreen.200',
+  border: '2px solid',
+  borderColor: 'green.400',
+  filter: 'drop-shadow(0px 9px 18px rgba(107, 201, 91, 0.27))',
+  borderRadius: 'sm',
+
+  _hover: {
+    bgColor: 'green.400',
+    borderColor: 'green.400',
+    _disabled: {
+      background: 'grey.200',
+    },
+  },
+});
+
+const outlinedWhite = defineStyle({
+  ...commonProps,
+  border: '1px solid white',
+  bgColor: 'transparent',
+  borderRadius: 'md',
+  borderWidth: '1px',
+
+  _hover: {
+    bgColor: 'green.400',
+    borderColor: 'green.400',
+    _disabled: {
+      background: 'grey.200',
+    },
+  },
+});
+
+const link = defineStyle({
+  ...commonProps,
+  border: 'none',
+  padding: '4px 8px',
+  bgColor: 'transparent',
+
+  _hover: {
+    _disabled: {},
   },
 });
 
 export const buttonTheme = defineStyleConfig({
-  variants: { primary, secondary },
+  variants: { primary, secondary, outlined, 'outlined-white': outlinedWhite, link },
+  sizes: {
+    lg: {
+      height: '50px',
+    },
+    md: {
+      height: '40px',
+    },
+  },
   defaultProps: {
     variant: 'primary',
+    size: 'lg',
   },
 });
