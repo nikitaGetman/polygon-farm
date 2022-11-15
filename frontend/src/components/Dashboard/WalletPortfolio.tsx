@@ -1,11 +1,10 @@
 import React from 'react';
 import { Text, Box, Flex, Button } from '@chakra-ui/react';
 import { useAccount } from 'wagmi';
-import './WalletPortfolio.scss';
 import { ReactComponent as PuzzlesIcon } from '@/assets/images/icons/puzzles.svg';
 import { ReactComponent as ForkIcon } from '@/assets/images/icons/fork.svg';
 import { ReactComponent as PlusIcon } from '@/assets/images/icons/plus.svg';
-import { ConnectWalletButton } from '@/components/ConnectWalletButton/ConnectWalletButton';
+import { ConnectWalletButton } from '@/components/ui/ConnectWalletButton/ConnectWalletButton';
 import { useAddTokens } from '@/hooks/useAddTokens';
 import { bigNumberToString } from '@/utils/number';
 import { ReactComponent as BoxIcon } from '@/assets/images/icons/box.svg';
@@ -19,25 +18,15 @@ export const WalletPortfolio = () => {
   const { data: savrBalance } = useSavRBalance();
 
   return (
-    <Flex
-      p="50px 40px"
-      alignItems="center"
-      background="linear-gradient(96.85deg, #20735B -8.44%, #1A3435 102.66%)"
-      boxShadow="0px 6px 20px rgba(0, 0, 0, 0.25)"
-      backdropFilter="blur(22.5px)"
-      borderRadius="md"
-    >
+    <Flex alignItems="center">
       <Box flex="1 1 600px">
-        <Text textStyle="h1">
-          Project for smart
-          <br />
-          investors
+        <Text textStyle="h1" fontSize="90px" lineHeight="99px">
+          DASHBOARD
         </Text>
-        <Text textStyle="text1" mt={5} maxW="490px">
-          Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has
-          been the industry's standard dummy.
+        <Text textStyle="textMedium" fontSize="32px" mt={2}>
+          All information about your assets
         </Text>
-        <Flex alignItems="center" mt={16}>
+        <Flex alignItems="center" mt="80px">
           <Text textStyle="textMedium" mr="40px">
             SAV = 00 USDT
           </Text>

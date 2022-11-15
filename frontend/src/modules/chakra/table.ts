@@ -23,6 +23,14 @@ const baseStyle = definePartsStyle({
   td: {},
 });
 
+const main = definePartsStyle({
+  td: {
+    py: '8px',
+    height: '48px',
+  },
+});
+
 export const tableTheme = defineMultiStyleConfig({
+  variants: { main },
   baseStyle,
 });

@@ -23,17 +23,22 @@ export const InputAmount: FC<InputAmountProps> = ({ placeholder, value, total, o
     [setLocalValue]
   );
 
-  const MaxButton = total ? (
-    <Button variant="transparent" color="green.400" onClick={() => setLocalValue(total.toString())}>
-      MAX
-    </Button>
-  ) : null;
-
   return (
     <Box>
-      <InputGroup>
+      <InputGroup variant="secondary" mb="8px">
         <Input type="number" placeholder={placeholder} value={localValue} onChange={handleChange} />
-        <InputRightElement children={MaxButton} />
+        <InputRightElement>
+          {!!total && (
+            <Button
+              variant="transparent"
+              color="white"
+              _hover={{ opacity: 0.7 }}
+              onClick={() => setLocalValue(total.toString())}
+            >
+              MAX
+            </Button>
+          )}
+        </InputRightElement>
       </InputGroup>
       {total !== undefined && (
         <Text textStyle="textSansSmall" textAlign="right" m="4px">

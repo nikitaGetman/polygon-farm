@@ -13,7 +13,7 @@ import {
   Skeleton,
 } from '@chakra-ui/react';
 import { WarningTwoIcon } from '@chakra-ui/icons';
-import { ConnectWalletButton } from '@/components/ConnectWalletButton/ConnectWalletButton';
+import { ConnectWalletButton } from '@/components/ui/ConnectWalletButton/ConnectWalletButton';
 import { useAccount } from 'wagmi';
 import { useStaking } from '@/hooks/useStaking';
 import { getReadableAmount, getYearlyAPR, makeBigNumber } from '@/utils/number';
@@ -22,7 +22,7 @@ import { useConnectWallet } from '@/hooks/useConnectWallet';
 import { StakingModal } from './StakingModal';
 import { TOKENS } from '@/hooks/useTokens';
 import { Link, useNavigate } from 'react-router-dom';
-import { StatBlock } from '../ui/StatBlock/StatBlock';
+import { StatBlock } from '@/components/ui/StatBlock/StatBlock';
 import { BigNumber } from 'ethers';
 
 type StakingProps = {
@@ -135,10 +135,10 @@ export const Staking: FC<StakingProps> = ({ isPageView }) => {
         </Box>
       </Flex>
 
-      <Box maxWidth="530px" mt={5}>
+      <Box maxWidth="640px" mt={5}>
         <Text textStyle="text1">
-          Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has
-          been the industry's standard dummy ...
+          Stake your SAV or SAVR holdings to earn more SAV. The longer you stake, the more you
+          yield. Accumulate more SAV, so you can increase your governance in the future iSaver DAO.
         </Text>
       </Box>
 

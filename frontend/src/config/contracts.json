@@ -1837,6 +1837,11 @@
                   "type": "address"
                 },
                 {
+                  "internalType": "uint256[10]",
+                  "name": "activeLevels",
+                  "type": "uint256[10]"
+                },
+                {
                   "internalType": "uint256",
                   "name": "totalDividends",
                   "type": "uint256"
@@ -1847,38 +1852,24 @@
                   "type": "uint256"
                 },
                 {
-                  "internalType": "uint256",
+                  "internalType": "address[]",
                   "name": "referrals_1_lvl",
-                  "type": "uint256"
+                  "type": "address[]"
+                },
+                {
+                  "internalType": "uint256[10]",
+                  "name": "refCount",
+                  "type": "uint256[10]"
                 },
                 {
                   "internalType": "uint256",
                   "name": "totalReferrals",
                   "type": "uint256"
-                }
-              ],
-              "stateMutability": "view",
-              "type": "function"
-            },
-            {
-              "inputs": [
-                {
-                  "internalType": "address",
-                  "name": "userAddress",
-                  "type": "address"
                 },
                 {
-                  "internalType": "uint256",
-                  "name": "level",
-                  "type": "uint256"
-                }
-              ],
-              "name": "getUserLvlReferralsCount",
-              "outputs": [
-                {
-                  "internalType": "uint256",
-                  "name": "",
-                  "type": "uint256"
+                  "internalType": "bool",
+                  "name": "isActive",
+                  "type": "bool"
                 }
               ],
               "stateMutability": "view",

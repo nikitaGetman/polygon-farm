@@ -5,6 +5,7 @@ import {
   Button,
   Checkbox,
   CloseButton,
+  Flex,
   Link,
   Menu,
   MenuButton,
@@ -26,6 +27,8 @@ import { getReadableDuration } from '@/utils/time';
 import { InputAmount } from '../ui/InputAmount/InputAmount';
 import { useSavBalance, useSavRBalance } from '@/hooks/useTokenBalance';
 import { bigNumberToString } from '@/utils/number';
+import { ReactComponent as SavIcon } from '@/assets/images/sav_icon.svg';
+import { ReactComponent as SavrIcon } from '@/assets/images/savr_icon.svg';
 
 const MIN_STAKE_LIMIT = 0.1;
 
@@ -83,11 +86,24 @@ export const StakingModal: FC<StakingModalProps> = ({
               fontStyle="textBold"
               fontSize={26}
             >
-              Stake {token}
+              <Flex alignItems="center">
+                <Box width="40px">{token === TOKENS.SAV ? <SavIcon /> : <SavrIcon />}</Box>
+                <span>Stake {token}</span>
+              </Flex>
             </MenuButton>
             <MenuList>
-              <MenuItem onClick={() => setToken(TOKENS.SAV)}>Stake SAV</MenuItem>
-              <MenuItem onClick={() => setToken(TOKENS.SAVR)}>Stake SAVR</MenuItem>
+              <MenuItem onClick={() => setToken(TOKENS.SAV)}>
+                <Box mr="4px">
+                  <SavIcon width="24px" />
+                </Box>
+                <span>Stake SAV</span>
+              </MenuItem>
+              <MenuItem onClick={() => setToken(TOKENS.SAVR)}>
+                <Box mr="4px">
+                  <SavrIcon width="24px" />
+                </Box>
+                <span>Stake SAVR</span>
+              </MenuItem>
             </MenuList>
           </Menu>
           <CloseButton onClick={onClose} size="lg" />

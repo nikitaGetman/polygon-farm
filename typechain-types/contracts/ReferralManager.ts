@@ -54,7 +54,6 @@ export interface ReferralManagerInterface extends utils.Interface {
     "getRoleAdmin(bytes32)": FunctionFragment;
     "getUser1LvlReferrals(address)": FunctionFragment;
     "getUserInfo(address)": FunctionFragment;
-    "getUserLvlReferralsCount(address,uint256)": FunctionFragment;
     "getUserReferrals(address,uint256)": FunctionFragment;
     "getUserReferrer(address)": FunctionFragment;
     "grantRole(bytes32,address)": FunctionFragment;
@@ -96,7 +95,6 @@ export interface ReferralManagerInterface extends utils.Interface {
       | "getRoleAdmin"
       | "getUser1LvlReferrals"
       | "getUserInfo"
-      | "getUserLvlReferralsCount"
       | "getUserReferrals"
       | "getUserReferrer"
       | "grantRole"
@@ -171,10 +169,6 @@ export interface ReferralManagerInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "getUserInfo",
     values: [PromiseOrValue<string>]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "getUserLvlReferralsCount",
-    values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
     functionFragment: "getUserReferrals",
@@ -320,10 +314,6 @@ export interface ReferralManagerInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "getUserInfo",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "getUserLvlReferralsCount",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -567,20 +557,26 @@ export interface ReferralManager extends BaseContract {
       userAddress: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<
-      [string, BigNumber, BigNumber, BigNumber, BigNumber] & {
+      [
+        string,
+        BigNumber[],
+        BigNumber,
+        BigNumber,
+        string[],
+        BigNumber[],
+        BigNumber,
+        boolean
+      ] & {
         referrer: string;
+        activeLevels: BigNumber[];
         totalDividends: BigNumber;
         totalClaimedDividends: BigNumber;
-        referrals_1_lvl: BigNumber;
+        referrals_1_lvl: string[];
+        refCount: BigNumber[];
         totalReferrals: BigNumber;
+        isActive: boolean;
       }
     >;
-
-    getUserLvlReferralsCount(
-      userAddress: PromiseOrValue<string>,
-      level: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
 
     getUserReferrals(
       userAddress: PromiseOrValue<string>,
@@ -752,20 +748,26 @@ export interface ReferralManager extends BaseContract {
     userAddress: PromiseOrValue<string>,
     overrides?: CallOverrides
   ): Promise<
-    [string, BigNumber, BigNumber, BigNumber, BigNumber] & {
+    [
+      string,
+      BigNumber[],
+      BigNumber,
+      BigNumber,
+      string[],
+      BigNumber[],
+      BigNumber,
+      boolean
+    ] & {
       referrer: string;
+      activeLevels: BigNumber[];
       totalDividends: BigNumber;
       totalClaimedDividends: BigNumber;
-      referrals_1_lvl: BigNumber;
+      referrals_1_lvl: string[];
+      refCount: BigNumber[];
       totalReferrals: BigNumber;
+      isActive: boolean;
     }
   >;
-
-  getUserLvlReferralsCount(
-    userAddress: PromiseOrValue<string>,
-    level: PromiseOrValue<BigNumberish>,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
 
   getUserReferrals(
     userAddress: PromiseOrValue<string>,
@@ -937,20 +939,26 @@ export interface ReferralManager extends BaseContract {
       userAddress: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<
-      [string, BigNumber, BigNumber, BigNumber, BigNumber] & {
+      [
+        string,
+        BigNumber[],
+        BigNumber,
+        BigNumber,
+        string[],
+        BigNumber[],
+        BigNumber,
+        boolean
+      ] & {
         referrer: string;
+        activeLevels: BigNumber[];
         totalDividends: BigNumber;
         totalClaimedDividends: BigNumber;
-        referrals_1_lvl: BigNumber;
+        referrals_1_lvl: string[];
+        refCount: BigNumber[];
         totalReferrals: BigNumber;
+        isActive: boolean;
       }
     >;
-
-    getUserLvlReferralsCount(
-      userAddress: PromiseOrValue<string>,
-      level: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
 
     getUserReferrals(
       userAddress: PromiseOrValue<string>,
@@ -1177,12 +1185,6 @@ export interface ReferralManager extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    getUserLvlReferralsCount(
-      userAddress: PromiseOrValue<string>,
-      level: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
     getUserReferrals(
       userAddress: PromiseOrValue<string>,
       currentLevel: PromiseOrValue<BigNumberish>,
@@ -1358,12 +1360,6 @@ export interface ReferralManager extends BaseContract {
 
     getUserInfo(
       userAddress: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    getUserLvlReferralsCount(
-      userAddress: PromiseOrValue<string>,
-      level: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 

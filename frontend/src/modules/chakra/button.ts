@@ -30,6 +30,45 @@ const primary = defineStyle({
   },
 });
 
+const primaryShadowed = defineStyle({
+  ...commonProps,
+
+  background: 'rgba(38, 71, 55, 0.5)',
+  boxShadow: '0px 6px 11px rgba(0, 0, 0, 0.25)',
+  borderRadius: '5px',
+  color: 'green.400',
+
+  _hover: {
+    boxShadow: '0px 6px 11px rgba(107, 201, 91, 0.25)',
+    _disabled: {
+      boxShadow: '0px 6px 11px rgba(0, 0, 0, 0.25)',
+      background: 'rgba(38, 71, 55, 0.5)',
+    },
+  },
+
+  _disabled: {
+    color: 'grey.200',
+    boxShadow: '0px 6px 11px rgba(0, 0, 0, 0.25)',
+  },
+});
+
+const inputTransparent = {
+  ...commonProps,
+
+  color: 'green.400',
+
+  _hover: {
+    color: 'green.100',
+    _disabled: {
+      color: 'grey.200',
+    },
+  },
+
+  _disabled: {
+    color: 'grey.200',
+  },
+};
+
 const secondary = defineStyle({
   ...commonProps,
   bgColor: 'bgGreen.200',
@@ -91,7 +130,15 @@ const link = defineStyle({
 });
 
 export const buttonTheme = defineStyleConfig({
-  variants: { primary, secondary, outlined, 'outlined-white': outlinedWhite, link },
+  variants: {
+    primary,
+    primaryShadowed,
+    secondary,
+    outlined,
+    'outlined-white': outlinedWhite,
+    link,
+    inputTransparent,
+  },
   sizes: {
     lg: {
       height: '50px',

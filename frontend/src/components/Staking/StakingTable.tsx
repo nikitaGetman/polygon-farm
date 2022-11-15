@@ -53,77 +53,80 @@ export const StakingTable = ({
     [isOpen, modifiedItems]
   );
 
-  const hasData = stakes.length > 0;
+  const emptyRows = Math.max(0, COLLAPSED_LIMIT - visibleItems.length);
 
   return (
     <>
-      {!hasData ? (
-        <Center textStyle="text1">No data</Center>
-      ) : (
-        <>
-          <Table>
-            <Thead>
-              <Tr>
-                <Th>Deposit</Th>
-                <Th>Start Date</Th>
-                <Th>End Date</Th>
-                <Th>Period</Th>
-                <Th isNumeric>Interest</Th>
-                <Th>Status</Th>
-                <Th></Th>
-              </Tr>
-            </Thead>
-            <Tbody>
-              {visibleItems.map(({ period, status, stake, planId, stakeId }, index) => (
-                <Tr key={index}>
-                  <Td>
-                    <Flex alignItems="center">
-                      {stake.isToken2 ? (
-                        <>
-                          <SavrIcon />
-                          {getReadableAmount(stake.amount)} SAVR
-                        </>
-                      ) : (
-                        <>
-                          <SavIcon />
-                          {getReadableAmount(stake.amount)} SAV
-                        </>
-                      )}
-                    </Flex>
-                  </Td>
-                  <Td>{getLocalDateString(stake.timeStart)}</Td>
-                  <Td>{getLocalDateString(stake.timeEnd)}</Td>
-                  <Td>{getReadableDuration(period)}</Td>
-                  <Td>
-                    {bigNumberToString(
-                      stake.isToken2 ? stake.profit : stake.profit.add(stake.amount)
-                    )}
-                  </Td>
-                  <Td>{status}</Td>
-                  <Td>
-                    {status === StakeStatusEnum.Ready && (
-                      <Button
-                        size="sm"
-                        variant="outlined-white"
-                        onClick={() => onClaim(planId, stakeId)}
-                      >
-                        Claim
-                      </Button>
-                    )}
-                  </Td>
-                </Tr>
-              ))}
-            </Tbody>
-          </Table>
+      <Table>
+        <Thead>
+          <Tr>
+            <Th>Deposit</Th>
+            <Th>Start Date</Th>
+            <Th>End Date</Th>
+            <Th>Period</Th>
+            <Th isNumeric>Interest</Th>
+            <Th>Status</Th>
+            <Th></Th>
+          </Tr>
+        </Thead>
+        <Tbody>
+          {visibleItems.map(({ period, status, stake, planId, stakeId }, index) => (
+            <Tr key={index}>
+              <Td>
+                <Flex alignItems="center">
+                  {stake.isToken2 ? (
+                    <>
+                      <SavrIcon height="26px" />
+                      {getReadableAmount(stake.amount)} SAVR
+                    </>
+                  ) : (
+                    <>
+                      <SavIcon height="26px" />
+                      {getReadableAmount(stake.amount)} SAV
+                    </>
+                  )}
+                </Flex>
+              </Td>
+              <Td>{getLocalDateString(stake.timeStart)}</Td>
+              <Td>{getLocalDateString(stake.timeEnd)}</Td>
+              <Td>{getReadableDuration(period)}</Td>
+              <Td>
+                {bigNumberToString(stake.isToken2 ? stake.profit : stake.profit.add(stake.amount))}
+              </Td>
+              <Td>{status}</Td>
+              <Td>
+                {status === StakeStatusEnum.Ready && (
+                  <Button
+                    size="sm"
+                    variant="outlined-white"
+                    onClick={() => onClaim(planId, stakeId)}
+                  >
+                    Claim
+                  </Button>
+                )}
+              </Td>
+            </Tr>
+          ))}
+          {Array.from({ length: emptyRows }).map((_, index) => (
+            <Tr key={`empty-${index}`}>
+              <Td></Td>
+              <Td></Td>
+              <Td></Td>
+              <Td></Td>
+              <Td></Td>
+              <Td></Td>
+              <Td></Td>
+            </Tr>
+          ))}
+        </Tbody>
+      </Table>
 
-          {stakes.length > COLLAPSED_LIMIT && (
-            <Center mt="10px">
-              <Button variant="link" onClick={onToggle}>
-                {isOpen ? 'Less' : 'More'}
-              </Button>
-            </Center>
-          )}
-        </>
+      {stakes.length > COLLAPSED_LIMIT && (
+        <Center mt="10px">
+          <Button variant="link" onClick={onToggle}>
+            {isOpen ? 'Less' : 'More'}
+          </Button>
+        </Center>
       )}
     </>
   );

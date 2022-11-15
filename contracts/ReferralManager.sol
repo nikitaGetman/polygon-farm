@@ -171,31 +171,29 @@ contract ReferralManager is IReferralManager, AccessControl {
         view
         returns (
             address referrer,
+            uint256[LEVELS] memory activeLevels,
             uint256 totalDividends,
             uint256 totalClaimedDividends,
-            uint256 referrals_1_lvl,
-            uint256 totalReferrals
+            address[] memory referrals_1_lvl,
+            uint256[LEVELS] memory refCount,
+            uint256 totalReferrals,
+            bool isActive
         )
     {
         User storage user = users[userAddress];
 
         referrer = user.referrer;
+        activeLevels = user.activeLevels;
         totalDividends = user.totalRefDividends;
         totalClaimedDividends = user.totalRefDividendsClaimed;
-        referrals_1_lvl = user.referrals_1_lvl.length;
+        referrals_1_lvl = user.referrals_1_lvl;
+        refCount = user.refCount;
         totalReferrals = _getUserTotalReferralsCount(userAddress, 0);
+        isActive = user.isActive;
     }
 
     function getUserReferrer(address user) public view returns (address) {
         return users[user].referrer;
-    }
-
-    function getUserLvlReferralsCount(address userAddress, uint256 level)
-        public
-        view
-        returns (uint256)
-    {
-        return users[userAddress].refCount[level - 1];
     }
 
     function getUser1LvlReferrals(address userAddress)

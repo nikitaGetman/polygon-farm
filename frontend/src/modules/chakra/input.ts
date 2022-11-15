@@ -23,18 +23,45 @@ const main = {
   },
 };
 
+const primary = {
+  field: {
+    background: 'rgba(38, 71, 55, 0.5)',
+    boxShadow: '0px 6px 11px rgba(0, 0, 0, 0.25)',
+    borderRadius: 'md',
+
+    _readOnly: {
+      color: 'white',
+      opacity: 0.5,
+    },
+  },
+};
+
+const secondary = {
+  field: {
+    background: 'bgGreen.800',
+    boxShadow: '0px 6px 11px rgba(0, 0, 0, 0.25)',
+    borderRadius: 'md',
+  },
+};
+
 const xl = defineStyle({
   fontSize: 'lg',
   h: '52px',
   px: 5,
 });
+const md = defineStyle({
+  fontSize: '12px',
+  h: '40px',
+  p: '12px 15px',
+});
 
 const sizes = {
   xl: definePartsStyle({ field: xl, element: { ...xl, mr: 5 }, addon: xl }),
+  md: definePartsStyle({ field: md, addon: md }),
 };
 
 export const inputTheme = defineMultiStyleConfig({
-  variants: { main },
+  variants: { main, primary, secondary },
   sizes,
   defaultProps: {
     variant: 'main',
