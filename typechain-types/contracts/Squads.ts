@@ -72,6 +72,7 @@ export interface SquadsInterface extends utils.Interface {
     "getPlans()": FunctionFragment;
     "getRoleAdmin(bytes32)": FunctionFragment;
     "getSufficientPlanIdByStakingAmount(uint256)": FunctionFragment;
+    "getTimestamp()": FunctionFragment;
     "getUserSquadInfo(uint256,address)": FunctionFragment;
     "getUserSquadMembers(address,uint256)": FunctionFragment;
     "getUserSquadsInfo(address)": FunctionFragment;
@@ -108,6 +109,7 @@ export interface SquadsInterface extends utils.Interface {
       | "getPlans"
       | "getRoleAdmin"
       | "getSufficientPlanIdByStakingAmount"
+      | "getTimestamp"
       | "getUserSquadInfo"
       | "getUserSquadMembers"
       | "getUserSquadsInfo"
@@ -162,6 +164,10 @@ export interface SquadsInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "getSufficientPlanIdByStakingAmount",
     values: [PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getTimestamp",
+    values?: undefined
   ): string;
   encodeFunctionData(
     functionFragment: "getUserSquadInfo",
@@ -289,6 +295,10 @@ export interface SquadsInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "getSufficientPlanIdByStakingAmount",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getTimestamp",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -558,6 +568,8 @@ export interface Squads extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
+    getTimestamp(overrides?: CallOverrides): Promise<[BigNumber]>;
+
     getUserSquadInfo(
       planId: PromiseOrValue<BigNumberish>,
       user: PromiseOrValue<string>,
@@ -730,6 +742,8 @@ export interface Squads extends BaseContract {
     amount: PromiseOrValue<BigNumberish>,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
+
+  getTimestamp(overrides?: CallOverrides): Promise<BigNumber>;
 
   getUserSquadInfo(
     planId: PromiseOrValue<BigNumberish>,
@@ -905,6 +919,8 @@ export interface Squads extends BaseContract {
       amount: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
+
+    getTimestamp(overrides?: CallOverrides): Promise<BigNumber>;
 
     getUserSquadInfo(
       planId: PromiseOrValue<BigNumberish>,
@@ -1176,6 +1192,8 @@ export interface Squads extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    getTimestamp(overrides?: CallOverrides): Promise<BigNumber>;
+
     getUserSquadInfo(
       planId: PromiseOrValue<BigNumberish>,
       user: PromiseOrValue<string>,
@@ -1344,6 +1362,8 @@ export interface Squads extends BaseContract {
       amount: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
+
+    getTimestamp(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     getUserSquadInfo(
       planId: PromiseOrValue<BigNumberish>,

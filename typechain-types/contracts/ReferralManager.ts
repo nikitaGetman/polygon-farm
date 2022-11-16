@@ -52,6 +52,7 @@ export interface ReferralManagerInterface extends utils.Interface {
     "fullSubscriptionCost()": FunctionFragment;
     "getReferralLevels()": FunctionFragment;
     "getRoleAdmin(bytes32)": FunctionFragment;
+    "getTimestamp()": FunctionFragment;
     "getUser1LvlReferrals(address)": FunctionFragment;
     "getUserInfo(address)": FunctionFragment;
     "getUserReferrals(address,uint256)": FunctionFragment;
@@ -93,6 +94,7 @@ export interface ReferralManagerInterface extends utils.Interface {
       | "fullSubscriptionCost"
       | "getReferralLevels"
       | "getRoleAdmin"
+      | "getTimestamp"
       | "getUser1LvlReferrals"
       | "getUserInfo"
       | "getUserReferrals"
@@ -161,6 +163,10 @@ export interface ReferralManagerInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "getRoleAdmin",
     values: [PromiseOrValue<BytesLike>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getTimestamp",
+    values?: undefined
   ): string;
   encodeFunctionData(
     functionFragment: "getUser1LvlReferrals",
@@ -306,6 +312,10 @@ export interface ReferralManagerInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "getRoleAdmin",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getTimestamp",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -548,6 +558,8 @@ export interface ReferralManager extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[string]>;
 
+    getTimestamp(overrides?: CallOverrides): Promise<[BigNumber]>;
+
     getUser1LvlReferrals(
       userAddress: PromiseOrValue<string>,
       overrides?: CallOverrides
@@ -739,6 +751,8 @@ export interface ReferralManager extends BaseContract {
     overrides?: CallOverrides
   ): Promise<string>;
 
+  getTimestamp(overrides?: CallOverrides): Promise<BigNumber>;
+
   getUser1LvlReferrals(
     userAddress: PromiseOrValue<string>,
     overrides?: CallOverrides
@@ -929,6 +943,8 @@ export interface ReferralManager extends BaseContract {
       role: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<string>;
+
+    getTimestamp(overrides?: CallOverrides): Promise<BigNumber>;
 
     getUser1LvlReferrals(
       userAddress: PromiseOrValue<string>,
@@ -1175,6 +1191,8 @@ export interface ReferralManager extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    getTimestamp(overrides?: CallOverrides): Promise<BigNumber>;
+
     getUser1LvlReferrals(
       userAddress: PromiseOrValue<string>,
       overrides?: CallOverrides
@@ -1352,6 +1370,8 @@ export interface ReferralManager extends BaseContract {
       role: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
+
+    getTimestamp(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     getUser1LvlReferrals(
       userAddress: PromiseOrValue<string>,

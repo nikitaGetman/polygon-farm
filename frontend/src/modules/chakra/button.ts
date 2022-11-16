@@ -135,7 +135,7 @@ export const buttonTheme = defineStyleConfig({
     primaryShadowed,
     secondary,
     outlined,
-    'outlined-white': outlinedWhite,
+    outlinedWhite,
     link,
     inputTransparent,
   },

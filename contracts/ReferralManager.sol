@@ -83,17 +83,27 @@ contract ReferralManager is IReferralManager, AccessControl {
         address subscriber = _msgSender();
 
         subscriptionToken.burnFrom(subscriber, levelSubscriptionCost);
-        users[subscriber].activeLevels[level - 1] = _getSubscriptionEnd();
+
+        uint256 startDate = users[subscriber].activeLevels[level - 1] <
+            getTimestamp()
+            ? getTimestamp()
+            : users[subscriber].activeLevels[level - 1];
+        users[subscriber].activeLevels[level - 1] =
+            startDate +
+            SUBSCRIPTION_PERIOD_DAYS *
+            1 days;
 
         users[subscriber].isActive = true;
-        emit Subscribed(subscriber, level, block.timestamp);
+        emit Subscribed(subscriber, level, startDate);
     }
 
     function subscribeToAllLevels() public {
         address subscriber = _msgSender();
 
         subscriptionToken.burnFrom(subscriber, fullSubscriptionCost);
-        uint256 subscriptionEnd = _getSubscriptionEnd();
+        uint256 subscriptionEnd = getTimestamp() +
+            SUBSCRIPTION_PERIOD_DAYS *
+            1 days;
 
         for (uint256 i = 0; i < LEVELS; i++) {
             users[subscriber].activeLevels[i] = subscriptionEnd;
@@ -262,7 +272,7 @@ contract ReferralManager is IReferralManager, AccessControl {
         view
         returns (bool)
     {
-        return users[user].activeLevels[level - 1] > block.timestamp;
+        return users[user].activeLevels[level - 1] > getTimestamp();
     }
 
     function calculateRefReward(uint256 amount, uint256 level)
@@ -275,8 +285,8 @@ contract ReferralManager is IReferralManager, AccessControl {
         return (amount * REFERRAL_PERCENTS[level - 1]) / 100;
     }
 
-    function _getSubscriptionEnd() internal view returns (uint256) {
-        return block.timestamp + SUBSCRIPTION_PERIOD_DAYS * 1 days;
+    function getTimestamp() public view returns (uint256) {
+        return block.timestamp;
     }
 
     function isAuthorized(address contractAddress) public view returns (bool) {

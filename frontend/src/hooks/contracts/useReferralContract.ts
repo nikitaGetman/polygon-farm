@@ -20,9 +20,21 @@ export const useReferralContract = () => {
     return contract.getUserInfo(address);
   };
 
+  const subscribeToLevel = async (level: number) => {
+    const tx = await contract.subscribeToLevel(level);
+    await tx.wait();
+  };
+
+  const subscribeToAllLevels = async () => {
+    const tx = await contract.subscribeToAllLevels();
+    await tx.wait();
+  };
+
   return {
     contract,
     address: contractAddress,
     getUserInfo,
+    subscribeToLevel,
+    subscribeToAllLevels,
   };
 };

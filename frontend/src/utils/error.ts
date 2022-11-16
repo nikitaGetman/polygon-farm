@@ -10,12 +10,13 @@ export function tryToGetError(error: unknown) {
 
   const hasReadableError = message.includes('reverted with reason string ');
 
-  const errorReg = /reverted with reason string '(?<data>[\w|\s|\d]*)'/gm;
+  const errorReg = /reverted with reason string '(?<data>[^']*)'/gm;
+
   let errorMessage = 'Something went wrong';
   if (hasReadableError) {
     const res = Array.from(message.matchAll(errorReg));
 
-    if (res && res[0][1]) {
+    if (res && res[0] && res[0][1]) {
       errorMessage = `Error: ${res[0][1]}`;
     }
   }

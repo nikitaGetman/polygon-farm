@@ -31,7 +31,7 @@ type StakingProps = {
 export const Staking: FC<StakingProps> = ({ isPageView }) => {
   const { isConnected } = useAccount();
   const { connect } = useConnectWallet();
-  const { isOpen, onOpen, onClose } = useDisclosure();
+  const { isOpen, onOpen, onClose } = useDisclosure(); // StakingModal toggle
   const [selectedPlan, setSelectedPlan] = useState<number>();
   const navigate = useNavigate();
 
@@ -109,7 +109,7 @@ export const Staking: FC<StakingProps> = ({ isPageView }) => {
         <Box>
           {isConnected ? (
             <Box display="flex" alignItems="center">
-              {hasEndingSubscription && (
+              {hasEndingSubscription ? (
                 <Text
                   textStyle="textBold"
                   color="error"
@@ -122,16 +122,16 @@ export const Staking: FC<StakingProps> = ({ isPageView }) => {
                     Check your subscription!
                   </>
                 </Text>
-              )}
-              {!isPageView && (
+              ) : null}
+              {!isPageView ? (
                 <Button as={Link} to="/staking">
                   My stake
                 </Button>
-              )}
+              ) : null}
             </Box>
-          ) : (
-            !isPageView && <ConnectWalletButton />
-          )}
+          ) : !isPageView ? (
+            <ConnectWalletButton />
+          ) : null}
         </Box>
       </Flex>
 
@@ -142,7 +142,7 @@ export const Staking: FC<StakingProps> = ({ isPageView }) => {
         </Text>
       </Box>
 
-      {isPageView && (
+      {isPageView ? (
         <Flex justifyContent="flex-end" mt="30px">
           <StatBlock width="260px">
             <Box textStyle="text1" mb="10px">
@@ -167,7 +167,7 @@ export const Staking: FC<StakingProps> = ({ isPageView }) => {
             </Box>
           </StatBlock>
         </Flex>
-      )}
+      ) : null}
 
       <Grid
         mt={isPageView ? '30px' : '40px'}
@@ -175,16 +175,17 @@ export const Staking: FC<StakingProps> = ({ isPageView }) => {
         templateRows="repeat(2, 1fr)"
         templateColumns="repeat(2, 1fr)"
       >
-        {!activeStakingPlans.length &&
-          Array.from({ length: 4 }).map((_, index) => (
-            <Skeleton
-              key={index}
-              height="210px"
-              borderRadius="md"
-              startColor="grey.200"
-              endColor="bgGreen.200"
-            />
-          ))}
+        {!activeStakingPlans.length
+          ? Array.from({ length: 4 }).map((_, index) => (
+              <Skeleton
+                key={index}
+                height="210px"
+                borderRadius="md"
+                startColor="grey.200"
+                endColor="bgGreen.200"
+              />
+            ))
+          : null}
         {activeStakingPlans.map((planData, index) => (
           <GridItem colSpan={1} rowSpan={1} key={planData.planId}>
             <StakingPlan
@@ -208,7 +209,7 @@ export const Staking: FC<StakingProps> = ({ isPageView }) => {
           </GridItem>
         ))}
       </Grid>
-      {isOpen && selectedPlan !== undefined && (
+      {isOpen && selectedPlan !== undefined ? (
         <StakingModal
           apr={getYearlyAPR(
             activeStakingPlans[selectedPlan].profitPercent,
@@ -219,7 +220,7 @@ export const Staking: FC<StakingProps> = ({ isPageView }) => {
           onClose={closeModal}
           onStake={onDeposit}
         />
-      )}
+      ) : null}
     </Container>
   );
 };

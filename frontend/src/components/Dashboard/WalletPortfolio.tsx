@@ -6,9 +6,10 @@ import { ReactComponent as ForkIcon } from '@/assets/images/icons/fork.svg';
 import { ReactComponent as PlusIcon } from '@/assets/images/icons/plus.svg';
 import { ConnectWalletButton } from '@/components/ui/ConnectWalletButton/ConnectWalletButton';
 import { useAddTokens } from '@/hooks/useAddTokens';
-import { bigNumberToString } from '@/utils/number';
+import { bigNumberToString, getReadableAmount } from '@/utils/number';
 import { ReactComponent as BoxIcon } from '@/assets/images/icons/box.svg';
 import { useSavBalance, useSavRBalance } from '@/hooks/useTokenBalance';
+import { useStaking } from '@/hooks/useStaking';
 
 export const WalletPortfolio = () => {
   const { isConnected } = useAccount();
@@ -16,6 +17,8 @@ export const WalletPortfolio = () => {
 
   const { data: savBalance } = useSavBalance();
   const { data: savrBalance } = useSavRBalance();
+
+  const { tvl, totalClaimed } = useStaking();
 
   return (
     <Flex alignItems="center">
@@ -87,13 +90,13 @@ export const WalletPortfolio = () => {
                 <Text mr="2" textStyle="textSansBold">
                   Total Value Locked
                 </Text>
-                <Text textStyle="text1">0.000</Text>
+                <Text textStyle="text1">{getReadableAmount(tvl || 0, 18, 3)}</Text>
               </Flex>
               <Flex>
                 <Text mr="2" textStyle="textSansBold">
                   Total Claimed
                 </Text>
-                <Text textStyle="text1">0.000</Text>
+                <Text textStyle="text1">{getReadableAmount(totalClaimed || 0, 18, 3)}</Text>
               </Flex>
             </Flex>
             <ConnectWalletButton />

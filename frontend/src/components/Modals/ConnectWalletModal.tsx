@@ -58,11 +58,11 @@ export const ConnectWalletModal: FC<ConnectWalletModalProps> = ({ onClose, isOpe
           <ModalCloseButton onClick={onClose} size="lg" right="20px" top="20px" />
         </ModalHeader>
         <ModalBody>
-          {connectError && (
+          {connectError ? (
             <Text color="error" textAlign="center" textStyle="textBold">
               {connectError.message}
             </Text>
-          )}
+          ) : null}
           {connectors.map((c) => (
             <ConnectButton
               key={c.id}

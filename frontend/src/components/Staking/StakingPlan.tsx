@@ -55,39 +55,37 @@ export const StakingPlan: FC<StakingPlanProps> = ({
         height="60px"
         alignItems="center"
       >
-        {isSubscribed ? (
-          isSubscriptionEnding ? (
-            <>
-              <Text textStyle="textSansBold">
-                <>Until {untilSubscriptionDate}</>
-              </Text>
-              <Button
-                variant="outlined-white"
-                onClick={onSubscribe}
-                isLoading={isSubscribeLoading}
-                size="md"
-                ml={5}
-                w="140px"
-              >
-                Prolong
-              </Button>
-            </>
-          ) : (
-            <Text textStyle="textSansBold" px="44px">
-              Active
-            </Text>
-          )
-        ) : (
-          <>
-            <Text textStyle="textSansBold">
-              {bigNumberToString(subscriptionCost, 18, 0)} SAV /{' '}
-              {getReadableDuration(subscriptionDuration)}
-            </Text>
-            <Button onClick={onSubscribe} isLoading={isSubscribeLoading} size="md" ml={5}>
-              Activate
-            </Button>
-          </>
-        )}
+        {isSubscriptionEnding ? (
+          <Text textStyle="textSansBold" mr={5}>
+            <>Until {untilSubscriptionDate}</>
+          </Text>
+        ) : null}
+
+        {!isSubscribed || isSubscriptionEnding ? (
+          <Text textStyle="textSansBold">
+            {bigNumberToString(subscriptionCost, 18, 0)} SAV /{' '}
+            {getReadableDuration(subscriptionDuration)}
+          </Text>
+        ) : null}
+
+        {isSubscriptionEnding ? (
+          <Button
+            variant="outlinedWhite"
+            onClick={onSubscribe}
+            isLoading={isSubscribeLoading}
+            size="md"
+            ml={5}
+            w="140px"
+          >
+            Prolong
+          </Button>
+        ) : null}
+
+        {!isSubscribed ? (
+          <Button onClick={onSubscribe} isLoading={isSubscribeLoading} size="md" ml={5}>
+            Activate
+          </Button>
+        ) : null}
       </Flex>
 
       <Box bgColor="rgba(38, 71, 55, 0.5)" boxShadow="0px 6px 11px rgba(0, 0, 0, 0.25)" p="20px">

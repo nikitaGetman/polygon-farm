@@ -40,11 +40,11 @@ export const InputAmount: FC<InputAmountProps> = ({ placeholder, value, total, o
           )}
         </InputRightElement>
       </InputGroup>
-      {total !== undefined && (
+      {total !== undefined ? (
         <Text textStyle="textSansSmall" textAlign="right" m="4px">
           <>You have: {total || 0}</>
         </Text>
-      )}
+      ) : null}
     </Box>
   );
 };

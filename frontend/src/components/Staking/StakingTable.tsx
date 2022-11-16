@@ -4,7 +4,7 @@ import { Table } from '../ui/Table/Table';
 import { ReactComponent as SavIcon } from '@/assets/images/sav_icon.svg';
 import { ReactComponent as SavrIcon } from '@/assets/images/savr_icon.svg';
 import { BigNumber } from 'ethers';
-import { getLocalDateString, getReadableDuration } from '@/utils/time';
+import { getLocalDateTimeString, getReadableDuration } from '@/utils/time';
 import { bigNumberToString, getReadableAmount } from '@/utils/number';
 
 const COLLAPSED_LIMIT = 6;
@@ -66,7 +66,6 @@ export const StakingTable = ({
             <Th>Period</Th>
             <Th isNumeric>Interest</Th>
             <Th>Status</Th>
-            <Th></Th>
           </Tr>
         </Thead>
         <Tbody>
@@ -87,22 +86,23 @@ export const StakingTable = ({
                   )}
                 </Flex>
               </Td>
-              <Td>{getLocalDateString(stake.timeStart)}</Td>
-              <Td>{getLocalDateString(stake.timeEnd)}</Td>
+              <Td>{getLocalDateTimeString(stake.timeStart)}</Td>
+              <Td>{getLocalDateTimeString(stake.timeEnd)}</Td>
               <Td>{getReadableDuration(period)}</Td>
               <Td>
                 {bigNumberToString(stake.isToken2 ? stake.profit : stake.profit.add(stake.amount))}
               </Td>
-              <Td>{status}</Td>
               <Td>
-                {status === StakeStatusEnum.Ready && (
+                {status === StakeStatusEnum.Ready ? (
                   <Button
                     size="sm"
-                    variant="outlined-white"
+                    variant="outlinedWhite"
                     onClick={() => onClaim(planId, stakeId)}
                   >
                     Claim
                   </Button>
+                ) : (
+                  status
                 )}
               </Td>
             </Tr>
@@ -115,19 +115,18 @@ export const StakingTable = ({
               <Td></Td>
               <Td></Td>
               <Td></Td>
-              <Td></Td>
             </Tr>
           ))}
         </Tbody>
       </Table>
 
-      {stakes.length > COLLAPSED_LIMIT && (
+      {stakes.length > COLLAPSED_LIMIT ? (
         <Center mt="10px">
           <Button variant="link" onClick={onToggle}>
             {isOpen ? 'Less' : 'More'}
           </Button>
         </Center>
-      )}
+      ) : null}
     </>
   );
 };

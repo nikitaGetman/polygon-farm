@@ -15,7 +15,7 @@ const STAKING_SUBSCRIBE_MUTATION = 'staking-subscribe';
 const STAKING_DEPOSIT_MUTATION = 'staking-deposit';
 const STAKING_CLAIM_MUTATION = 'staking-claim';
 
-const SUBSCRIPTION_ENDING_NOTIFICATION = 15 * 24 * 60 * 60; // 15 days in seconds
+const STAKING_SUBSCRIPTION_ENDING_NOTIFICATION = 15 * 24 * 60 * 60; // 15 days in seconds
 const REFETCH_REWARD_INTERVAL = 30000; // 30 secs
 
 export const useStaking = () => {
@@ -62,7 +62,8 @@ export const useStaking = () => {
             const currentTime = Date.now() / 1000;
             const isSubscriptionEnding =
               isSubscribed &&
-              (subscribedTill?.toNumber() || 0) - currentTime < SUBSCRIPTION_ENDING_NOTIFICATION;
+              (subscribedTill?.toNumber() || 0) - currentTime <
+                STAKING_SUBSCRIPTION_ENDING_NOTIFICATION;
 
             const stakes = userStakes.data?.[index];
 
@@ -93,6 +94,16 @@ export const useStaking = () => {
     () => activeStakingPlans.some((plan) => plan.isSubscriptionEnding),
     [activeStakingPlans]
   );
+
+  const tvl = useMemo(() => {
+    return stakingPlans.data?.reduce(
+      (acc, plan) => acc.add(plan.currentToken1Locked).add(plan.currentToken2Locked),
+      BigNumber.from(0)
+    );
+  }, [stakingPlans]);
+  const totalClaimed = useMemo(() => {
+    return stakingPlans.data?.reduce((acc, plan) => acc.add(plan.totalClaimed), BigNumber.from(0));
+  }, [stakingPlans]);
 
   const subscribe = useMutation(
     [STAKING_SUBSCRIBE_MUTATION],
@@ -192,5 +203,7 @@ export const useStaking = () => {
     deposit,
     withdraw,
     stakingContract,
+    tvl,
+    totalClaimed,
   };
 };

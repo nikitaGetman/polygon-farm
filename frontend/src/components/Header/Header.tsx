@@ -42,9 +42,9 @@ export const Header = () => {
               onClick={onOpen}
               padding="7px"
             />
-            {hasNotification && (
+            {hasNotification ? (
               <Circle as="span" size="10px" bg="red" position="absolute" right="-2px" top="-2px" />
-            )}
+            ) : null}
           </Box>
         </Flex>
       </Container>
