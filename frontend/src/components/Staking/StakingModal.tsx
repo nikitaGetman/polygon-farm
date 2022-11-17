@@ -20,7 +20,7 @@ import {
   Spacer,
   Text,
 } from '@chakra-ui/react';
-import { BigNumberish } from 'ethers';
+import { BigNumberish, ethers } from 'ethers';
 import { Link as RouterLink } from 'react-router-dom';
 import { ReactComponent as ChevronDownIcon } from '@/assets/images/icons/chevron-down.svg';
 import { getReadableDuration } from '@/utils/time';
@@ -62,8 +62,6 @@ export const StakingModal: FC<StakingModalProps> = ({
   const { data: savBalance } = useSavBalance();
   const { data: savrBalance } = useSavRBalance();
 
-  const isStakeDisabled = !amount || amount < MIN_STAKE_LIMIT || !isAgreed;
-
   const handleStake = useCallback(() => {
     if (amount && amount >= MIN_STAKE_LIMIT) {
       onStake(token, amount);
@@ -71,6 +69,11 @@ export const StakingModal: FC<StakingModalProps> = ({
   }, [token, amount, onStake]);
 
   const balance = token === TOKENS.SAV ? savBalance : savrBalance;
+  const isStakeDisabled =
+    !amount ||
+    amount < MIN_STAKE_LIMIT ||
+    balance?.lt(ethers.utils.parseEther(`${amount || 0}`)) ||
+    !isAgreed;
 
   return (
     <Modal isCentered isOpen={true} onClose={onClose}>

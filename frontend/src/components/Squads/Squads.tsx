@@ -28,6 +28,9 @@ import { useReferralManager } from '@/hooks/useReferralManager';
 import { BigNumber } from 'ethers';
 import { getReadableAmount } from '@/utils/number';
 import { ReferralSubscriptionModal } from './ReferralSubscriptionModal';
+import { useLocalReferrer } from '@/hooks/useLocalReferrer';
+import { UpdateLeaderModal } from './UpdateLeaderModal';
+import { QRCodeModal } from './QRCodeModal';
 
 type SquadsProps = {
   isPageView?: boolean;
@@ -39,9 +42,15 @@ export const Squads: FC<SquadsProps> = ({ isPageView }) => {
     isOpen: isRefSubscribeOpen,
     onOpen: onRefSubscribeOpen,
     onClose: onRefSubscribeClose,
-  } = useDisclosure(); //
-  //   const navigate = useNavigate();
+  } = useDisclosure();
+  const {
+    isOpen: isLeaderUpdateOpen,
+    onOpen: onLeaderUpdateOpen,
+    onClose: onLeaderUpdateClose,
+  } = useDisclosure();
+  const { isOpen: isQRCodeOpen, onOpen: onQRCodeOpen, onClose: onQRCodeClose } = useDisclosure();
 
+  const { localReferrer, setLocalReferrer } = useLocalReferrer();
   const {
     userReferralInfo,
     hasEndingReferralSubscription,
@@ -56,6 +65,8 @@ export const Squads: FC<SquadsProps> = ({ isPageView }) => {
     referrer,
   } = useReferralManager();
 
+  console.log('userReferralInfo', userReferralInfo.data);
+
   const isRefSubscribeLoading =
     subscribeToLevel.isLoading ||
     subscribeToAllLevels.isLoading ||
@@ -68,8 +79,16 @@ export const Squads: FC<SquadsProps> = ({ isPageView }) => {
     if (referralLink) setValue(referralLink);
   }, [referralLink, setValue]);
   useEffect(() => {
-    if (hasCopied) success('Copied');
+    if (hasCopied) success({ title: 'Copied!' });
   }, [hasCopied, success]);
+
+  const handleLeaderUpdate = useCallback(
+    (leader: string) => {
+      setLocalReferrer(leader);
+      onLeaderUpdateClose();
+    },
+    [setLocalReferrer, onLeaderUpdateClose]
+  );
 
   return (
     <Container variant="dashboard">
@@ -117,26 +136,26 @@ export const Squads: FC<SquadsProps> = ({ isPageView }) => {
       <Flex
         justifyContent="space-between"
         alignItems="flex-start"
-        mt={isPageView ? '100px' : '50px'}
+        mt={isPageView ? '80px' : '50px'}
       >
         <Box alignSelf={isPageView ? 'flex-start' : 'flex-end'}>
-          {isPageView && isConnected && !referrer ? <Button mb="15px">Add leader</Button> : null}
+          {isPageView && isConnected && !referrer ? (
+            <Button mb="15px" onClick={onLeaderUpdateOpen}>
+              Add leader
+            </Button>
+          ) : null}
 
-          {isPageView && referrer ? (
+          {isPageView && isConnected && (referrer || localReferrer) ? (
             <Flex alignItems="center" mb="15px">
-              <Text textStyle="button" mr="15px" color="green.400">
+              <Text textStyle="button" mr="15px" color={referrer ? 'green.400' : 'grey.200'}>
                 Your leader:
               </Text>
-              <Text textStyle="button" color="white">
-                {trimAddress(referrer)}
+              <Text textStyle="button" color={referrer ? 'white' : 'grey.200'}>
+                {trimAddress(referrer || localReferrer)}
               </Text>
             </Flex>
           ) : null}
-          {!referralLink && isConnected ? (
-            <Text color="error" textStyle="textBold" mb="15px">
-              You will get your ref link after subscribing at the 1st team level
-            </Text>
-          ) : null}
+
           <Text textStyle="button" color={referralLink ? 'green.400' : 'grey.200'} mb="10px">
             Your referral link:
           </Text>
@@ -166,8 +185,14 @@ export const Squads: FC<SquadsProps> = ({ isPageView }) => {
               icon={<QRIcon height="24px" />}
               aria-label="qr-code"
               disabled={!referralLink}
+              onClick={onQRCodeOpen}
             />
           </Flex>
+          {isPageView && isConnected && !referralLink ? (
+            <Text color="error" textStyle="textBold" fontSize="14" mt="8px">
+              You will get your ref link after subscribing at the 1st team level
+            </Text>
+          ) : null}
         </Box>
 
         <Flex justifyContent="flex-end">
@@ -205,6 +230,18 @@ export const Squads: FC<SquadsProps> = ({ isPageView }) => {
           onFullSubscribe={subscribeToAllLevels.mutate}
           onLevelSubscribe={subscribeToLevel.mutate}
         />
+      ) : null}
+
+      {isLeaderUpdateOpen ? (
+        <UpdateLeaderModal
+          leader={localReferrer}
+          onClose={onLeaderUpdateClose}
+          onUpdate={handleLeaderUpdate}
+        />
+      ) : null}
+
+      {isQRCodeOpen && referralLink ? (
+        <QRCodeModal onClose={onQRCodeClose} link={referralLink} />
       ) : null}
     </Container>
   );

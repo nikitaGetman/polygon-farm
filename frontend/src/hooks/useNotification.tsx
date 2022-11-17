@@ -1,47 +1,40 @@
+import { Notification, NotificationProps } from '@/components/ui/Notification/Notification';
 import { useToast } from '@chakra-ui/react';
 import { useCallback } from 'react';
 
 const commonProps = {
   position: 'bottom-left' as const,
+
   isClosable: true,
 };
+type ToastProps = Omit<NotificationProps, 'type'>;
 
 export const useNotification = () => {
   const toast = useToast();
 
   const success = useCallback(
-    (title: string, description?: string) => {
+    (props: ToastProps) => {
       toast({
         ...commonProps,
-        title,
-        description,
-        status: 'success',
+        render: () => <Notification type="success" {...props} />,
       });
     },
     [toast]
   );
   const error = useCallback(
-    (title: string, description?: string) => {
+    (props: ToastProps) => {
       toast({
         ...commonProps,
-        title,
-        description,
-        status: 'error',
-        containerStyle: {
-          bgColor: 'error',
-          borderRadius: 'md',
-        },
+        render: () => <Notification type="error" {...props} />,
       });
     },
     [toast]
   );
-  const warning = useCallback(
-    (title: string, description?: string) => {
+  const info = useCallback(
+    (props: ToastProps) => {
       toast({
         ...commonProps,
-        title,
-        description,
-        status: 'warning',
+        render: () => <Notification type="info" {...props} />,
       });
     },
     [toast]
@@ -50,6 +43,6 @@ export const useNotification = () => {
   return {
     success,
     error,
-    warning,
+    info,
   };
 };

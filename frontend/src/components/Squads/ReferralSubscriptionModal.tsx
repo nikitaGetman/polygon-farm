@@ -2,7 +2,6 @@ import React, { FC } from 'react';
 import {
   Box,
   Button,
-  Center,
   CloseButton,
   Divider,
   Flex,
@@ -11,7 +10,6 @@ import {
   ModalContent,
   ModalHeader,
   ModalOverlay,
-  Spinner,
   Text,
 } from '@chakra-ui/react';
 import { BigNumberish } from 'ethers';
@@ -54,7 +52,7 @@ export const ReferralSubscriptionModal: FC<ReferralSubscriptionModalProps> = ({
           <CloseButton onClick={onClose} size="lg" />
         </ModalHeader>
 
-        <ModalBody className="with-custom-scroll">
+        <ModalBody className="with-custom-scroll" mr="-10px" pr="10px">
           {isLoading ? <CenteredSpinner /> : null}
 
           <Box mt="6px">

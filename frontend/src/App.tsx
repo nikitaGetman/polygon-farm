@@ -1,4 +1,4 @@
-import React, { createRef, useCallback } from 'react';
+import React, { createRef, useCallback, useEffect } from 'react';
 import { Box, ChakraProvider } from '@chakra-ui/react';
 import {
   useLocation,
@@ -6,6 +6,7 @@ import {
   useOutlet,
   RouterProvider,
   Navigate,
+  useSearchParams,
 } from 'react-router-dom';
 import { WagmiConfig } from 'wagmi';
 import { Header } from '@/components/Header/Header';
@@ -19,6 +20,7 @@ import { AppStateProvider } from '@/contexts/AppContext';
 import { Modals } from '@/components/Modals';
 import { SwitchTransition, CSSTransition } from 'react-transition-group';
 import { SquadsPage } from './components/Squads/SquadsPage';
+import { REFERRER_SEARCH_PARAMS_KEY, useLocalReferrer } from './hooks/useLocalReferrer';
 
 import '@/assets/styles/index.scss';
 
@@ -52,6 +54,15 @@ function Layout() {
   const scrollToTop = useCallback(() => {
     window?.scroll(0, 0);
   }, []);
+
+  const { localReferrer, setLocalReferrer } = useLocalReferrer();
+  const [searchParams] = useSearchParams();
+  const queryRef = searchParams.get(REFERRER_SEARCH_PARAMS_KEY);
+  useEffect(() => {
+    if (queryRef && localReferrer !== queryRef) {
+      setLocalReferrer(queryRef);
+    }
+  }, [queryRef, localReferrer, setLocalReferrer]);
 
   return (
     <>

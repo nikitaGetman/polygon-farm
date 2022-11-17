@@ -13,10 +13,10 @@ export const useSwitchNetworkToSupported = () => {
   useEffect(() => {
     const handleSwitch = async () => {
       if (isConnected && chain?.unsupported) {
-        error('Network unsupported');
+        error({ title: 'Network unsupported' });
         if (switchNetworkAsync) {
           await switchNetworkAsync(chains[0].id);
-          success(`Network changed to ${chains[0].name}`);
+          success({ title: `Network changed to ${chains[0].name}` });
         }
       }
     };
@@ -26,7 +26,7 @@ export const useSwitchNetworkToSupported = () => {
 
   useEffect(() => {
     if (chainSwitchError) {
-      error(chainSwitchError.message);
+      error({ title: 'Failed', description: chainSwitchError.message });
     }
   }, [chainSwitchError, error]);
 };

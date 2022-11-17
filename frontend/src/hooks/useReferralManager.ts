@@ -1,4 +1,4 @@
-import { tryToGetError } from '@/utils/error';
+import { tryToGetErrorData } from '@/utils/error';
 import { createReferralLink } from '@/utils/referralLinks';
 import { useMutation } from '@tanstack/react-query';
 import { BigNumber, ethers } from 'ethers';
@@ -92,17 +92,17 @@ export const useReferralManager = () => {
         requiredAmount: levelSubscriptionCost.data || BigNumber.from(10).pow(18), // fallback to 10 tokens
       });
 
-      await referralContract.subscribeToLevel(level);
+      const txHash = await referralContract.subscribeToLevel(level);
+      success({ title: 'Success', description: `Subscribed to Referral level ${level}`, txHash });
     },
     {
-      onSuccess: (_, level) => {
+      onSuccess: () => {
         queryClient.invalidateQueries({ queryKey: [USER_REFERRAL_INFO_REQUEST] });
         queryClient.invalidateQueries({ queryKey: [SAV_BALANCE_REQUEST] });
-        success(`Subscribed to level ${level}!`);
       },
       onError: (err) => {
-        const errMessage = tryToGetError(err);
-        error(errMessage);
+        const errData = tryToGetErrorData(err);
+        error(errData);
       },
     }
   );
@@ -119,17 +119,17 @@ export const useReferralManager = () => {
         requiredAmount: fullSubscriptionCost.data || BigNumber.from(10).pow(18), // fallback to 10 tokens
       });
 
-      await referralContract.subscribeToAllLevels();
+      const txHash = await referralContract.subscribeToAllLevels();
+      success({ title: 'Success', description: 'Subscribed to all Referral levels', txHash });
     },
     {
       onSuccess: () => {
         queryClient.invalidateQueries({ queryKey: [USER_REFERRAL_INFO_REQUEST] });
         queryClient.invalidateQueries({ queryKey: [SAV_BALANCE_REQUEST] });
-        success('Subscribed to all levels');
       },
       onError: (err) => {
-        const errMessage = tryToGetError(err);
-        error(errMessage);
+        const errData = tryToGetErrorData(err);
+        error(errData);
       },
     }
   );

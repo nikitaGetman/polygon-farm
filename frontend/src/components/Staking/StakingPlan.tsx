@@ -100,10 +100,14 @@ export const StakingPlan: FC<StakingPlanProps> = ({
             </Flex>
             <Flex justifyContent="space-between">
               <StakingParameter title="Your Stake">
-                <Box as="span" ml={3} mr={6}>
-                  {getReadableAmount(userStakeSav)} SAV
-                </Box>
-                <Box as="span">{getReadableAmount(userStakeSavR)} SAVR</Box>
+                <Flex flexWrap="wrap">
+                  <Box as="span" ml={2} mr={2}>
+                    {getReadableAmount(userStakeSav)} SAV
+                  </Box>
+                  <Box as="span" mr={2} ml={2}>
+                    {getReadableAmount(userStakeSavR)} SAVR
+                  </Box>
+                </Flex>
               </StakingParameter>
               <StakingParameter title="Your rewards">
                 {getReadableAmount(userReward || 0)} SAV
@@ -128,8 +132,10 @@ export const StakingPlan: FC<StakingPlanProps> = ({
 const StakingParameter = ({ title, children }: { title: string; children: any }) => {
   return (
     <Flex alignItems="center">
-      <Text textStyle="textSansSmall" mr="10px">{`${title}`}</Text>
-      <Text textStyle="textSansBold">{children}</Text>
+      <Box textStyle="textSansSmall" mr="10px" whiteSpace="nowrap">{`${title}`}</Box>
+      <Box textStyle="textSansBold" whiteSpace="nowrap">
+        {children}
+      </Box>
     </Flex>
   );
 };

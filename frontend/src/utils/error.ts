@@ -3,10 +3,11 @@ export function getErrorMessage(error: unknown) {
   return String(error);
 }
 
-export function tryToGetError(error: unknown) {
+export function tryToGetErrorData(error: unknown): { title: string; description?: string } {
   const message = getErrorMessage(error);
 
-  if (message.includes('user rejected transaction')) return 'Rejected by user';
+  if (message.includes('user rejected transaction'))
+    return { title: 'Failed', description: 'Rejected by user' };
 
   const hasReadableError = message.includes('reverted with reason string ');
 
@@ -21,5 +22,5 @@ export function tryToGetError(error: unknown) {
     }
   }
 
-  return errorMessage;
+  return { title: 'Transaction failed', description: errorMessage };
 }

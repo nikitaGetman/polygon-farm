@@ -24,6 +24,7 @@ import { TOKENS } from '@/hooks/useTokens';
 import { Link, useNavigate } from 'react-router-dom';
 import { StatBlock } from '@/components/ui/StatBlock/StatBlock';
 import { BigNumber } from 'ethers';
+import { useLocalReferrer } from '@/hooks/useLocalReferrer';
 
 type StakingProps = {
   isPageView?: boolean;
@@ -34,6 +35,7 @@ export const Staking: FC<StakingProps> = ({ isPageView }) => {
   const { isOpen, onOpen, onClose } = useDisclosure(); // StakingModal toggle
   const [selectedPlan, setSelectedPlan] = useState<number>();
   const navigate = useNavigate();
+  const { localReferrer } = useLocalReferrer();
 
   const { activeStakingPlans, hasEndingSubscription, subscribe, deposit } = useStaking();
 
@@ -66,13 +68,14 @@ export const Staking: FC<StakingProps> = ({ isPageView }) => {
           planId: selectedPlan,
           amount: amountBN,
           isToken2: token === TOKENS.SAVR,
+          referrer: localReferrer,
         });
         closeModal();
       } else {
         connect();
       }
     },
-    [deposit, connect, isConnected, selectedPlan, closeModal]
+    [deposit, connect, isConnected, selectedPlan, closeModal, localReferrer]
   );
 
   const onClaim = useCallback(() => {
