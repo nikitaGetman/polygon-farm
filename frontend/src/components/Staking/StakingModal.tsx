@@ -86,7 +86,7 @@ export const StakingModal: FC<StakingModalProps> = ({
               variant="transparent"
               rightIcon={<ChevronDownIcon />}
               padding={0}
-              fontStyle="textBold"
+              textStyle="textBold"
               fontSize={26}
             >
               <Flex alignItems="center">

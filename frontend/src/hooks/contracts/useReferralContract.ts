@@ -32,11 +32,18 @@ export const useReferralContract = () => {
     return tx.hash;
   };
 
+  const setMyReferrer = async (referrer: string) => {
+    const tx = await contract.setMyReferrer(referrer);
+    await tx.wait();
+    return tx.hash;
+  };
+
   return {
     contract,
     address: contractAddress,
     getUserInfo,
     subscribeToLevel,
     subscribeToAllLevels,
+    setMyReferrer,
   };
 };

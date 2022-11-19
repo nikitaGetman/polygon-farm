@@ -23,11 +23,28 @@ import type {
   PromiseOrValue,
 } from "../../common";
 
+export declare namespace IReferralManager {
+  export type ReferralStruct = {
+    referralAddress: PromiseOrValue<string>;
+    level: PromiseOrValue<BigNumberish>;
+    activationDate: PromiseOrValue<BigNumberish>;
+    isReferralSubscriptionActive: PromiseOrValue<boolean>;
+  };
+
+  export type ReferralStructOutput = [string, BigNumber, BigNumber, boolean] & {
+    referralAddress: string;
+    level: BigNumber;
+    activationDate: BigNumber;
+    isReferralSubscriptionActive: boolean;
+  };
+}
+
 export interface IReferralManagerInterface extends utils.Interface {
   functions: {
     "addUserDividends(address,uint256)": FunctionFragment;
     "calculateRefReward(uint256,uint256)": FunctionFragment;
     "getReferralLevels()": FunctionFragment;
+    "getUserReferralsByLevel(address,uint256)": FunctionFragment;
     "getUserReferrer(address)": FunctionFragment;
     "setUserReferrer(address,address)": FunctionFragment;
     "userHasSubscription(address,uint256)": FunctionFragment;
@@ -38,6 +55,7 @@ export interface IReferralManagerInterface extends utils.Interface {
       | "addUserDividends"
       | "calculateRefReward"
       | "getReferralLevels"
+      | "getUserReferralsByLevel"
       | "getUserReferrer"
       | "setUserReferrer"
       | "userHasSubscription"
@@ -54,6 +72,10 @@ export interface IReferralManagerInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "getReferralLevels",
     values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getUserReferralsByLevel",
+    values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
     functionFragment: "getUserReferrer",
@@ -78,6 +100,10 @@ export interface IReferralManagerInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "getReferralLevels",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getUserReferralsByLevel",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -137,6 +163,12 @@ export interface IReferralManager extends BaseContract {
 
     getReferralLevels(overrides?: CallOverrides): Promise<[BigNumber]>;
 
+    getUserReferralsByLevel(
+      userAddress: PromiseOrValue<string>,
+      level: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<[IReferralManager.ReferralStructOutput[]]>;
+
     getUserReferrer(
       user: PromiseOrValue<string>,
       overrides?: CallOverrides
@@ -169,6 +201,12 @@ export interface IReferralManager extends BaseContract {
 
   getReferralLevels(overrides?: CallOverrides): Promise<BigNumber>;
 
+  getUserReferralsByLevel(
+    userAddress: PromiseOrValue<string>,
+    level: PromiseOrValue<BigNumberish>,
+    overrides?: CallOverrides
+  ): Promise<IReferralManager.ReferralStructOutput[]>;
+
   getUserReferrer(
     user: PromiseOrValue<string>,
     overrides?: CallOverrides
@@ -200,6 +238,12 @@ export interface IReferralManager extends BaseContract {
     ): Promise<BigNumber>;
 
     getReferralLevels(overrides?: CallOverrides): Promise<BigNumber>;
+
+    getUserReferralsByLevel(
+      userAddress: PromiseOrValue<string>,
+      level: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<IReferralManager.ReferralStructOutput[]>;
 
     getUserReferrer(
       user: PromiseOrValue<string>,
@@ -236,6 +280,12 @@ export interface IReferralManager extends BaseContract {
 
     getReferralLevels(overrides?: CallOverrides): Promise<BigNumber>;
 
+    getUserReferralsByLevel(
+      userAddress: PromiseOrValue<string>,
+      level: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     getUserReferrer(
       user: PromiseOrValue<string>,
       overrides?: CallOverrides
@@ -268,6 +318,12 @@ export interface IReferralManager extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     getReferralLevels(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    getUserReferralsByLevel(
+      userAddress: PromiseOrValue<string>,
+      level: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
 
     getUserReferrer(
       user: PromiseOrValue<string>,

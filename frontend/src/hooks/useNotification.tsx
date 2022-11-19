@@ -4,10 +4,9 @@ import { useCallback } from 'react';
 
 const commonProps = {
   position: 'bottom-left' as const,
-
   isClosable: true,
 };
-type ToastProps = Omit<NotificationProps, 'type'>;
+type ToastProps = Omit<NotificationProps, 'type' | 'onClose'>;
 
 export const useNotification = () => {
   const toast = useToast();
@@ -16,7 +15,7 @@ export const useNotification = () => {
     (props: ToastProps) => {
       toast({
         ...commonProps,
-        render: () => <Notification type="success" {...props} />,
+        render: ({ onClose }) => <Notification type="success" onClose={onClose} {...props} />,
       });
     },
     [toast]
@@ -25,7 +24,7 @@ export const useNotification = () => {
     (props: ToastProps) => {
       toast({
         ...commonProps,
-        render: () => <Notification type="error" {...props} />,
+        render: ({ onClose }) => <Notification type="error" onClose={onClose} {...props} />,
       });
     },
     [toast]
@@ -34,7 +33,7 @@ export const useNotification = () => {
     (props: ToastProps) => {
       toast({
         ...commonProps,
-        render: () => <Notification type="info" {...props} />,
+        render: ({ onClose }) => <Notification type="info" onClose={onClose} {...props} />,
       });
     },
     [toast]

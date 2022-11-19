@@ -1,7 +1,7 @@
 import React from 'react';
 import { Container, Box } from '@chakra-ui/react';
 import { Staking } from '@/components/Staking/Staking';
-import { Squads } from '@/components/Squads/Squads';
+import { ReferralInfo } from '@/components/Referral/ReferralInfo';
 import { WalletPortfolio } from '@/components/Dashboard/WalletPortfolio';
 import { SquadsList } from '../Squads/SquadsList';
 
@@ -17,7 +17,7 @@ export const Dashboard = () => {
       </Box>
 
       <Box mt="150px" mb="30px">
-        <Squads />
+        <ReferralInfo />
       </Box>
       <Box mb="300px">{/* <SquadsList /> */}</Box>
     </Container>

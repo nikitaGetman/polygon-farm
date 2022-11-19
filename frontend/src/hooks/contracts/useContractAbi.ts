@@ -7,6 +7,7 @@ export enum ContractsEnum {
   'SAVR' = 'Token2',
   'Staking' = 'Staking',
   'ReferralManager' = 'ReferralManager',
+  'Helper' = 'Helper',
 }
 
 type ContractAbi = {

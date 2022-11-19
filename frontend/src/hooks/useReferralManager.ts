@@ -10,10 +10,12 @@ import { SAV_BALANCE_REQUEST } from './useTokenBalance';
 import { TOKENS, useTokens } from './useTokens';
 
 export const USER_REFERRAL_INFO_REQUEST = 'user-referrals-info';
+
 const LEVEL_SUBSCRIPTION_COST_REQUEST = 'get-referral-level-subscription-cost';
 const ALL_LEVELS_SUBSCRIPTION_COST_REQUEST = 'get-all-referral-levels-subscription-cost';
 const SUBSCRIBE_TO_REFERRAL_LEVEL_MUTATION = 'subscribe-to-referral-level';
 const SUBSCRIBE_TO_ALL_REFERRAL_LEVELS_MUTATION = 'subscribe-to-all-referral-levels';
+const SET_MY_REFERRER_MUTATION = 'set-my-referrer';
 
 export const REFERRAL_SUBSCRIPTION_ENDING_NOTIFICATION = 15 * 24 * 60 * 60; // 15 days in seconds
 
@@ -134,6 +136,25 @@ export const useReferralManager = () => {
     }
   );
 
+  const setMyReferrer = useMutation(
+    [SET_MY_REFERRER_MUTATION],
+    async (referrer: string) => {
+      if (!account) return;
+      const txHash = await referralContract.setMyReferrer(referrer);
+      success({ title: 'Success', description: `Your referrer is ${referrer}`, txHash });
+    },
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries({ queryKey: [USER_REFERRAL_INFO_REQUEST] });
+        queryClient.invalidateQueries({ queryKey: [SAV_BALANCE_REQUEST] });
+      },
+      onError: (err) => {
+        const errData = tryToGetErrorData(err);
+        error(errData);
+      },
+    }
+  );
+
   return {
     referralContract,
     userReferralInfo,
@@ -148,5 +169,6 @@ export const useReferralManager = () => {
     fullSubscription,
     referrer,
     referralLink,
+    setMyReferrer,
   };
 };

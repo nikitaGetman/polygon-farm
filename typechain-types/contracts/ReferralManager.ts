@@ -27,15 +27,19 @@ import type {
   PromiseOrValue,
 } from "../common";
 
-export declare namespace ReferralManager {
+export declare namespace IReferralManager {
   export type ReferralStruct = {
     referralAddress: PromiseOrValue<string>;
     level: PromiseOrValue<BigNumberish>;
+    activationDate: PromiseOrValue<BigNumberish>;
+    isReferralSubscriptionActive: PromiseOrValue<boolean>;
   };
 
-  export type ReferralStructOutput = [string, BigNumber] & {
+  export type ReferralStructOutput = [string, BigNumber, BigNumber, boolean] & {
     referralAddress: string;
     level: BigNumber;
+    activationDate: BigNumber;
+    isReferralSubscriptionActive: boolean;
   };
 }
 
@@ -55,7 +59,7 @@ export interface ReferralManagerInterface extends utils.Interface {
     "getTimestamp()": FunctionFragment;
     "getUser1LvlReferrals(address)": FunctionFragment;
     "getUserInfo(address)": FunctionFragment;
-    "getUserReferrals(address,uint256)": FunctionFragment;
+    "getUserReferralsByLevel(address,uint256)": FunctionFragment;
     "getUserReferrer(address)": FunctionFragment;
     "grantRole(bytes32,address)": FunctionFragment;
     "hasRole(bytes32,address)": FunctionFragment;
@@ -78,6 +82,7 @@ export interface ReferralManagerInterface extends utils.Interface {
     "updateRewardToken(address)": FunctionFragment;
     "updateSubscriptionPeriod(uint256)": FunctionFragment;
     "updateSubscriptionToken(address)": FunctionFragment;
+    "userHasAnySubscription(address)": FunctionFragment;
     "userHasSubscription(address,uint256)": FunctionFragment;
   };
 
@@ -97,7 +102,7 @@ export interface ReferralManagerInterface extends utils.Interface {
       | "getTimestamp"
       | "getUser1LvlReferrals"
       | "getUserInfo"
-      | "getUserReferrals"
+      | "getUserReferralsByLevel"
       | "getUserReferrer"
       | "grantRole"
       | "hasRole"
@@ -120,6 +125,7 @@ export interface ReferralManagerInterface extends utils.Interface {
       | "updateRewardToken"
       | "updateSubscriptionPeriod"
       | "updateSubscriptionToken"
+      | "userHasAnySubscription"
       | "userHasSubscription"
   ): FunctionFragment;
 
@@ -177,7 +183,7 @@ export interface ReferralManagerInterface extends utils.Interface {
     values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
-    functionFragment: "getUserReferrals",
+    functionFragment: "getUserReferralsByLevel",
     values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
@@ -269,6 +275,10 @@ export interface ReferralManagerInterface extends utils.Interface {
     values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
+    functionFragment: "userHasAnySubscription",
+    values: [PromiseOrValue<string>]
+  ): string;
+  encodeFunctionData(
     functionFragment: "userHasSubscription",
     values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]
   ): string;
@@ -327,7 +337,7 @@ export interface ReferralManagerInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "getUserReferrals",
+    functionFragment: "getUserReferralsByLevel",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -407,6 +417,10 @@ export interface ReferralManagerInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "updateSubscriptionToken",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "userHasAnySubscription",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -577,7 +591,8 @@ export interface ReferralManager extends BaseContract {
         string[],
         BigNumber[],
         BigNumber,
-        boolean
+        boolean,
+        BigNumber
       ] & {
         referrer: string;
         activeLevels: BigNumber[];
@@ -586,15 +601,16 @@ export interface ReferralManager extends BaseContract {
         referrals_1_lvl: string[];
         refCount: BigNumber[];
         totalReferrals: BigNumber;
-        isActive: boolean;
+        isActiveSubscriber: boolean;
+        activationDate: BigNumber;
       }
     >;
 
-    getUserReferrals(
+    getUserReferralsByLevel(
       userAddress: PromiseOrValue<string>,
-      currentLevel: PromiseOrValue<BigNumberish>,
+      level: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
-    ): Promise<[ReferralManager.ReferralStructOutput[]]>;
+    ): Promise<[IReferralManager.ReferralStructOutput[]]>;
 
     getUserReferrer(
       user: PromiseOrValue<string>,
@@ -702,6 +718,11 @@ export interface ReferralManager extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
+    userHasAnySubscription(
+      user: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<[boolean]>;
+
     userHasSubscription(
       user: PromiseOrValue<string>,
       level: PromiseOrValue<BigNumberish>,
@@ -770,7 +791,8 @@ export interface ReferralManager extends BaseContract {
       string[],
       BigNumber[],
       BigNumber,
-      boolean
+      boolean,
+      BigNumber
     ] & {
       referrer: string;
       activeLevels: BigNumber[];
@@ -779,15 +801,16 @@ export interface ReferralManager extends BaseContract {
       referrals_1_lvl: string[];
       refCount: BigNumber[];
       totalReferrals: BigNumber;
-      isActive: boolean;
+      isActiveSubscriber: boolean;
+      activationDate: BigNumber;
     }
   >;
 
-  getUserReferrals(
+  getUserReferralsByLevel(
     userAddress: PromiseOrValue<string>,
-    currentLevel: PromiseOrValue<BigNumberish>,
+    level: PromiseOrValue<BigNumberish>,
     overrides?: CallOverrides
-  ): Promise<ReferralManager.ReferralStructOutput[]>;
+  ): Promise<IReferralManager.ReferralStructOutput[]>;
 
   getUserReferrer(
     user: PromiseOrValue<string>,
@@ -895,6 +918,11 @@ export interface ReferralManager extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
+  userHasAnySubscription(
+    user: PromiseOrValue<string>,
+    overrides?: CallOverrides
+  ): Promise<boolean>;
+
   userHasSubscription(
     user: PromiseOrValue<string>,
     level: PromiseOrValue<BigNumberish>,
@@ -963,7 +991,8 @@ export interface ReferralManager extends BaseContract {
         string[],
         BigNumber[],
         BigNumber,
-        boolean
+        boolean,
+        BigNumber
       ] & {
         referrer: string;
         activeLevels: BigNumber[];
@@ -972,15 +1001,16 @@ export interface ReferralManager extends BaseContract {
         referrals_1_lvl: string[];
         refCount: BigNumber[];
         totalReferrals: BigNumber;
-        isActive: boolean;
+        isActiveSubscriber: boolean;
+        activationDate: BigNumber;
       }
     >;
 
-    getUserReferrals(
+    getUserReferralsByLevel(
       userAddress: PromiseOrValue<string>,
-      currentLevel: PromiseOrValue<BigNumberish>,
+      level: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
-    ): Promise<ReferralManager.ReferralStructOutput[]>;
+    ): Promise<IReferralManager.ReferralStructOutput[]>;
 
     getUserReferrer(
       user: PromiseOrValue<string>,
@@ -1085,6 +1115,11 @@ export interface ReferralManager extends BaseContract {
       token: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<void>;
+
+    userHasAnySubscription(
+      user: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
 
     userHasSubscription(
       user: PromiseOrValue<string>,
@@ -1203,9 +1238,9 @@ export interface ReferralManager extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    getUserReferrals(
+    getUserReferralsByLevel(
       userAddress: PromiseOrValue<string>,
-      currentLevel: PromiseOrValue<BigNumberish>,
+      level: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -1315,6 +1350,11 @@ export interface ReferralManager extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
+    userHasAnySubscription(
+      user: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     userHasSubscription(
       user: PromiseOrValue<string>,
       level: PromiseOrValue<BigNumberish>,
@@ -1383,9 +1423,9 @@ export interface ReferralManager extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    getUserReferrals(
+    getUserReferralsByLevel(
       userAddress: PromiseOrValue<string>,
-      currentLevel: PromiseOrValue<BigNumberish>,
+      level: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
@@ -1495,6 +1535,11 @@ export interface ReferralManager extends BaseContract {
     updateSubscriptionToken(
       token: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    userHasAnySubscription(
+      user: PromiseOrValue<string>,
+      overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     userHasSubscription(

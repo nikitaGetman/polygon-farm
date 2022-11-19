@@ -4,7 +4,7 @@ import { Box, Circle, Container, Flex, IconButton, useDisclosure } from '@chakra
 import { ConnectWalletButton } from '@/components/ui/ConnectWalletButton/ConnectWalletButton';
 import { Menu } from '@/components/Menu/Menu';
 import { ReactComponent as BurgerIcon } from '@/assets/images/icons/burger.svg';
-import { WalletMenu } from '@/components/WalletMenu/WalletMenu';
+import { WalletMenu } from '@/components/Header/WalletMenu';
 import Logo from '@/assets/images/logo.svg';
 import './Header.scss';
 import { useStaking } from '@/hooks/useStaking';

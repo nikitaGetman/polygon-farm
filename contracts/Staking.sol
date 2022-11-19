@@ -396,6 +396,15 @@ contract Staking is IStaking, AccessControl {
         return users[planId][user].subscription > getTimestamp();
     }
 
+    function hasAnySubscription(address user) public view returns (bool) {
+        for (uint256 i = 0; i < stakingPlans.length; i++) {
+            if (hasSubscription(i, user)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     // --------- Administrative functions ---------
     function updateShouldAddReferrerOnToken2Stake(bool value)
         public

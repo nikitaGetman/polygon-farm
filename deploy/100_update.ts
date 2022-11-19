@@ -6,6 +6,7 @@ import {
   Staking,
   Token1,
   Token2,
+  Helper,
 } from "typechain-types";
 
 const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
@@ -22,7 +23,10 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
     admin
   );
   const squadsManager = await ethers.getContract<Squads>("Squads", admin);
+  const helper = await ethers.getContract<Helper>("Helper", admin);
 
+  // --------------------- STAKING ------------------------
+  // ------------------------------------------------------
   // check Token1 in Staking
   const stakingToken1 = await staking.token1();
   if (stakingToken1 !== token1.address) {
@@ -52,6 +56,8 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
     await tx.wait();
   }
 
+  // --------------------- REFERRAL MANAGER ------------------------
+  // ------------------------------------------------------
   // check Token1 in ReferralManager
   const refManagerToken1 = await referralManager.subscriptionToken();
   if (refManagerToken1 !== token1.address) {
@@ -74,9 +80,11 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
     await tx.wait();
   }
 
+  // --------------------- SQUADS ------------------------
+  // ------------------------------------------------------
   // check Token1 in Squads
-  const token1Squads = await squadsManager.subscriptionToken();
-  if (token1Squads !== token1.address) {
+  const squadsToken1 = await squadsManager.subscriptionToken();
+  if (squadsToken1 !== token1.address) {
     console.log("Update Subscription token to Token1 in Squads");
     const tx = await squadsManager.updateSubscriptionToken(token1.address);
     await tx.wait();
@@ -95,6 +103,44 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
     const tx = await squadsManager.updateSubscriptionReferralManager(
       referralManager.address
     );
+    await tx.wait();
+  }
+
+  // --------------------- HELPER ------------------------
+  // ------------------------------------------------------
+  // check Token1 in Helper
+  const helperToken1 = await helper.token1();
+  if (helperToken1 !== token1.address) {
+    console.log("Update Token1 in Helper");
+    const tx = await helper.updateToken1(token1.address);
+    await tx.wait();
+  }
+  // check Token2 in Helper
+  const helperToken2 = await helper.token2();
+  if (helperToken2 !== token2.address) {
+    console.log("Update Token2 in Helper");
+    const tx = await helper.updateToken2(token2.address);
+    await tx.wait();
+  }
+  // check Staking in Helper
+  const helperStaking = await helper.staking();
+  if (helperStaking !== staking.address) {
+    console.log("Update Staking in Helper");
+    const tx = await helper.updateStaking(staking.address);
+    await tx.wait();
+  }
+  // check ReferralManager in Helper
+  const helperRefManager = await helper.referralManager();
+  if (helperRefManager !== referralManager.address) {
+    console.log("Update ReferralManager in Helper");
+    const tx = await helper.updateReferralManager(referralManager.address);
+    await tx.wait();
+  }
+  // check Squads in Helper
+  const helperSquads = await helper.squads();
+  if (helperSquads !== squadsManager.address) {
+    console.log("Update Squads in Helper");
+    const tx = await helper.updateSquads(squadsManager.address);
     await tx.wait();
   }
 

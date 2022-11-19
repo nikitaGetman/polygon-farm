@@ -1,0 +1,71 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="4427" fill="none">
+  <g fill-opacity=".41" filter="url(#a)">
+    <circle cx="996.5" cy="3115.5" r="536.5" fill="url(#b)"/>
+    <circle cx="1526.5" cy="3874.5" r="536.5" fill="url(#c)"/>
+    <circle cx="-.5" cy="3616.5" r="645.5" fill="url(#d)"/>
+    <circle cx="208.5" cy="312.5" r="432.5" fill="url(#e)"/>
+    <circle cx="1408.5" cy="416.5" r="536.5" fill="url(#f)"/>
+    <circle cx="657.5" cy="1025.5" r="536.5" fill="url(#g)"/>
+    <circle cx="1296.5" cy="1489.5" r="536.5" fill="url(#h)"/>
+    <circle cx="608.5" cy="1654.5" r="536.5" fill="url(#i)"/>
+    <circle cx="212.5" cy="2611.5" r="536.5" fill="url(#j)"/>
+    <circle cx="1379.5" cy="4604.5" r="536.5" fill="url(#k)"/>
+    <circle cx="118.5" cy="4580.5" r="536.5" fill="url(#l)"/>
+  </g>
+  <defs>
+    <radialGradient id="b" cx="0" cy="0" r="1" gradientTransform="rotate(90 -1059.5 2056) scale(536.5)" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#4BC2D2"/>
+      <stop offset="1" stop-color="#20303F" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="c" cx="0" cy="0" r="1" gradientTransform="rotate(90 -1174 2700.5) scale(536.5)" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#4BC2D2"/>
+      <stop offset="1" stop-color="#20303F" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="d" cx="0" cy="0" r="1" gradientTransform="matrix(0 645.5 -645.5 0 -.5 3616.5)" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#4BC2D2"/>
+      <stop offset="1" stop-color="#20303F" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="e" cx="0" cy="0" r="1" gradientTransform="rotate(90 -52 260.5) scale(432.5)" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#4BC2D2"/>
+      <stop offset="1" stop-color="#20303F" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="f" cx="0" cy="0" r="1" gradientTransform="rotate(90 496 912.5) scale(536.5)" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#4BC2D2"/>
+      <stop offset="1" stop-color="#20303F" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="g" cx="0" cy="0" r="1" gradientTransform="rotate(90 -184 841.5) scale(536.5)" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#4BC2D2"/>
+      <stop offset="1" stop-color="#20303F" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="h" cx="0" cy="0" r="1" gradientTransform="rotate(90 -96.5 1393) scale(536.5)" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#4BC2D2"/>
+      <stop offset="1" stop-color="#20303F" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="i" cx="0" cy="0" r="1" gradientTransform="rotate(90 -523 1131.5) scale(536.5)" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#4BC2D2"/>
+      <stop offset="1" stop-color="#20303F" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="j" cx="0" cy="0" r="1" gradientTransform="rotate(90 -1199.5 1412) scale(536.5)" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#4BC2D2"/>
+      <stop offset="1" stop-color="#20303F" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="k" cx="0" cy="0" r="1" gradientTransform="rotate(90 -1612.5 2992) scale(536.5)" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#4BC2D2"/>
+      <stop offset="1" stop-color="#20303F" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="l" cx="0" cy="0" r="1" gradientTransform="rotate(90 -2231 2349.5) scale(536.5)" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#4BC2D2"/>
+      <stop offset="1" stop-color="#20303F" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="a" width="2717" height="5269" x="-650" y="-120" color-interpolation-filters="sRGB" filterUnits="userSpaceOnUse">
+      <feFlood flood-opacity="0" result="BackgroundImageFix"/>
+      <feColorMatrix in="SourceAlpha" result="hardAlpha" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0"/>
+      <feOffset dy="4"/>
+      <feGaussianBlur stdDeviation="2"/>
+      <feComposite in2="hardAlpha" operator="out"/>
+      <feColorMatrix values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.25 0"/>
+      <feBlend in2="BackgroundImageFix" result="effect1_dropShadow_1560_858"/>
+      <feBlend in="SourceGraphic" in2="effect1_dropShadow_1560_858" result="shape"/>
+    </filter>
+  </defs>
+</svg>

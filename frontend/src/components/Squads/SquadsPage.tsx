@@ -1,8 +1,9 @@
 import React from 'react';
-import { Box, Button, Container, Flex, Heading, Link } from '@chakra-ui/react';
+import { Box, Container, Link } from '@chakra-ui/react';
 import { Link as RouterLink } from 'react-router-dom';
-import { ArrowBackIcon, DownloadIcon, SearchIcon } from '@chakra-ui/icons';
-import { Squads } from './Squads';
+import { ArrowBackIcon } from '@chakra-ui/icons';
+import { ReferralInfo } from '../Referral/ReferralInfo';
+import { ReferralsList } from '../Referral/ReferralsList';
 
 export const SquadsPage = () => {
   return (
@@ -12,28 +13,13 @@ export const SquadsPage = () => {
         Back
       </Link>
 
-      <Box mb="80px">
-        <Squads isPageView />
+      <Box mb="35px">
+        <ReferralInfo isPageView />
       </Box>
 
-      <Flex justifyContent="space-between" alignItems="center" mb={5}>
-        <Heading textStyle="h3" textTransform="uppercase" id="referral-list">
-          Your level
-        </Heading>
-
-        <Flex alignItems="center">
-          <Button variant="link">
-            Search wallet
-            <SearchIcon ml="12px" />
-          </Button>
-          <Button variant="link" display="none">
-            Export
-            <DownloadIcon ml="12px" />
-          </Button>
-        </Flex>
-      </Flex>
-
-      <Box mb="120px">{/* <StakingTable stakes={stakesList} onClaim={onClaim} /> */}</Box>
+      <Box mb="120px">
+        <ReferralsList />
+      </Box>
     </Container>
   );
 };
