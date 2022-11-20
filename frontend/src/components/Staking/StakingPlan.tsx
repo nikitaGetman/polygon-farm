@@ -2,7 +2,7 @@ import React, { FC } from 'react';
 import { Box, Text, Flex, Button } from '@chakra-ui/react';
 
 import { BigNumber, BigNumberish } from 'ethers';
-import { getReadableDuration } from '@/utils/time';
+import { getLocalDateString, getReadableDuration } from '@/utils/time';
 import { bigNumberToString, getReadableAmount } from '@/utils/number';
 
 type StakingPlanProps = {
@@ -42,10 +42,6 @@ export const StakingPlan: FC<StakingPlanProps> = ({
   onDeposit,
   onClaim,
 }) => {
-  const untilSubscriptionDate =
-    subscribedTill &&
-    new Date(BigNumber.from(subscribedTill).toNumber() * 1000).toLocaleDateString();
-
   return (
     <Box borderRadius="md" overflow="hidden" filter="drop-shadow(0px 4px 4px rgba(0, 0, 0, 0.25))">
       <Flex
@@ -57,7 +53,7 @@ export const StakingPlan: FC<StakingPlanProps> = ({
       >
         {isSubscriptionEnding ? (
           <Text textStyle="textSansBold" mr={5}>
-            <>Until {untilSubscriptionDate}</>
+            <>Until {getLocalDateString(BigNumber.from(subscribedTill).toNumber() * 1000)}</>
           </Text>
         ) : null}
 

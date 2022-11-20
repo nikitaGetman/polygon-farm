@@ -6,6 +6,7 @@ import { BigNumber, ethers } from 'ethers';
 import { useMemo } from 'react';
 import { useAccount, useQuery, useQueryClient } from 'wagmi';
 import { useReferralContract } from './contracts/useReferralContract';
+import { useConnectWallet } from './useConnectWallet';
 import { useNotification } from './useNotification';
 import { SAVR_BALANCE_REQUEST, SAV_BALANCE_REQUEST } from './useTokenBalance';
 import { TOKENS, useTokens } from './useTokens';
@@ -28,6 +29,7 @@ export const useReferralManager = () => {
   const referralContract = useReferralContract();
   const { success, error } = useNotification();
   const tokens = useTokens();
+  const { connect } = useConnectWallet();
 
   // Hardcode this, hope it would not change
   const levels = 10;
@@ -87,7 +89,10 @@ export const useReferralManager = () => {
   const subscribeToLevel = useMutation(
     [SUBSCRIBE_TO_REFERRAL_LEVEL_MUTATION],
     async (level: number) => {
-      if (!account) return;
+      if (!account) {
+        connect();
+        return;
+      }
 
       await tokens.increaseAllowanceIfRequired.mutateAsync({
         token: TOKENS.SAV,
@@ -114,7 +119,10 @@ export const useReferralManager = () => {
   const subscribeToAllLevels = useMutation(
     [SUBSCRIBE_TO_ALL_REFERRAL_LEVELS_MUTATION],
     async () => {
-      if (!account) return;
+      if (!account) {
+        connect();
+        return;
+      }
 
       await tokens.increaseAllowanceIfRequired.mutateAsync({
         token: TOKENS.SAV,
@@ -141,7 +149,10 @@ export const useReferralManager = () => {
   const setMyReferrer = useMutation(
     [SET_MY_REFERRER_MUTATION],
     async (referrer: string) => {
-      if (!account) return;
+      if (!account) {
+        connect();
+        return;
+      }
       const txHash = await referralContract.setMyReferrer(referrer);
       success({ title: 'Success', description: `Your referrer is ${referrer}`, txHash });
     },
@@ -160,7 +171,10 @@ export const useReferralManager = () => {
   const claimDividends = useMutation(
     [CLAIM_REFERRAL_REWARDS_MUTATION],
     async (rewards: BigNumber) => {
-      if (!account) return;
+      if (!account) {
+        connect();
+        return;
+      }
 
       const txHash = await referralContract.claimRewards(rewards);
       success({

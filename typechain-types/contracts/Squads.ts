@@ -62,6 +62,22 @@ export declare namespace Squads {
     subscription: BigNumber;
     squadsFilled: BigNumber;
   };
+
+  export type UserSquadInfoStruct = {
+    squadStatus: Squads.SquadStruct;
+    plan: Squads.SquadPlanStruct;
+    members: PromiseOrValue<string>[];
+  };
+
+  export type UserSquadInfoStructOutput = [
+    Squads.SquadStructOutput,
+    Squads.SquadPlanStructOutput,
+    string[]
+  ] & {
+    squadStatus: Squads.SquadStructOutput;
+    plan: Squads.SquadPlanStructOutput;
+    members: string[];
+  };
 }
 
 export interface SquadsInterface extends utils.Interface {
@@ -574,7 +590,7 @@ export interface Squads extends BaseContract {
       planId: PromiseOrValue<BigNumberish>,
       user: PromiseOrValue<string>,
       overrides?: CallOverrides
-    ): Promise<[Squads.SquadStructOutput]>;
+    ): Promise<[Squads.UserSquadInfoStructOutput]>;
 
     getUserSquadMembers(
       user: PromiseOrValue<string>,
@@ -585,7 +601,7 @@ export interface Squads extends BaseContract {
     getUserSquadsInfo(
       user: PromiseOrValue<string>,
       overrides?: CallOverrides
-    ): Promise<[Squads.SquadStructOutput[]]>;
+    ): Promise<[Squads.UserSquadInfoStructOutput[]]>;
 
     grantRole(
       role: PromiseOrValue<BytesLike>,
@@ -749,7 +765,7 @@ export interface Squads extends BaseContract {
     planId: PromiseOrValue<BigNumberish>,
     user: PromiseOrValue<string>,
     overrides?: CallOverrides
-  ): Promise<Squads.SquadStructOutput>;
+  ): Promise<Squads.UserSquadInfoStructOutput>;
 
   getUserSquadMembers(
     user: PromiseOrValue<string>,
@@ -760,7 +776,7 @@ export interface Squads extends BaseContract {
   getUserSquadsInfo(
     user: PromiseOrValue<string>,
     overrides?: CallOverrides
-  ): Promise<Squads.SquadStructOutput[]>;
+  ): Promise<Squads.UserSquadInfoStructOutput[]>;
 
   grantRole(
     role: PromiseOrValue<BytesLike>,
@@ -926,7 +942,7 @@ export interface Squads extends BaseContract {
       planId: PromiseOrValue<BigNumberish>,
       user: PromiseOrValue<string>,
       overrides?: CallOverrides
-    ): Promise<Squads.SquadStructOutput>;
+    ): Promise<Squads.UserSquadInfoStructOutput>;
 
     getUserSquadMembers(
       user: PromiseOrValue<string>,
@@ -937,7 +953,7 @@ export interface Squads extends BaseContract {
     getUserSquadsInfo(
       user: PromiseOrValue<string>,
       overrides?: CallOverrides
-    ): Promise<Squads.SquadStructOutput[]>;
+    ): Promise<Squads.UserSquadInfoStructOutput[]>;
 
     grantRole(
       role: PromiseOrValue<BytesLike>,

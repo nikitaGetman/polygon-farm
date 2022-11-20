@@ -5,6 +5,7 @@ import { BigNumber, BigNumberish } from 'ethers';
 import { useMemo } from 'react';
 import { useAccount } from 'wagmi';
 import { useStakingContract } from './contracts/useStakingContract';
+import { useConnectWallet } from './useConnectWallet';
 import { useNotification } from './useNotification';
 import { SAVR_BALANCE_REQUEST, SAV_BALANCE_REQUEST } from './useTokenBalance';
 import { TOKENS, useTokens } from './useTokens';
@@ -26,6 +27,8 @@ export const useStaking = () => {
   const stakingContract = useStakingContract();
   const { success, error } = useNotification();
   const tokens = useTokens();
+
+  const { connect } = useConnectWallet();
 
   const stakingPlans = useQuery([STAKING_PLANS_REQUEST], async () => {
     return await stakingContract.getStakingPlans();
@@ -109,7 +112,10 @@ export const useStaking = () => {
   const subscribe = useMutation(
     [STAKING_SUBSCRIBE_MUTATION],
     async (planId: number) => {
-      if (!account) return;
+      if (!account) {
+        connect();
+        return;
+      }
 
       const stakingPlan = activeStakingPlans[planId];
 
@@ -151,7 +157,10 @@ export const useStaking = () => {
       isToken2: boolean;
       referrer?: string;
     }) => {
-      if (!account) return;
+      if (!account) {
+        connect();
+        return;
+      }
 
       await tokens.increaseAllowanceIfRequired.mutateAsync({
         token: isToken2 ? TOKENS.SAVR : TOKENS.SAV,

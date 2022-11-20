@@ -25,6 +25,12 @@ contract Squads is ISquads, AccessControl {
         bool isActive;
     }
 
+    struct UserSquadInfo {
+        Squad squadStatus;
+        SquadPlan plan;
+        address[] members;
+    }
+
     SquadPlan[] public plans;
     mapping(uint256 => mapping(address => Squad)) private userSubscriptions;
     mapping(uint256 => mapping(address => address[])) private squadMembers;
@@ -154,17 +160,21 @@ contract Squads is ISquads, AccessControl {
     function getUserSquadInfo(uint256 planId, address user)
         public
         view
-        returns (Squad memory)
+        returns (UserSquadInfo memory)
     {
-        return userSubscriptions[planId][user];
+        Squad memory squadStatus = userSubscriptions[planId][user];
+        SquadPlan memory plan = plans[planId];
+        address[] memory members = squadMembers[planId][user];
+
+        return UserSquadInfo(squadStatus, plan, members);
     }
 
     function getUserSquadsInfo(address user)
         public
         view
-        returns (Squad[] memory)
+        returns (UserSquadInfo[] memory)
     {
-        Squad[] memory squadsInfo = new Squad[](plans.length);
+        UserSquadInfo[] memory squadsInfo = new UserSquadInfo[](plans.length);
 
         for (uint256 i = 0; i < plans.length; i++) {
             squadsInfo[i] = getUserSquadInfo(i, user);
