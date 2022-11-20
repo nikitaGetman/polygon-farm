@@ -28,7 +28,7 @@ const colors = {
   turquoise: '#2d969a',
   blue: '#1adce2',
   red: '#c95b5b',
-  grey: {
+  gray: {
     200: '#4d6655',
   },
   bgGreen: {
@@ -37,18 +37,14 @@ const colors = {
     800: '#192219',
     900: '#0B200B',
   },
-  // headerBg: 'rgba(12, 34, 14, 0.2)',
   headerBg: '#1b3925e3',
 };
 
 const semanticTokens = {
   colors: {
     error: 'red',
-
-    // success: 'green.500',
     primary: 'green.400',
     secondary: 'green.100',
-
     stakingHeader: 'rgb(13, 146, 58, 0.5)',
   },
   sizes: {

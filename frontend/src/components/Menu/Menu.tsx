@@ -23,9 +23,11 @@ import { ReactComponent as RocketIcon } from '@/assets/images/icons/rocket.svg';
 import { ReactComponent as WalletIcon } from '@/assets/images/icons/wallet.svg';
 import { ReactComponent as TabletIcon } from '@/assets/images/icons/tablet.svg';
 import { useStaking } from '@/hooks/useStaking';
+import { useReferralManager } from '@/hooks/useReferralManager';
 
 export const Menu = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) => {
   const { hasEndingSubscription } = useStaking();
+  const { hasEndingReferralSubscription } = useReferralManager();
   const navigate = useNavigate();
 
   const handleNavigate = useCallback(
@@ -66,7 +68,13 @@ export const Menu = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => void
             hasAlert={hasEndingSubscription}
             textAlert={hasEndingSubscription ? 'Check your subscription!' : undefined}
           />
-          <NavMenuItem text="Team" icon={<StarsIcon />} onClick={() => handleNavigate('/squads')} />
+          <NavMenuItem
+            text="Team"
+            icon={<StarsIcon />}
+            onClick={() => handleNavigate('/team')}
+            hasAlert={hasEndingReferralSubscription}
+            textAlert={hasEndingReferralSubscription ? 'Check your levels' : undefined}
+          />
           <NavMenuItem text="Play everyday" icon={<GameboyIcon />} />
           <NavMenuItem
             text="Lottery"
@@ -123,7 +131,7 @@ const NavMenuItem = ({
           <Flex alignItems="center">
             <Text as="span" position="relative" textStyle="menuDefault">
               {text}
-              {hasAlert && (
+              {hasAlert ? (
                 <Circle
                   as="span"
                   size="10px"
@@ -132,15 +140,15 @@ const NavMenuItem = ({
                   right="-10px"
                   top="-3px"
                 />
-              )}
+              ) : null}
             </Text>
-            {textAlert && (
+            {textAlert ? (
               <Text color="red" ml="25px" position="relative" textStyle="textBold">
                 {textAlert}
               </Text>
-            )}
+            ) : null}
           </Flex>
-          {subtitle && <Text textStyle="text1">{subtitle}</Text>}
+          {subtitle ? <Text textStyle="text1">{subtitle}</Text> : null}
         </Flex>
       </Flex>
     </Link>

@@ -6,9 +6,9 @@
   align-items: center;
   padding: 13px 0;
 
-  background-color: var(--chakra-colors-headerBg);
-  border-bottom: 1px solid rgba(var(--chakra-colors-white), 0.5);
-  backdrop-filter: blur(7.5px);
+  background: rgba(12, 34, 14, 0.9);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.5);
+  backdrop-filter: blur(10px);
 
   position: sticky;
   top: 0;

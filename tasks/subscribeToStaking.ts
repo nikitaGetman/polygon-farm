@@ -13,7 +13,8 @@ task("subscribe-to-staking", "Subscribe to staking plan")
     const token = await ethers.getContract<Token1>("Token1", account);
     const tx = await token.approve(staking.address, subscriptionCost);
     await tx.wait();
-    await staking.subscribe(taskArgs.planId);
+    const subscribeTx = await staking.subscribe(taskArgs.planId);
+    await subscribeTx.wait();
     console.log(
       `Account (${taskArgs.account}) subscribed to staking plan (${taskArgs.planId})`
     );

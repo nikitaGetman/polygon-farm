@@ -69,6 +69,52 @@ const _abi = [
     inputs: [
       {
         internalType: "address",
+        name: "userAddress",
+        type: "address",
+      },
+      {
+        internalType: "uint256",
+        name: "level",
+        type: "uint256",
+      },
+    ],
+    name: "getUserReferralsByLevel",
+    outputs: [
+      {
+        components: [
+          {
+            internalType: "address",
+            name: "referralAddress",
+            type: "address",
+          },
+          {
+            internalType: "uint256",
+            name: "level",
+            type: "uint256",
+          },
+          {
+            internalType: "uint256",
+            name: "activationDate",
+            type: "uint256",
+          },
+          {
+            internalType: "bool",
+            name: "isReferralSubscriptionActive",
+            type: "bool",
+          },
+        ],
+        internalType: "struct IReferralManager.Referral[]",
+        name: "",
+        type: "tuple[]",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
         name: "user",
         type: "address",
       },

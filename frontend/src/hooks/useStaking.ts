@@ -1,4 +1,5 @@
-import { tryToGetError } from '@/utils/error';
+import { tryToGetErrorData } from '@/utils/error';
+import { getReadableAmount } from '@/utils/number';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { BigNumber, BigNumberish } from 'ethers';
 import { useMemo } from 'react';
@@ -15,7 +16,7 @@ const STAKING_SUBSCRIBE_MUTATION = 'staking-subscribe';
 const STAKING_DEPOSIT_MUTATION = 'staking-deposit';
 const STAKING_CLAIM_MUTATION = 'staking-claim';
 
-const SUBSCRIPTION_ENDING_NOTIFICATION = 15 * 24 * 60 * 60; // 15 days in seconds
+const STAKING_SUBSCRIPTION_ENDING_NOTIFICATION = 15 * 24 * 60 * 60; // 15 days in seconds
 const REFETCH_REWARD_INTERVAL = 30000; // 30 secs
 
 export const useStaking = () => {
@@ -62,7 +63,8 @@ export const useStaking = () => {
             const currentTime = Date.now() / 1000;
             const isSubscriptionEnding =
               isSubscribed &&
-              (subscribedTill?.toNumber() || 0) - currentTime < SUBSCRIPTION_ENDING_NOTIFICATION;
+              (subscribedTill?.toNumber() || 0) - currentTime <
+                STAKING_SUBSCRIPTION_ENDING_NOTIFICATION;
 
             const stakes = userStakes.data?.[index];
 
@@ -94,6 +96,16 @@ export const useStaking = () => {
     [activeStakingPlans]
   );
 
+  const tvl = useMemo(() => {
+    return stakingPlans.data?.reduce(
+      (acc, plan) => acc.add(plan.currentToken1Locked).add(plan.currentToken2Locked),
+      BigNumber.from(0)
+    );
+  }, [stakingPlans]);
+  const totalClaimed = useMemo(() => {
+    return stakingPlans.data?.reduce((acc, plan) => acc.add(plan.totalClaimed), BigNumber.from(0));
+  }, [stakingPlans]);
+
   const subscribe = useMutation(
     [STAKING_SUBSCRIBE_MUTATION],
     async (planId: number) => {
@@ -107,17 +119,21 @@ export const useStaking = () => {
         spender: stakingContract.address,
         requiredAmount: stakingPlan.subscriptionCost,
       });
-      await stakingContract.subscribe(planId);
+      const txHash = await stakingContract.subscribe(planId);
+      success({
+        title: 'Success',
+        description: `Subscribed to ${planId + 1} staking plan`,
+        txHash,
+      });
     },
     {
       onSuccess: () => {
         queryClient.invalidateQueries({ queryKey: [USER_STAKING_INFO_REQUEST] });
         queryClient.invalidateQueries({ queryKey: [SAV_BALANCE_REQUEST] });
-        success('Subscribed!');
       },
       onError: (err) => {
-        const errMessage = tryToGetError(err);
-        error(errMessage);
+        const errData = tryToGetErrorData(err);
+        error(errData);
       },
     }
   );
@@ -144,7 +160,14 @@ export const useStaking = () => {
         requiredAmount: amount,
       });
 
-      await stakingContract.deposit({ planId, amount, isToken2, referrer });
+      const txHash = await stakingContract.deposit({ planId, amount, isToken2, referrer });
+      success({
+        title: 'Success',
+        description: `You deposited ${getReadableAmount(amount)} ${
+          isToken2 ? 'SAVR' : 'SAV'
+        } tokens in ${planId + 1} staking plan`,
+        txHash,
+      });
     },
     {
       onSuccess: () => {
@@ -153,11 +176,10 @@ export const useStaking = () => {
         queryClient.invalidateQueries({ queryKey: [USER_STAKES_REQUEST] });
         queryClient.invalidateQueries({ queryKey: [SAV_BALANCE_REQUEST] });
         queryClient.invalidateQueries({ queryKey: [SAVR_BALANCE_REQUEST] });
-        success('Deposit sent!');
       },
       onError: (err) => {
-        const errMessage = tryToGetError(err);
-        error(errMessage);
+        const errData = tryToGetErrorData(err);
+        error(errData);
       },
     }
   );
@@ -165,7 +187,8 @@ export const useStaking = () => {
   const withdraw = useMutation(
     [STAKING_CLAIM_MUTATION],
     async ({ planId, stakeId }: { planId: number; stakeId: number }) => {
-      await stakingContract.withdraw(planId, stakeId);
+      const txHash = await stakingContract.withdraw(planId, stakeId);
+      success({ title: 'Success', description: 'Rewards claimed', txHash });
     },
     {
       onSuccess: () => {
@@ -173,11 +196,10 @@ export const useStaking = () => {
         queryClient.invalidateQueries({ queryKey: [USER_STAKING_INFO_REQUEST] });
         queryClient.invalidateQueries({ queryKey: [USER_STAKES_REQUEST] });
         queryClient.invalidateQueries({ queryKey: [SAV_BALANCE_REQUEST] });
-        success('Rewards claimed!');
       },
       onError: (err) => {
-        const errMessage = tryToGetError(err);
-        error(errMessage);
+        const errData = tryToGetErrorData(err);
+        error(errData);
       },
     }
   );
@@ -192,5 +214,7 @@ export const useStaking = () => {
     deposit,
     withdraw,
     stakingContract,
+    tvl,
+    totalClaimed,
   };
 };

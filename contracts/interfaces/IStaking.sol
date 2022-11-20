@@ -80,4 +80,6 @@ interface IStaking {
         external
         view
         returns (bool);
+
+    function hasAnySubscription(address user) external view returns (bool);
 }

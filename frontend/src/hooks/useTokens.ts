@@ -1,3 +1,4 @@
+import { tryToGetErrorData } from '@/utils/error';
 import { useMutation } from '@tanstack/react-query';
 import { BigNumber, BigNumberish, ethers } from 'ethers';
 import { useSavContract } from './contracts/useSavContract';
@@ -36,13 +37,14 @@ export const useTokens = () => {
       const allowAmount = allow || ethers.constants.MaxUint256;
 
       if (allowance.lt(requiredAmount)) {
-        await tokenContract.approve(spender, BigNumber.from(allowAmount));
-        success('Approved!');
+        const txHash = await tokenContract.approve(spender, BigNumber.from(allowAmount));
+        success({ title: 'Approved!', txHash });
       }
     },
     {
-      onError: () => {
-        error('Something went wrong!');
+      onError: (err) => {
+        const errData = tryToGetErrorData(err);
+        error(errData);
       },
     }
   );

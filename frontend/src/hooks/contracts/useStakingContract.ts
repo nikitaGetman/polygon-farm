@@ -1,22 +1,7 @@
 import { Staking } from '@/types';
-import { BigNumber, BigNumberish, ethers } from 'ethers';
-import { useAccount, useContract, useProvider, useSigner } from 'wagmi';
+import { BigNumberish, ethers } from 'ethers';
+import { useContract, useProvider, useSigner } from 'wagmi';
 import { ContractsEnum, useContractAbi } from './useContractAbi';
-import { useSavContract } from './useSavContract';
-import { useSavRContract } from './useSavRContract';
-
-// type StakingPlan = {
-//   isActive: boolean;
-//   profitPercent: BigNumber;
-//   stakingDuration: BigNumber;
-//   subscriptionCost: BigNumber;
-//   subscriptionDuration: BigNumber;
-//   totalClaimed: BigNumber;
-//   totalStakedToken1: BigNumber;
-//   totalStakedToken2: BigNumber;
-//   totalStakesToken1No: BigNumber;
-//   totalStakesToken2No: BigNumber;
-// };
 
 export enum StakingEvent {
   Staked = 'Staked',
@@ -50,14 +35,16 @@ export const useStakingContract = () => {
     return contract.getUserStakesWithRewards(planId, address);
   };
 
-  const subscribe = async (planId: number) => {
+  const subscribe = async (planId: number): Promise<string> => {
     const tx = await contract.subscribe(planId);
     await tx.wait();
+    return tx.hash;
   };
 
-  const withdraw = async (planId: number, stakeId: number) => {
+  const withdraw = async (planId: number, stakeId: number): Promise<string> => {
     const tx = await contract.withdraw(planId, stakeId);
     await tx.wait();
+    return tx.hash;
   };
 
   const deposit = async ({
@@ -70,7 +57,7 @@ export const useStakingContract = () => {
     amount: BigNumberish;
     isToken2: boolean;
     referrer?: string;
-  }): Promise<void> => {
+  }): Promise<string> => {
     // TODO: what if call this method unauthorized
     const tx = await contract.deposit(
       planId,
@@ -79,6 +66,7 @@ export const useStakingContract = () => {
       referrer || ethers.constants.AddressZero
     );
     await tx.wait();
+    return tx.hash;
   };
 
   return {

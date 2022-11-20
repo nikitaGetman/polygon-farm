@@ -3,22 +3,24 @@ export function getErrorMessage(error: unknown) {
   return String(error);
 }
 
-export function tryToGetError(error: unknown) {
+export function tryToGetErrorData(error: unknown): { title: string; description?: string } {
   const message = getErrorMessage(error);
 
-  if (message.includes('user rejected transaction')) return 'Rejected by user';
+  if (message.includes('user rejected transaction'))
+    return { title: 'Failed', description: 'Rejected by user' };
 
   const hasReadableError = message.includes('reverted with reason string ');
 
-  const errorReg = /reverted with reason string '(?<data>[\w|\s|\d]*)'/gm;
+  const errorReg = /reverted with reason string '(?<data>[^']*)'/gm;
+
   let errorMessage = 'Something went wrong';
   if (hasReadableError) {
     const res = Array.from(message.matchAll(errorReg));
 
-    if (res && res[0][1]) {
+    if (res && res[0] && res[0][1]) {
       errorMessage = `Error: ${res[0][1]}`;
     }
   }
 
-  return errorMessage;
+  return { title: 'Transaction failed', description: errorMessage };
 }

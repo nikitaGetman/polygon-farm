@@ -5,6 +5,7 @@ import {
   Button,
   Checkbox,
   CloseButton,
+  Flex,
   Link,
   Menu,
   MenuButton,
@@ -19,18 +20,20 @@ import {
   Spacer,
   Text,
 } from '@chakra-ui/react';
-import { BigNumberish } from 'ethers';
+import { BigNumberish, ethers } from 'ethers';
 import { Link as RouterLink } from 'react-router-dom';
 import { ReactComponent as ChevronDownIcon } from '@/assets/images/icons/chevron-down.svg';
 import { getReadableDuration } from '@/utils/time';
 import { InputAmount } from '../ui/InputAmount/InputAmount';
 import { useSavBalance, useSavRBalance } from '@/hooks/useTokenBalance';
 import { bigNumberToString } from '@/utils/number';
+import { ReactComponent as SavIcon } from '@/assets/images/sav_icon.svg';
+import { ReactComponent as SavrIcon } from '@/assets/images/savr_icon.svg';
 
 const MIN_STAKE_LIMIT = 0.1;
 
 const boxCommonStyles = {
-  bgColor: 'grey.200',
+  bgColor: 'gray.200',
   borderRadius: 'sm',
   display: 'flex',
   justifyContent: 'space-between',
@@ -59,8 +62,6 @@ export const StakingModal: FC<StakingModalProps> = ({
   const { data: savBalance } = useSavBalance();
   const { data: savrBalance } = useSavRBalance();
 
-  const isStakeDisabled = !amount || amount < MIN_STAKE_LIMIT || !isAgreed;
-
   const handleStake = useCallback(() => {
     if (amount && amount >= MIN_STAKE_LIMIT) {
       onStake(token, amount);
@@ -68,6 +69,11 @@ export const StakingModal: FC<StakingModalProps> = ({
   }, [token, amount, onStake]);
 
   const balance = token === TOKENS.SAV ? savBalance : savrBalance;
+  const isStakeDisabled =
+    !amount ||
+    amount < MIN_STAKE_LIMIT ||
+    balance?.lt(ethers.utils.parseEther(`${amount || 0}`)) ||
+    !isAgreed;
 
   return (
     <Modal isCentered isOpen={true} onClose={onClose}>
@@ -80,14 +86,27 @@ export const StakingModal: FC<StakingModalProps> = ({
               variant="transparent"
               rightIcon={<ChevronDownIcon />}
               padding={0}
-              fontStyle="textBold"
+              textStyle="textBold"
               fontSize={26}
             >
-              Stake {token}
+              <Flex alignItems="center">
+                <Box width="40px">{token === TOKENS.SAV ? <SavIcon /> : <SavrIcon />}</Box>
+                <span>Stake {token}</span>
+              </Flex>
             </MenuButton>
             <MenuList>
-              <MenuItem onClick={() => setToken(TOKENS.SAV)}>Stake SAV</MenuItem>
-              <MenuItem onClick={() => setToken(TOKENS.SAVR)}>Stake SAVR</MenuItem>
+              <MenuItem onClick={() => setToken(TOKENS.SAV)}>
+                <Box mr="4px">
+                  <SavIcon width="24px" />
+                </Box>
+                <span>Stake SAV</span>
+              </MenuItem>
+              <MenuItem onClick={() => setToken(TOKENS.SAVR)}>
+                <Box mr="4px">
+                  <SavrIcon width="24px" />
+                </Box>
+                <span>Stake SAVR</span>
+              </MenuItem>
             </MenuList>
           </Menu>
           <CloseButton onClick={onClose} size="lg" />
@@ -115,7 +134,12 @@ export const StakingModal: FC<StakingModalProps> = ({
           </Box>
 
           <Box {...boxCommonStyles} p={5}>
-            <Checkbox isChecked={isAgreed} onChange={(e) => setIsAgreed(e.target.checked)}>
+            <Checkbox
+              isChecked={isAgreed}
+              borderColor="bgGreen.200"
+              colorScheme="green"
+              onChange={(e) => setIsAgreed(e.target.checked)}
+            >
               <Text fontSize="18px" ml={2}>
                 I have read, understand, and agree to the{' '}
                 <Link as={RouterLink} color="yellow.200" to="#">

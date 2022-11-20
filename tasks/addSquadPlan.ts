@@ -1,4 +1,5 @@
 import { task, types } from "hardhat/config";
+import { Squads } from "typechain-types";
 
 task("add-squad-plan", "Add squad plan")
   .addParam(
@@ -24,13 +25,18 @@ task("add-squad-plan", "Add squad plan")
   .setAction(async (taskArgs, { ethers, getNamedAccounts }) => {
     const { admin } = await getNamedAccounts();
     const adminSigner = await ethers.getSigner(admin);
-    const squadsManager = await ethers.getContract("Squads", adminSigner);
+    const squadsManager = await ethers.getContract<Squads>(
+      "Squads",
+      adminSigner
+    );
 
-    await squadsManager.addPlan(
+    const tx = await squadsManager.addPlan(
       taskArgs.subscriptionCost,
       taskArgs.reward,
       taskArgs.stakingThreshold,
       taskArgs.squadSize,
       taskArgs.stakingPlanId
     );
+
+    await tx.wait();
   });

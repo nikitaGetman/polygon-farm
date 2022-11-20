@@ -26,7 +26,8 @@ task("grant-role", "Grant role for account in contract with access control")
     );
 
     const role = await contract[taskArgs.role]?.();
-    await contract.grantRole(role, accountAddr);
+    const tx = await contract.grantRole(role, accountAddr);
+    await tx.wait();
 
     console.log(
       `[AccessControl] Role ${taskArgs.role} granted to ${taskArgs.account}`
@@ -58,7 +59,8 @@ task("revoke-role", "Revoke role from account for contract with access control")
     );
 
     const role = await contract[taskArgs.role]?.();
-    await contract.revokeRole(role, accountAddr);
+    const tx = await contract.revokeRole(role, accountAddr);
+    await tx.wait();
 
     console.log(
       `[AccessControl] Role ${taskArgs.role} revoked to ${taskArgs.account}`

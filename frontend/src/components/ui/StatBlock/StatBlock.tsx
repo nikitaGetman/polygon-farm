@@ -10,7 +10,6 @@ export const StatBlock = ({ children, width }: { width?: string; children: any }
       borderRadius="sm"
       padding="16px 0"
       minW="200px"
-      h="100%"
       w={width}
     >
       <Center flexDir="column">{children}</Center>

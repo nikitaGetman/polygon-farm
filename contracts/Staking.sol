@@ -232,8 +232,12 @@ contract Staking is IStaking, AccessControl {
         require(plan.isActive, "Staking plan is not active");
 
         token1.burnFrom(_msgSender(), plan.subscriptionCost);
+        uint256 startDate = users[planId][_msgSender()].subscription <
+            getTimestamp()
+            ? getTimestamp()
+            : users[planId][_msgSender()].subscription;
         users[planId][_msgSender()].subscription =
-            getTimestamp() +
+            startDate +
             plan.subscriptionDuration *
             TIME_STEP;
 
@@ -390,6 +394,15 @@ contract Staking is IStaking, AccessControl {
         returns (bool)
     {
         return users[planId][user].subscription > getTimestamp();
+    }
+
+    function hasAnySubscription(address user) public view returns (bool) {
+        for (uint256 i = 0; i < stakingPlans.length; i++) {
+            if (hasSubscription(i, user)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     // --------- Administrative functions ---------

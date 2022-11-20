@@ -86,10 +86,17 @@ contract Squads is ISquads, AccessControl {
         subscriptionToken.burnFrom(subscriber, plan.subscriptionCost);
 
         squadMembers[planId][subscriber] = new address[](0);
-        userSubscriptions[planId][subscriber]
-            .subscription = _getSubscriptionEnd();
 
-        emit Subscribed(subscriber, planId, block.timestamp);
+        uint256 startDate = userSubscriptions[planId][subscriber].subscription <
+            getTimestamp()
+            ? getTimestamp()
+            : userSubscriptions[planId][subscriber].subscription;
+        userSubscriptions[planId][subscriber].subscription =
+            startDate +
+            SUBSCRIPTION_PERIOD_DAYS *
+            1 days;
+
+        emit Subscribed(subscriber, planId, startDate);
     }
 
     function tryToAddMember(
@@ -236,8 +243,8 @@ contract Squads is ISquads, AccessControl {
         return false;
     }
 
-    function _getSubscriptionEnd() internal view returns (uint256) {
-        return block.timestamp + SUBSCRIPTION_PERIOD_DAYS * 1 days;
+    function getTimestamp() public view returns (uint256) {
+        return block.timestamp;
     }
 
     function _isSenderAuthorized(address contractAddress)

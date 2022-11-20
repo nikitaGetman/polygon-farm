@@ -38,9 +38,10 @@ export const useSavContract = () => {
     return contract.allowance(owner, spender);
   };
 
-  const approve = async (spender: string, amount: BigNumber): Promise<void> => {
+  const approve = async (spender: string, amount: BigNumber): Promise<string> => {
     const tx = await contract.approve(spender, amount);
     await tx.wait();
+    return tx.hash;
   };
 
   return {
