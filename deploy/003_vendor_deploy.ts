@@ -1,6 +1,7 @@
 import { HardhatRuntimeEnvironment } from "hardhat/types";
 import { DeployFunction } from "hardhat-deploy/types";
 import { VENDOR_SELL_SWAP_RATE } from "../config";
+import { ERC20, Token1 } from "typechain-types";
 
 const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   const { deployments, getNamedAccounts, ethers, network } = hre;
@@ -16,13 +17,13 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
       : await deployments.get("ERC20BurnableMock");
   const swapRate = VENDOR_SELL_SWAP_RATE;
 
-  const token1 = await ethers.getContract("Token1");
+  const token1 = await ethers.getContract<Token1>("Token1");
 
   if (!changeTokenContract) {
     throw new Error("VendorSell incorrect config for change token");
   }
 
-  const changeToken = await ethers.getContractAt(
+  const changeToken = await ethers.getContractAt<ERC20>(
     changeTokenContract.abi,
     changeTokenContract.address
   );
@@ -43,13 +44,15 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   const vendorPoolSigner = await ethers.getSigner(vendorPool);
   const vendorChangePoolSigner = await ethers.getSigner(vendorChangePool);
 
-  await token1
+  let tx = await token1
     .connect(vendorPoolSigner)
     .approve(vendorSell.address, ethers.constants.MaxUint256);
+  await tx.wait();
 
-  await changeToken
+  tx = await changeToken
     .connect(vendorChangePoolSigner)
     .approve(vendorSell.address, ethers.constants.MaxUint256);
+  await tx.wait();
 };
 func.tags = ["VendorSell"];
 func.dependencies = ["Token1"];

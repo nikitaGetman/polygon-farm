@@ -17819,6 +17819,285 @@
             }
           ]
         },
+        "Helper": {
+          "address": "0x147cB027a382D947150079f65E2741cE4FaB3eC0",
+          "abi": [
+            {
+              "inputs": [
+                {
+                  "internalType": "address",
+                  "name": "_token1",
+                  "type": "address"
+                },
+                {
+                  "internalType": "address",
+                  "name": "_token2",
+                  "type": "address"
+                },
+                {
+                  "internalType": "address",
+                  "name": "_staking",
+                  "type": "address"
+                },
+                {
+                  "internalType": "address",
+                  "name": "_referralManager",
+                  "type": "address"
+                },
+                {
+                  "internalType": "address",
+                  "name": "_squads",
+                  "type": "address"
+                }
+              ],
+              "stateMutability": "nonpayable",
+              "type": "constructor"
+            },
+            {
+              "anonymous": false,
+              "inputs": [
+                {
+                  "indexed": true,
+                  "internalType": "address",
+                  "name": "previousOwner",
+                  "type": "address"
+                },
+                {
+                  "indexed": true,
+                  "internalType": "address",
+                  "name": "newOwner",
+                  "type": "address"
+                }
+              ],
+              "name": "OwnershipTransferred",
+              "type": "event"
+            },
+            {
+              "inputs": [
+                {
+                  "internalType": "address",
+                  "name": "user",
+                  "type": "address"
+                },
+                {
+                  "internalType": "uint256",
+                  "name": "level",
+                  "type": "uint256"
+                }
+              ],
+              "name": "getUserReferralsFullInfoByLevel",
+              "outputs": [
+                {
+                  "components": [
+                    {
+                      "internalType": "address",
+                      "name": "referralAddress",
+                      "type": "address"
+                    },
+                    {
+                      "internalType": "uint256",
+                      "name": "level",
+                      "type": "uint256"
+                    },
+                    {
+                      "internalType": "uint256",
+                      "name": "activationDate",
+                      "type": "uint256"
+                    },
+                    {
+                      "internalType": "uint256",
+                      "name": "token1Balance",
+                      "type": "uint256"
+                    },
+                    {
+                      "internalType": "uint256",
+                      "name": "token2Balance",
+                      "type": "uint256"
+                    },
+                    {
+                      "internalType": "bool",
+                      "name": "isReferralSubscriptionActive",
+                      "type": "bool"
+                    },
+                    {
+                      "internalType": "bool",
+                      "name": "isStakingSubscriptionActive",
+                      "type": "bool"
+                    }
+                  ],
+                  "internalType": "struct Helper.ReferralFullInfo[]",
+                  "name": "",
+                  "type": "tuple[]"
+                }
+              ],
+              "stateMutability": "view",
+              "type": "function"
+            },
+            {
+              "inputs": [],
+              "name": "owner",
+              "outputs": [
+                {
+                  "internalType": "address",
+                  "name": "",
+                  "type": "address"
+                }
+              ],
+              "stateMutability": "view",
+              "type": "function"
+            },
+            {
+              "inputs": [],
+              "name": "referralManager",
+              "outputs": [
+                {
+                  "internalType": "contract IReferralManager",
+                  "name": "",
+                  "type": "address"
+                }
+              ],
+              "stateMutability": "view",
+              "type": "function"
+            },
+            {
+              "inputs": [],
+              "name": "renounceOwnership",
+              "outputs": [],
+              "stateMutability": "nonpayable",
+              "type": "function"
+            },
+            {
+              "inputs": [],
+              "name": "squads",
+              "outputs": [
+                {
+                  "internalType": "contract ISquads",
+                  "name": "",
+                  "type": "address"
+                }
+              ],
+              "stateMutability": "view",
+              "type": "function"
+            },
+            {
+              "inputs": [],
+              "name": "staking",
+              "outputs": [
+                {
+                  "internalType": "contract IStaking",
+                  "name": "",
+                  "type": "address"
+                }
+              ],
+              "stateMutability": "view",
+              "type": "function"
+            },
+            {
+              "inputs": [],
+              "name": "token1",
+              "outputs": [
+                {
+                  "internalType": "contract IERC20",
+                  "name": "",
+                  "type": "address"
+                }
+              ],
+              "stateMutability": "view",
+              "type": "function"
+            },
+            {
+              "inputs": [],
+              "name": "token2",
+              "outputs": [
+                {
+                  "internalType": "contract IERC20",
+                  "name": "",
+                  "type": "address"
+                }
+              ],
+              "stateMutability": "view",
+              "type": "function"
+            },
+            {
+              "inputs": [
+                {
+                  "internalType": "address",
+                  "name": "newOwner",
+                  "type": "address"
+                }
+              ],
+              "name": "transferOwnership",
+              "outputs": [],
+              "stateMutability": "nonpayable",
+              "type": "function"
+            },
+            {
+              "inputs": [
+                {
+                  "internalType": "address",
+                  "name": "_referralManager",
+                  "type": "address"
+                }
+              ],
+              "name": "updateReferralManager",
+              "outputs": [],
+              "stateMutability": "nonpayable",
+              "type": "function"
+            },
+            {
+              "inputs": [
+                {
+                  "internalType": "address",
+                  "name": "_squads",
+                  "type": "address"
+                }
+              ],
+              "name": "updateSquads",
+              "outputs": [],
+              "stateMutability": "nonpayable",
+              "type": "function"
+            },
+            {
+              "inputs": [
+                {
+                  "internalType": "address",
+                  "name": "_staking",
+                  "type": "address"
+                }
+              ],
+              "name": "updateStaking",
+              "outputs": [],
+              "stateMutability": "nonpayable",
+              "type": "function"
+            },
+            {
+              "inputs": [
+                {
+                  "internalType": "address",
+                  "name": "_token1",
+                  "type": "address"
+                }
+              ],
+              "name": "updateToken1",
+              "outputs": [],
+              "stateMutability": "nonpayable",
+              "type": "function"
+            },
+            {
+              "inputs": [
+                {
+                  "internalType": "address",
+                  "name": "_token2",
+                  "type": "address"
+                }
+              ],
+              "name": "updateToken2",
+              "outputs": [],
+              "stateMutability": "nonpayable",
+              "type": "function"
+            }
+          ]
+        },
         "Lottery": {
           "address": "0xcBd1422EF22E69709D1161f37Efd92d541bBF564",
           "abi": [
@@ -18967,7 +19246,7 @@
           ]
         },
         "ReferralManager": {
-          "address": "0xea1A47a80382Be3D830a605e9F3Ab5c11FbdE91a",
+          "address": "0x6Ab4b2db6D34ad1DC7F2e38bb975E7E7c7D44306",
           "abi": [
             {
               "inputs": [
@@ -19291,6 +19570,19 @@
               "type": "function"
             },
             {
+              "inputs": [],
+              "name": "getTimestamp",
+              "outputs": [
+                {
+                  "internalType": "uint256",
+                  "name": "",
+                  "type": "uint256"
+                }
+              ],
+              "stateMutability": "view",
+              "type": "function"
+            },
+            {
               "inputs": [
                 {
                   "internalType": "address",
@@ -19325,6 +19617,11 @@
                   "type": "address"
                 },
                 {
+                  "internalType": "uint256[10]",
+                  "name": "activeLevels",
+                  "type": "uint256[10]"
+                },
+                {
                   "internalType": "uint256",
                   "name": "totalDividends",
                   "type": "uint256"
@@ -19335,13 +19632,28 @@
                   "type": "uint256"
                 },
                 {
-                  "internalType": "uint256",
+                  "internalType": "address[]",
                   "name": "referrals_1_lvl",
-                  "type": "uint256"
+                  "type": "address[]"
+                },
+                {
+                  "internalType": "uint256[10]",
+                  "name": "refCount",
+                  "type": "uint256[10]"
                 },
                 {
                   "internalType": "uint256",
                   "name": "totalReferrals",
+                  "type": "uint256"
+                },
+                {
+                  "internalType": "bool",
+                  "name": "isActiveSubscriber",
+                  "type": "bool"
+                },
+                {
+                  "internalType": "uint256",
+                  "name": "activationDate",
                   "type": "uint256"
                 }
               ],
@@ -19361,31 +19673,7 @@
                   "type": "uint256"
                 }
               ],
-              "name": "getUserLvlReferralsCount",
-              "outputs": [
-                {
-                  "internalType": "uint256",
-                  "name": "",
-                  "type": "uint256"
-                }
-              ],
-              "stateMutability": "view",
-              "type": "function"
-            },
-            {
-              "inputs": [
-                {
-                  "internalType": "address",
-                  "name": "userAddress",
-                  "type": "address"
-                },
-                {
-                  "internalType": "uint256",
-                  "name": "currentLevel",
-                  "type": "uint256"
-                }
-              ],
-              "name": "getUserReferrals",
+              "name": "getUserReferralsByLevel",
               "outputs": [
                 {
                   "components": [
@@ -19398,9 +19686,19 @@
                       "internalType": "uint256",
                       "name": "level",
                       "type": "uint256"
+                    },
+                    {
+                      "internalType": "uint256",
+                      "name": "activationDate",
+                      "type": "uint256"
+                    },
+                    {
+                      "internalType": "bool",
+                      "name": "isReferralSubscriptionActive",
+                      "type": "bool"
                     }
                   ],
-                  "internalType": "struct ReferralManager.Referral[]",
+                  "internalType": "struct IReferralManager.Referral[]",
                   "name": "",
                   "type": "tuple[]"
                 }
@@ -19748,6 +20046,25 @@
                   "internalType": "address",
                   "name": "user",
                   "type": "address"
+                }
+              ],
+              "name": "userHasAnySubscription",
+              "outputs": [
+                {
+                  "internalType": "bool",
+                  "name": "",
+                  "type": "bool"
+                }
+              ],
+              "stateMutability": "view",
+              "type": "function"
+            },
+            {
+              "inputs": [
+                {
+                  "internalType": "address",
+                  "name": "user",
+                  "type": "address"
                 },
                 {
                   "internalType": "uint256",
@@ -19769,7 +20086,7 @@
           ]
         },
         "Squads": {
-          "address": "0x44C067E11330AabCf741a25682991eaf92969A89",
+          "address": "0x6E8A9D00ef5fB522DDD880195F36471B68BdA0c5",
           "abi": [
             {
               "inputs": [
@@ -20147,6 +20464,19 @@
                   "internalType": "int256",
                   "name": "",
                   "type": "int256"
+                }
+              ],
+              "stateMutability": "view",
+              "type": "function"
+            },
+            {
+              "inputs": [],
+              "name": "getTimestamp",
+              "outputs": [
+                {
+                  "internalType": "uint256",
+                  "name": "",
+                  "type": "uint256"
                 }
               ],
               "stateMutability": "view",
@@ -20681,7 +21011,7 @@
           ]
         },
         "Staking": {
-          "address": "0xDda3efaee57f1B6CECBAF9ea9844D4f32ddEC7C1",
+          "address": "0x65Ce665C07CE70A47da8A7d79D891dd3f522DE7C",
           "abi": [
             {
               "inputs": [
@@ -21459,6 +21789,25 @@
               "name": "grantRole",
               "outputs": [],
               "stateMutability": "nonpayable",
+              "type": "function"
+            },
+            {
+              "inputs": [
+                {
+                  "internalType": "address",
+                  "name": "user",
+                  "type": "address"
+                }
+              ],
+              "name": "hasAnySubscription",
+              "outputs": [
+                {
+                  "internalType": "bool",
+                  "name": "",
+                  "type": "bool"
+                }
+              ],
+              "stateMutability": "view",
               "type": "function"
             },
             {

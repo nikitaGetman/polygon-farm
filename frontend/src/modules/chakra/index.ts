@@ -28,7 +28,7 @@ const colors = {
   turquoise: '#2d969a',
   blue: '#1adce2',
   red: '#c95b5b',
-  grey: {
+  gray: {
     200: '#4d6655',
   },
   bgGreen: {

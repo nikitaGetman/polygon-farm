@@ -42,14 +42,16 @@ export const ReferralsTable: FC<ReferralsTableProps> = ({ referrals }) => {
         <Thead>
           <Tr>
             <Th width="90px">Level</Th>
-            <Th textAlign="center">Wallet</Th>
+            <Th textAlign="center" width="360px">
+              Wallet
+            </Th>
             <Th textAlign="center">Start Date</Th>
-            <Th textAlign="center">
+            <Th textAlign="center" width="200px">
               <Flex alignItems="center" justifyContent="center">
                 Have SAV <SavIcon width="24px" />
               </Flex>
             </Th>
-            <Th textAlign="center">
+            <Th textAlign="center" width="200px">
               <Flex alignItems="center" justifyContent="center">
                 Have SAVR <SavrIcon width="24px" />
               </Flex>

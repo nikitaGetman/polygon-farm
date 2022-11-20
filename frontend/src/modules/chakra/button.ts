@@ -5,7 +5,7 @@ const commonProps = {
   color: 'white',
 
   _disabled: {
-    bgColor: 'grey.200',
+    bgColor: 'gray.200',
     opacity: 1,
     color: 'rgba(255, 255, 255, 0.5)',
     border: 'none',
@@ -24,7 +24,7 @@ const primary = defineStyle({
   _hover: {
     boxShadow: '0px 4px 10px rgba(107, 201, 91, 0.5)',
     _disabled: {
-      background: 'grey.200',
+      background: 'gray.200',
       boxShadow: 'none',
     },
   },
@@ -47,7 +47,7 @@ const primaryShadowed = defineStyle({
   },
 
   _disabled: {
-    color: 'grey.200',
+    color: 'gray.200',
     boxShadow: '0px 6px 11px rgba(0, 0, 0, 0.25)',
   },
 });
@@ -60,12 +60,24 @@ const inputTransparent = {
   _hover: {
     color: 'green.100',
     _disabled: {
-      color: 'grey.200',
+      color: 'gray.200',
     },
   },
 
   _disabled: {
-    color: 'grey.200',
+    color: 'gray.200',
+  },
+};
+const inputTransparentWhite = {
+  ...inputTransparent,
+
+  color: 'white',
+
+  _hover: {
+    color: 'gray.400',
+    _disabled: {
+      color: 'gray.200',
+    },
   },
 };
 
@@ -80,7 +92,7 @@ const secondary = defineStyle({
     bgColor: 'green.400',
     borderColor: 'green.400',
     _disabled: {
-      background: 'grey.200',
+      background: 'gray.200',
     },
   },
 });
@@ -97,7 +109,7 @@ const outlined = defineStyle({
     bgColor: 'green.400',
     borderColor: 'green.400',
     _disabled: {
-      background: 'grey.200',
+      background: 'gray.200',
     },
   },
 });
@@ -113,7 +125,7 @@ const outlinedWhite = defineStyle({
     bgColor: 'green.400',
     borderColor: 'green.400',
     _disabled: {
-      background: 'grey.200',
+      background: 'gray.200',
     },
   },
 });
@@ -138,6 +150,7 @@ export const buttonTheme = defineStyleConfig({
     outlinedWhite,
     link,
     inputTransparent,
+    inputTransparentWhite,
   },
   sizes: {
     lg: {

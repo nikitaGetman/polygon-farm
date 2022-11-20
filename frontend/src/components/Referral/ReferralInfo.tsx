@@ -145,16 +145,16 @@ export const ReferralInfo: FC<ReferralInfoProps> = ({ isPageView }) => {
 
           {isPageView && isConnected && (referrer || localReferrer) ? (
             <Flex alignItems="center" mb="15px">
-              <Text textStyle="button" mr="15px" color={referrer ? 'green.400' : 'grey.200'}>
+              <Text textStyle="button" mr="15px" color={referrer ? 'green.400' : 'gray.200'}>
                 Your leader:
               </Text>
-              <Text textStyle="button" color={referrer ? 'white' : 'grey.200'}>
+              <Text textStyle="button" color={referrer ? 'white' : 'gray.200'}>
                 {trimAddress(referrer || localReferrer)}
               </Text>
             </Flex>
           ) : null}
 
-          <Text textStyle="button" color={referralLink ? 'green.400' : 'grey.200'} mb="10px">
+          <Text textStyle="button" color={referralLink ? 'green.400' : 'gray.200'} mb="10px">
             Your referral link:
           </Text>
           <Flex>

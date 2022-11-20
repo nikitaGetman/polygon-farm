@@ -52,17 +52,20 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
     gasPrice: ethers.BigNumber.from(10).pow(10),
   });
 
-  await token2.approve(lottery.address, ethers.constants.MaxUint256);
+  let tx = await token2.approve(lottery.address, ethers.constants.MaxUint256);
+  await tx.wait();
 
   const isWhitelisted = await token2.isAddressInWhiteList(referralRewardPool);
   if (!isWhitelisted) {
     const adminSigner = await ethers.getSigner(admin);
-    await token2.connect(adminSigner).addToWhitelist([referralRewardPool]);
+    tx = await token2.connect(adminSigner).addToWhitelist([referralRewardPool]);
+    await tx.wait();
   }
 
   const ticketToken = await ethers.getContract<Ticket>("Ticket", admin);
   const MinterRole = await ticketToken.MINTER_ROLE();
-  await ticketToken.grantRole(MinterRole, lottery.address);
+  tx = await ticketToken.grantRole(MinterRole, lottery.address);
+  await tx.wait();
 
   // IMPORTANT: Manually add lottery contract to coordinator
 };

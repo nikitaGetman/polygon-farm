@@ -33,7 +33,7 @@ import { ReactComponent as SavrIcon } from '@/assets/images/savr_icon.svg';
 const MIN_STAKE_LIMIT = 0.1;
 
 const boxCommonStyles = {
-  bgColor: 'grey.200',
+  bgColor: 'gray.200',
   borderRadius: 'sm',
   display: 'flex',
   justifyContent: 'space-between',
@@ -134,7 +134,12 @@ export const StakingModal: FC<StakingModalProps> = ({
           </Box>
 
           <Box {...boxCommonStyles} p={5}>
-            <Checkbox isChecked={isAgreed} onChange={(e) => setIsAgreed(e.target.checked)}>
+            <Checkbox
+              isChecked={isAgreed}
+              borderColor="bgGreen.200"
+              colorScheme="green"
+              onChange={(e) => setIsAgreed(e.target.checked)}
+            >
               <Text fontSize="18px" ml={2}>
                 I have read, understand, and agree to the{' '}
                 <Link as={RouterLink} color="yellow.200" to="#">

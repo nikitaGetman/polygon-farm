@@ -23,7 +23,7 @@ export const useContractAbi = ({
   const { chain } = useNetwork();
 
   //   TODO: fix TS return type
-  let chainId = ChainIDsEnum.hardhat; // default is hardhat chain ID
+  let chainId = ChainIDsEnum.mumbai; // default is hardhat chain ID
   if (chain?.network === 'maticmum') {
     chainId = ChainIDsEnum.mumbai;
   }

@@ -18,7 +18,7 @@ const baseStyle = definePartsStyle({
 const main = {
   field: {
     border: 'none',
-    bgColor: 'grey.200',
+    bgColor: 'gray.200',
     borderRadius: 'sm',
   },
 };

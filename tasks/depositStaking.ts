@@ -22,12 +22,13 @@ task("deposit-staking", "Deposit to staking contract")
     const token = await ethers.getContract(tokenName, account);
     const tx = await token.approve(staking.address, taskArgs.amount);
     await tx.wait();
-    await staking.deposit(
+    const depositTx = await staking.deposit(
       taskArgs.planId,
       taskArgs.amount,
       taskArgs.isToken2,
       taskArgs.referrer
     );
+    await depositTx.wait();
     console.log(
       `Account (${taskArgs.account}) deposited ${taskArgs.amount} Tokens to staking contract (${taskArgs.contract})`
     );

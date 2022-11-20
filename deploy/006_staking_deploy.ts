@@ -41,23 +41,27 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
     }
 
     const token1 = await ethers.getContract<Token1>("Token1", stakingPool);
-    await token1.approve(staking.address, ethers.constants.MaxUint256);
+    let tx = await token1.approve(staking.address, ethers.constants.MaxUint256);
+    await tx.wait();
     const token2 = await ethers.getContract<Token2>("Token2", admin);
-    await token2.addToWhitelist([staking.address]);
+    tx = await token2.addToWhitelist([staking.address]);
+    await tx.wait();
 
     if (!network.live) {
       const stakingContract = await ethers.getContract<Staking>(
         "Staking",
         admin
       );
-      await stakingContract.updateTimeStep(60);
+      tx = await stakingContract.updateTimeStep(60);
+      await tx.wait();
 
       // Transfer 1 000 000 tokens to reward pool for testing
       console.log("Transfer 100 000 SAV tokens from SAV holder to reward pool");
       const holderSigner = await ethers.getSigner(token1Holder);
-      await token1
+      tx = await token1
         .connect(holderSigner)
         .transfer(stakingPool, BigNumber.from(10).pow(23));
+      await tx.wait();
     }
   }
 };

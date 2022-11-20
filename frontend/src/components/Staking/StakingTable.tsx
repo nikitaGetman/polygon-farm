@@ -60,12 +60,18 @@ export const StakingTable = ({
       <Table>
         <Thead>
           <Tr>
-            <Th>Deposit</Th>
-            <Th>Start Date</Th>
-            <Th>End Date</Th>
-            <Th>Period</Th>
-            <Th isNumeric>Interest</Th>
-            <Th>Status</Th>
+            <Th width="260px" pl="50px">
+              Deposit
+            </Th>
+            <Th width="200px" textAlign="center">
+              Start Date
+            </Th>
+            <Th width="200px" textAlign="center">
+              End Date
+            </Th>
+            <Th textAlign="center">Period</Th>
+            <Th textAlign="center">Interest</Th>
+            <Th textAlign="center">Status</Th>
           </Tr>
         </Thead>
         <Tbody>
@@ -86,13 +92,13 @@ export const StakingTable = ({
                   )}
                 </Flex>
               </Td>
-              <Td>{getLocalDateTimeString(stake.timeStart)}</Td>
-              <Td>{getLocalDateTimeString(stake.timeEnd)}</Td>
-              <Td>{getReadableDuration(period)}</Td>
-              <Td>
+              <Td textAlign="center">{getLocalDateTimeString(stake.timeStart)}</Td>
+              <Td textAlign="center">{getLocalDateTimeString(stake.timeEnd)}</Td>
+              <Td textAlign="center">{getReadableDuration(period)}</Td>
+              <Td textAlign="center">
                 {bigNumberToString(stake.isToken2 ? stake.profit : stake.profit.add(stake.amount))}
               </Td>
-              <Td>
+              <Td textAlign="center">
                 {status === StakeStatusEnum.Ready ? (
                   <Button
                     size="sm"

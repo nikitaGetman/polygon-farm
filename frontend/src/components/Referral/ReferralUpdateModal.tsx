@@ -48,7 +48,7 @@ export const ReferralUpdateModal: FC<ReferralUpdateModalProps> = ({
           </Text>
           <Input
             variant="secondary"
-            placeholder="0x Leader address"
+            placeholder="0x..."
             value={localLeader}
             onChange={(e) => setLocalLeader(e.target.value)}
           />

@@ -12,7 +12,8 @@ task("snapshot", "Create snapshot token 1")
       await ethers.getSigner(accountAddr)
     );
 
-    await token.snapshot();
+    const tx = await token.snapshot();
+    await tx.wait();
     const id = await token.snapshotCount();
 
     console.log(`[Token1] Snapshot ${id} created for Token1`);

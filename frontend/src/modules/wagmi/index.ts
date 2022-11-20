@@ -2,14 +2,13 @@ import { createClient, configureChains, chain } from 'wagmi';
 import { publicProvider } from 'wagmi/providers/public';
 import { alchemyProvider } from 'wagmi/providers/alchemy';
 import { jsonRpcProvider } from 'wagmi/providers/jsonRpc';
-// import { InjectedConnector } from 'wagmi/connectors/injected';
 import { MetaMaskConnector } from 'wagmi/connectors/metaMask';
 import { WalletConnectConnector } from 'wagmi/connectors/walletConnect';
 
 window.Buffer = require('buffer/').Buffer;
 
 const { chains, provider, webSocketProvider } = configureChains(
-  [chain.hardhat, chain.polygonMumbai, chain.polygon],
+  [chain.polygonMumbai, chain.hardhat, chain.polygon],
   [
     alchemyProvider({ apiKey: process.env.REACT_APP_ALCHEMY_KEY }),
     publicProvider(),
@@ -40,8 +39,8 @@ export const walletConnector = new WalletConnectConnector({
 });
 
 const client = createClient({
-  // autoConnect: false,
-  autoConnect: true,
+  autoConnect: false,
+  // autoConnect: true,
   connectors: [metamaskConnector, walletConnector],
   provider,
   webSocketProvider,

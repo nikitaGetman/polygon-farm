@@ -1,4 +1,5 @@
 import { ReferralManager } from '@/types';
+import { BigNumber } from 'ethers';
 import { useContract, useProvider, useSigner } from 'wagmi';
 import { ContractsEnum, useContractAbi } from './useContractAbi';
 
@@ -38,6 +39,12 @@ export const useReferralContract = () => {
     return tx.hash;
   };
 
+  const claimRewards = async (amount: BigNumber) => {
+    const tx = await contract.claimDividends(amount);
+    await tx.wait();
+    return tx.hash;
+  };
+
   return {
     contract,
     address: contractAddress,
@@ -45,5 +52,6 @@ export const useReferralContract = () => {
     subscribeToLevel,
     subscribeToAllLevels,
     setMyReferrer,
+    claimRewards,
   };
 };

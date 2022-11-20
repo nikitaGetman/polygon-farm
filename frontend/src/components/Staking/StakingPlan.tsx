@@ -49,7 +49,7 @@ export const StakingPlan: FC<StakingPlanProps> = ({
   return (
     <Box borderRadius="md" overflow="hidden" filter="drop-shadow(0px 4px 4px rgba(0, 0, 0, 0.25))">
       <Flex
-        bgColor={isSubscribed ? 'green.10050' : 'grey.200'}
+        bgColor={isSubscribed ? 'green.10050' : 'gray.200'}
         p="10px 20px"
         justifyContent="flex-end"
         height="60px"
@@ -85,6 +85,12 @@ export const StakingPlan: FC<StakingPlanProps> = ({
           <Button onClick={onSubscribe} isLoading={isSubscribeLoading} size="md" ml={5}>
             Activate
           </Button>
+        ) : null}
+
+        {isSubscribed && !isSubscriptionEnding ? (
+          <Text textStyle="textSansBold" mr="46px">
+            Active
+          </Text>
         ) : null}
       </Flex>
 

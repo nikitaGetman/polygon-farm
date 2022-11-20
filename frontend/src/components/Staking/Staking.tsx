@@ -184,7 +184,7 @@ export const Staking: FC<StakingProps> = ({ isPageView }) => {
                 key={index}
                 height="210px"
                 borderRadius="md"
-                startColor="grey.200"
+                startColor="gray.200"
                 endColor="bgGreen.200"
               />
             ))

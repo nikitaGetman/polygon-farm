@@ -1,4 +1,5 @@
 import { tryToGetErrorData } from '@/utils/error';
+import { getReadableAmount } from '@/utils/number';
 import { createReferralLink } from '@/utils/referralLinks';
 import { useMutation } from '@tanstack/react-query';
 import { BigNumber, ethers } from 'ethers';
@@ -6,7 +7,7 @@ import { useMemo } from 'react';
 import { useAccount, useQuery, useQueryClient } from 'wagmi';
 import { useReferralContract } from './contracts/useReferralContract';
 import { useNotification } from './useNotification';
-import { SAV_BALANCE_REQUEST } from './useTokenBalance';
+import { SAVR_BALANCE_REQUEST, SAV_BALANCE_REQUEST } from './useTokenBalance';
 import { TOKENS, useTokens } from './useTokens';
 
 export const USER_REFERRAL_INFO_REQUEST = 'user-referrals-info';
@@ -16,6 +17,7 @@ const ALL_LEVELS_SUBSCRIPTION_COST_REQUEST = 'get-all-referral-levels-subscripti
 const SUBSCRIBE_TO_REFERRAL_LEVEL_MUTATION = 'subscribe-to-referral-level';
 const SUBSCRIBE_TO_ALL_REFERRAL_LEVELS_MUTATION = 'subscribe-to-all-referral-levels';
 const SET_MY_REFERRER_MUTATION = 'set-my-referrer';
+const CLAIM_REFERRAL_REWARDS_MUTATION = 'claim-referral-rewards';
 
 export const REFERRAL_SUBSCRIPTION_ENDING_NOTIFICATION = 15 * 24 * 60 * 60; // 15 days in seconds
 
@@ -155,6 +157,30 @@ export const useReferralManager = () => {
     }
   );
 
+  const claimDividends = useMutation(
+    [CLAIM_REFERRAL_REWARDS_MUTATION],
+    async (rewards: BigNumber) => {
+      if (!account) return;
+
+      const txHash = await referralContract.claimRewards(rewards);
+      success({
+        title: 'Success',
+        description: `${getReadableAmount(rewards)} SAVR rewards claimed`,
+        txHash,
+      });
+    },
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries({ queryKey: [USER_REFERRAL_INFO_REQUEST] });
+        queryClient.invalidateQueries({ queryKey: [SAVR_BALANCE_REQUEST] });
+      },
+      onError: (err) => {
+        const errData = tryToGetErrorData(err);
+        error(errData);
+      },
+    }
+  );
+
   return {
     referralContract,
     userReferralInfo,
@@ -170,5 +196,6 @@ export const useReferralManager = () => {
     referrer,
     referralLink,
     setMyReferrer,
+    claimDividends,
   };
 };
