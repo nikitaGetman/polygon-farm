@@ -1,14 +1,15 @@
 import { tryToGetErrorData } from '@/utils/error';
 import { useMutation } from '@tanstack/react-query';
-import { BigNumber, ethers } from 'ethers';
+import { BigNumber } from 'ethers';
 import { useAccount, useQuery, useQueryClient } from 'wagmi';
 import { useSquadsContract } from './contracts/useSquadsContract';
 import { useConnectWallet } from './useConnectWallet';
+import { HELPER_USER_SQUADS_INFO_REQUEST } from './useHelper';
 import { useNotification } from './useNotification';
 import { SAV_BALANCE_REQUEST } from './useTokenBalance';
 import { TOKENS, useTokens } from './useTokens';
 
-export const USER_SQUADS_INFO_REQUEST = 'user-squads-info';
+const SQUAD_PLANS_REQUEST = 'squad-plans-info';
 const SUBSCRIBE_TO_SQUADS_PLAN_MUTATION = 'subscribe-to-squads';
 
 export const SQUADS_SUBSCRIPTION_ENDING_NOTIFICATION = 15 * 24 * 60 * 60; // 15 days in seconds
@@ -24,8 +25,8 @@ export const useSquads = () => {
 
   const subscriptionPeriodDays = 365;
 
-  const userSquadsInfoRequest = useQuery([USER_SQUADS_INFO_REQUEST, { account }], async () => {
-    return await squadsContract.getUserSquadsInfo(account || ethers.constants.AddressZero);
+  const squadPlansRequest = useQuery([SQUAD_PLANS_REQUEST], async () => {
+    return await squadsContract.getPlans();
   });
 
   const subscribe = useMutation(
@@ -37,7 +38,7 @@ export const useSquads = () => {
       }
 
       const subscriptionCost =
-        userSquadsInfoRequest?.data?.[planId].plan.subscriptionCost || BigNumber.from(10).pow(18); // fallback to 100 tokens;
+        squadPlansRequest?.data?.[planId].subscriptionCost || BigNumber.from(10).pow(18); // fallback to 100 tokens;
 
       await tokens.increaseAllowanceIfRequired.mutateAsync({
         token: TOKENS.SAV,
@@ -51,7 +52,7 @@ export const useSquads = () => {
     },
     {
       onSuccess: () => {
-        queryClient.invalidateQueries({ queryKey: [USER_SQUADS_INFO_REQUEST] });
+        queryClient.invalidateQueries({ queryKey: [HELPER_USER_SQUADS_INFO_REQUEST] });
         queryClient.invalidateQueries({ queryKey: [SAV_BALANCE_REQUEST] });
       },
       onError: (err) => {
@@ -63,7 +64,6 @@ export const useSquads = () => {
 
   return {
     squadsContract,
-    userSquadsInfoRequest,
     subscribe,
     subscriptionPeriodDays,
   };

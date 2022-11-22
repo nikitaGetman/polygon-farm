@@ -140,14 +140,12 @@ contract Staking is IStaking, AccessControl {
 
             // Squads
             if (address(squadsManager) != address(0)) {
-                try
-                    squadsManager.tryToAddMember(
-                        planId,
-                        userReferrer,
-                        _msgSender(),
-                        depositAmount
-                    )
-                {} catch {}
+                squadsManager.tryToAddMember(
+                    planId,
+                    userReferrer,
+                    _msgSender(),
+                    depositAmount
+                );
             }
         }
         emit Staked(

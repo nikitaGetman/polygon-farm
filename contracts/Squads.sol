@@ -11,26 +11,6 @@ import "./interfaces/IReferralManager.sol";
 contract Squads is ISquads, AccessControl {
     uint256 public SUBSCRIPTION_PERIOD_DAYS = 365;
 
-    struct Squad {
-        uint256 subscription; // when subscription expire
-        uint256 squadsFilled; // how much squads user filled
-    }
-
-    struct SquadPlan {
-        uint256 subscriptionCost;
-        uint256 reward; // reward for filling full squad
-        uint256 stakingThreshold; // min staking amount that member should do
-        uint256 squadSize; // amount of squad members
-        uint256 stakingPlanId;
-        bool isActive;
-    }
-
-    struct UserSquadInfo {
-        Squad squadStatus;
-        SquadPlan plan;
-        address[] members;
-    }
-
     SquadPlan[] public plans;
     mapping(uint256 => mapping(address => Squad)) private userSubscriptions;
     mapping(uint256 => mapping(address => address[])) private squadMembers;
@@ -111,19 +91,15 @@ contract Squads is ISquads, AccessControl {
         address member,
         uint256 amount
     ) public returns (bool) {
-        require(referrer != address(0), "Referrer is zero address");
-        require(member != address(0), "Member is zero address");
+        if (referrer == address(0) || member == address(0)) return false;
 
         int256 _planId = getSufficientPlanIdByStakingAmount(amount);
 
-        require(_planId >= 0);
+        if (_planId < 0) return false;
 
         uint256 planId = uint256(_planId);
 
-        require(
-            plans[planId].stakingPlanId == stakingPlanId,
-            "Staking plan do not match"
-        );
+        if (plans[planId].stakingPlanId != stakingPlanId) return false;
 
         if (
             _isSenderAuthorized(_msgSender()) &&
@@ -157,30 +133,12 @@ contract Squads is ISquads, AccessControl {
     }
 
     // --------- Helper functions ---------
-    function getUserSquadInfo(uint256 planId, address user)
+    function getUserSubscription(address user, uint256 planId)
         public
         view
-        returns (UserSquadInfo memory)
+        returns (Squad memory)
     {
-        Squad memory squadStatus = userSubscriptions[planId][user];
-        SquadPlan memory plan = plans[planId];
-        address[] memory members = squadMembers[planId][user];
-
-        return UserSquadInfo(squadStatus, plan, members);
-    }
-
-    function getUserSquadsInfo(address user)
-        public
-        view
-        returns (UserSquadInfo[] memory)
-    {
-        UserSquadInfo[] memory squadsInfo = new UserSquadInfo[](plans.length);
-
-        for (uint256 i = 0; i < plans.length; i++) {
-            squadsInfo[i] = getUserSquadInfo(i, user);
-        }
-
-        return squadsInfo;
+        return userSubscriptions[planId][user];
     }
 
     function getUserSquadMembers(address user, uint256 planId)
@@ -189,6 +147,10 @@ contract Squads is ISquads, AccessControl {
         returns (address[] memory)
     {
         return squadMembers[planId][user];
+    }
+
+    function getPlan(uint256 planId) public view returns (SquadPlan memory) {
+        return plans[planId];
     }
 
     function getPlans() public view returns (SquadPlan[] memory) {
@@ -205,12 +167,12 @@ contract Squads is ISquads, AccessControl {
             user
         );
 
-        for (uint256 i = 0; i < stakes.length; i++) {
+        for (uint256 i = stakes.length; i > 0; i--) {
             // stake is: active + in SAV token + sufficient amount
             if (
-                stakes[i].timeEnd > block.timestamp &&
-                !stakes[i].isToken2 &&
-                getSufficientPlanIdByStakingAmount(stakes[i].amount) ==
+                stakes[i - 1].timeEnd > block.timestamp &&
+                !stakes[i - 1].isToken2 &&
+                getSufficientPlanIdByStakingAmount(stakes[i - 1].amount) ==
                 int256(planId)
             ) return true;
         }

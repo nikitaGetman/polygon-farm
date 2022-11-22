@@ -16,13 +16,8 @@ export const useSquadsContract = () => {
     signerOrProvider: signer || provider,
   }) as Squads;
 
-  const getUserSquadsInfo = async (address: string) => {
-    const res = await contract.getUserSquadsInfo(address);
-    return res.map(({ plan, squadStatus, members }) => ({
-      plan: { ...plan },
-      squadStatus: { ...squadStatus },
-      members,
-    }));
+  const getPlans = async () => {
+    return await contract.getPlans();
   };
 
   const subscribe = async (planId: number) => {
@@ -34,7 +29,7 @@ export const useSquadsContract = () => {
   return {
     contract,
     address: contractAddress,
-    getUserSquadsInfo,
     subscribe,
+    getPlans,
   };
 };

@@ -446,6 +446,181 @@
               "type": "function"
             },
             {
+              "inputs": [
+                {
+                  "internalType": "uint256",
+                  "name": "planId",
+                  "type": "uint256"
+                },
+                {
+                  "internalType": "address",
+                  "name": "user",
+                  "type": "address"
+                }
+              ],
+              "name": "getUserSquadInfo",
+              "outputs": [
+                {
+                  "components": [
+                    {
+                      "components": [
+                        {
+                          "internalType": "uint256",
+                          "name": "subscription",
+                          "type": "uint256"
+                        },
+                        {
+                          "internalType": "uint256",
+                          "name": "squadsFilled",
+                          "type": "uint256"
+                        }
+                      ],
+                      "internalType": "struct ISquads.Squad",
+                      "name": "squadStatus",
+                      "type": "tuple"
+                    },
+                    {
+                      "components": [
+                        {
+                          "internalType": "uint256",
+                          "name": "subscriptionCost",
+                          "type": "uint256"
+                        },
+                        {
+                          "internalType": "uint256",
+                          "name": "reward",
+                          "type": "uint256"
+                        },
+                        {
+                          "internalType": "uint256",
+                          "name": "stakingThreshold",
+                          "type": "uint256"
+                        },
+                        {
+                          "internalType": "uint256",
+                          "name": "squadSize",
+                          "type": "uint256"
+                        },
+                        {
+                          "internalType": "uint256",
+                          "name": "stakingPlanId",
+                          "type": "uint256"
+                        },
+                        {
+                          "internalType": "bool",
+                          "name": "isActive",
+                          "type": "bool"
+                        }
+                      ],
+                      "internalType": "struct ISquads.SquadPlan",
+                      "name": "plan",
+                      "type": "tuple"
+                    },
+                    {
+                      "internalType": "address[]",
+                      "name": "members",
+                      "type": "address[]"
+                    },
+                    {
+                      "internalType": "bool",
+                      "name": "userHasSufficientStaking",
+                      "type": "bool"
+                    }
+                  ],
+                  "internalType": "struct Helper.UserSquadInfo",
+                  "name": "",
+                  "type": "tuple"
+                }
+              ],
+              "stateMutability": "view",
+              "type": "function"
+            },
+            {
+              "inputs": [
+                {
+                  "internalType": "address",
+                  "name": "user",
+                  "type": "address"
+                }
+              ],
+              "name": "getUserSquadsInfo",
+              "outputs": [
+                {
+                  "components": [
+                    {
+                      "components": [
+                        {
+                          "internalType": "uint256",
+                          "name": "subscription",
+                          "type": "uint256"
+                        },
+                        {
+                          "internalType": "uint256",
+                          "name": "squadsFilled",
+                          "type": "uint256"
+                        }
+                      ],
+                      "internalType": "struct ISquads.Squad",
+                      "name": "squadStatus",
+                      "type": "tuple"
+                    },
+                    {
+                      "components": [
+                        {
+                          "internalType": "uint256",
+                          "name": "subscriptionCost",
+                          "type": "uint256"
+                        },
+                        {
+                          "internalType": "uint256",
+                          "name": "reward",
+                          "type": "uint256"
+                        },
+                        {
+                          "internalType": "uint256",
+                          "name": "stakingThreshold",
+                          "type": "uint256"
+                        },
+                        {
+                          "internalType": "uint256",
+                          "name": "squadSize",
+                          "type": "uint256"
+                        },
+                        {
+                          "internalType": "uint256",
+                          "name": "stakingPlanId",
+                          "type": "uint256"
+                        },
+                        {
+                          "internalType": "bool",
+                          "name": "isActive",
+                          "type": "bool"
+                        }
+                      ],
+                      "internalType": "struct ISquads.SquadPlan",
+                      "name": "plan",
+                      "type": "tuple"
+                    },
+                    {
+                      "internalType": "address[]",
+                      "name": "members",
+                      "type": "address[]"
+                    },
+                    {
+                      "internalType": "bool",
+                      "name": "userHasSufficientStaking",
+                      "type": "bool"
+                    }
+                  ],
+                  "internalType": "struct Helper.UserSquadInfo[]",
+                  "name": "",
+                  "type": "tuple[]"
+                }
+              ],
+              "stateMutability": "view",
+              "type": "function"
+            },
+            {
               "inputs": [],
               "name": "owner",
               "outputs": [
@@ -2899,6 +3074,57 @@
               "type": "function"
             },
             {
+              "inputs": [
+                {
+                  "internalType": "uint256",
+                  "name": "planId",
+                  "type": "uint256"
+                }
+              ],
+              "name": "getPlan",
+              "outputs": [
+                {
+                  "components": [
+                    {
+                      "internalType": "uint256",
+                      "name": "subscriptionCost",
+                      "type": "uint256"
+                    },
+                    {
+                      "internalType": "uint256",
+                      "name": "reward",
+                      "type": "uint256"
+                    },
+                    {
+                      "internalType": "uint256",
+                      "name": "stakingThreshold",
+                      "type": "uint256"
+                    },
+                    {
+                      "internalType": "uint256",
+                      "name": "squadSize",
+                      "type": "uint256"
+                    },
+                    {
+                      "internalType": "uint256",
+                      "name": "stakingPlanId",
+                      "type": "uint256"
+                    },
+                    {
+                      "internalType": "bool",
+                      "name": "isActive",
+                      "type": "bool"
+                    }
+                  ],
+                  "internalType": "struct ISquads.SquadPlan",
+                  "name": "",
+                  "type": "tuple"
+                }
+              ],
+              "stateMutability": "view",
+              "type": "function"
+            },
+            {
               "inputs": [],
               "name": "getPlans",
               "outputs": [
@@ -2935,7 +3161,7 @@
                       "type": "bool"
                     }
                   ],
-                  "internalType": "struct Squads.SquadPlan[]",
+                  "internalType": "struct ISquads.SquadPlan[]",
                   "name": "",
                   "type": "tuple[]"
                 }
@@ -2997,91 +3223,6 @@
             {
               "inputs": [
                 {
-                  "internalType": "uint256",
-                  "name": "planId",
-                  "type": "uint256"
-                },
-                {
-                  "internalType": "address",
-                  "name": "user",
-                  "type": "address"
-                }
-              ],
-              "name": "getUserSquadInfo",
-              "outputs": [
-                {
-                  "components": [
-                    {
-                      "components": [
-                        {
-                          "internalType": "uint256",
-                          "name": "subscription",
-                          "type": "uint256"
-                        },
-                        {
-                          "internalType": "uint256",
-                          "name": "squadsFilled",
-                          "type": "uint256"
-                        }
-                      ],
-                      "internalType": "struct Squads.Squad",
-                      "name": "squadStatus",
-                      "type": "tuple"
-                    },
-                    {
-                      "components": [
-                        {
-                          "internalType": "uint256",
-                          "name": "subscriptionCost",
-                          "type": "uint256"
-                        },
-                        {
-                          "internalType": "uint256",
-                          "name": "reward",
-                          "type": "uint256"
-                        },
-                        {
-                          "internalType": "uint256",
-                          "name": "stakingThreshold",
-                          "type": "uint256"
-                        },
-                        {
-                          "internalType": "uint256",
-                          "name": "squadSize",
-                          "type": "uint256"
-                        },
-                        {
-                          "internalType": "uint256",
-                          "name": "stakingPlanId",
-                          "type": "uint256"
-                        },
-                        {
-                          "internalType": "bool",
-                          "name": "isActive",
-                          "type": "bool"
-                        }
-                      ],
-                      "internalType": "struct Squads.SquadPlan",
-                      "name": "plan",
-                      "type": "tuple"
-                    },
-                    {
-                      "internalType": "address[]",
-                      "name": "members",
-                      "type": "address[]"
-                    }
-                  ],
-                  "internalType": "struct Squads.UserSquadInfo",
-                  "name": "",
-                  "type": "tuple"
-                }
-              ],
-              "stateMutability": "view",
-              "type": "function"
-            },
-            {
-              "inputs": [
-                {
                   "internalType": "address",
                   "name": "user",
                   "type": "address"
@@ -3109,75 +3250,31 @@
                   "internalType": "address",
                   "name": "user",
                   "type": "address"
+                },
+                {
+                  "internalType": "uint256",
+                  "name": "planId",
+                  "type": "uint256"
                 }
               ],
-              "name": "getUserSquadsInfo",
+              "name": "getUserSubscription",
               "outputs": [
                 {
                   "components": [
                     {
-                      "components": [
-                        {
-                          "internalType": "uint256",
-                          "name": "subscription",
-                          "type": "uint256"
-                        },
-                        {
-                          "internalType": "uint256",
-                          "name": "squadsFilled",
-                          "type": "uint256"
-                        }
-                      ],
-                      "internalType": "struct Squads.Squad",
-                      "name": "squadStatus",
-                      "type": "tuple"
+                      "internalType": "uint256",
+                      "name": "subscription",
+                      "type": "uint256"
                     },
                     {
-                      "components": [
-                        {
-                          "internalType": "uint256",
-                          "name": "subscriptionCost",
-                          "type": "uint256"
-                        },
-                        {
-                          "internalType": "uint256",
-                          "name": "reward",
-                          "type": "uint256"
-                        },
-                        {
-                          "internalType": "uint256",
-                          "name": "stakingThreshold",
-                          "type": "uint256"
-                        },
-                        {
-                          "internalType": "uint256",
-                          "name": "squadSize",
-                          "type": "uint256"
-                        },
-                        {
-                          "internalType": "uint256",
-                          "name": "stakingPlanId",
-                          "type": "uint256"
-                        },
-                        {
-                          "internalType": "bool",
-                          "name": "isActive",
-                          "type": "bool"
-                        }
-                      ],
-                      "internalType": "struct Squads.SquadPlan",
-                      "name": "plan",
-                      "type": "tuple"
-                    },
-                    {
-                      "internalType": "address[]",
-                      "name": "members",
-                      "type": "address[]"
+                      "internalType": "uint256",
+                      "name": "squadsFilled",
+                      "type": "uint256"
                     }
                   ],
-                  "internalType": "struct Squads.UserSquadInfo[]",
+                  "internalType": "struct ISquads.Squad",
                   "name": "",
-                  "type": "tuple[]"
+                  "type": "tuple"
                 }
               ],
               "stateMutability": "view",
@@ -9287,6 +9384,181 @@
               "type": "function"
             },
             {
+              "inputs": [
+                {
+                  "internalType": "uint256",
+                  "name": "planId",
+                  "type": "uint256"
+                },
+                {
+                  "internalType": "address",
+                  "name": "user",
+                  "type": "address"
+                }
+              ],
+              "name": "getUserSquadInfo",
+              "outputs": [
+                {
+                  "components": [
+                    {
+                      "components": [
+                        {
+                          "internalType": "uint256",
+                          "name": "subscription",
+                          "type": "uint256"
+                        },
+                        {
+                          "internalType": "uint256",
+                          "name": "squadsFilled",
+                          "type": "uint256"
+                        }
+                      ],
+                      "internalType": "struct ISquads.Squad",
+                      "name": "squadStatus",
+                      "type": "tuple"
+                    },
+                    {
+                      "components": [
+                        {
+                          "internalType": "uint256",
+                          "name": "subscriptionCost",
+                          "type": "uint256"
+                        },
+                        {
+                          "internalType": "uint256",
+                          "name": "reward",
+                          "type": "uint256"
+                        },
+                        {
+                          "internalType": "uint256",
+                          "name": "stakingThreshold",
+                          "type": "uint256"
+                        },
+                        {
+                          "internalType": "uint256",
+                          "name": "squadSize",
+                          "type": "uint256"
+                        },
+                        {
+                          "internalType": "uint256",
+                          "name": "stakingPlanId",
+                          "type": "uint256"
+                        },
+                        {
+                          "internalType": "bool",
+                          "name": "isActive",
+                          "type": "bool"
+                        }
+                      ],
+                      "internalType": "struct ISquads.SquadPlan",
+                      "name": "plan",
+                      "type": "tuple"
+                    },
+                    {
+                      "internalType": "address[]",
+                      "name": "members",
+                      "type": "address[]"
+                    },
+                    {
+                      "internalType": "bool",
+                      "name": "userHasSufficientStaking",
+                      "type": "bool"
+                    }
+                  ],
+                  "internalType": "struct Helper.UserSquadInfo",
+                  "name": "",
+                  "type": "tuple"
+                }
+              ],
+              "stateMutability": "view",
+              "type": "function"
+            },
+            {
+              "inputs": [
+                {
+                  "internalType": "address",
+                  "name": "user",
+                  "type": "address"
+                }
+              ],
+              "name": "getUserSquadsInfo",
+              "outputs": [
+                {
+                  "components": [
+                    {
+                      "components": [
+                        {
+                          "internalType": "uint256",
+                          "name": "subscription",
+                          "type": "uint256"
+                        },
+                        {
+                          "internalType": "uint256",
+                          "name": "squadsFilled",
+                          "type": "uint256"
+                        }
+                      ],
+                      "internalType": "struct ISquads.Squad",
+                      "name": "squadStatus",
+                      "type": "tuple"
+                    },
+                    {
+                      "components": [
+                        {
+                          "internalType": "uint256",
+                          "name": "subscriptionCost",
+                          "type": "uint256"
+                        },
+                        {
+                          "internalType": "uint256",
+                          "name": "reward",
+                          "type": "uint256"
+                        },
+                        {
+                          "internalType": "uint256",
+                          "name": "stakingThreshold",
+                          "type": "uint256"
+                        },
+                        {
+                          "internalType": "uint256",
+                          "name": "squadSize",
+                          "type": "uint256"
+                        },
+                        {
+                          "internalType": "uint256",
+                          "name": "stakingPlanId",
+                          "type": "uint256"
+                        },
+                        {
+                          "internalType": "bool",
+                          "name": "isActive",
+                          "type": "bool"
+                        }
+                      ],
+                      "internalType": "struct ISquads.SquadPlan",
+                      "name": "plan",
+                      "type": "tuple"
+                    },
+                    {
+                      "internalType": "address[]",
+                      "name": "members",
+                      "type": "address[]"
+                    },
+                    {
+                      "internalType": "bool",
+                      "name": "userHasSufficientStaking",
+                      "type": "bool"
+                    }
+                  ],
+                  "internalType": "struct Helper.UserSquadInfo[]",
+                  "name": "",
+                  "type": "tuple[]"
+                }
+              ],
+              "stateMutability": "view",
+              "type": "function"
+            },
+            {
               "inputs": [],
               "name": "owner",
               "outputs": [
@@ -11740,6 +12012,57 @@
               "type": "function"
             },
             {
+              "inputs": [
+                {
+                  "internalType": "uint256",
+                  "name": "planId",
+                  "type": "uint256"
+                }
+              ],
+              "name": "getPlan",
+              "outputs": [
+                {
+                  "components": [
+                    {
+                      "internalType": "uint256",
+                      "name": "subscriptionCost",
+                      "type": "uint256"
+                    },
+                    {
+                      "internalType": "uint256",
+                      "name": "reward",
+                      "type": "uint256"
+                    },
+                    {
+                      "internalType": "uint256",
+                      "name": "stakingThreshold",
+                      "type": "uint256"
+                    },
+                    {
+                      "internalType": "uint256",
+                      "name": "squadSize",
+                      "type": "uint256"
+                    },
+                    {
+                      "internalType": "uint256",
+                      "name": "stakingPlanId",
+                      "type": "uint256"
+                    },
+                    {
+                      "internalType": "bool",
+                      "name": "isActive",
+                      "type": "bool"
+                    }
+                  ],
+                  "internalType": "struct ISquads.SquadPlan",
+                  "name": "",
+                  "type": "tuple"
+                }
+              ],
+              "stateMutability": "view",
+              "type": "function"
+            },
+            {
               "inputs": [],
               "name": "getPlans",
               "outputs": [
@@ -11776,7 +12099,7 @@
                       "type": "bool"
                     }
                   ],
-                  "internalType": "struct Squads.SquadPlan[]",
+                  "internalType": "struct ISquads.SquadPlan[]",
                   "name": "",
                   "type": "tuple[]"
                 }
@@ -11838,42 +12161,6 @@
             {
               "inputs": [
                 {
-                  "internalType": "uint256",
-                  "name": "planId",
-                  "type": "uint256"
-                },
-                {
-                  "internalType": "address",
-                  "name": "user",
-                  "type": "address"
-                }
-              ],
-              "name": "getUserSquadInfo",
-              "outputs": [
-                {
-                  "components": [
-                    {
-                      "internalType": "uint256",
-                      "name": "subscription",
-                      "type": "uint256"
-                    },
-                    {
-                      "internalType": "uint256",
-                      "name": "squadsFilled",
-                      "type": "uint256"
-                    }
-                  ],
-                  "internalType": "struct Squads.Squad",
-                  "name": "",
-                  "type": "tuple"
-                }
-              ],
-              "stateMutability": "view",
-              "type": "function"
-            },
-            {
-              "inputs": [
-                {
                   "internalType": "address",
                   "name": "user",
                   "type": "address"
@@ -11901,9 +12188,14 @@
                   "internalType": "address",
                   "name": "user",
                   "type": "address"
+                },
+                {
+                  "internalType": "uint256",
+                  "name": "planId",
+                  "type": "uint256"
                 }
               ],
-              "name": "getUserSquadsInfo",
+              "name": "getUserSubscription",
               "outputs": [
                 {
                   "components": [
@@ -11918,9 +12210,9 @@
                       "type": "uint256"
                     }
                   ],
-                  "internalType": "struct Squads.Squad[]",
+                  "internalType": "struct ISquads.Squad",
                   "name": "",
-                  "type": "tuple[]"
+                  "type": "tuple"
                 }
               ],
               "stateMutability": "view",
@@ -17918,7 +18210,7 @@
           ]
         },
         "Helper": {
-          "address": "0x147cB027a382D947150079f65E2741cE4FaB3eC0",
+          "address": "0x8B67d58BF402Bfe832A48fd6C302d19d528c182e",
           "abi": [
             {
               "inputs": [
@@ -20184,7 +20476,7 @@
           ]
         },
         "Squads": {
-          "address": "0x6E8A9D00ef5fB522DDD880195F36471B68BdA0c5",
+          "address": "0xE8947329d65ADBd76630c740BfC4FC3fd50d2459",
           "abi": [
             {
               "inputs": [
@@ -20598,17 +20890,66 @@
                 {
                   "components": [
                     {
-                      "internalType": "uint256",
-                      "name": "subscription",
-                      "type": "uint256"
+                      "components": [
+                        {
+                          "internalType": "uint256",
+                          "name": "subscription",
+                          "type": "uint256"
+                        },
+                        {
+                          "internalType": "uint256",
+                          "name": "squadsFilled",
+                          "type": "uint256"
+                        }
+                      ],
+                      "internalType": "struct Squads.Squad",
+                      "name": "squadStatus",
+                      "type": "tuple"
                     },
                     {
-                      "internalType": "uint256",
-                      "name": "squadsFilled",
-                      "type": "uint256"
+                      "components": [
+                        {
+                          "internalType": "uint256",
+                          "name": "subscriptionCost",
+                          "type": "uint256"
+                        },
+                        {
+                          "internalType": "uint256",
+                          "name": "reward",
+                          "type": "uint256"
+                        },
+                        {
+                          "internalType": "uint256",
+                          "name": "stakingThreshold",
+                          "type": "uint256"
+                        },
+                        {
+                          "internalType": "uint256",
+                          "name": "squadSize",
+                          "type": "uint256"
+                        },
+                        {
+                          "internalType": "uint256",
+                          "name": "stakingPlanId",
+                          "type": "uint256"
+                        },
+                        {
+                          "internalType": "bool",
+                          "name": "isActive",
+                          "type": "bool"
+                        }
+                      ],
+                      "internalType": "struct Squads.SquadPlan",
+                      "name": "plan",
+                      "type": "tuple"
+                    },
+                    {
+                      "internalType": "address[]",
+                      "name": "members",
+                      "type": "address[]"
                     }
                   ],
-                  "internalType": "struct Squads.Squad",
+                  "internalType": "struct Squads.UserSquadInfo",
                   "name": "",
                   "type": "tuple"
                 }
@@ -20653,17 +20994,66 @@
                 {
                   "components": [
                     {
-                      "internalType": "uint256",
-                      "name": "subscription",
-                      "type": "uint256"
+                      "components": [
+                        {
+                          "internalType": "uint256",
+                          "name": "subscription",
+                          "type": "uint256"
+                        },
+                        {
+                          "internalType": "uint256",
+                          "name": "squadsFilled",
+                          "type": "uint256"
+                        }
+                      ],
+                      "internalType": "struct Squads.Squad",
+                      "name": "squadStatus",
+                      "type": "tuple"
                     },
                     {
-                      "internalType": "uint256",
-                      "name": "squadsFilled",
-                      "type": "uint256"
+                      "components": [
+                        {
+                          "internalType": "uint256",
+                          "name": "subscriptionCost",
+                          "type": "uint256"
+                        },
+                        {
+                          "internalType": "uint256",
+                          "name": "reward",
+                          "type": "uint256"
+                        },
+                        {
+                          "internalType": "uint256",
+                          "name": "stakingThreshold",
+                          "type": "uint256"
+                        },
+                        {
+                          "internalType": "uint256",
+                          "name": "squadSize",
+                          "type": "uint256"
+                        },
+                        {
+                          "internalType": "uint256",
+                          "name": "stakingPlanId",
+                          "type": "uint256"
+                        },
+                        {
+                          "internalType": "bool",
+                          "name": "isActive",
+                          "type": "bool"
+                        }
+                      ],
+                      "internalType": "struct Squads.SquadPlan",
+                      "name": "plan",
+                      "type": "tuple"
+                    },
+                    {
+                      "internalType": "address[]",
+                      "name": "members",
+                      "type": "address[]"
                     }
                   ],
-                  "internalType": "struct Squads.Squad[]",
+                  "internalType": "struct Squads.UserSquadInfo[]",
                   "name": "",
                   "type": "tuple[]"
                 }
@@ -21109,7 +21499,7 @@
           ]
         },
         "Staking": {
-          "address": "0x65Ce665C07CE70A47da8A7d79D891dd3f522DE7C",
+          "address": "0xF4D949E8b56235244c2661c8a9C51D7A6868C34c",
           "abi": [
             {
               "inputs": [

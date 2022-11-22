@@ -19,7 +19,9 @@ export const Dashboard = () => {
       <Box mt="150px" mb="30px">
         <ReferralInfo />
       </Box>
-      <Box mb="300px">{/* <SquadsList /> */}</Box>
+      <Box mb="300px">
+        <SquadsList />
+      </Box>
     </Container>
   );
 };

@@ -12,8 +12,10 @@ type SquadItemProps = {
   squadsFilled?: BigNumber;
   subscriptionCost: BigNumber;
   subscriptionDuration: BigNumberish;
+  stakingDuration: BigNumberish;
   reward: BigNumberish;
   squadSize: BigNumber;
+  userHasStake: boolean;
   members?: string[];
   isLoading?: boolean;
   onSubscribe: () => void;
@@ -23,8 +25,10 @@ export const SquadItem: FC<SquadItemProps> = ({
   squadsFilled,
   subscriptionCost,
   subscriptionDuration,
+  stakingDuration,
   reward,
   squadSize,
+  userHasStake,
   members,
   isLoading,
   onSubscribe,
@@ -95,15 +99,24 @@ export const SquadItem: FC<SquadItemProps> = ({
           transform="translate(-50%, -50%)"
           textAlign="center"
         >
-          <Text textStyle="text1" fontSize="44px" lineHeight="40px">
+          <Text textStyle="text1" fontSize="44px" lineHeight="40px" whiteSpace="nowrap">
             {bigNumberToString(reward, 18, 0)}
             <Text as="span" fontSize="24px" ml="5px">
               SAV
             </Text>
           </Text>
 
-          <Text textStyle="text1" fontSize="44px" textTransform="uppercase">
-            {getReadableDuration(subscriptionDuration)}
+          <Text textStyle="text1" fontSize="44px" textTransform="uppercase" whiteSpace="nowrap">
+            {getReadableDuration(stakingDuration)}
+          </Text>
+
+          <Text
+            color={userHasStake ? 'green.400' : 'error'}
+            textStyle="textRegular"
+            textTransform="uppercase"
+            whiteSpace="nowrap"
+          >
+            {userHasStake ? 'Stake active' : 'No your stake'}
           </Text>
         </Box>
 
