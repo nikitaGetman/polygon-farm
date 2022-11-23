@@ -53,7 +53,7 @@ export const StakingPlan: FC<StakingPlanProps> = ({
       >
         {isSubscriptionEnding ? (
           <Text textStyle="textSansBold" mr={5}>
-            <>Until {getLocalDateString(BigNumber.from(subscribedTill).toNumber() * 1000)}</>
+            <>Until {getLocalDateString(BigNumber.from(subscribedTill).toNumber())}</>
           </Text>
         ) : null}
 

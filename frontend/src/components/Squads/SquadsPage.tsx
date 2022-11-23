@@ -11,6 +11,7 @@ import { useMemo } from 'react';
 import { getReadableAmount } from '@/utils/number';
 import { useCallback } from 'react';
 import { SquadsList } from './SquadsList';
+import { ReferralRewardsList } from '../Referral/ReferralRewardsList';
 
 export const SquadsPage = () => {
   const { userReferralInfo, claimDividends } = useReferralManager();
@@ -83,7 +84,9 @@ export const SquadsPage = () => {
         </Flex>
       </Box>
 
-      <Box mb="120px">{/* Referral rewards list */}</Box>
+      <Box mb="120px">
+        <ReferralRewardsList />
+      </Box>
     </Container>
   );
 };

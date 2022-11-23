@@ -24,6 +24,31 @@ import type {
 } from "../../common";
 
 export declare namespace IReferralManager {
+  export type AddDividendsParamsStruct = {
+    user: PromiseOrValue<string>;
+    reward: PromiseOrValue<BigNumberish>;
+    referral: PromiseOrValue<string>;
+    level: PromiseOrValue<BigNumberish>;
+    depositAmount: PromiseOrValue<BigNumberish>;
+    stakingPlanId: PromiseOrValue<BigNumberish>;
+  };
+
+  export type AddDividendsParamsStructOutput = [
+    string,
+    BigNumber,
+    string,
+    BigNumber,
+    BigNumber,
+    BigNumber
+  ] & {
+    user: string;
+    reward: BigNumber;
+    referral: string;
+    level: BigNumber;
+    depositAmount: BigNumber;
+    stakingPlanId: BigNumber;
+  };
+
   export type ReferralStruct = {
     referralAddress: PromiseOrValue<string>;
     level: PromiseOrValue<BigNumberish>;
@@ -41,7 +66,7 @@ export declare namespace IReferralManager {
 
 export interface IReferralManagerInterface extends utils.Interface {
   functions: {
-    "addUserDividends(address,uint256)": FunctionFragment;
+    "addUserDividends((address,uint256,address,uint256,uint256,uint256))": FunctionFragment;
     "calculateRefReward(uint256,uint256)": FunctionFragment;
     "getReferralLevels()": FunctionFragment;
     "getUserReferralsByLevel(address,uint256)": FunctionFragment;
@@ -63,7 +88,7 @@ export interface IReferralManagerInterface extends utils.Interface {
 
   encodeFunctionData(
     functionFragment: "addUserDividends",
-    values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]
+    values: [IReferralManager.AddDividendsParamsStruct]
   ): string;
   encodeFunctionData(
     functionFragment: "calculateRefReward",
@@ -150,8 +175,7 @@ export interface IReferralManager extends BaseContract {
 
   functions: {
     addUserDividends(
-      user: PromiseOrValue<string>,
-      reward: PromiseOrValue<BigNumberish>,
+      params: IReferralManager.AddDividendsParamsStruct,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -188,8 +212,7 @@ export interface IReferralManager extends BaseContract {
   };
 
   addUserDividends(
-    user: PromiseOrValue<string>,
-    reward: PromiseOrValue<BigNumberish>,
+    params: IReferralManager.AddDividendsParamsStruct,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -226,8 +249,7 @@ export interface IReferralManager extends BaseContract {
 
   callStatic: {
     addUserDividends(
-      user: PromiseOrValue<string>,
-      reward: PromiseOrValue<BigNumberish>,
+      params: IReferralManager.AddDividendsParamsStruct,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -267,8 +289,7 @@ export interface IReferralManager extends BaseContract {
 
   estimateGas: {
     addUserDividends(
-      user: PromiseOrValue<string>,
-      reward: PromiseOrValue<BigNumberish>,
+      params: IReferralManager.AddDividendsParamsStruct,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -306,8 +327,7 @@ export interface IReferralManager extends BaseContract {
 
   populateTransaction: {
     addUserDividends(
-      user: PromiseOrValue<string>,
-      reward: PromiseOrValue<BigNumberish>,
+      params: IReferralManager.AddDividendsParamsStruct,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 

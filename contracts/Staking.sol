@@ -136,7 +136,12 @@ contract Staking is IStaking, AccessControl {
                 referralManager.setUserReferrer(_msgSender(), referrer);
                 userReferrer = referralManager.getUserReferrer(_msgSender());
             }
-            _assignRefRewards(planId, _msgSender(), stakingProfit);
+            _assignRefRewards(
+                planId,
+                _msgSender(),
+                stakingProfit,
+                depositAmount
+            );
 
             // Squads
             if (address(squadsManager) != address(0)) {
@@ -194,7 +199,8 @@ contract Staking is IStaking, AccessControl {
     function _assignRefRewards(
         uint256 planId,
         address depositSender,
-        uint256 stakingReward
+        uint256 stakingReward,
+        uint256 depositAmount
     ) internal {
         uint256 totalLevels = referralManager.getReferralLevels();
         address currentLevelUser = depositSender;
@@ -205,20 +211,31 @@ contract Staking is IStaking, AccessControl {
             );
 
             if (referrer != address(0)) {
+                uint256 refReward = 0;
+
                 if (referralManager.userHasSubscription(referrer, level)) {
-                    uint256 refReward = referralManager.calculateRefReward(
+                    refReward = referralManager.calculateRefReward(
                         stakingReward,
                         level
                     );
                     uint256 currentToken1Staked = users[planId][referrer]
                         .currentToken1Staked;
 
-                    uint256 truncatedReward = refReward <= currentToken1Staked
+                    refReward = refReward <= currentToken1Staked
                         ? refReward
                         : currentToken1Staked;
-
-                    referralManager.addUserDividends(referrer, truncatedReward);
                 }
+
+                referralManager.addUserDividends(
+                    IReferralManager.AddDividendsParams(
+                        referrer,
+                        refReward,
+                        depositSender,
+                        level,
+                        depositAmount,
+                        planId
+                    )
+                );
 
                 currentLevelUser = referrer;
             } else break;

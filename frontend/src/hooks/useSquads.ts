@@ -4,7 +4,7 @@ import { BigNumber } from 'ethers';
 import { useAccount, useQuery, useQueryClient } from 'wagmi';
 import { useSquadsContract } from './contracts/useSquadsContract';
 import { useConnectWallet } from './useConnectWallet';
-import { HELPER_USER_SQUADS_INFO_REQUEST } from './useHelper';
+import { useHelperUserSquadsFullInfo } from './useHelper';
 import { useNotification } from './useNotification';
 import { SAV_BALANCE_REQUEST } from './useTokenBalance';
 import { TOKENS, useTokens } from './useTokens';
@@ -22,6 +22,7 @@ export const useSquads = () => {
   const { success, error } = useNotification();
   const tokens = useTokens();
   const { connect } = useConnectWallet();
+  const { userSquadsInfoRequest } = useHelperUserSquadsFullInfo(account);
 
   const subscriptionPeriodDays = 365;
 
@@ -52,7 +53,9 @@ export const useSquads = () => {
     },
     {
       onSuccess: () => {
-        queryClient.invalidateQueries({ queryKey: [HELPER_USER_SQUADS_INFO_REQUEST] });
+        userSquadsInfoRequest.refetch();
+        // TODO: invalidateQueries does not work in this case
+        // queryClient.invalidateQueries({ queryKey: [HELPER_USER_SQUADS_INFO_REQUEST] });
         queryClient.invalidateQueries({ queryKey: [SAV_BALANCE_REQUEST] });
       },
       onError: (err) => {

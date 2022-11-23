@@ -28,6 +28,31 @@ import type {
 } from "../common";
 
 export declare namespace IReferralManager {
+  export type AddDividendsParamsStruct = {
+    user: PromiseOrValue<string>;
+    reward: PromiseOrValue<BigNumberish>;
+    referral: PromiseOrValue<string>;
+    level: PromiseOrValue<BigNumberish>;
+    depositAmount: PromiseOrValue<BigNumberish>;
+    stakingPlanId: PromiseOrValue<BigNumberish>;
+  };
+
+  export type AddDividendsParamsStructOutput = [
+    string,
+    BigNumber,
+    string,
+    BigNumber,
+    BigNumber,
+    BigNumber
+  ] & {
+    user: string;
+    reward: BigNumber;
+    referral: string;
+    level: BigNumber;
+    depositAmount: BigNumber;
+    stakingPlanId: BigNumber;
+  };
+
   export type ReferralStruct = {
     referralAddress: PromiseOrValue<string>;
     level: PromiseOrValue<BigNumberish>;
@@ -49,7 +74,7 @@ export interface ReferralManagerInterface extends utils.Interface {
     "LEVELS()": FunctionFragment;
     "REFERRAL_PERCENTS(uint256)": FunctionFragment;
     "SUBSCRIPTION_PERIOD_DAYS()": FunctionFragment;
-    "addUserDividends(address,uint256)": FunctionFragment;
+    "addUserDividends((address,uint256,address,uint256,uint256,uint256))": FunctionFragment;
     "authorizeContract(address)": FunctionFragment;
     "calculateRefReward(uint256,uint256)": FunctionFragment;
     "claimDividends(uint256)": FunctionFragment;
@@ -144,7 +169,7 @@ export interface ReferralManagerInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "addUserDividends",
-    values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]
+    values: [IReferralManager.AddDividendsParamsStruct]
   ): string;
   encodeFunctionData(
     functionFragment: "authorizeContract",
@@ -429,6 +454,7 @@ export interface ReferralManagerInterface extends utils.Interface {
   ): Result;
 
   events: {
+    "DividendsAdded(address,address,uint256,uint256,uint256,uint256,uint256)": EventFragment;
     "ReferralAdded(address,address)": EventFragment;
     "RoleAdminChanged(bytes32,bytes32,bytes32)": EventFragment;
     "RoleGranted(bytes32,address,address)": EventFragment;
@@ -436,12 +462,29 @@ export interface ReferralManagerInterface extends utils.Interface {
     "Subscribed(address,uint256,uint256)": EventFragment;
   };
 
+  getEvent(nameOrSignatureOrTopic: "DividendsAdded"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "ReferralAdded"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "RoleAdminChanged"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "RoleGranted"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "RoleRevoked"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Subscribed"): EventFragment;
 }
+
+export interface DividendsAddedEventObject {
+  referrer: string;
+  referral: string;
+  level: BigNumber;
+  depositAmount: BigNumber;
+  rewardAmount: BigNumber;
+  stakingPlanId: BigNumber;
+  timestamp: BigNumber;
+}
+export type DividendsAddedEvent = TypedEvent<
+  [string, string, BigNumber, BigNumber, BigNumber, BigNumber, BigNumber],
+  DividendsAddedEventObject
+>;
+
+export type DividendsAddedEventFilter = TypedEventFilter<DividendsAddedEvent>;
 
 export interface ReferralAddedEventObject {
   referrer: string;
@@ -542,8 +585,7 @@ export interface ReferralManager extends BaseContract {
     SUBSCRIPTION_PERIOD_DAYS(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     addUserDividends(
-      user: PromiseOrValue<string>,
-      reward: PromiseOrValue<BigNumberish>,
+      params: IReferralManager.AddDividendsParamsStruct,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -742,8 +784,7 @@ export interface ReferralManager extends BaseContract {
   SUBSCRIPTION_PERIOD_DAYS(overrides?: CallOverrides): Promise<BigNumber>;
 
   addUserDividends(
-    user: PromiseOrValue<string>,
-    reward: PromiseOrValue<BigNumberish>,
+    params: IReferralManager.AddDividendsParamsStruct,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -942,8 +983,7 @@ export interface ReferralManager extends BaseContract {
     SUBSCRIPTION_PERIOD_DAYS(overrides?: CallOverrides): Promise<BigNumber>;
 
     addUserDividends(
-      user: PromiseOrValue<string>,
-      reward: PromiseOrValue<BigNumberish>,
+      params: IReferralManager.AddDividendsParamsStruct,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -1129,6 +1169,25 @@ export interface ReferralManager extends BaseContract {
   };
 
   filters: {
+    "DividendsAdded(address,address,uint256,uint256,uint256,uint256,uint256)"(
+      referrer?: PromiseOrValue<string> | null,
+      referral?: PromiseOrValue<string> | null,
+      level?: PromiseOrValue<BigNumberish> | null,
+      depositAmount?: null,
+      rewardAmount?: null,
+      stakingPlanId?: null,
+      timestamp?: null
+    ): DividendsAddedEventFilter;
+    DividendsAdded(
+      referrer?: PromiseOrValue<string> | null,
+      referral?: PromiseOrValue<string> | null,
+      level?: PromiseOrValue<BigNumberish> | null,
+      depositAmount?: null,
+      rewardAmount?: null,
+      stakingPlanId?: null,
+      timestamp?: null
+    ): DividendsAddedEventFilter;
+
     "ReferralAdded(address,address)"(
       referrer?: PromiseOrValue<string> | null,
       referral?: PromiseOrValue<string> | null
@@ -1196,8 +1255,7 @@ export interface ReferralManager extends BaseContract {
     SUBSCRIPTION_PERIOD_DAYS(overrides?: CallOverrides): Promise<BigNumber>;
 
     addUserDividends(
-      user: PromiseOrValue<string>,
-      reward: PromiseOrValue<BigNumberish>,
+      params: IReferralManager.AddDividendsParamsStruct,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -1379,8 +1437,7 @@ export interface ReferralManager extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     addUserDividends(
-      user: PromiseOrValue<string>,
-      reward: PromiseOrValue<BigNumberish>,
+      params: IReferralManager.AddDividendsParamsStruct,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 

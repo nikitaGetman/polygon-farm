@@ -1,26 +1,23 @@
-import React, { useCallback, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import {
+  Box,
   Button,
   Checkbox,
   CheckboxGroup,
   Flex,
-  IconButton,
-  Input,
-  InputGroup,
-  InputRightElement,
   Menu,
   MenuButton,
   MenuList,
   Stack,
   Text,
-  useDisclosure,
 } from '@chakra-ui/react';
 import { ReferralsTable } from '../Referral/ReferralsTable';
 import { useHelperReferralsFullInfoByLevel } from '@/hooks/useHelper';
 import { useAccount } from 'wagmi';
 import { useReferralManager } from '@/hooks/useReferralManager';
-import { DownloadIcon, SearchIcon } from '@chakra-ui/icons';
+import { DownloadIcon } from '@chakra-ui/icons';
 import { ReactComponent as ChevronDownIcon } from '@/assets/images/icons/chevron-down.svg';
+import { TableSearch } from '../ui/Table/TableSearch';
 
 const TOTAL_LEVELS = 10;
 
@@ -30,8 +27,6 @@ export const ReferralsList = () => {
   const [search, setSearch] = useState<string>('');
   const referrals = useHelperReferralsFullInfoByLevel(address, levels);
   const { userReferralInfo } = useReferralManager();
-  const { isOpen, onClose, onOpen } = useDisclosure();
-  const searchRef = useRef<HTMLInputElement>(null);
 
   const handleLevelsSelect = useCallback(
     (value: (number | string)[]) => {
@@ -49,11 +44,6 @@ export const ReferralsList = () => {
         : 0,
     [levels, refCount]
   );
-
-  const handleOpenSearch = useCallback(() => {
-    onOpen();
-    setTimeout(() => searchRef.current?.focus(), 0);
-  }, [onOpen]);
 
   const filteredReferrals = useMemo(
     () =>
@@ -104,33 +94,9 @@ export const ReferralsList = () => {
         </Menu>
 
         <Flex alignItems="center">
-          {isOpen || search ? (
-            <InputGroup variant="primary" size="md" minWidth="320px" mr="10px">
-              <Input
-                placeholder="0x..."
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-                pr="40px"
-                onBlur={onClose}
-                ref={searchRef}
-              />
-              <InputRightElement>
-                <IconButton
-                  variant="inputTransparentWhite"
-                  color="white"
-                  aria-label="search"
-                  size="md"
-                >
-                  <SearchIcon />
-                </IconButton>
-              </InputRightElement>
-            </InputGroup>
-          ) : (
-            <Button variant="link" onClick={handleOpenSearch}>
-              Search wallet
-              <SearchIcon ml="12px" />
-            </Button>
-          )}
+          <Box mr="10px">
+            <TableSearch buttonText="Search wallet" onChange={setSearch} />
+          </Box>
           <Button variant="link" display="none">
             Export
             <DownloadIcon ml="12px" />

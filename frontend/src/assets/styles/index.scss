@@ -16,10 +16,17 @@ body {
 #root {
   background-color: $color-green-back;
   min-height: 100vh;
+  position: relative;
+}
 
-  background-position: top;
-  background-size: cover;
-  // background-image: url('../images/background.svg');
+.background {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 0;
+  background: linear-gradient(180deg, #0b200a 0%, #113b32 58.58%, #1e5a52 100%);
 }
 
 .with-custom-scroll {

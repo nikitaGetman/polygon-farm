@@ -9,9 +9,18 @@ interface IReferralManager {
         bool isReferralSubscriptionActive;
     }
 
+    struct AddDividendsParams {
+        address user;
+        uint256 reward;
+        address referral;
+        uint256 level;
+        uint256 depositAmount;
+        uint256 stakingPlanId;
+    }
+
     function getReferralLevels() external pure returns (uint256);
 
-    function addUserDividends(address user, uint256 reward) external;
+    function addUserDividends(AddDividendsParams memory params) external;
 
     function getUserReferrer(address user) external view returns (address);
 

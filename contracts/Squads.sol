@@ -119,8 +119,14 @@ contract Squads is ISquads, AccessControl {
                 partner.subscription = 0;
 
                 referralManager.addUserDividends(
-                    referrer,
-                    plans[planId].reward
+                    IReferralManager.AddDividendsParams(
+                        referrer,
+                        plans[planId].reward,
+                        address(this),
+                        1,
+                        plans[planId].stakingThreshold,
+                        stakingPlanId
+                    )
                 );
 
                 emit SquadFilled(referrer, planId, partner.squadsFilled);
