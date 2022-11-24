@@ -1,4 +1,4 @@
-import React, { FC } from 'react';
+import React, { FC, useCallback, useEffect, useState } from 'react';
 import {
   Box,
   Button,
@@ -25,7 +25,9 @@ type ReferralSubscriptionModalProps = {
   subscriptionDuration: number;
   fullSubscriptionTill: number;
   levelsSubscriptionTill: number[];
-  isLoading?: boolean;
+  isLoading: boolean;
+  isFullLoading: boolean;
+  isLevelLoading: boolean;
   onLevelSubscribe: (level: number) => void;
   onFullSubscribe: () => void;
   onClose: () => void;
@@ -37,10 +39,30 @@ export const ReferralSubscriptionModal: FC<ReferralSubscriptionModalProps> = ({
   fullSubscriptionTill,
   levelsSubscriptionTill,
   isLoading,
+  isFullLoading,
+  isLevelLoading,
   onLevelSubscribe,
   onFullSubscribe,
   onClose,
 }) => {
+  const [selected, setSelected] = useState<number>();
+
+  const handleSubscribeToLevel = useCallback(
+    (level: number) => {
+      setSelected(level);
+      onLevelSubscribe(level);
+    },
+    [setSelected, onLevelSubscribe]
+  );
+
+  useEffect(() => {
+    if (!isLevelLoading) {
+      setSelected(undefined);
+    }
+  }, [isLevelLoading]);
+
+  const isButtonsDisabled = isFullLoading || !!selected;
+
   return (
     <Modal isCentered isOpen={true} onClose={onClose} scrollBehavior="inside">
       <ModalOverlay />
@@ -52,7 +74,7 @@ export const ReferralSubscriptionModal: FC<ReferralSubscriptionModalProps> = ({
           <CloseButton onClick={onClose} size="lg" />
         </ModalHeader>
 
-        <ModalBody className="with-custom-scroll" mr="-10px" pr="10px">
+        <ModalBody display="flex" flexDirection="column" mr="-16px" pr="16px">
           {isLoading ? <CenteredSpinner /> : null}
 
           <Box mt="6px">
@@ -61,21 +83,33 @@ export const ReferralSubscriptionModal: FC<ReferralSubscriptionModalProps> = ({
               price={fullSubscriptionCost}
               duration={subscriptionDuration}
               subscriptionTill={fullSubscriptionTill}
+              disabled={isButtonsDisabled}
+              isLoading={isFullLoading}
               onSubscribe={onFullSubscribe}
             />
           </Box>
           <Divider mt="30px" />
-          {levelsSubscriptionTill.map((subTill, index) => (
-            <Box key={index} mt="30px">
-              <SubscriptionLevel
-                title={`${index + 1} Level`}
-                price={levelSubscriptionCost}
-                duration={subscriptionDuration}
-                subscriptionTill={subTill}
-                onSubscribe={() => onLevelSubscribe(index + 1)}
-              />
+
+          <Box overflow="auto" className="with-custom-scroll" mr="-16px" pr="16px">
+            <Box>
+              {levelsSubscriptionTill.map((subTill, index) => (
+                <Box key={index} mt="30px">
+                  <SubscriptionLevel
+                    title={`${index + 1} Level`}
+                    price={levelSubscriptionCost}
+                    duration={subscriptionDuration}
+                    subscriptionTill={subTill}
+                    disabled={
+                      isButtonsDisabled ||
+                      (index > 0 && levelsSubscriptionTill[index - 1] < Date.now() / 1000)
+                    }
+                    isLoading={selected === index + 1}
+                    onSubscribe={() => handleSubscribeToLevel(index + 1)}
+                  />
+                </Box>
+              ))}
             </Box>
-          ))}
+          </Box>
         </ModalBody>
       </ModalContent>
     </Modal>
@@ -87,6 +121,8 @@ type SubscriptionLevelProps = {
   price: BigNumberish;
   duration: number;
   subscriptionTill: number;
+  disabled: boolean;
+  isLoading: boolean;
   onSubscribe: () => void;
 };
 const SubscriptionLevel: FC<SubscriptionLevelProps> = ({
@@ -94,6 +130,8 @@ const SubscriptionLevel: FC<SubscriptionLevelProps> = ({
   duration,
   title,
   subscriptionTill,
+  disabled,
+  isLoading,
   onSubscribe,
 }) => {
   const currentTime = Date.now() / 1000;
@@ -117,7 +155,7 @@ const SubscriptionLevel: FC<SubscriptionLevelProps> = ({
           bgColor="bgGreen.800"
           p="13px 20px"
           borderRadius="sm"
-          mr="10px"
+          mr={isActive ? '0px' : '10px'}
           flexGrow="1"
           alignItems="center"
           justifyContent="space-between"
@@ -135,9 +173,18 @@ const SubscriptionLevel: FC<SubscriptionLevelProps> = ({
             </>
           ) : null}
         </Flex>
-        {!isActive ? <Button onClick={onSubscribe}>Activate</Button> : null}
+        {!isActive ? (
+          <Button onClick={onSubscribe} isLoading={isLoading} disabled={disabled}>
+            Activate
+          </Button>
+        ) : null}
         {isEnding ? (
-          <Button variant="outlinedWhite" onClick={onSubscribe}>
+          <Button
+            variant="outlinedWhite"
+            onClick={onSubscribe}
+            isLoading={isLoading}
+            disabled={disabled}
+          >
             Prolong
           </Button>
         ) : null}

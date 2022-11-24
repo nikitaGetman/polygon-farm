@@ -17,6 +17,7 @@ const baseStyle = definePartsStyle({
     },
   },
   th: {
+    textTransform: 'capitalize',
     fontSize: 'inherit',
     bgColor: 'rgba(45, 150, 154, 0.3)',
   },
@@ -26,7 +27,12 @@ const baseStyle = definePartsStyle({
 const main = definePartsStyle({
   td: {
     py: '8px',
-    height: '48px',
+    height: '40px',
+  },
+  th: {
+    height: '50px',
+    fontSize: '16px',
+    fontWeight: '400',
   },
 });
 

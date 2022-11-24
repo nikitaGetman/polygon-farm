@@ -6,7 +6,8 @@ export const bigNumberToString = (
   precision: number = 3
 ) => {
   const parts = ethers.utils.formatUnits(value, decimals).split('.');
-  const fractional = parts[1].slice(0, precision);
+  let fractional = parts[1].slice(0, precision);
+  if (fractional === '0') fractional = '00';
   return fractional ? `${parts[0]}.${fractional}` : `${parts[0]}`;
 };
 

@@ -121,7 +121,11 @@ export const useReferralManager = () => {
       });
 
       const txHash = await referralContract.subscribeToLevel(level);
-      success({ title: 'Success', description: `Subscribed to Referral level ${level}`, txHash });
+      success({
+        title: 'Success',
+        description: `Referral ${level} Level subscription has been activated for one year`,
+        txHash,
+      });
     },
     {
       onSuccess: () => {
@@ -151,7 +155,11 @@ export const useReferralManager = () => {
       });
 
       const txHash = await referralContract.subscribeToAllLevels();
-      success({ title: 'Success', description: 'Subscribed to all Referral levels', txHash });
+      success({
+        title: 'Success',
+        description: 'Referral All Levels subscription has been activated for one year',
+        txHash,
+      });
     },
     {
       onSuccess: () => {

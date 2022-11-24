@@ -15,12 +15,23 @@ export const getLocalDateTimeString = (timestamp: BigNumberish) => {
   const t = BigNumber.from(timestamp).toNumber() * 1000;
   const date = new Date(t);
 
-  return date.toLocaleString();
+  const year = date.getFullYear();
+  const month = date.getMonth();
+  const day = date.getDate();
+  const hours = date.getHours();
+  const minutes = date.getMinutes();
+  const secs = date.getSeconds();
+
+  return `${year}-${month + 1}-${day}, ${hours}:${minutes}:${secs}`;
 };
 
 export const getLocalDateString = (timestamp: BigNumberish) => {
   const t = BigNumber.from(timestamp).toNumber() * 1000;
   const date = new Date(t);
 
-  return date.toLocaleDateString();
+  const year = date.getFullYear();
+  const month = date.getMonth();
+  const day = date.getDate();
+
+  return `${year}-${month + 1}-${day}`;
 };

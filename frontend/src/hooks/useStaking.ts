@@ -1,5 +1,6 @@
 import { tryToGetErrorData } from '@/utils/error';
 import { getReadableAmount } from '@/utils/number';
+import { getReadableDuration } from '@/utils/time';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { BigNumber, BigNumberish } from 'ethers';
 import { useMemo } from 'react';
@@ -128,7 +129,9 @@ export const useStaking = () => {
       const txHash = await stakingContract.subscribe(planId);
       success({
         title: 'Success',
-        description: `Subscribed to ${planId + 1} staking plan`,
+        description: `${getReadableDuration(
+          stakingPlan.stakingDuration
+        )} subscription has been activated for one year`,
         txHash,
       });
     },
@@ -169,12 +172,14 @@ export const useStaking = () => {
         requiredAmount: amount,
       });
 
+      const stakingPlan = activeStakingPlans[planId];
+
       const txHash = await stakingContract.deposit({ planId, amount, isToken2, referrer });
       success({
         title: 'Success',
-        description: `You deposited ${getReadableAmount(amount)} ${
+        description: `You have deposited ${getReadableAmount(amount)} ${
           isToken2 ? 'SAVR' : 'SAV'
-        } tokens in ${planId + 1} staking plan`,
+        } tokens in ${getReadableDuration(stakingPlan.stakingDuration)} staking plan`,
         txHash,
       });
     },

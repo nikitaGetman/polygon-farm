@@ -11,8 +11,12 @@ export const useLocalReferrer = () => {
     setReferrer(localRef ?? undefined);
   }, []);
 
-  const setLocalReferrer = useCallback((ref: string) => {
-    localStorage.setItem(REFERRER_STORAGE_KEY, ref);
+  const setLocalReferrer = useCallback((ref: string | undefined) => {
+    if (!ref) {
+      localStorage.removeItem(REFERRER_STORAGE_KEY);
+    } else {
+      localStorage.setItem(REFERRER_STORAGE_KEY, ref);
+    }
     setReferrer(ref);
   }, []);
 

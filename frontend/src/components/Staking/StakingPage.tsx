@@ -25,8 +25,8 @@ export const StakingPage = () => {
   );
 
   const onClaim = useCallback(
-    (planId: number, stakeId: number) => {
-      withdraw.mutate({ planId, stakeId });
+    async (planId: number, stakeId: number) => {
+      await withdraw.mutateAsync({ planId, stakeId });
     },
     [withdraw]
   );

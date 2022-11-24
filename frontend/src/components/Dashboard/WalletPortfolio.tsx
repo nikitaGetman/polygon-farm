@@ -31,9 +31,9 @@ export const WalletPortfolio = () => {
         </Text>
         <Flex alignItems="center" mt="80px">
           <Text textStyle="textMedium" mr="40px">
-            SAV = 00 USDT
+            SAV = 1 USDT
           </Text>
-          <Text textStyle="textMedium">SAVR = 00 USDT</Text>
+          <Text textStyle="textMedium">SAVR = 1 USDT</Text>
         </Flex>
         <Button mt="30px" rightIcon={<BoxIcon />}>
           Buy SAV
@@ -41,7 +41,7 @@ export const WalletPortfolio = () => {
       </Box>
 
       <Box background="rgba(0, 0, 0, 0.2)" borderRadius="md" p="30px" maxW="510px">
-        <Text textStyle="textMedium" mb="5">
+        <Text textStyle="textMedium" mb="5" textTransform="uppercase">
           Wallet portfolio
         </Text>
 

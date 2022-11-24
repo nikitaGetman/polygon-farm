@@ -34,6 +34,17 @@ export const ReferralsList = () => {
     },
     [setLevels]
   );
+  const toggleAllLevels = useCallback(
+    (e: any) => {
+      if (e.target.checked) {
+        const allLevels = Array.from({ length: TOTAL_LEVELS }).map((_, index) => index + 1);
+        setLevels(allLevels);
+      } else {
+        setLevels([]);
+      }
+    },
+    [setLevels]
+  );
   const refCount = useMemo(() => userReferralInfo.data?.refCount || [], [userReferralInfo]);
 
   const levelsTitle = useMemo(() => calculateTitle(levels), [levels]);
@@ -70,6 +81,14 @@ export const ReferralsList = () => {
             </Text>
           </MenuButton>
           <MenuList p="20px">
+            <Checkbox value="all" onChange={toggleAllLevels} spacing={5} mb={5} colorScheme="white">
+              <Text textStyle="textSansBold">
+                All{' '}
+                <Text as="span" opacity="0.5">
+                  ({totalReferrals})
+                </Text>
+              </Text>
+            </Checkbox>
             <CheckboxGroup colorScheme="green" value={levels} onChange={handleLevelsSelect}>
               <Stack
                 spacing={5}
@@ -104,7 +123,10 @@ export const ReferralsList = () => {
         </Flex>
       </Flex>
 
-      <ReferralsTable referrals={filteredReferrals || []} />
+      <ReferralsTable
+        referrals={filteredReferrals}
+        userLevels={userReferralInfo.data?.activeLevels || []}
+      />
     </>
   );
 };

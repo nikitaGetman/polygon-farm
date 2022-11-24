@@ -30,7 +30,7 @@ type StakingProps = {
   isPageView?: boolean;
 };
 export const Staking: FC<StakingProps> = ({ isPageView }) => {
-  const { isConnected } = useAccount();
+  const { isConnected, address } = useAccount();
   const { connect } = useConnectWallet();
   const { isOpen, onOpen, onClose } = useDisclosure(); // StakingModal toggle
   const [selectedPlan, setSelectedPlan] = useState<number>();
@@ -68,14 +68,14 @@ export const Staking: FC<StakingProps> = ({ isPageView }) => {
           planId: selectedPlan,
           amount: amountBN,
           isToken2: token === TOKENS.SAVR,
-          referrer: localReferrer,
+          referrer: localReferrer !== address ? localReferrer : undefined,
         });
         closeModal();
       } else {
         connect();
       }
     },
-    [deposit, connect, isConnected, selectedPlan, closeModal, localReferrer]
+    [deposit, connect, isConnected, selectedPlan, closeModal, localReferrer, address]
   );
 
   const onClaim = useCallback(() => {

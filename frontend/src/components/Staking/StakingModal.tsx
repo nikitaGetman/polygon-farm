@@ -155,7 +155,7 @@ export const StakingModal: FC<StakingModalProps> = ({
             width="100%"
             variant="outlined"
             onClick={handleStake}
-            disabled={isStakeDisabled}
+            disabled={isStakeDisabled || isLoading}
             isLoading={isLoading}
           >
             Stake funds
