@@ -35,12 +35,14 @@ export declare namespace IReferralManager {
     level: PromiseOrValue<BigNumberish>;
     depositAmount: PromiseOrValue<BigNumberish>;
     stakingPlanId: PromiseOrValue<BigNumberish>;
+    reason: PromiseOrValue<BigNumberish>;
   };
 
   export type AddDividendsParamsStructOutput = [
     string,
     BigNumber,
     string,
+    BigNumber,
     BigNumber,
     BigNumber,
     BigNumber
@@ -51,6 +53,7 @@ export declare namespace IReferralManager {
     level: BigNumber;
     depositAmount: BigNumber;
     stakingPlanId: BigNumber;
+    reason: BigNumber;
   };
 
   export type ReferralStruct = {
@@ -74,7 +77,7 @@ export interface ReferralManagerInterface extends utils.Interface {
     "LEVELS()": FunctionFragment;
     "REFERRAL_PERCENTS(uint256)": FunctionFragment;
     "SUBSCRIPTION_PERIOD_DAYS()": FunctionFragment;
-    "addUserDividends((address,uint256,address,uint256,uint256,uint256))": FunctionFragment;
+    "addUserDividends((address,uint256,address,uint256,uint256,uint256,uint256))": FunctionFragment;
     "authorizeContract(address)": FunctionFragment;
     "calculateRefReward(uint256,uint256)": FunctionFragment;
     "claimDividends(uint256)": FunctionFragment;
@@ -454,7 +457,7 @@ export interface ReferralManagerInterface extends utils.Interface {
   ): Result;
 
   events: {
-    "DividendsAdded(address,address,uint256,uint256,uint256,uint256,uint256)": EventFragment;
+    "DividendsAdded(address,address,uint256,uint256,uint256,uint256,uint256,uint256)": EventFragment;
     "ReferralAdded(address,address)": EventFragment;
     "RoleAdminChanged(bytes32,bytes32,bytes32)": EventFragment;
     "RoleGranted(bytes32,address,address)": EventFragment;
@@ -477,10 +480,20 @@ export interface DividendsAddedEventObject {
   depositAmount: BigNumber;
   rewardAmount: BigNumber;
   stakingPlanId: BigNumber;
+  reason: BigNumber;
   timestamp: BigNumber;
 }
 export type DividendsAddedEvent = TypedEvent<
-  [string, string, BigNumber, BigNumber, BigNumber, BigNumber, BigNumber],
+  [
+    string,
+    string,
+    BigNumber,
+    BigNumber,
+    BigNumber,
+    BigNumber,
+    BigNumber,
+    BigNumber
+  ],
   DividendsAddedEventObject
 >;
 
@@ -1169,13 +1182,14 @@ export interface ReferralManager extends BaseContract {
   };
 
   filters: {
-    "DividendsAdded(address,address,uint256,uint256,uint256,uint256,uint256)"(
+    "DividendsAdded(address,address,uint256,uint256,uint256,uint256,uint256,uint256)"(
       referrer?: PromiseOrValue<string> | null,
       referral?: PromiseOrValue<string> | null,
       level?: PromiseOrValue<BigNumberish> | null,
       depositAmount?: null,
       rewardAmount?: null,
       stakingPlanId?: null,
+      reason?: null,
       timestamp?: null
     ): DividendsAddedEventFilter;
     DividendsAdded(
@@ -1185,6 +1199,7 @@ export interface ReferralManager extends BaseContract {
       depositAmount?: null,
       rewardAmount?: null,
       stakingPlanId?: null,
+      reason?: null,
       timestamp?: null
     ): DividendsAddedEventFilter;
 

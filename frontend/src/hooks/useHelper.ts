@@ -3,6 +3,7 @@ import { useQueries, useQuery } from '@tanstack/react-query';
 import { ethers } from 'ethers';
 import { useMemo } from 'react';
 import { useHelperContract } from './contracts/useHelperContract';
+import { SQUADS_SUBSCRIPTION_ENDING_NOTIFICATION } from './useSquads';
 import { useStaking } from './useStaking';
 
 export const HELPER_REFERRALS_LIST_REQUEST = 'helper-referrals-list';
@@ -47,6 +48,7 @@ export const useHelperUserSquadsFullInfo = (account?: string) => {
   );
 
   const userSquadsInfo = useMemo(() => {
+    const currentTime = Date.now() / 1000;
     return (
       userSquadsInfoRequest.data?.map(
         ({ plan, squadStatus, members, userHasSufficientStaking }) => ({
@@ -55,6 +57,10 @@ export const useHelperUserSquadsFullInfo = (account?: string) => {
           members,
           userHasSufficientStaking,
           stakingPlan: stakingPlans.data?.[plan.stakingPlanId.toNumber()],
+          isSubscriptionEnding:
+            squadStatus.subscription.toNumber() > 0 &&
+            squadStatus.subscription.toNumber() - currentTime <
+              SQUADS_SUBSCRIPTION_ENDING_NOTIFICATION,
         })
       ) || []
     );

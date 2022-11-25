@@ -178,6 +178,7 @@ export interface StakingInterface extends utils.Interface {
     "updateToken1(address)": FunctionFragment;
     "updateToken2(address)": FunctionFragment;
     "withdraw(uint256,uint256)": FunctionFragment;
+    "withdrawAll(uint256)": FunctionFragment;
   };
 
   getFunction(
@@ -226,6 +227,7 @@ export interface StakingInterface extends utils.Interface {
       | "updateToken1"
       | "updateToken2"
       | "withdraw"
+      | "withdrawAll"
   ): FunctionFragment;
 
   encodeFunctionData(
@@ -409,6 +411,10 @@ export interface StakingInterface extends utils.Interface {
     functionFragment: "withdraw",
     values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>]
   ): string;
+  encodeFunctionData(
+    functionFragment: "withdrawAll",
+    values: [PromiseOrValue<BigNumberish>]
+  ): string;
 
   decodeFunctionResult(
     functionFragment: "DEFAULT_ADMIN_ROLE",
@@ -559,6 +565,10 @@ export interface StakingInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "withdraw", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "withdrawAll",
+    data: BytesLike
+  ): Result;
 
   events: {
     "ActivityChanged(uint256,bool)": EventFragment;
@@ -952,6 +962,11 @@ export interface Staking extends BaseContract {
       stakeId: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
+
+    withdrawAll(
+      planId: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
   };
 
   DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<string>;
@@ -1194,6 +1209,11 @@ export interface Staking extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
+  withdrawAll(
+    planId: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
   callStatic: {
     DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<string>;
 
@@ -1432,6 +1452,11 @@ export interface Staking extends BaseContract {
     withdraw(
       planId: PromiseOrValue<BigNumberish>,
       stakeId: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    withdrawAll(
+      planId: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<void>;
   };
@@ -1748,6 +1773,11 @@ export interface Staking extends BaseContract {
       stakeId: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
+
+    withdrawAll(
+      planId: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
   };
 
   populateTransaction: {
@@ -1962,6 +1992,11 @@ export interface Staking extends BaseContract {
     withdraw(
       planId: PromiseOrValue<BigNumberish>,
       stakeId: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    withdrawAll(
+      planId: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
   };

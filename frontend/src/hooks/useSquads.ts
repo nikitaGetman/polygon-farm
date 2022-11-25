@@ -1,6 +1,7 @@
 import { tryToGetErrorData } from '@/utils/error';
 import { useMutation } from '@tanstack/react-query';
 import { BigNumber } from 'ethers';
+import { useMemo } from 'react';
 import { useAccount, useQuery, useQueryClient } from 'wagmi';
 import { useSquadsContract } from './contracts/useSquadsContract';
 import { useConnectWallet } from './useConnectWallet';
@@ -22,13 +23,18 @@ export const useSquads = () => {
   const { success, error } = useNotification();
   const tokens = useTokens();
   const { connect } = useConnectWallet();
-  const { userSquadsInfoRequest } = useHelperUserSquadsFullInfo(account);
+  const { userSquadsInfoRequest, userSquadsInfo } = useHelperUserSquadsFullInfo(account);
 
   const subscriptionPeriodDays = 365;
 
   const squadPlansRequest = useQuery([SQUAD_PLANS_REQUEST], async () => {
     return await squadsContract.getPlans();
   });
+
+  const hasEndingSquadsSubscription = useMemo(
+    () => (userSquadsInfo || []).some(({ isSubscriptionEnding }) => isSubscriptionEnding),
+    [userSquadsInfo]
+  );
 
   const subscribe = useMutation(
     [SUBSCRIBE_TO_SQUADS_PLAN_MUTATION],
@@ -69,5 +75,6 @@ export const useSquads = () => {
     squadsContract,
     subscribe,
     subscriptionPeriodDays,
+    hasEndingSquadsSubscription,
   };
 };

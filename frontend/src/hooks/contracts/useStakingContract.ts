@@ -47,6 +47,12 @@ export const useStakingContract = () => {
     return tx.hash;
   };
 
+  const withdrawAll = async (planId: number): Promise<string> => {
+    const tx = await contract.withdrawAll(planId);
+    await tx.wait();
+    return tx.hash;
+  };
+
   const deposit = async ({
     planId,
     amount,
@@ -74,6 +80,7 @@ export const useStakingContract = () => {
     address: contractAddress,
     deposit,
     withdraw,
+    withdrawAll,
     getStakingPlans,
     getUserStakingInfo,
     getUserStakesWithRewards,

@@ -1,7 +1,6 @@
 import React, { FC, useMemo } from 'react';
 import { BigNumber, BigNumberish } from 'ethers';
 import { Box, Button, Flex, Text } from '@chakra-ui/react';
-import { SQUADS_SUBSCRIPTION_ENDING_NOTIFICATION } from '@/hooks/useSquads';
 import { getLocalDateString, getReadableDuration } from '@/utils/time';
 import { bigNumberToString } from '@/utils/number';
 import { ReactComponent as SquadSectionIcon } from '@/assets/images/icons/squad-section.svg';
@@ -12,6 +11,7 @@ type SquadItemProps = {
   squadsFilled?: BigNumber;
   subscriptionCost: BigNumber;
   subscriptionDuration: BigNumberish;
+  isSubscriptionEnding: boolean;
   stakingDuration: BigNumberish;
   reward: BigNumberish;
   squadSize: BigNumber;
@@ -25,6 +25,7 @@ export const SquadItem: FC<SquadItemProps> = ({
   squadsFilled,
   subscriptionCost,
   subscriptionDuration,
+  isSubscriptionEnding,
   stakingDuration,
   reward,
   squadSize,
@@ -33,14 +34,10 @@ export const SquadItem: FC<SquadItemProps> = ({
   isLoading,
   onSubscribe,
 }) => {
-  const subscriptionRestTime = useMemo(
-    () => (subscription ? subscription.toNumber() - Date.now() / 1000 : 0),
+  const isSubscribed = useMemo(
+    () => (subscription ? subscription.toNumber() > Date.now() / 1000 : false),
     [subscription]
   );
-
-  const isSubscribed = subscriptionRestTime > 0;
-  const isSubscriptionEnding =
-    isSubscribed && subscriptionRestTime < SQUADS_SUBSCRIPTION_ENDING_NOTIFICATION;
 
   const squad = useMemo(
     () =>

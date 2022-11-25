@@ -92,6 +92,8 @@ export const ReferralsList = () => {
             <CheckboxGroup colorScheme="green" value={levels} onChange={handleLevelsSelect}>
               <Stack
                 spacing={5}
+                ml="-4px"
+                pl="4px"
                 direction={'column'}
                 maxH="280px"
                 overflow="auto"

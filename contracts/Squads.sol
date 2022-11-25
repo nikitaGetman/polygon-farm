@@ -125,7 +125,8 @@ contract Squads is ISquads, AccessControl {
                         address(this),
                         1,
                         plans[planId].stakingThreshold,
-                        stakingPlanId
+                        stakingPlanId,
+                        0
                     )
                 );
 

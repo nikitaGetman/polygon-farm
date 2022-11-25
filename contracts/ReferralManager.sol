@@ -55,6 +55,7 @@ contract ReferralManager is IReferralManager, AccessControl {
         uint256 depositAmount,
         uint256 rewardAmount,
         uint256 stakingPlanId,
+        uint256 reason,
         uint256 timestamp
     );
 
@@ -130,6 +131,7 @@ contract ReferralManager is IReferralManager, AccessControl {
             params.depositAmount,
             params.reward,
             params.stakingPlanId,
+            params.reason,
             getTimestamp()
         );
     }

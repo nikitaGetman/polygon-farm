@@ -1,11 +1,9 @@
 import React, { FC, useMemo } from 'react';
-import { Button, Center, Flex, Tbody, Td, Th, Thead, Tr, useDisclosure } from '@chakra-ui/react';
+import { Button, Center, Tbody, Td, Th, Thead, Tr, useDisclosure } from '@chakra-ui/react';
 import { Table } from '@/components/ui/Table/Table';
-import { ReactComponent as SavIcon } from '@/assets/images/sav_icon.svg';
-import { ReactComponent as SavrIcon } from '@/assets/images/savr_icon.svg';
-import { BigNumber, BigNumberish } from 'ethers';
+import { BigNumber } from 'ethers';
 import { getLocalDateString, getReadableDuration } from '@/utils/time';
-import { getReadableAmount } from '@/utils/number';
+import { bigNumberToString } from '@/utils/number';
 
 const COLLAPSED_LIMIT = 6;
 
@@ -17,6 +15,7 @@ type Reward = {
   rewardAmount: BigNumber;
   stakingDuration: BigNumber;
   timestamp: BigNumber;
+  reason: BigNumber;
 };
 type RewardsTableProps = {
   rewards: Reward[];
@@ -59,6 +58,9 @@ export const ReferralRewardsTable: FC<RewardsTableProps> = ({ rewards }) => {
             <Th textAlign="center" width="200px">
               Reward
             </Th>
+            <Th textAlign="center" width="100px">
+              Comment
+            </Th>
           </Tr>
         </Thead>
         <Tbody>
@@ -66,14 +68,16 @@ export const ReferralRewardsTable: FC<RewardsTableProps> = ({ rewards }) => {
             <Tr key={index}>
               <Td textAlign="center">{reward.referral}</Td>
               <Td textAlign="center">{getLocalDateString(reward.timestamp)}</Td>
-              <Td textAlign="center">{getReadableAmount(reward.depositAmount)}</Td>
+              <Td textAlign="center">{bigNumberToString(reward.depositAmount)} SAV</Td>
               <Td textAlign="center">{getReadableDuration(reward.stakingDuration)}</Td>
               <Td textAlign="center">{reward.level.toNumber()}</Td>
-              <Td textAlign="center">{getReadableAmount(reward.rewardAmount)}</Td>
+              <Td textAlign="center">{bigNumberToString(reward.rewardAmount)} SAVR</Td>
+              <Td textAlign="center">{getRewardReason(reward.reason)}</Td>
             </Tr>
           ))}
           {Array.from({ length: emptyRows }).map((_, index) => (
             <Tr key={`empty-${index}`}>
+              <Td></Td>
               <Td></Td>
               <Td></Td>
               <Td></Td>
@@ -94,4 +98,16 @@ export const ReferralRewardsTable: FC<RewardsTableProps> = ({ rewards }) => {
       ) : null}
     </>
   );
+};
+
+const REASONS_MAP: Record<string, string> = {
+  '0': 'complete',
+  '1': 'no level',
+  '2': 'no stake',
+  '3': 'limited',
+};
+const getRewardReason = (_reason: BigNumber) => {
+  const reason = _reason.toString();
+
+  return REASONS_MAP[reason] || '---';
 };

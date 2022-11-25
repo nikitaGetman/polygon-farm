@@ -24,10 +24,12 @@ import { ReactComponent as WalletIcon } from '@/assets/images/icons/wallet.svg';
 import { ReactComponent as TabletIcon } from '@/assets/images/icons/tablet.svg';
 import { useStaking } from '@/hooks/useStaking';
 import { useReferralManager } from '@/hooks/useReferralManager';
+import { useSquads } from '@/hooks/useSquads';
 
 export const Menu = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) => {
   const { hasEndingSubscription } = useStaking();
   const { hasEndingReferralSubscription } = useReferralManager();
+  const { hasEndingSquadsSubscription } = useSquads();
   const navigate = useNavigate();
 
   const handleNavigate = useCallback(
@@ -72,8 +74,14 @@ export const Menu = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => void
             text="Team"
             icon={<StarsIcon />}
             onClick={() => handleNavigate('/team')}
-            hasAlert={hasEndingReferralSubscription}
-            textAlert={hasEndingReferralSubscription ? 'Check your levels' : undefined}
+            hasAlert={hasEndingReferralSubscription || hasEndingSquadsSubscription}
+            textAlert={
+              hasEndingReferralSubscription
+                ? 'Check your levels'
+                : hasEndingSquadsSubscription
+                ? 'Check your squads'
+                : undefined
+            }
           />
           <NavMenuItem text="Play everyday" icon={<GameboyIcon />} />
           <NavMenuItem

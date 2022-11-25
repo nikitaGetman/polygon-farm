@@ -21,7 +21,7 @@ import { StakingPlan } from './StakingPlan';
 import { useConnectWallet } from '@/hooks/useConnectWallet';
 import { StakingModal } from './StakingModal';
 import { TOKENS } from '@/hooks/useTokens';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { StatBlock } from '@/components/ui/StatBlock/StatBlock';
 import { BigNumber } from 'ethers';
 import { useLocalReferrer } from '@/hooks/useLocalReferrer';
@@ -34,10 +34,10 @@ export const Staking: FC<StakingProps> = ({ isPageView }) => {
   const { connect } = useConnectWallet();
   const { isOpen, onOpen, onClose } = useDisclosure(); // StakingModal toggle
   const [selectedPlan, setSelectedPlan] = useState<number>();
-  const navigate = useNavigate();
   const { localReferrer } = useLocalReferrer();
 
-  const { activeStakingPlans, hasEndingSubscription, subscribe, deposit } = useStaking();
+  const { activeStakingPlans, hasEndingSubscription, subscribe, deposit, withdrawAll } =
+    useStaking();
 
   const openModal = useCallback(
     (index: number) => {
@@ -78,14 +78,14 @@ export const Staking: FC<StakingProps> = ({ isPageView }) => {
     [deposit, connect, isConnected, selectedPlan, closeModal, localReferrer, address]
   );
 
-  const onClaim = useCallback(() => {
-    if (isPageView) {
-      const element = document.getElementById('stakings-list');
-      element?.scrollIntoView({ behavior: 'smooth' });
-    } else {
-      navigate('/staking');
-    }
-  }, [navigate, isPageView]);
+  const onClaim = useCallback(
+    async (planId: number) => {
+      setSelectedPlan(planId);
+      await withdrawAll.mutateAsync(planId);
+      setSelectedPlan(undefined);
+    },
+    [withdrawAll]
+  );
 
   const totalStakeSav = useMemo(
     () =>
@@ -202,12 +202,13 @@ export const Staking: FC<StakingProps> = ({ isPageView }) => {
               apr={getYearlyAPR(planData.profitPercent, planData.stakingDuration)}
               userStakeSav={planData.currentToken1Staked || 0}
               userStakeSavR={planData.currentToken2Staked || 0}
-              userReward={planData.currentReward}
+              userTotalReward={planData.totalReward}
               isClaimAvailable={planData.hasReadyStakes}
               onSubscribe={isConnected ? () => onSubscribe(planData.planId) : connect}
               isSubscribeLoading={selectedPlan === planData.planId && subscribe.isLoading}
+              isClaimLoading={selectedPlan === planData.planId && withdrawAll.isLoading}
               onDeposit={() => openModal(planData.planId)}
-              onClaim={onClaim}
+              onClaim={() => onClaim(planData.planId)}
             />
           </GridItem>
         ))}

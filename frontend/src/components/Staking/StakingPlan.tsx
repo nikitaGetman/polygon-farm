@@ -16,9 +16,10 @@ type StakingPlanProps = {
   apr: number | string;
   userStakeSav: BigNumberish;
   userStakeSavR: BigNumberish;
-  userReward?: BigNumber;
+  userTotalReward?: BigNumber;
   isClaimAvailable?: boolean;
   isSubscribeLoading?: boolean;
+  isClaimLoading?: boolean;
 
   onSubscribe: () => void;
   onDeposit: () => void;
@@ -35,9 +36,10 @@ export const StakingPlan: FC<StakingPlanProps> = ({
   apr,
   userStakeSav,
   userStakeSavR,
-  userReward,
+  userTotalReward,
   isClaimAvailable,
   isSubscribeLoading,
+  isClaimLoading,
   onSubscribe,
   onDeposit,
   onClaim,
@@ -112,7 +114,7 @@ export const StakingPlan: FC<StakingPlanProps> = ({
                 </Flex>
               </StakingParameter>
               <StakingParameter title="Your rewards">
-                {getReadableAmount(userReward || 0)} SAV
+                {getReadableAmount(userTotalReward || 0)} SAV
               </StakingParameter>
             </Flex>
           </Box>
@@ -121,7 +123,12 @@ export const StakingPlan: FC<StakingPlanProps> = ({
             <Button onClick={onDeposit} variant="outlined" disabled={!isSubscribed}>
               Deposit
             </Button>
-            <Button onClick={onClaim} variant="outlined" disabled={!isClaimAvailable}>
+            <Button
+              onClick={onClaim}
+              variant="outlined"
+              disabled={!isClaimAvailable || isClaimLoading}
+              isLoading={isClaimLoading}
+            >
               Claim
             </Button>
           </Flex>

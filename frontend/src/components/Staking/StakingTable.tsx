@@ -17,6 +17,7 @@ import { ReactComponent as SavrIcon } from '@/assets/images/savr_icon.svg';
 import { BigNumber } from 'ethers';
 import { getLocalDateTimeString, getReadableDuration } from '@/utils/time';
 import { bigNumberToString } from '@/utils/number';
+import { calculateStakeReward } from '@/utils/staking';
 
 const COLLAPSED_LIMIT = 6;
 
@@ -26,6 +27,7 @@ type Stake = {
   timeEnd: BigNumber;
   profitPercent: BigNumber;
   profit: BigNumber;
+  reward: BigNumber;
   isClaimed: boolean;
   isToken2: boolean;
 };
@@ -95,6 +97,9 @@ export const StakingTable = ({
               End Date
             </Th>
             <Th width="200px" textAlign="center">
+              Reward
+            </Th>
+            <Th width="200px" textAlign="center">
               Total
             </Th>
             <Th width="150px" textAlign="center">
@@ -103,7 +108,7 @@ export const StakingTable = ({
           </Tr>
         </Thead>
         <Tbody>
-          {visibleItems.map(({ period, status, stake, planId, stakeId }, index) => (
+          {visibleItems.map(({ period, status, stake, planId, stakeId, reward }, index) => (
             <Tr key={index}>
               <Td>
                 <Flex alignItems="center">
@@ -117,9 +122,12 @@ export const StakingTable = ({
               <Td textAlign="center">{getLocalDateTimeString(stake.timeStart)}</Td>
               <Td textAlign="center">{getLocalDateTimeString(stake.timeEnd)}</Td>
               <Td textAlign="center">
-                {bigNumberToString(stake.isToken2 ? stake.profit : stake.profit.add(stake.amount))}{' '}
+                {bigNumberToString(
+                  status === StakeStatusEnum.Claimed ? calculateStakeReward(stake) : reward
+                )}{' '}
                 SAV
               </Td>
+              <Td textAlign="center">{bigNumberToString(calculateStakeReward(stake))} SAV</Td>
               <Td textAlign="center">
                 {status === StakeStatusEnum.Completed ? (
                   <Button
@@ -138,6 +146,7 @@ export const StakingTable = ({
           ))}
           {Array.from({ length: emptyRows }).map((_, index) => (
             <Tr key={`empty-${index}`}>
+              <Td></Td>
               <Td></Td>
               <Td></Td>
               <Td></Td>

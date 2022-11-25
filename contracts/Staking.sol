@@ -196,6 +196,16 @@ contract Staking is IStaking, AccessControl {
         );
     }
 
+    function withdrawAll(uint256 planId) public {
+        Stake[] storage stakes = users[planId][_msgSender()].stakes;
+
+        for (uint256 i = 0; i < stakes.length; i++) {
+            if (!stakes[i].isClaimed && stakes[i].timeEnd <= getTimestamp()) {
+                withdraw(planId, i);
+            }
+        }
+    }
+
     function _assignRefRewards(
         uint256 planId,
         address depositSender,
@@ -212,6 +222,12 @@ contract Staking is IStaking, AccessControl {
 
             if (referrer != address(0)) {
                 uint256 refReward = 0;
+                // REASONS:
+                // 0 - full reward
+                // 1 - no ref subscription
+                // 2 - no user stake
+                // 3 - trancated by user stake
+                uint256 reason = 1;
 
                 if (referralManager.userHasSubscription(referrer, level)) {
                     refReward = referralManager.calculateRefReward(
@@ -220,6 +236,14 @@ contract Staking is IStaking, AccessControl {
                     );
                     uint256 currentToken1Staked = users[planId][referrer]
                         .currentToken1Staked;
+
+                    if (currentToken1Staked == 0) {
+                        reason = 2;
+                    } else if (refReward > currentToken1Staked) {
+                        reason = 3;
+                    } else {
+                        reason = 0;
+                    }
 
                     refReward = refReward <= currentToken1Staked
                         ? refReward
@@ -233,7 +257,8 @@ contract Staking is IStaking, AccessControl {
                         depositSender,
                         level,
                         depositAmount,
-                        planId
+                        planId,
+                        reason
                     )
                 );
 
@@ -365,7 +390,7 @@ contract Staking is IStaking, AccessControl {
         return users[planId][userAddress].stakes;
     }
 
-    // TODO: can i optimize it?
+    // TODO: how to optimize it?
     function getUserStakesWithRewards(uint256 planId, address userAddress)
         public
         view

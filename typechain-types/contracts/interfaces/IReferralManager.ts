@@ -31,12 +31,14 @@ export declare namespace IReferralManager {
     level: PromiseOrValue<BigNumberish>;
     depositAmount: PromiseOrValue<BigNumberish>;
     stakingPlanId: PromiseOrValue<BigNumberish>;
+    reason: PromiseOrValue<BigNumberish>;
   };
 
   export type AddDividendsParamsStructOutput = [
     string,
     BigNumber,
     string,
+    BigNumber,
     BigNumber,
     BigNumber,
     BigNumber
@@ -47,6 +49,7 @@ export declare namespace IReferralManager {
     level: BigNumber;
     depositAmount: BigNumber;
     stakingPlanId: BigNumber;
+    reason: BigNumber;
   };
 
   export type ReferralStruct = {
@@ -66,7 +69,7 @@ export declare namespace IReferralManager {
 
 export interface IReferralManagerInterface extends utils.Interface {
   functions: {
-    "addUserDividends((address,uint256,address,uint256,uint256,uint256))": FunctionFragment;
+    "addUserDividends((address,uint256,address,uint256,uint256,uint256,uint256))": FunctionFragment;
     "calculateRefReward(uint256,uint256)": FunctionFragment;
     "getReferralLevels()": FunctionFragment;
     "getUserReferralsByLevel(address,uint256)": FunctionFragment;

@@ -44,6 +44,11 @@ const _abi = [
             name: "stakingPlanId",
             type: "uint256",
           },
+          {
+            internalType: "uint256",
+            name: "reason",
+            type: "uint256",
+          },
         ],
         internalType: "struct IReferralManager.AddDividendsParams",
         name: "params",

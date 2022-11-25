@@ -16,6 +16,12 @@ interface IReferralManager {
         uint256 level;
         uint256 depositAmount;
         uint256 stakingPlanId;
+        // REASONS:
+        // 0 - full reward
+        // 1 - no ref subscription
+        // 2 - no user stake
+        // 3 - trancated by user stake
+        uint256 reason;
     }
 
     function getReferralLevels() external pure returns (uint256);
