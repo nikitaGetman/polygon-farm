@@ -2,14 +2,14 @@ import React from 'react';
 import { Text, Box, Flex, Button } from '@chakra-ui/react';
 import { useAccount } from 'wagmi';
 import { ReactComponent as PuzzlesIcon } from '@/assets/images/icons/puzzles.svg';
-import { ReactComponent as ForkIcon } from '@/assets/images/icons/fork.svg';
 import { ReactComponent as PlusIcon } from '@/assets/images/icons/plus.svg';
 import { ConnectWalletButton } from '@/components/ui/ConnectWalletButton/ConnectWalletButton';
 import { useAddTokens } from '@/hooks/useAddTokens';
 import { bigNumberToString, getReadableAmount } from '@/utils/number';
 import { ReactComponent as BoxIcon } from '@/assets/images/icons/box.svg';
-import { useSavBalance, useSavRBalance } from '@/hooks/useTokenBalance';
+import { useSavBalance, useTokenBalanceHistory, useSavRBalance } from '@/hooks/useTokenBalance';
 import { useStaking } from '@/hooks/useStaking';
+import { BalanceHistoryChart } from './BalanceChart';
 
 export const WalletPortfolio = () => {
   const { isConnected } = useAccount();
@@ -17,6 +17,8 @@ export const WalletPortfolio = () => {
 
   const { data: savBalance } = useSavBalance();
   const { data: savrBalance } = useSavRBalance();
+
+  const balanceHistory = useTokenBalanceHistory();
 
   const { tvl, totalClaimed } = useStaking();
 
@@ -31,24 +33,24 @@ export const WalletPortfolio = () => {
         </Text>
         <Flex alignItems="center" mt="80px">
           <Text textStyle="textMedium" mr="40px">
-            SAV = 00 USDT
+            SAV = 1 USDT
           </Text>
-          <Text textStyle="textMedium">SAVR = 00 USDT</Text>
+          <Text textStyle="textMedium">SAVR = 1 USDT</Text>
         </Flex>
         <Button mt="30px" rightIcon={<BoxIcon />}>
           Buy SAV
         </Button>
       </Box>
 
-      <Box background="rgba(0, 0, 0, 0.2)" borderRadius="md" p="30px" maxW="510px">
-        <Text textStyle="textMedium" mb="5">
+      <Box background="rgba(0, 0, 0, 0.2)" borderRadius="md" p="30px" maxW="510px" flexGrow="1">
+        <Text textStyle="textMedium" mb="5" textTransform="uppercase">
           Wallet portfolio
         </Text>
 
         {isConnected ? (
           <>
             <Box h="220px">
-              <ForkIcon />
+              <BalanceHistoryChart data={balanceHistory.data} />
             </Box>
             <Flex mt="17px" justifyContent="space-between">
               <Flex flexWrap="wrap" maxW="200px">

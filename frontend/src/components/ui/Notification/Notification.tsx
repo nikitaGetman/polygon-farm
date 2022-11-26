@@ -39,7 +39,7 @@ export const Notification: FC<NotificationProps> = ({
       bgColor="bgGreen.200"
       borderRadius="13px"
       p="20px 20px 20px 30px"
-      maxWidth="340px"
+      width="380px"
       borderLeft="10px solid"
       borderColor={borderColor}
     >

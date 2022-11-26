@@ -27,7 +27,7 @@ import type {
   PromiseOrValue,
 } from "../common";
 
-export declare namespace Squads {
+export declare namespace ISquads {
   export type SquadPlanStruct = {
     subscriptionCost: PromiseOrValue<BigNumberish>;
     reward: PromiseOrValue<BigNumberish>;
@@ -69,13 +69,13 @@ export interface SquadsInterface extends utils.Interface {
     "DEFAULT_ADMIN_ROLE()": FunctionFragment;
     "SUBSCRIPTION_PERIOD_DAYS()": FunctionFragment;
     "addPlan(uint256,uint256,uint256,uint256,uint256)": FunctionFragment;
+    "getPlan(uint256)": FunctionFragment;
     "getPlans()": FunctionFragment;
     "getRoleAdmin(bytes32)": FunctionFragment;
     "getSufficientPlanIdByStakingAmount(uint256)": FunctionFragment;
     "getTimestamp()": FunctionFragment;
-    "getUserSquadInfo(uint256,address)": FunctionFragment;
     "getUserSquadMembers(address,uint256)": FunctionFragment;
-    "getUserSquadsInfo(address)": FunctionFragment;
+    "getUserSubscription(address,uint256)": FunctionFragment;
     "grantRole(bytes32,address)": FunctionFragment;
     "hasRole(bytes32,address)": FunctionFragment;
     "plans(uint256)": FunctionFragment;
@@ -106,13 +106,13 @@ export interface SquadsInterface extends utils.Interface {
       | "DEFAULT_ADMIN_ROLE"
       | "SUBSCRIPTION_PERIOD_DAYS"
       | "addPlan"
+      | "getPlan"
       | "getPlans"
       | "getRoleAdmin"
       | "getSufficientPlanIdByStakingAmount"
       | "getTimestamp"
-      | "getUserSquadInfo"
       | "getUserSquadMembers"
-      | "getUserSquadsInfo"
+      | "getUserSubscription"
       | "grantRole"
       | "hasRole"
       | "plans"
@@ -156,6 +156,10 @@ export interface SquadsInterface extends utils.Interface {
       PromiseOrValue<BigNumberish>
     ]
   ): string;
+  encodeFunctionData(
+    functionFragment: "getPlan",
+    values: [PromiseOrValue<BigNumberish>]
+  ): string;
   encodeFunctionData(functionFragment: "getPlans", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "getRoleAdmin",
@@ -170,16 +174,12 @@ export interface SquadsInterface extends utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(
-    functionFragment: "getUserSquadInfo",
-    values: [PromiseOrValue<BigNumberish>, PromiseOrValue<string>]
-  ): string;
-  encodeFunctionData(
     functionFragment: "getUserSquadMembers",
     values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
-    functionFragment: "getUserSquadsInfo",
-    values: [PromiseOrValue<string>]
+    functionFragment: "getUserSubscription",
+    values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
     functionFragment: "grantRole",
@@ -288,6 +288,7 @@ export interface SquadsInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "addPlan", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "getPlan", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "getPlans", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "getRoleAdmin",
@@ -302,15 +303,11 @@ export interface SquadsInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "getUserSquadInfo",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
     functionFragment: "getUserSquadMembers",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "getUserSquadsInfo",
+    functionFragment: "getUserSubscription",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "grantRole", data: BytesLike): Result;
@@ -554,9 +551,14 @@ export interface Squads extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
+    getPlan(
+      planId: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<[ISquads.SquadPlanStructOutput]>;
+
     getPlans(
       overrides?: CallOverrides
-    ): Promise<[Squads.SquadPlanStructOutput[]]>;
+    ): Promise<[ISquads.SquadPlanStructOutput[]]>;
 
     getRoleAdmin(
       role: PromiseOrValue<BytesLike>,
@@ -570,22 +572,17 @@ export interface Squads extends BaseContract {
 
     getTimestamp(overrides?: CallOverrides): Promise<[BigNumber]>;
 
-    getUserSquadInfo(
-      planId: PromiseOrValue<BigNumberish>,
-      user: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<[Squads.SquadStructOutput]>;
-
     getUserSquadMembers(
       user: PromiseOrValue<string>,
       planId: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<[string[]]>;
 
-    getUserSquadsInfo(
+    getUserSubscription(
       user: PromiseOrValue<string>,
+      planId: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
-    ): Promise<[Squads.SquadStructOutput[]]>;
+    ): Promise<[ISquads.SquadStructOutput]>;
 
     grantRole(
       role: PromiseOrValue<BytesLike>,
@@ -731,7 +728,12 @@ export interface Squads extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
-  getPlans(overrides?: CallOverrides): Promise<Squads.SquadPlanStructOutput[]>;
+  getPlan(
+    planId: PromiseOrValue<BigNumberish>,
+    overrides?: CallOverrides
+  ): Promise<ISquads.SquadPlanStructOutput>;
+
+  getPlans(overrides?: CallOverrides): Promise<ISquads.SquadPlanStructOutput[]>;
 
   getRoleAdmin(
     role: PromiseOrValue<BytesLike>,
@@ -745,22 +747,17 @@ export interface Squads extends BaseContract {
 
   getTimestamp(overrides?: CallOverrides): Promise<BigNumber>;
 
-  getUserSquadInfo(
-    planId: PromiseOrValue<BigNumberish>,
-    user: PromiseOrValue<string>,
-    overrides?: CallOverrides
-  ): Promise<Squads.SquadStructOutput>;
-
   getUserSquadMembers(
     user: PromiseOrValue<string>,
     planId: PromiseOrValue<BigNumberish>,
     overrides?: CallOverrides
   ): Promise<string[]>;
 
-  getUserSquadsInfo(
+  getUserSubscription(
     user: PromiseOrValue<string>,
+    planId: PromiseOrValue<BigNumberish>,
     overrides?: CallOverrides
-  ): Promise<Squads.SquadStructOutput[]>;
+  ): Promise<ISquads.SquadStructOutput>;
 
   grantRole(
     role: PromiseOrValue<BytesLike>,
@@ -906,9 +903,14 @@ export interface Squads extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
+    getPlan(
+      planId: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<ISquads.SquadPlanStructOutput>;
+
     getPlans(
       overrides?: CallOverrides
-    ): Promise<Squads.SquadPlanStructOutput[]>;
+    ): Promise<ISquads.SquadPlanStructOutput[]>;
 
     getRoleAdmin(
       role: PromiseOrValue<BytesLike>,
@@ -922,22 +924,17 @@ export interface Squads extends BaseContract {
 
     getTimestamp(overrides?: CallOverrides): Promise<BigNumber>;
 
-    getUserSquadInfo(
-      planId: PromiseOrValue<BigNumberish>,
-      user: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<Squads.SquadStructOutput>;
-
     getUserSquadMembers(
       user: PromiseOrValue<string>,
       planId: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<string[]>;
 
-    getUserSquadsInfo(
+    getUserSubscription(
       user: PromiseOrValue<string>,
+      planId: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
-    ): Promise<Squads.SquadStructOutput[]>;
+    ): Promise<ISquads.SquadStructOutput>;
 
     grantRole(
       role: PromiseOrValue<BytesLike>,
@@ -1180,6 +1177,11 @@ export interface Squads extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
+    getPlan(
+      planId: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     getPlans(overrides?: CallOverrides): Promise<BigNumber>;
 
     getRoleAdmin(
@@ -1194,20 +1196,15 @@ export interface Squads extends BaseContract {
 
     getTimestamp(overrides?: CallOverrides): Promise<BigNumber>;
 
-    getUserSquadInfo(
-      planId: PromiseOrValue<BigNumberish>,
-      user: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
     getUserSquadMembers(
       user: PromiseOrValue<string>,
       planId: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    getUserSquadsInfo(
+    getUserSubscription(
       user: PromiseOrValue<string>,
+      planId: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -1351,6 +1348,11 @@ export interface Squads extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
+    getPlan(
+      planId: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     getPlans(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     getRoleAdmin(
@@ -1365,20 +1367,15 @@ export interface Squads extends BaseContract {
 
     getTimestamp(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    getUserSquadInfo(
-      planId: PromiseOrValue<BigNumberish>,
-      user: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
     getUserSquadMembers(
       user: PromiseOrValue<string>,
       planId: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    getUserSquadsInfo(
+    getUserSubscription(
       user: PromiseOrValue<string>,
+      planId: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 

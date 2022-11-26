@@ -1,9 +1,13 @@
 import { Helper } from '@/types';
-import { useQueries } from '@tanstack/react-query';
+import { useQueries, useQuery } from '@tanstack/react-query';
+import { ethers } from 'ethers';
 import { useMemo } from 'react';
 import { useHelperContract } from './contracts/useHelperContract';
+import { SQUADS_SUBSCRIPTION_ENDING_NOTIFICATION } from './useSquads';
+import { useStaking } from './useStaking';
 
 export const HELPER_REFERRALS_LIST_REQUEST = 'helper-referrals-list';
+export const HELPER_USER_SQUADS_INFO_REQUEST = 'helper-user-squads-info';
 
 export const useHelperReferralsFullInfoByLevel = (account?: string, levels?: number[]) => {
   const helperContract = useHelperContract();
@@ -30,4 +34,40 @@ export const useHelperReferralsFullInfoByLevel = (account?: string, levels?: num
   }, [referralsQueries]);
 
   return referralsFullInfoList;
+};
+
+export const useHelperUserSquadsFullInfo = (account?: string) => {
+  const helperContract = useHelperContract();
+  const { stakingPlans } = useStaking();
+
+  const userSquadsInfoRequest = useQuery(
+    [HELPER_USER_SQUADS_INFO_REQUEST, { account }],
+    async () => {
+      return await helperContract.getUserSquadsInfo(account || ethers.constants.AddressZero);
+    }
+  );
+
+  const userSquadsInfo = useMemo(() => {
+    const currentTime = Date.now() / 1000;
+    return (
+      userSquadsInfoRequest.data?.map(
+        ({ plan, squadStatus, members, userHasSufficientStaking }) => ({
+          plan: { ...plan },
+          squadStatus: { ...squadStatus },
+          members,
+          userHasSufficientStaking,
+          stakingPlan: stakingPlans.data?.[plan.stakingPlanId.toNumber()],
+          isSubscriptionEnding:
+            squadStatus.subscription.toNumber() > 0 &&
+            squadStatus.subscription.toNumber() - currentTime <
+              SQUADS_SUBSCRIPTION_ENDING_NOTIFICATION,
+        })
+      ) || []
+    );
+  }, [stakingPlans, userSquadsInfoRequest]);
+
+  return {
+    userSquadsInfoRequest,
+    userSquadsInfo,
+  };
 };

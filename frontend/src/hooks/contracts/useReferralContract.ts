@@ -45,6 +45,11 @@ export const useReferralContract = () => {
     return tx.hash;
   };
 
+  const getRewards = async (account: string) => {
+    const filter = contract.filters.DividendsAdded(account);
+    return await contract.queryFilter(filter);
+  };
+
   return {
     contract,
     address: contractAddress,
@@ -53,5 +58,6 @@ export const useReferralContract = () => {
     subscribeToAllLevels,
     setMyReferrer,
     claimRewards,
+    getRewards,
   };
 };

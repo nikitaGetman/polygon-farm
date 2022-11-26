@@ -48,6 +48,16 @@ contract ReferralManager is IReferralManager, AccessControl {
         uint256 indexed timestamp
     );
     event ReferralAdded(address indexed referrer, address indexed referral);
+    event DividendsAdded(
+        address indexed referrer,
+        address indexed referral,
+        uint256 indexed level,
+        uint256 depositAmount,
+        uint256 rewardAmount,
+        uint256 stakingPlanId,
+        uint256 reason,
+        uint256 timestamp
+    );
 
     constructor(
         address subscriptionToken_,
@@ -109,11 +119,21 @@ contract ReferralManager is IReferralManager, AccessControl {
         emit Subscribed(subscriber, LEVELS + 1, block.timestamp);
     }
 
-    function addUserDividends(address user, uint256 reward)
+    function addUserDividends(AddDividendsParams memory params)
         public
         onlyAuthorizedContracts
     {
-        users[user].totalRefDividends += reward;
+        users[params.user].totalRefDividends += params.reward;
+        emit DividendsAdded(
+            params.user,
+            params.referral,
+            params.level,
+            params.depositAmount,
+            params.reward,
+            params.stakingPlanId,
+            params.reason,
+            getTimestamp()
+        );
     }
 
     function claimDividends(uint256 amount) public {

@@ -3,8 +3,8 @@ import { ETHER_ADDRESS_REGEX } from '@/utils/address';
 import {
   Button,
   CloseButton,
+  Flex,
   Input,
-  ListItem,
   Modal,
   ModalBody,
   ModalContent,
@@ -12,8 +12,8 @@ import {
   ModalHeader,
   ModalOverlay,
   Text,
-  UnorderedList,
 } from '@chakra-ui/react';
+import { WarningTwoIcon } from '@chakra-ui/icons';
 
 type ReferralUpdateModalProps = {
   leader?: string;
@@ -32,9 +32,9 @@ export const ReferralUpdateModal: FC<ReferralUpdateModalProps> = ({
   const isLeaderValid = useMemo(() => ETHER_ADDRESS_REGEX.test(localLeader), [localLeader]);
 
   return (
-    <Modal isCentered isOpen={true} onClose={onClose}>
+    <Modal isCentered isOpen={true} onClose={onClose} size="xl">
       <ModalOverlay />
-      <ModalContent>
+      <ModalContent p="40px 40px 32px">
         <ModalHeader textStyle="textSansBold" fontSize={26}>
           <Text textStyle="textSansBold" fontSize="26px">
             Add leader
@@ -43,8 +43,8 @@ export const ReferralUpdateModal: FC<ReferralUpdateModalProps> = ({
         </ModalHeader>
 
         <ModalBody>
-          <Text textStyle="textSansBold" mb="10px">
-            Leader address:
+          <Text textStyle="textSansBold" mb="10px" mt="26px">
+            Leader's wallet
           </Text>
           <Input
             variant="secondary"
@@ -52,12 +52,10 @@ export const ReferralUpdateModal: FC<ReferralUpdateModalProps> = ({
             value={localLeader}
             onChange={(e) => setLocalLeader(e.target.value)}
           />
-          <UnorderedList mt="12px">
-            <ListItem>The leader cannot be changed after submitting</ListItem>
-          </UnorderedList>
+
           <Text textStyle="textSansBold"></Text>
         </ModalBody>
-        <ModalFooter>
+        <ModalFooter flexDirection="column">
           <Button
             width="100%"
             variant="outlined"
@@ -65,8 +63,13 @@ export const ReferralUpdateModal: FC<ReferralUpdateModalProps> = ({
             disabled={!isLeaderValid}
             isLoading={isLoading}
           >
-            Submit
+            Add leader
           </Button>
+
+          <Flex mt="20px" alignItems="center" width="100%">
+            <WarningTwoIcon mr="10px" />
+            The leader cannot be changed after adding
+          </Flex>
         </ModalFooter>
       </ModalContent>
     </Modal>

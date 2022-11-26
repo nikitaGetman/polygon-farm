@@ -13,6 +13,7 @@
     "@types/react": "^18.0.23",
     "@types/react-dom": "^18.0.7",
     "axios": "^0.26.0",
+    "ethereum-block-by-date": "^1.4.6",
     "ethers": "^5.7.2",
     "framer-motion": "^7.6.2",
     "react": "^18.2.0",
@@ -21,6 +22,7 @@
     "react-router-dom": "^6.4.2",
     "react-scripts": "5.0.1",
     "react-transition-group": "^4.4.5",
+    "recharts": "^2.1.16",
     "sass": "^1.55.0",
     "typescript": "^4.8.4",
     "wagmi": "^0.7.9"
@@ -28,6 +30,7 @@
   "devDependencies": {
     "@chakra-ui/cli": "^2.1.8",
     "@svgr/webpack": "^6.5.1",
+    "@types/ethereum-block-by-date": "^1.4.1",
     "@types/react-transition-group": "^4.4.5",
     "eslint-config-prettier": "^8.3.0",
     "eslint-plugin-prettier": "^3.4.0",

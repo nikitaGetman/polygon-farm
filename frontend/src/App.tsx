@@ -91,7 +91,11 @@ function App() {
       <ChakraProvider theme={theme}>
         <QueryClientProvider client={queryClient}>
           <AppStateProvider>
-            <RouterProvider router={router} />
+            <div className="background" />
+
+            <Box position="relative">
+              <RouterProvider router={router} />
+            </Box>
 
             <Modals />
           </AppStateProvider>

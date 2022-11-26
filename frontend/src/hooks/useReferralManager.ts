@@ -6,7 +6,9 @@ import { BigNumber, ethers } from 'ethers';
 import { useMemo } from 'react';
 import { useAccount, useQuery, useQueryClient } from 'wagmi';
 import { useReferralContract } from './contracts/useReferralContract';
+import { useConnectWallet } from './useConnectWallet';
 import { useNotification } from './useNotification';
+import { useStaking } from './useStaking';
 import { SAVR_BALANCE_REQUEST, SAV_BALANCE_REQUEST } from './useTokenBalance';
 import { TOKENS, useTokens } from './useTokens';
 
@@ -14,6 +16,7 @@ export const USER_REFERRAL_INFO_REQUEST = 'user-referrals-info';
 
 const LEVEL_SUBSCRIPTION_COST_REQUEST = 'get-referral-level-subscription-cost';
 const ALL_LEVELS_SUBSCRIPTION_COST_REQUEST = 'get-all-referral-levels-subscription-cost';
+const USER_REFERRAL_REWARDS_REQUEST = 'user-referral-rewards';
 const SUBSCRIBE_TO_REFERRAL_LEVEL_MUTATION = 'subscribe-to-referral-level';
 const SUBSCRIBE_TO_ALL_REFERRAL_LEVELS_MUTATION = 'subscribe-to-all-referral-levels';
 const SET_MY_REFERRER_MUTATION = 'set-my-referrer';
@@ -28,6 +31,8 @@ export const useReferralManager = () => {
   const referralContract = useReferralContract();
   const { success, error } = useNotification();
   const tokens = useTokens();
+  const { connect } = useConnectWallet();
+  const { stakingPlans } = useStaking();
 
   // Hardcode this, hope it would not change
   const levels = 10;
@@ -43,6 +48,22 @@ export const useReferralManager = () => {
   const fullSubscriptionCost = useQuery([ALL_LEVELS_SUBSCRIPTION_COST_REQUEST], async () => {
     return await referralContract.contract.fullSubscriptionCost();
   });
+
+  const referralRewardsQuery = useQuery([USER_REFERRAL_REWARDS_REQUEST, { account }], async () => {
+    return account ? await referralContract.getRewards(account) : null;
+  });
+
+  const referralRewards = useMemo(
+    () =>
+      referralRewardsQuery.data?.map(({ args }) => ({
+        ...args,
+        stakingDuration:
+          stakingPlans.data && args.stakingPlanId
+            ? stakingPlans.data[args.stakingPlanId.toNumber()].stakingDuration
+            : BigNumber.from(0),
+      })) || [],
+    [referralRewardsQuery, stakingPlans]
+  );
 
   const levelsSubscription = useMemo(
     () =>
@@ -87,7 +108,10 @@ export const useReferralManager = () => {
   const subscribeToLevel = useMutation(
     [SUBSCRIBE_TO_REFERRAL_LEVEL_MUTATION],
     async (level: number) => {
-      if (!account) return;
+      if (!account) {
+        connect();
+        return;
+      }
 
       await tokens.increaseAllowanceIfRequired.mutateAsync({
         token: TOKENS.SAV,
@@ -97,7 +121,11 @@ export const useReferralManager = () => {
       });
 
       const txHash = await referralContract.subscribeToLevel(level);
-      success({ title: 'Success', description: `Subscribed to Referral level ${level}`, txHash });
+      success({
+        title: 'Success',
+        description: `Referral ${level} Level subscription has been activated for one year`,
+        txHash,
+      });
     },
     {
       onSuccess: () => {
@@ -114,7 +142,10 @@ export const useReferralManager = () => {
   const subscribeToAllLevels = useMutation(
     [SUBSCRIBE_TO_ALL_REFERRAL_LEVELS_MUTATION],
     async () => {
-      if (!account) return;
+      if (!account) {
+        connect();
+        return;
+      }
 
       await tokens.increaseAllowanceIfRequired.mutateAsync({
         token: TOKENS.SAV,
@@ -124,7 +155,11 @@ export const useReferralManager = () => {
       });
 
       const txHash = await referralContract.subscribeToAllLevels();
-      success({ title: 'Success', description: 'Subscribed to all Referral levels', txHash });
+      success({
+        title: 'Success',
+        description: 'Referral All Levels subscription has been activated for one year',
+        txHash,
+      });
     },
     {
       onSuccess: () => {
@@ -141,7 +176,10 @@ export const useReferralManager = () => {
   const setMyReferrer = useMutation(
     [SET_MY_REFERRER_MUTATION],
     async (referrer: string) => {
-      if (!account) return;
+      if (!account) {
+        connect();
+        return;
+      }
       const txHash = await referralContract.setMyReferrer(referrer);
       success({ title: 'Success', description: `Your referrer is ${referrer}`, txHash });
     },
@@ -160,7 +198,10 @@ export const useReferralManager = () => {
   const claimDividends = useMutation(
     [CLAIM_REFERRAL_REWARDS_MUTATION],
     async (rewards: BigNumber) => {
-      if (!account) return;
+      if (!account) {
+        connect();
+        return;
+      }
 
       const txHash = await referralContract.claimRewards(rewards);
       success({
@@ -197,5 +238,7 @@ export const useReferralManager = () => {
     referralLink,
     setMyReferrer,
     claimDividends,
+    referralRewardsQuery,
+    referralRewards,
   };
 };

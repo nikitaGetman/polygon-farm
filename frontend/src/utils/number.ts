@@ -6,8 +6,18 @@ export const bigNumberToString = (
   precision: number = 3
 ) => {
   const parts = ethers.utils.formatUnits(value, decimals).split('.');
-  const fractional = parts[1].slice(0, precision);
+  let fractional = parts[1].slice(0, precision);
+  if (fractional === '0') fractional = '00';
   return fractional ? `${parts[0]}.${fractional}` : `${parts[0]}`;
+};
+
+export const bigNumberToNumber = (
+  value: BigNumberish,
+  decimals: number = 18,
+  precision: number = 3
+) => {
+  const stringValue = bigNumberToString(value, decimals, precision);
+  return parseFloat(stringValue);
 };
 
 const PERCENT_DIVIDER = 1000.0;

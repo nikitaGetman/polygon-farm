@@ -3,9 +3,9 @@ import { constants } from 'ethers';
 import { useEffect } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import { useAccount } from 'wagmi';
-import { useSavContract } from './contracts/useSavContract';
-import { useSavRContract } from './contracts/useSavRContract';
 import { StakingEvent, useStakingContract } from './contracts/useStakingContract';
+import { useTokenContract } from './contracts/useTokenContract';
+import { ContractsEnum } from './contracts/useContractAbi';
 
 // Listen to events and refresh data
 export const useEvents = () => {
@@ -14,8 +14,8 @@ export const useEvents = () => {
   //   const forumContract = useForumContract();
   //   const tokenContract = useGoflowContract();
   const stakingContract = useStakingContract();
-  const savContract = useSavContract();
-  const savRContract = useSavRContract();
+  const savContract = useTokenContract(ContractsEnum.SAV);
+  const savRContract = useTokenContract(ContractsEnum.SAVR);
 
   useEffect(() => {
     // const questionHandler = () => {

@@ -25,7 +25,9 @@ const colors = {
     10050: 'rgba(13, 146, 58, 0.5)',
     400: '#6bc95b', // rgb(107, 201, 91)
   },
-  turquoise: '#2d969a',
+  turquoise: {
+    200: '#2d969a',
+  },
   blue: '#1adce2',
   red: '#c95b5b',
   gray: {

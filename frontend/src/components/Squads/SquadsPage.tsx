@@ -1,5 +1,5 @@
 import React from 'react';
-import { Box, Container, Flex, Link, Spinner } from '@chakra-ui/react';
+import { Box, Container, Flex, Heading, Link, Spinner } from '@chakra-ui/react';
 import { Link as RouterLink } from 'react-router-dom';
 import { ArrowBackIcon } from '@chakra-ui/icons';
 import { ReferralInfo } from '../Referral/ReferralInfo';
@@ -10,6 +10,8 @@ import { useReferralManager } from '@/hooks/useReferralManager';
 import { useMemo } from 'react';
 import { getReadableAmount } from '@/utils/number';
 import { useCallback } from 'react';
+import { SquadsList } from './SquadsList';
+import { ReferralRewardsList } from '../Referral/ReferralRewardsList';
 
 export const SquadsPage = () => {
   const { userReferralInfo, claimDividends } = useReferralManager();
@@ -43,7 +45,13 @@ export const SquadsPage = () => {
         <ReferralsList />
       </Box>
 
-      {/* <Box mb="100px">SquadsList</Box> */}
+      <Heading textStyle="h3" fontSize="26px" textTransform="uppercase" mb="30px">
+        Your team
+      </Heading>
+
+      <Box mb="100px">
+        <SquadsList />
+      </Box>
 
       <Box mb="50px">
         <Flex justifyContent="flex-end">
@@ -76,7 +84,9 @@ export const SquadsPage = () => {
         </Flex>
       </Box>
 
-      <Box mb="120px">{/* Referral rewards list */}</Box>
+      <Box mb="120px">
+        <ReferralRewardsList />
+      </Box>
     </Container>
   );
 };

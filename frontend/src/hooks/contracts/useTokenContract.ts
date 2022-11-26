@@ -1,20 +1,22 @@
-import { useProvider, useSigner, useContract, useAccount } from 'wagmi';
+import { useProvider, useSigner, useContract } from 'wagmi';
 import type { BigNumber } from 'ethers';
 import { ContractsEnum, useContractAbi } from './useContractAbi';
 
 import { Token1 } from '@/types';
+import { BALANCE_HISTORY_PERIOD } from '@/utils/balance';
+import EthDater from 'ethereum-block-by-date';
 
 export enum SavEvent {
   Transfer = 'Transfer',
   Approval = 'Approval',
 }
 
-export const useSavContract = () => {
+export const useTokenContract = (token: ContractsEnum.SAV | ContractsEnum.SAVR) => {
   const { data: signer } = useSigner();
   const provider = useProvider();
-  const { address: accountAddress } = useAccount();
+  const dater = new EthDater(provider);
 
-  const { address, abi } = useContractAbi({ contract: ContractsEnum.SAV });
+  const { address, abi } = useContractAbi({ contract: token });
 
   const contract = useContract({
     address,
@@ -26,8 +28,20 @@ export const useSavContract = () => {
     return contract.balanceOf(address);
   };
 
-  const getUserBalance = async (): Promise<BigNumber | null> => {
-    return accountAddress ? await contract.balanceOf(accountAddress) : null;
+  const getBalanceHistoryTransfers = async (account: string) => {
+    const { block } = await dater.getDate(Date.now() - BALANCE_HISTORY_PERIOD);
+
+    const filterFrom = contract.filters.Transfer(account);
+    const filterTo = contract.filters.Transfer(null, account);
+
+    const fromTransfersRequest = contract.queryFilter(filterFrom, block);
+    const toTransfersRequest = contract.queryFilter(filterTo, block);
+    return (await Promise.all([fromTransfersRequest, toTransfersRequest]))
+      .reduce((acc, transfers) => {
+        acc.push(...transfers);
+        return acc;
+      }, [])
+      .sort((t1, t2) => t1.blockNumber - t2.blockNumber);
   };
 
   const decimals = async (): Promise<number> => {
@@ -48,9 +62,9 @@ export const useSavContract = () => {
     contract,
     address,
     balanceOf,
+    getBalanceHistoryTransfers,
     decimals,
     allowance,
     approve,
-    getUserBalance,
   };
 };

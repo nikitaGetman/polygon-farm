@@ -72,6 +72,46 @@ contract Helper is Ownable {
         return referralsFullInfo;
     }
 
+    // Squads
+    struct UserSquadInfo {
+        ISquads.Squad squadStatus;
+        ISquads.SquadPlan plan;
+        address[] members;
+        bool userHasSufficientStaking;
+    }
+
+    function getUserSquadInfo(uint256 planId, address user)
+        public
+        view
+        returns (UserSquadInfo memory)
+    {
+        ISquads.Squad memory squadStatus = squads.getUserSubscription(
+            user,
+            planId
+        );
+        ISquads.SquadPlan memory plan = squads.getPlan(planId);
+        address[] memory members = squads.getUserSquadMembers(user, planId);
+        bool hasStaking = squads.userHasSufficientStaking(user, planId);
+
+        return UserSquadInfo(squadStatus, plan, members, hasStaking);
+    }
+
+    function getUserSquadsInfo(address user)
+        public
+        view
+        returns (UserSquadInfo[] memory)
+    {
+        uint256 length = squads.getPlans().length;
+
+        UserSquadInfo[] memory squadsInfo = new UserSquadInfo[](length);
+
+        for (uint256 i = 0; i < length; i++) {
+            squadsInfo[i] = getUserSquadInfo(i, user);
+        }
+
+        return squadsInfo;
+    }
+
     // --------------------------------
 
     function updateToken1(address _token1) public onlyOwner {

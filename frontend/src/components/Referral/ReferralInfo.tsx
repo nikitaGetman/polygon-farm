@@ -35,7 +35,7 @@ type ReferralInfoProps = {
   isPageView?: boolean;
 };
 export const ReferralInfo: FC<ReferralInfoProps> = ({ isPageView }) => {
-  const { isConnected } = useAccount();
+  const { isConnected, address } = useAccount();
 
   const {
     isOpen: isRefSubscribeOpen,
@@ -65,11 +65,7 @@ export const ReferralInfo: FC<ReferralInfoProps> = ({ isPageView }) => {
     setMyReferrer,
   } = useReferralManager();
 
-  const isRefSubscribeLoading =
-    subscribeToLevel.isLoading ||
-    subscribeToAllLevels.isLoading ||
-    fullSubscriptionCost.isLoading ||
-    levelSubscriptionCost.isLoading;
+  const isRefSubscribeLoading = fullSubscriptionCost.isLoading || levelSubscriptionCost.isLoading;
 
   const { success } = useNotification();
   const { onCopy, hasCopied, setValue } = useClipboard('');
@@ -137,21 +133,25 @@ export const ReferralInfo: FC<ReferralInfoProps> = ({ isPageView }) => {
         mt={isPageView ? '80px' : '50px'}
       >
         <Box alignSelf={isPageView ? 'flex-start' : 'flex-end'}>
-          {isPageView && isConnected && !referrer ? (
-            <Button mb="15px" onClick={onLeaderUpdateOpen}>
-              Add leader
-            </Button>
-          ) : null}
+          {isPageView && isConnected ? (
+            <>
+              {!referrer ? (
+                <Button mb="15px" onClick={onLeaderUpdateOpen}>
+                  Add leader
+                </Button>
+              ) : null}
 
-          {isPageView && isConnected && (referrer || localReferrer) ? (
-            <Flex alignItems="center" mb="15px">
-              <Text textStyle="button" mr="15px" color={referrer ? 'green.400' : 'gray.200'}>
-                Your leader:
-              </Text>
-              <Text textStyle="button" color={referrer ? 'white' : 'gray.200'}>
-                {trimAddress(referrer || localReferrer)}
-              </Text>
-            </Flex>
+              {referrer || (localReferrer && localReferrer !== address) ? (
+                <Flex alignItems="center" mb="15px">
+                  <Text textStyle="button" mr="15px" color={referrer ? 'green.400' : 'gray.200'}>
+                    Your leader:
+                  </Text>
+                  <Text textStyle="button" color={referrer ? 'white' : 'gray.200'}>
+                    {trimAddress(referrer || localReferrer)}
+                  </Text>
+                </Flex>
+              ) : null}
+            </>
           ) : null}
 
           <Text textStyle="button" color={referralLink ? 'green.400' : 'gray.200'} mb="10px">
@@ -187,7 +187,7 @@ export const ReferralInfo: FC<ReferralInfoProps> = ({ isPageView }) => {
             />
           </Flex>
 
-          {isPageView && isConnected && !referralLink ? (
+          {isConnected && !referralLink ? (
             <Text color="error" textStyle="textBold" fontSize="14" mt="8px">
               You will get your ref link after subscribing at the 1st team level
             </Text>
@@ -225,6 +225,8 @@ export const ReferralInfo: FC<ReferralInfoProps> = ({ isPageView }) => {
           fullSubscriptionTill={fullSubscription}
           levelsSubscriptionTill={levelsSubscription}
           isLoading={isRefSubscribeLoading}
+          isFullLoading={subscribeToAllLevels.isLoading}
+          isLevelLoading={subscribeToLevel.isLoading}
           onClose={onRefSubscribeClose}
           onFullSubscribe={subscribeToAllLevels.mutate}
           onLevelSubscribe={subscribeToLevel.mutate}

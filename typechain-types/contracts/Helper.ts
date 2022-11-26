@@ -55,11 +55,69 @@ export declare namespace Helper {
     isReferralSubscriptionActive: boolean;
     isStakingSubscriptionActive: boolean;
   };
+
+  export type UserSquadInfoStruct = {
+    squadStatus: ISquads.SquadStruct;
+    plan: ISquads.SquadPlanStruct;
+    members: PromiseOrValue<string>[];
+    userHasSufficientStaking: PromiseOrValue<boolean>;
+  };
+
+  export type UserSquadInfoStructOutput = [
+    ISquads.SquadStructOutput,
+    ISquads.SquadPlanStructOutput,
+    string[],
+    boolean
+  ] & {
+    squadStatus: ISquads.SquadStructOutput;
+    plan: ISquads.SquadPlanStructOutput;
+    members: string[];
+    userHasSufficientStaking: boolean;
+  };
+}
+
+export declare namespace ISquads {
+  export type SquadStruct = {
+    subscription: PromiseOrValue<BigNumberish>;
+    squadsFilled: PromiseOrValue<BigNumberish>;
+  };
+
+  export type SquadStructOutput = [BigNumber, BigNumber] & {
+    subscription: BigNumber;
+    squadsFilled: BigNumber;
+  };
+
+  export type SquadPlanStruct = {
+    subscriptionCost: PromiseOrValue<BigNumberish>;
+    reward: PromiseOrValue<BigNumberish>;
+    stakingThreshold: PromiseOrValue<BigNumberish>;
+    squadSize: PromiseOrValue<BigNumberish>;
+    stakingPlanId: PromiseOrValue<BigNumberish>;
+    isActive: PromiseOrValue<boolean>;
+  };
+
+  export type SquadPlanStructOutput = [
+    BigNumber,
+    BigNumber,
+    BigNumber,
+    BigNumber,
+    BigNumber,
+    boolean
+  ] & {
+    subscriptionCost: BigNumber;
+    reward: BigNumber;
+    stakingThreshold: BigNumber;
+    squadSize: BigNumber;
+    stakingPlanId: BigNumber;
+    isActive: boolean;
+  };
 }
 
 export interface HelperInterface extends utils.Interface {
   functions: {
     "getUserReferralsFullInfoByLevel(address,uint256)": FunctionFragment;
+    "getUserSquadInfo(uint256,address)": FunctionFragment;
+    "getUserSquadsInfo(address)": FunctionFragment;
     "owner()": FunctionFragment;
     "referralManager()": FunctionFragment;
     "renounceOwnership()": FunctionFragment;
@@ -78,6 +136,8 @@ export interface HelperInterface extends utils.Interface {
   getFunction(
     nameOrSignatureOrTopic:
       | "getUserReferralsFullInfoByLevel"
+      | "getUserSquadInfo"
+      | "getUserSquadsInfo"
       | "owner"
       | "referralManager"
       | "renounceOwnership"
@@ -96,6 +156,14 @@ export interface HelperInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "getUserReferralsFullInfoByLevel",
     values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getUserSquadInfo",
+    values: [PromiseOrValue<BigNumberish>, PromiseOrValue<string>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getUserSquadsInfo",
+    values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(functionFragment: "owner", values?: undefined): string;
   encodeFunctionData(
@@ -137,6 +205,14 @@ export interface HelperInterface extends utils.Interface {
 
   decodeFunctionResult(
     functionFragment: "getUserReferralsFullInfoByLevel",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getUserSquadInfo",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getUserSquadsInfo",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
@@ -229,6 +305,17 @@ export interface Helper extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[Helper.ReferralFullInfoStructOutput[]]>;
 
+    getUserSquadInfo(
+      planId: PromiseOrValue<BigNumberish>,
+      user: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<[Helper.UserSquadInfoStructOutput]>;
+
+    getUserSquadsInfo(
+      user: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<[Helper.UserSquadInfoStructOutput[]]>;
+
     owner(overrides?: CallOverrides): Promise<[string]>;
 
     referralManager(overrides?: CallOverrides): Promise<[string]>;
@@ -282,6 +369,17 @@ export interface Helper extends BaseContract {
     overrides?: CallOverrides
   ): Promise<Helper.ReferralFullInfoStructOutput[]>;
 
+  getUserSquadInfo(
+    planId: PromiseOrValue<BigNumberish>,
+    user: PromiseOrValue<string>,
+    overrides?: CallOverrides
+  ): Promise<Helper.UserSquadInfoStructOutput>;
+
+  getUserSquadsInfo(
+    user: PromiseOrValue<string>,
+    overrides?: CallOverrides
+  ): Promise<Helper.UserSquadInfoStructOutput[]>;
+
   owner(overrides?: CallOverrides): Promise<string>;
 
   referralManager(overrides?: CallOverrides): Promise<string>;
@@ -334,6 +432,17 @@ export interface Helper extends BaseContract {
       level: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<Helper.ReferralFullInfoStructOutput[]>;
+
+    getUserSquadInfo(
+      planId: PromiseOrValue<BigNumberish>,
+      user: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<Helper.UserSquadInfoStructOutput>;
+
+    getUserSquadsInfo(
+      user: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<Helper.UserSquadInfoStructOutput[]>;
 
     owner(overrides?: CallOverrides): Promise<string>;
 
@@ -398,6 +507,17 @@ export interface Helper extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    getUserSquadInfo(
+      planId: PromiseOrValue<BigNumberish>,
+      user: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    getUserSquadsInfo(
+      user: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     owner(overrides?: CallOverrides): Promise<BigNumber>;
 
     referralManager(overrides?: CallOverrides): Promise<BigNumber>;
@@ -449,6 +569,17 @@ export interface Helper extends BaseContract {
     getUserReferralsFullInfoByLevel(
       user: PromiseOrValue<string>,
       level: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    getUserSquadInfo(
+      planId: PromiseOrValue<BigNumberish>,
+      user: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    getUserSquadsInfo(
+      user: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 

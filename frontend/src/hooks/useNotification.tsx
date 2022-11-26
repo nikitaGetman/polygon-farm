@@ -5,6 +5,7 @@ import { useCallback } from 'react';
 const commonProps = {
   position: 'bottom-left' as const,
   isClosable: true,
+  duration: 15000,
 };
 type ToastProps = Omit<NotificationProps, 'type' | 'onClose'>;
 

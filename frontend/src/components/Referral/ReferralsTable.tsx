@@ -1,8 +1,17 @@
 import React, { FC, useMemo } from 'react';
-import { Button, Center, Flex, Tbody, Td, Th, Thead, Tr, useDisclosure } from '@chakra-ui/react';
+import {
+  Box,
+  Button,
+  Center,
+  Flex,
+  Tbody,
+  Td,
+  Th,
+  Thead,
+  Tr,
+  useDisclosure,
+} from '@chakra-ui/react';
 import { Table } from '@/components/ui/Table/Table';
-import { ReactComponent as SavIcon } from '@/assets/images/sav_icon.svg';
-import { ReactComponent as SavrIcon } from '@/assets/images/savr_icon.svg';
 import { BigNumber } from 'ethers';
 import { getLocalDateString } from '@/utils/time';
 import { getReadableAmount } from '@/utils/number';
@@ -20,8 +29,9 @@ type Referral = {
 };
 type ReferralsTableProps = {
   referrals: Referral[];
+  userLevels: BigNumber[];
 };
-export const ReferralsTable: FC<ReferralsTableProps> = ({ referrals }) => {
+export const ReferralsTable: FC<ReferralsTableProps> = ({ referrals, userLevels }) => {
   const { isOpen, onToggle } = useDisclosure();
 
   const modifiedItems = useMemo(
@@ -36,6 +46,16 @@ export const ReferralsTable: FC<ReferralsTableProps> = ({ referrals }) => {
 
   const emptyRows = Math.max(0, COLLAPSED_LIMIT - visibleItems.length);
 
+  const hasSubscription = (level: number) =>
+    userLevels.length > level && userLevels[level].toNumber() > Date.now() / 1000;
+
+  const RedCircle = (
+    <Box display="inline-block" width="16px" height="16px" borderRadius="50%" bgColor="error" />
+  );
+  const GreenCircle = (
+    <Box display="inline-block" width="16px" height="16px" borderRadius="50%" bgColor="green.400" />
+  );
+
   return (
     <>
       <Table>
@@ -48,16 +68,17 @@ export const ReferralsTable: FC<ReferralsTableProps> = ({ referrals }) => {
             <Th textAlign="center">Start Date</Th>
             <Th textAlign="center" width="200px">
               <Flex alignItems="center" justifyContent="center">
-                Have SAV <SavIcon width="24px" />
+                Have SAV
               </Flex>
             </Th>
             <Th textAlign="center" width="200px">
               <Flex alignItems="center" justifyContent="center">
-                Have SAVR <SavrIcon width="24px" />
+                Have SAVR
               </Flex>
             </Th>
             <Th width="90px">Staking</Th>
             <Th width="90px">Referral</Th>
+            <Th width="90px">Status</Th>
           </Tr>
         </Thead>
         <Tbody>
@@ -68,12 +89,20 @@ export const ReferralsTable: FC<ReferralsTableProps> = ({ referrals }) => {
               <Td textAlign="center">{getLocalDateString(referral.activationDate)}</Td>
               <Td textAlign="center">{getReadableAmount(referral.token1Balance)}</Td>
               <Td textAlign="center">{getReadableAmount(referral.token2Balance)}</Td>
-              <Td textAlign="center">{referral.isStakingSubscriptionActive ? 'Yes' : 'No'}</Td>
-              <Td textAlign="center">{referral.isReferralSubscriptionActive ? 'Yes' : 'No'}</Td>
+              <Td textAlign="center">
+                {referral.isStakingSubscriptionActive ? GreenCircle : RedCircle}
+              </Td>
+              <Td textAlign="center">
+                {referral.isReferralSubscriptionActive ? GreenCircle : RedCircle}
+              </Td>
+              <Td textAlign="center">
+                {hasSubscription(referral.level.toNumber() - 1) ? GreenCircle : RedCircle}
+              </Td>
             </Tr>
           ))}
           {Array.from({ length: emptyRows }).map((_, index) => (
             <Tr key={`empty-${index}`}>
+              <Td></Td>
               <Td></Td>
               <Td></Td>
               <Td></Td>
