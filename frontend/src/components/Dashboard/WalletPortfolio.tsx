@@ -2,14 +2,14 @@ import React from 'react';
 import { Text, Box, Flex, Button } from '@chakra-ui/react';
 import { useAccount } from 'wagmi';
 import { ReactComponent as PuzzlesIcon } from '@/assets/images/icons/puzzles.svg';
-import { ReactComponent as ForkIcon } from '@/assets/images/icons/fork.svg';
 import { ReactComponent as PlusIcon } from '@/assets/images/icons/plus.svg';
 import { ConnectWalletButton } from '@/components/ui/ConnectWalletButton/ConnectWalletButton';
 import { useAddTokens } from '@/hooks/useAddTokens';
 import { bigNumberToString, getReadableAmount } from '@/utils/number';
 import { ReactComponent as BoxIcon } from '@/assets/images/icons/box.svg';
-import { useSavBalance, useSavRBalance } from '@/hooks/useTokenBalance';
+import { useSavBalance, useTokenBalanceHistory, useSavRBalance } from '@/hooks/useTokenBalance';
 import { useStaking } from '@/hooks/useStaking';
+import { BalanceHistoryChart } from './BalanceChart';
 
 export const WalletPortfolio = () => {
   const { isConnected } = useAccount();
@@ -17,6 +17,8 @@ export const WalletPortfolio = () => {
 
   const { data: savBalance } = useSavBalance();
   const { data: savrBalance } = useSavRBalance();
+
+  const balanceHistory = useTokenBalanceHistory();
 
   const { tvl, totalClaimed } = useStaking();
 
@@ -40,7 +42,7 @@ export const WalletPortfolio = () => {
         </Button>
       </Box>
 
-      <Box background="rgba(0, 0, 0, 0.2)" borderRadius="md" p="30px" maxW="510px">
+      <Box background="rgba(0, 0, 0, 0.2)" borderRadius="md" p="30px" maxW="510px" flexGrow="1">
         <Text textStyle="textMedium" mb="5" textTransform="uppercase">
           Wallet portfolio
         </Text>
@@ -48,7 +50,7 @@ export const WalletPortfolio = () => {
         {isConnected ? (
           <>
             <Box h="220px">
-              <ForkIcon />
+              <BalanceHistoryChart data={balanceHistory.data} />
             </Box>
             <Flex mt="17px" justifyContent="space-between">
               <Flex flexWrap="wrap" maxW="200px">

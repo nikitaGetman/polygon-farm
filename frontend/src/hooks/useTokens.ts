@@ -1,8 +1,8 @@
 import { tryToGetErrorData } from '@/utils/error';
 import { useMutation } from '@tanstack/react-query';
 import { BigNumber, BigNumberish, ethers } from 'ethers';
-import { useSavContract } from './contracts/useSavContract';
-import { useSavRContract } from './contracts/useSavRContract';
+import { ContractsEnum } from './contracts/useContractAbi';
+import { useTokenContract } from './contracts/useTokenContract';
 import { useNotification } from './useNotification';
 
 export enum TOKENS {
@@ -12,8 +12,8 @@ export enum TOKENS {
 
 const INCREASE_TOKEN_ALLOWANCE_MUTATION = 'increase-allowance';
 export const useTokens = () => {
-  const savToken = useSavContract();
-  const savRToken = useSavRContract();
+  const savToken = useTokenContract(ContractsEnum.SAV);
+  const savRToken = useTokenContract(ContractsEnum.SAVR);
   const { success, error } = useNotification();
 
   const increaseAllowanceIfRequired = useMutation(

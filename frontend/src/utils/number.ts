@@ -11,6 +11,15 @@ export const bigNumberToString = (
   return fractional ? `${parts[0]}.${fractional}` : `${parts[0]}`;
 };
 
+export const bigNumberToNumber = (
+  value: BigNumberish,
+  decimals: number = 18,
+  precision: number = 3
+) => {
+  const stringValue = bigNumberToString(value, decimals, precision);
+  return parseFloat(stringValue);
+};
+
 const PERCENT_DIVIDER = 1000.0;
 export const getYearlyAPR = (profit: BigNumberish, duration: BigNumberish) => {
   return (
