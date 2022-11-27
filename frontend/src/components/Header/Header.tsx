@@ -9,7 +9,7 @@ import Logo from '@/assets/images/logo.svg';
 import { useStaking } from '@/hooks/useStaking';
 import { useReferralManager } from '@/hooks/useReferralManager';
 import { useLocalReferrer } from '@/hooks/useLocalReferrer';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useSquads } from '@/hooks/useSquads';
 import './Header.scss';
 
@@ -35,9 +35,9 @@ export const Header = () => {
   return (
     <div className="app-header">
       <Container variant="header">
-        <div className="app-header__logo">
+        <Link to="/">
           <img src={Logo} alt="Logo" />
-        </div>
+        </Link>
 
         <Flex>
           {isConnected ? (

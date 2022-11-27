@@ -1,4 +1,4 @@
-import React, { FC, useMemo } from 'react';
+import React, { FC, useCallback, useMemo, useState } from 'react';
 import { BigNumber, BigNumberish } from 'ethers';
 import { Box, Button, Flex, Text } from '@chakra-ui/react';
 import { getLocalDateString, getReadableDuration } from '@/utils/time';
@@ -17,8 +17,7 @@ type SquadItemProps = {
   squadSize: BigNumber;
   userHasStake: boolean;
   members?: string[];
-  isLoading?: boolean;
-  onSubscribe: () => void;
+  onSubscribe: () => Promise<void>;
 };
 export const SquadItem: FC<SquadItemProps> = ({
   subscription,
@@ -31,7 +30,6 @@ export const SquadItem: FC<SquadItemProps> = ({
   squadSize,
   userHasStake,
   members,
-  isLoading,
   onSubscribe,
 }) => {
   const isSubscribed = useMemo(
@@ -47,24 +45,33 @@ export const SquadItem: FC<SquadItemProps> = ({
     [members, squadSize]
   );
 
+  const [isLoading, setIsLoading] = useState(false);
+
+  const handleSubscribe = useCallback(() => {
+    setIsLoading(true);
+    onSubscribe().finally(() => {
+      setIsLoading(false);
+    });
+  }, [onSubscribe, setIsLoading]);
+
   return (
     <Box
       flex="1 0 420px"
       background="rgba(38, 71, 55, 0.5)"
       boxShadow="0px 6px 11px rgba(0, 0, 0, 0.25)"
       borderRadius="md"
-      padding="50px 60px 60px"
+      padding="40px 40px 52px"
       position="relative"
     >
       <Flex alignItems="center" justifyContent="space-between" height="50px" mb="50px">
         <Box>
           {!isSubscribed ? (
-            <Button variant="outlinedWhite" isLoading={isLoading} onClick={onSubscribe}>
+            <Button isLoading={isLoading} onClick={handleSubscribe} padding="15px 20px">
               Activate
             </Button>
           ) : null}
           {isSubscriptionEnding ? (
-            <Button variant="outlinedWhite" isLoading={isLoading} onClick={onSubscribe}>
+            <Button variant="outlinedWhite" isLoading={isLoading} onClick={handleSubscribe}>
               Prolong
             </Button>
           ) : null}
@@ -81,14 +88,14 @@ export const SquadItem: FC<SquadItemProps> = ({
             </Text>
           ) : (
             <Text textStyle="textSansBold">
-              {bigNumberToString(subscriptionCost, 18, 0)} SAV /{' '}
+              {bigNumberToString(subscriptionCost, 18, 0)} SAV / 1 Team or{' '}
               {getReadableDuration(subscriptionDuration)}
             </Text>
           )}
         </Box>
       </Flex>
 
-      <Box position="relative" height={'300px'}>
+      <Box position="relative" height="300px" px="20px">
         <Box
           position="absolute"
           top="50%"

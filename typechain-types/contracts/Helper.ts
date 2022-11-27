@@ -36,6 +36,7 @@ export declare namespace Helper {
     token2Balance: PromiseOrValue<BigNumberish>;
     isReferralSubscriptionActive: PromiseOrValue<boolean>;
     isStakingSubscriptionActive: PromiseOrValue<boolean>;
+    isSquadSubscriptionActive: PromiseOrValue<boolean>;
   };
 
   export type ReferralFullInfoStructOutput = [
@@ -44,6 +45,7 @@ export declare namespace Helper {
     BigNumber,
     BigNumber,
     BigNumber,
+    boolean,
     boolean,
     boolean
   ] & {
@@ -54,6 +56,7 @@ export declare namespace Helper {
     token2Balance: BigNumber;
     isReferralSubscriptionActive: boolean;
     isStakingSubscriptionActive: boolean;
+    isSquadSubscriptionActive: boolean;
   };
 
   export type UserSquadInfoStruct = {

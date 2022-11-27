@@ -205,7 +205,7 @@ export const ReferralInfo: FC<ReferralInfoProps> = ({ isPageView }) => {
           </StatBlock>
           <StatBlock width="260px">
             <Box textStyle="text1" mb="10px">
-              Total referral reward
+              Total Referral Reward
             </Box>
             <Box textStyle="text1">
               <Box as="span" textStyle="textSansBold" fontSize="26px" mr="6px">

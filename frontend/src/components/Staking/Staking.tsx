@@ -34,7 +34,7 @@ export const Staking: FC<StakingProps> = ({ isPageView }) => {
   const { connect } = useConnectWallet();
   const { isOpen, onOpen, onClose } = useDisclosure(); // StakingModal toggle
   const [selectedPlan, setSelectedPlan] = useState<number>();
-  const { localReferrer } = useLocalReferrer();
+  const { getLocalReferrer } = useLocalReferrer();
 
   const { activeStakingPlans, hasEndingSubscription, subscribe, deposit, withdrawAll } =
     useStaking();
@@ -51,18 +51,11 @@ export const Staking: FC<StakingProps> = ({ isPageView }) => {
     onClose();
   }, [setSelectedPlan, onClose]);
 
-  const onSubscribe = useCallback(
-    (planId: number) => {
-      setSelectedPlan(planId);
-      subscribe.mutate(planId);
-    },
-    [setSelectedPlan, subscribe]
-  );
-
   const onDeposit = useCallback(
     async (token: TOKENS, amount: number) => {
       if (isConnected && selectedPlan !== undefined) {
         const amountBN = makeBigNumber(amount);
+        const localReferrer = getLocalReferrer() || '';
 
         await deposit.mutateAsync({
           planId: selectedPlan,
@@ -75,16 +68,7 @@ export const Staking: FC<StakingProps> = ({ isPageView }) => {
         connect();
       }
     },
-    [deposit, connect, isConnected, selectedPlan, closeModal, localReferrer, address]
-  );
-
-  const onClaim = useCallback(
-    async (planId: number) => {
-      setSelectedPlan(planId);
-      await withdrawAll.mutateAsync(planId);
-      setSelectedPlan(undefined);
-    },
-    [withdrawAll]
+    [deposit, connect, isConnected, selectedPlan, closeModal, getLocalReferrer, address]
   );
 
   const totalStakeSav = useMemo(
@@ -204,11 +188,9 @@ export const Staking: FC<StakingProps> = ({ isPageView }) => {
               userStakeSavR={planData.currentToken2Staked || 0}
               userTotalReward={planData.totalReward}
               isClaimAvailable={planData.hasReadyStakes}
-              onSubscribe={isConnected ? () => onSubscribe(planData.planId) : connect}
-              isSubscribeLoading={selectedPlan === planData.planId && subscribe.isLoading}
-              isClaimLoading={selectedPlan === planData.planId && withdrawAll.isLoading}
+              onSubscribe={() => subscribe.mutateAsync(planData.planId)}
               onDeposit={() => openModal(planData.planId)}
-              onClaim={() => onClaim(planData.planId)}
+              onClaim={() => withdrawAll.mutateAsync(planData.planId)}
             />
           </GridItem>
         ))}

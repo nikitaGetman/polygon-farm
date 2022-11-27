@@ -40,6 +40,8 @@ interface ISquads {
         view
         returns (Squad memory);
 
+    function hasAnySubscription(address user) external view returns (bool);
+
     function userHasPlanSubscription(address user, uint256 planId)
         external
         view

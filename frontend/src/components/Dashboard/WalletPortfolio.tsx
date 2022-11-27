@@ -25,7 +25,7 @@ export const WalletPortfolio = () => {
   return (
     <Flex alignItems="center">
       <Box flex="1 1 600px">
-        <Text textStyle="h1" fontSize="90px" lineHeight="99px">
+        <Text textStyle="h1" as="h1" fontSize="90px" lineHeight="99px">
           DASHBOARD
         </Text>
         <Text textStyle="textMedium" fontSize="32px" mt={2}>
@@ -92,13 +92,15 @@ export const WalletPortfolio = () => {
                 <Text mr="2" textStyle="textSansBold">
                   Total Value Locked
                 </Text>
-                <Text textStyle="text1">{getReadableAmount(tvl || 0, 18, 3)}</Text>
+                <Text textStyle="text1">{getReadableAmount(tvl || 0, { precision: 3 })}</Text>
               </Flex>
               <Flex>
                 <Text mr="2" textStyle="textSansBold">
                   Total Claimed
                 </Text>
-                <Text textStyle="text1">{getReadableAmount(totalClaimed || 0, 18, 3)}</Text>
+                <Text textStyle="text1">
+                  {getReadableAmount(totalClaimed || 0, { precision: 3 })}
+                </Text>
               </Flex>
             </Flex>
             <ConnectWalletButton />

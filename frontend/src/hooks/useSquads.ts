@@ -1,16 +1,18 @@
 import { tryToGetErrorData } from '@/utils/error';
+import { bigNumberToString } from '@/utils/number';
+import { getReadableDuration } from '@/utils/time';
 import { useMutation } from '@tanstack/react-query';
-import { BigNumber } from 'ethers';
 import { useMemo } from 'react';
 import { useAccount, useQuery, useQueryClient } from 'wagmi';
 import { useSquadsContract } from './contracts/useSquadsContract';
 import { useConnectWallet } from './useConnectWallet';
 import { useHelperUserSquadsFullInfo } from './useHelper';
 import { useNotification } from './useNotification';
+import { useStaking } from './useStaking';
 import { SAV_BALANCE_REQUEST } from './useTokenBalance';
 import { TOKENS, useTokens } from './useTokens';
 
-const SQUAD_PLANS_REQUEST = 'squad-plans-info';
+export const SQUAD_PLANS_REQUEST = 'squad-plans-info';
 const SUBSCRIBE_TO_SQUADS_PLAN_MUTATION = 'subscribe-to-squads';
 
 export const SQUADS_SUBSCRIPTION_ENDING_NOTIFICATION = 15 * 24 * 60 * 60; // 15 days in seconds
@@ -23,6 +25,7 @@ export const useSquads = () => {
   const { success, error } = useNotification();
   const tokens = useTokens();
   const { connect } = useConnectWallet();
+  const { stakingPlans } = useStaking();
   const { userSquadsInfoRequest, userSquadsInfo } = useHelperUserSquadsFullInfo(account);
 
   const subscriptionPeriodDays = 365;
@@ -44,18 +47,30 @@ export const useSquads = () => {
         return;
       }
 
-      const subscriptionCost =
-        squadPlansRequest?.data?.[planId].subscriptionCost || BigNumber.from(10).pow(18); // fallback to 100 tokens;
+      const squadPlan = squadPlansRequest?.data?.[planId];
+      if (!squadPlan) {
+        return;
+      }
+      const stakingPlan = stakingPlans?.data?.[squadPlan.stakingPlanId.toNumber()];
+      if (!stakingPlan) {
+        return;
+      }
 
       await tokens.increaseAllowanceIfRequired.mutateAsync({
         token: TOKENS.SAV,
         owner: account,
         spender: squadsContract.address,
-        requiredAmount: subscriptionCost,
+        requiredAmount: squadPlan.subscriptionCost,
       });
 
       const txHash = await squadsContract.subscribe(planId);
-      success({ title: 'Success', description: `Subscribed to Squad plan ${planId + 1}`, txHash });
+      success({
+        title: 'Success',
+        description: `${bigNumberToString(squadPlan.stakingThreshold)}/${getReadableDuration(
+          stakingPlan.stakingDuration
+        )} team subscription has been activated for one year`,
+        txHash,
+      });
     },
     {
       onSuccess: () => {

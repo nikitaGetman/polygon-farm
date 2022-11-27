@@ -86,7 +86,6 @@ const secondary = defineStyle({
   bgColor: 'bgGreen.200',
   border: '2px solid',
   borderColor: 'green.100',
-  // filter: 'drop-shadow(0px 9px 18px rgba(107, 201, 91, 0.27))',
 
   _hover: {
     bgColor: 'green.400',
@@ -102,7 +101,6 @@ const outlined = defineStyle({
   bgColor: 'bgGreen.200',
   border: '2px solid',
   borderColor: 'green.400',
-  filter: 'drop-shadow(0px 9px 18px rgba(107, 201, 91, 0.27))',
   borderRadius: 'sm',
 
   _hover: {

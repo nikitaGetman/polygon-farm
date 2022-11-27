@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo } from 'react';
+import React, { useCallback, useEffect, useMemo } from 'react';
 import { Box, Button, Container, Flex, Link, Text } from '@chakra-ui/react';
 import { ArrowBackIcon, DownloadIcon } from '@chakra-ui/icons';
 import { Link as RouterLink } from 'react-router-dom';
@@ -8,6 +8,10 @@ import { StakingTable } from './StakingTable';
 
 export const StakingPage = () => {
   const { userStakes, stakingPlans, withdraw } = useStaking();
+
+  useEffect(() => {
+    document.title = 'iSaver | Earn by staking';
+  }, []);
 
   const stakesList = useMemo(
     () =>

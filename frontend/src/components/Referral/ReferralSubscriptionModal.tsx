@@ -161,7 +161,7 @@ const SubscriptionLevel: FC<SubscriptionLevelProps> = ({
           justifyContent="space-between"
         >
           <Text textStyle="textSansBold" textOverflow="ellipsis">
-            {getReadableAmount(price, 18, 0)} SAV / {getReadableDuration(duration)}
+            {getReadableAmount(price, { precision: 0 })} SAV / {getReadableDuration(duration)}
           </Text>
           {isActive ? (
             <>

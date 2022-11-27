@@ -1,4 +1,4 @@
-import React, { FC } from 'react';
+import React, { FC, useCallback, useState } from 'react';
 import { Box, Text, Flex, Button } from '@chakra-ui/react';
 
 import { BigNumber, BigNumberish } from 'ethers';
@@ -18,12 +18,10 @@ type StakingPlanProps = {
   userStakeSavR: BigNumberish;
   userTotalReward?: BigNumber;
   isClaimAvailable?: boolean;
-  isSubscribeLoading?: boolean;
-  isClaimLoading?: boolean;
 
-  onSubscribe: () => void;
+  onSubscribe: () => Promise<void>;
   onDeposit: () => void;
-  onClaim: () => void;
+  onClaim: () => Promise<void>;
 };
 export const StakingPlan: FC<StakingPlanProps> = ({
   isSubscribed,
@@ -38,14 +36,29 @@ export const StakingPlan: FC<StakingPlanProps> = ({
   userStakeSavR,
   userTotalReward,
   isClaimAvailable,
-  isSubscribeLoading,
-  isClaimLoading,
   onSubscribe,
   onDeposit,
   onClaim,
 }) => {
+  const [isSubscribeLoading, setIsSubscribeLoading] = useState(false);
+  const [isClaimLoading, setIsClaimLoading] = useState(false);
+
+  const handleSubscribe = useCallback(() => {
+    setIsSubscribeLoading(true);
+    onSubscribe().finally(() => {
+      setIsSubscribeLoading(false);
+    });
+  }, [setIsSubscribeLoading, onSubscribe]);
+
+  const handleClaim = useCallback(() => {
+    setIsClaimLoading(true);
+    onClaim().finally(() => {
+      setIsClaimLoading(false);
+    });
+  }, [setIsClaimLoading, onClaim]);
+
   return (
-    <Box borderRadius="md" overflow="hidden" filter="drop-shadow(0px 4px 4px rgba(0, 0, 0, 0.25))">
+    <Box borderRadius="md" overflow="hidden">
       <Flex
         bgColor={isSubscribed ? 'green.10050' : 'gray.200'}
         p="10px 20px"
@@ -69,7 +82,7 @@ export const StakingPlan: FC<StakingPlanProps> = ({
         {isSubscriptionEnding ? (
           <Button
             variant="outlinedWhite"
-            onClick={onSubscribe}
+            onClick={handleSubscribe}
             isLoading={isSubscribeLoading}
             size="md"
             ml={5}
@@ -80,7 +93,7 @@ export const StakingPlan: FC<StakingPlanProps> = ({
         ) : null}
 
         {!isSubscribed ? (
-          <Button onClick={onSubscribe} isLoading={isSubscribeLoading} size="md" ml={5}>
+          <Button onClick={handleSubscribe} isLoading={isSubscribeLoading} size="md" ml={5}>
             Activate
           </Button>
         ) : null}
@@ -106,10 +119,10 @@ export const StakingPlan: FC<StakingPlanProps> = ({
               <StakingParameter title="Your Stake">
                 <Flex flexWrap="wrap">
                   <Box as="span" ml={2} mr={2}>
-                    {getReadableAmount(userStakeSav)} SAV
+                    {getReadableAmount(userStakeSav, { shortify: true })} SAV
                   </Box>
                   <Box as="span" mr={2} ml={2}>
-                    {getReadableAmount(userStakeSavR)} SAVR
+                    {getReadableAmount(userStakeSavR, { shortify: true })} SAVR
                   </Box>
                 </Flex>
               </StakingParameter>
@@ -124,7 +137,7 @@ export const StakingPlan: FC<StakingPlanProps> = ({
               Deposit
             </Button>
             <Button
-              onClick={onClaim}
+              onClick={handleClaim}
               variant="outlined"
               disabled={!isClaimAvailable || isClaimLoading}
               isLoading={isClaimLoading}

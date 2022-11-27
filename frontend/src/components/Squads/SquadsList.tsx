@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react';
+import React from 'react';
 import { useSquads } from '@/hooks/useSquads';
 import { Flex, Skeleton } from '@chakra-ui/react';
 import { SquadItem } from './SquadItem';
@@ -7,17 +7,8 @@ import { useAccount } from 'wagmi';
 
 export const SquadsList = () => {
   const { address } = useAccount();
-  const [selectedSquadPlanId, setSelectedSquadPlanId] = useState<number>();
   const { subscriptionPeriodDays, subscribe } = useSquads();
   const { userSquadsInfo } = useHelperUserSquadsFullInfo(address);
-
-  const handleSubscribe = useCallback(
-    (planId: number) => {
-      setSelectedSquadPlanId(planId);
-      subscribe.mutate(planId);
-    },
-    [setSelectedSquadPlanId, subscribe]
-  );
 
   return (
     <Flex overflow="auto" gap="20px">
@@ -58,8 +49,7 @@ export const SquadsList = () => {
             userHasStake={userHasSufficientStaking}
             members={members}
             reward={plan.reward}
-            isLoading={selectedSquadPlanId === index && subscribe.isLoading}
-            onSubscribe={() => handleSubscribe(index)}
+            onSubscribe={() => subscribe.mutateAsync(index)}
           />
         )
       )}

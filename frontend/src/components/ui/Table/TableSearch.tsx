@@ -1,5 +1,5 @@
 import React, { FC, useCallback, useEffect, useRef, useState } from 'react';
-import { SearchIcon } from '@chakra-ui/icons';
+import { SearchIcon, CloseIcon } from '@chakra-ui/icons';
 import {
   Box,
   Button,
@@ -29,6 +29,11 @@ export const TableSearch: FC<TableSearchProps> = ({
     setTimeout(() => searchRef.current?.focus(), 0);
   }, [onOpen]);
 
+  const handleReset = useCallback(() => {
+    setSearch('');
+    onClose();
+  }, [setSearch, onClose]);
+
   useEffect(() => {
     onChange(search);
   }, [search, onChange]);
@@ -36,7 +41,7 @@ export const TableSearch: FC<TableSearchProps> = ({
   return (
     <Box>
       {isOpen || search ? (
-        <InputGroup variant="primary" size="md" minWidth="320px">
+        <InputGroup variant="primary" size="md" minWidth="340px">
           <Input
             placeholder={placeholder}
             value={search}
@@ -46,8 +51,14 @@ export const TableSearch: FC<TableSearchProps> = ({
             ref={searchRef}
           />
           <InputRightElement>
-            <IconButton variant="inputTransparentWhite" color="white" aria-label="Search" size="md">
-              <SearchIcon />
+            <IconButton
+              variant="inputTransparentWhite"
+              color="white"
+              aria-label="Search"
+              size="md"
+              onClick={handleReset}
+            >
+              <CloseIcon width="12px" />
             </IconButton>
           </InputRightElement>
         </InputGroup>

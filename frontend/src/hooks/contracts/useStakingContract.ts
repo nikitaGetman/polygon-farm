@@ -35,6 +35,10 @@ export const useStakingContract = () => {
     return contract.getUserStakesWithRewards(planId, address);
   };
 
+  const getUserStakes = async (address: string, planId: number) => {
+    return contract.getUserStakes(planId, address);
+  };
+
   const subscribe = async (planId: number): Promise<string> => {
     const tx = await contract.subscribe(planId);
     await tx.wait();
@@ -84,6 +88,7 @@ export const useStakingContract = () => {
     getStakingPlans,
     getUserStakingInfo,
     getUserStakesWithRewards,
+    getUserStakes,
     subscribe,
   };
 };

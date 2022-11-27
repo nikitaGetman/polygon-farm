@@ -1,6 +1,5 @@
 import { tryToGetErrorData } from '@/utils/error';
-import { getReadableAmount } from '@/utils/number';
-import { calculateStakeReward } from '@/utils/staking';
+import { bigNumberToString } from '@/utils/number';
 import { getReadableDuration } from '@/utils/time';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { BigNumber, BigNumberish } from 'ethers';
@@ -9,6 +8,7 @@ import { useAccount } from 'wagmi';
 import { useStakingContract } from './contracts/useStakingContract';
 import { useConnectWallet } from './useConnectWallet';
 import { useNotification } from './useNotification';
+import { SQUAD_PLANS_REQUEST } from './useSquads';
 import { SAVR_BALANCE_REQUEST, SAV_BALANCE_REQUEST } from './useTokenBalance';
 import { TOKENS, useTokens } from './useTokens';
 
@@ -48,7 +48,7 @@ export const useStaking = () => {
       const res = account
         ? await Promise.all(
             (stakingPlans.data || []).map((_, index) =>
-              stakingContract.getUserStakesWithRewards(account, index)
+              stakingContract.getUserStakes(account, index)
             )
           )
         : null;
@@ -75,12 +75,12 @@ export const useStaking = () => {
             const stakes = userStakes.data?.[index];
 
             const totalReward = stakes?.reduce(
-              (sum, stake) => sum.add(calculateStakeReward(stake.stake)),
+              (sum, stake) => sum.add(stake.profit),
               BigNumber.from(0)
             );
 
             const hasReadyStakes = stakes?.some(
-              (stake) => stake.stake.timeEnd.toNumber() <= currentTime && !stake.stake.isClaimed
+              (stake) => stake.timeEnd.toNumber() <= currentTime && !stake.isClaimed
             );
 
             return {
@@ -179,7 +179,7 @@ export const useStaking = () => {
       const txHash = await stakingContract.deposit({ planId, amount, isToken2, referrer });
       success({
         title: 'Success',
-        description: `You have deposited ${getReadableAmount(amount)} ${
+        description: `You have deposited ${bigNumberToString(amount)} ${
           isToken2 ? 'SAVR' : 'SAV'
         } tokens in ${getReadableDuration(stakingPlan.stakingDuration)} staking plan`,
         txHash,
@@ -190,6 +190,7 @@ export const useStaking = () => {
         queryClient.invalidateQueries({ queryKey: [STAKING_PLANS_REQUEST] });
         queryClient.invalidateQueries({ queryKey: [USER_STAKING_INFO_REQUEST] });
         queryClient.invalidateQueries({ queryKey: [USER_STAKES_REQUEST] });
+        queryClient.invalidateQueries({ queryKey: [SQUAD_PLANS_REQUEST] });
         queryClient.invalidateQueries({ queryKey: [SAV_BALANCE_REQUEST] });
         queryClient.invalidateQueries({ queryKey: [SAVR_BALANCE_REQUEST] });
       },

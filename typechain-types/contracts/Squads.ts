@@ -77,6 +77,7 @@ export interface SquadsInterface extends utils.Interface {
     "getUserSquadMembers(address,uint256)": FunctionFragment;
     "getUserSubscription(address,uint256)": FunctionFragment;
     "grantRole(bytes32,address)": FunctionFragment;
+    "hasAnySubscription(address)": FunctionFragment;
     "hasRole(bytes32,address)": FunctionFragment;
     "plans(uint256)": FunctionFragment;
     "referralManager()": FunctionFragment;
@@ -114,6 +115,7 @@ export interface SquadsInterface extends utils.Interface {
       | "getUserSquadMembers"
       | "getUserSubscription"
       | "grantRole"
+      | "hasAnySubscription"
       | "hasRole"
       | "plans"
       | "referralManager"
@@ -184,6 +186,10 @@ export interface SquadsInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "grantRole",
     values: [PromiseOrValue<BytesLike>, PromiseOrValue<string>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "hasAnySubscription",
+    values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
     functionFragment: "hasRole",
@@ -311,6 +317,10 @@ export interface SquadsInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "grantRole", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "hasAnySubscription",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "hasRole", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "plans", data: BytesLike): Result;
   decodeFunctionResult(
@@ -590,6 +600,11 @@ export interface Squads extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
+    hasAnySubscription(
+      user: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<[boolean]>;
+
     hasRole(
       role: PromiseOrValue<BytesLike>,
       account: PromiseOrValue<string>,
@@ -764,6 +779,11 @@ export interface Squads extends BaseContract {
     account: PromiseOrValue<string>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
+
+  hasAnySubscription(
+    user: PromiseOrValue<string>,
+    overrides?: CallOverrides
+  ): Promise<boolean>;
 
   hasRole(
     role: PromiseOrValue<BytesLike>,
@@ -941,6 +961,11 @@ export interface Squads extends BaseContract {
       account: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<void>;
+
+    hasAnySubscription(
+      user: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
 
     hasRole(
       role: PromiseOrValue<BytesLike>,
@@ -1214,6 +1239,11 @@ export interface Squads extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
+    hasAnySubscription(
+      user: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     hasRole(
       role: PromiseOrValue<BytesLike>,
       account: PromiseOrValue<string>,
@@ -1383,6 +1413,11 @@ export interface Squads extends BaseContract {
       role: PromiseOrValue<BytesLike>,
       account: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    hasAnySubscription(
+      user: PromiseOrValue<string>,
+      overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     hasRole(

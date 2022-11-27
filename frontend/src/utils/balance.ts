@@ -1,7 +1,7 @@
 import { TransferEvent } from '@/../../typechain-types/contracts/tokens/BasicToken';
 import { bigNumberToNumber } from './number';
 
-export const BALANCE_HISTORY_PERIOD = 2 * 30 * 24 * 60 * 60 * 1000; // 2 month
+export const BALANCE_HISTORY_PERIOD = 1 * 30 * 24 * 60 * 60 * 1000; // 1 month
 
 type BalanceHistoryType = {
   token1: number;
@@ -53,6 +53,12 @@ export const getBalanceHistoryFromTransfers = (
 
       return acc;
     }, [] as BalanceHistoryType[]);
+
+  // Hack for preventing only one dot on chart
+  if (tokensHistory.length === 1) {
+    const data = tokensHistory[0];
+    tokensHistory.push({ ...data, block: data.block + 1 });
+  }
 
   return tokensHistory;
 };

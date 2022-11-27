@@ -435,6 +435,11 @@
                       "internalType": "bool",
                       "name": "isStakingSubscriptionActive",
                       "type": "bool"
+                    },
+                    {
+                      "internalType": "bool",
+                      "name": "isSquadSubscriptionActive",
+                      "type": "bool"
                     }
                   ],
                   "internalType": "struct Helper.ReferralFullInfo[]",
@@ -3383,6 +3388,25 @@
               "name": "grantRole",
               "outputs": [],
               "stateMutability": "nonpayable",
+              "type": "function"
+            },
+            {
+              "inputs": [
+                {
+                  "internalType": "address",
+                  "name": "user",
+                  "type": "address"
+                }
+              ],
+              "name": "hasAnySubscription",
+              "outputs": [
+                {
+                  "internalType": "bool",
+                  "name": "",
+                  "type": "bool"
+                }
+              ],
+              "stateMutability": "view",
               "type": "function"
             },
             {
@@ -9473,6 +9497,11 @@
                       "internalType": "bool",
                       "name": "isStakingSubscriptionActive",
                       "type": "bool"
+                    },
+                    {
+                      "internalType": "bool",
+                      "name": "isSquadSubscriptionActive",
+                      "type": "bool"
                     }
                   ],
                   "internalType": "struct Helper.ReferralFullInfo[]",
@@ -12421,6 +12450,25 @@
               "name": "grantRole",
               "outputs": [],
               "stateMutability": "nonpayable",
+              "type": "function"
+            },
+            {
+              "inputs": [
+                {
+                  "internalType": "address",
+                  "name": "user",
+                  "type": "address"
+                }
+              ],
+              "name": "hasAnySubscription",
+              "outputs": [
+                {
+                  "internalType": "bool",
+                  "name": "",
+                  "type": "bool"
+                }
+              ],
+              "stateMutability": "view",
               "type": "function"
             },
             {
