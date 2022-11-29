@@ -49,6 +49,6 @@ export const getReadableAmount = (
   return `${(shortAmount / 1000000).toFixed(precision)}M`;
 };
 
-export const makeBigNumber = (value: BigNumberish) => {
-  return ethers.utils.parseEther(value.toString());
+export const makeBigNumber = (value: BigNumberish, decimals: number = 18) => {
+  return ethers.utils.parseUnits(value.toString(), decimals);
 };

@@ -3,6 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 import { useAccount } from 'wagmi';
 import { ContractsEnum } from './contracts/useContractAbi';
 import { useTokenContract } from './contracts/useTokenContract';
+import { useUsdtTokenContract } from './contracts/useUsdtTokenContract';
 
 export const SAV_BALANCE_REQUEST = 'token-balance-sav';
 export const useSavBalance = () => {
@@ -21,6 +22,16 @@ export const useSavRBalance = () => {
 
   return useQuery([SAVR_BALANCE_REQUEST, { address }], async () => {
     return address ? await savrContract.balanceOf(address) : null;
+  });
+};
+
+export const USDT_BALANCE_REQUEST = 'token-balance-usdt';
+export const useUsdtBalance = () => {
+  const usdtContract = useUsdtTokenContract();
+  const { address } = useAccount();
+
+  return useQuery([SAVR_BALANCE_REQUEST, { address }], async () => {
+    return address ? await usdtContract.balanceOf(address) : null;
   });
 };
 

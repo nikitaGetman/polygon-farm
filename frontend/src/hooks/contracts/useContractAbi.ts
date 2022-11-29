@@ -9,6 +9,7 @@ export enum ContractsEnum {
   'ReferralManager' = 'ReferralManager',
   'Squads' = 'Squads',
   'Helper' = 'Helper',
+  'VendorSell' = 'VendorSell',
 }
 
 type ContractAbi = {

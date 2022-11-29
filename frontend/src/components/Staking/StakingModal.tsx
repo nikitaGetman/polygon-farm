@@ -57,21 +57,21 @@ export const StakingModal: FC<StakingModalProps> = ({
   onClose,
 }) => {
   const [token, setToken] = useState<TOKENS>(TOKENS.SAV);
-  const [amount, setAmount] = useState<number>();
+  const [amount, setAmount] = useState<string>();
   const [isAgreed, setIsAgreed] = useState(false);
   const { data: savBalance } = useSavBalance();
   const { data: savrBalance } = useSavRBalance();
 
   const handleStake = useCallback(() => {
-    if (amount && amount >= MIN_STAKE_LIMIT) {
-      onStake(token, amount);
+    if (amount && parseFloat(amount) >= MIN_STAKE_LIMIT) {
+      onStake(token, parseFloat(amount));
     }
   }, [token, amount, onStake]);
 
   const balance = token === TOKENS.SAV ? savBalance : savrBalance;
   const isStakeDisabled =
     !amount ||
-    amount < MIN_STAKE_LIMIT ||
+    parseFloat(amount) < MIN_STAKE_LIMIT ||
     balance?.lt(ethers.utils.parseEther(`${amount || 0}`)) ||
     !isAgreed;
 

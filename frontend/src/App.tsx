@@ -21,6 +21,7 @@ import { Modals } from '@/components/Modals';
 import { SwitchTransition, CSSTransition } from 'react-transition-group';
 import { SquadsPage } from './components/Squads/SquadsPage';
 import { REFERRER_SEARCH_PARAMS_KEY, useLocalReferrer } from './hooks/useLocalReferrer';
+import { ExchangePage } from './components/Exchange/ExchangePage';
 
 import '@/assets/styles/index.scss';
 
@@ -28,6 +29,7 @@ const routes = [
   { path: '/', name: 'Dashboard', element: <Dashboard />, nodeRef: createRef() },
   { path: '/staking', name: 'Staking', element: <StakingPage />, nodeRef: createRef() },
   { path: '/team', name: 'Squads', element: <SquadsPage />, nodeRef: createRef() },
+  { path: '/exchange', name: 'Exchange', element: <ExchangePage />, nodeRef: createRef() },
 ];
 
 const router = createBrowserRouter([

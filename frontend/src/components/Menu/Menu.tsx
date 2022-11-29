@@ -89,7 +89,11 @@ export const Menu = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => void
             onClick={() => handleNavigate('/lottery')}
           />
           <Divider mb="30px" borderBottomWidth="2px" borderColor="white" />
-          <NavMenuItem text="Buy token" icon={<WalletIcon />} />
+          <NavMenuItem
+            text="Buy token"
+            icon={<WalletIcon />}
+            onClick={() => handleNavigate('/exchange')}
+          />
           <NavMenuItem text="Whitepaper" icon={<TabletIcon />} />
         </DrawerBody>
       </DrawerContent>

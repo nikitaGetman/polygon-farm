@@ -11,6 +11,9 @@ contract VendorSell is Context, AccessControl, Pausable {
     using SafeERC20 for IERC20;
 
     uint256 private SWAP_RATE_DIVIDER = 1000;
+    uint256 private TOKEN_DECIMALS = 18;
+    uint256 private CHANGE_TOKEN_DECIMALS = 6; // USDT decimals
+
     uint256 public swapRate; // divide on SWAP_RATE_DIVIDER
     bool private _isSellAvailable;
 
@@ -108,7 +111,9 @@ contract VendorSell is Context, AccessControl, Pausable {
         view
         returns (uint256)
     {
-        return (_amountToken * SWAP_RATE_DIVIDER) / swapRate;
+        return
+            (((_amountToken * SWAP_RATE_DIVIDER) / swapRate) *
+                10**CHANGE_TOKEN_DECIMALS) / 10**TOKEN_DECIMALS;
     }
 
     // !important: hope that decimals of tokens are the same
@@ -117,7 +122,9 @@ contract VendorSell is Context, AccessControl, Pausable {
         view
         returns (uint256)
     {
-        return (_amountChangeToken * swapRate) / SWAP_RATE_DIVIDER;
+        return
+            (((_amountChangeToken * swapRate) / SWAP_RATE_DIVIDER) *
+                10**TOKEN_DECIMALS) / 10**CHANGE_TOKEN_DECIMALS;
     }
 
     function isSellAvailable() public view returns (bool) {
