@@ -75,7 +75,7 @@ export const ReferralsList = () => {
             textTransform="uppercase"
             fontSize="26px"
           >
-            Your level {levelsTitle}
+            Your levels {levelsTitle}
             <Text as="span" opacity="0.5" ml="8px">
               ({totalReferrals})
             </Text>

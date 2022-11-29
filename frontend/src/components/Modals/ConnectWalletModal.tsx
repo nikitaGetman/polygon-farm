@@ -85,7 +85,6 @@ const ConnectButton: FC<ConnectButtonProps> = ({ text, icon, onClick, isLoading 
     <Button
       background="linear-gradient(96.85deg, rgba(35, 157, 113, 0.54) -8.44%, rgba(35, 54, 72, 0.54) 102.66%)"
       boxShadow="0px 6px 20px rgba(0, 0, 0, 0.25)"
-      backdropFilter="blur(22.5px)"
       borderRadius="md"
       w="100%"
       mt="10px"

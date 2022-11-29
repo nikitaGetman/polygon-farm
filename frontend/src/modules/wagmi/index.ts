@@ -41,8 +41,8 @@ export const walletConnector = new WalletConnectConnector({
 });
 
 const client = createClient({
-  // autoConnect: false,
-  autoConnect: process.env.NODE_ENV !== 'production',
+  autoConnect: true,
+  // autoConnect: process.env.NODE_ENV !== 'production',
   connectors: [metamaskConnector, walletConnector],
   provider,
   webSocketProvider,

@@ -10,8 +10,8 @@ import {
   ModalOverlay,
   Text,
 } from '@chakra-ui/react';
-import { ReactComponent as SavIcon } from '@/assets/images/sav_icon.svg';
 import QRCode from 'react-qr-code';
+import Logo from '@/assets/images/logo.svg';
 
 type ReferralLinkQRModalProps = {
   link: string;
@@ -24,11 +24,9 @@ export const ReferralLinkQRModal: FC<ReferralLinkQRModalProps> = ({ link, onClos
       <ModalContent>
         <ModalHeader textStyle="textSansBold" fontSize={26}>
           <Flex alignItems="center">
-            <SavIcon width="32px" />
-
-            <Text textStyle="textSansBold" fontSize="26px" ml="6px">
-              iSaver
-            </Text>
+            <Box width="140px">
+              <img src={Logo} alt="Logo" />
+            </Box>
           </Flex>
           <CloseButton onClick={onClose} size="lg" />
         </ModalHeader>

@@ -25,7 +25,7 @@ export const WalletPortfolio = () => {
   return (
     <Flex alignItems="center">
       <Box flex="1 1 600px">
-        <Text textStyle="h1" fontSize="90px" lineHeight="99px">
+        <Text textStyle="h1" as="h1" fontSize="90px" lineHeight="99px">
           DASHBOARD
         </Text>
         <Text textStyle="textMedium" fontSize="32px" mt={2}>
@@ -50,7 +50,13 @@ export const WalletPortfolio = () => {
         {isConnected ? (
           <>
             <Box h="220px">
-              <BalanceHistoryChart data={balanceHistory.data} />
+              {balanceHistory.data?.length ? (
+                <BalanceHistoryChart data={balanceHistory.data} />
+              ) : (
+                <Box color="bgGreen.600">
+                  <PuzzlesIcon />
+                </Box>
+              )}
             </Box>
             <Flex mt="17px" justifyContent="space-between">
               <Flex flexWrap="wrap" maxW="200px">
@@ -79,12 +85,7 @@ export const WalletPortfolio = () => {
           </>
         ) : (
           <>
-            <Box
-              height="220px"
-              color="bgGreen.600"
-              transition="all .3s ease"
-              _hover={{ color: 'green.500' }}
-            >
+            <Box color="bgGreen.600" transition="all .3s ease" _hover={{ color: 'green.500' }}>
               <PuzzlesIcon />
             </Box>
             <Flex mt="23px" mb="22px" justifyContent="space-between">
@@ -92,13 +93,15 @@ export const WalletPortfolio = () => {
                 <Text mr="2" textStyle="textSansBold">
                   Total Value Locked
                 </Text>
-                <Text textStyle="text1">{getReadableAmount(tvl || 0, 18, 3)}</Text>
+                <Text textStyle="text1">{getReadableAmount(tvl || 0, { precision: 3 })}</Text>
               </Flex>
               <Flex>
                 <Text mr="2" textStyle="textSansBold">
                   Total Claimed
                 </Text>
-                <Text textStyle="text1">{getReadableAmount(totalClaimed || 0, 18, 3)}</Text>
+                <Text textStyle="text1">
+                  {getReadableAmount(totalClaimed || 0, { precision: 3 })}
+                </Text>
               </Flex>
             </Flex>
             <ConnectWalletButton />

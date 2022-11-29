@@ -12,4 +12,8 @@ contract ERC20BurnableMock is ERC20, ERC20Burnable {
     ) ERC20(name, symbol) {
         _mint(msg.sender, initialSupply);
     }
+
+    function decimals() public pure override returns (uint8) {
+        return 6;
+    }
 }

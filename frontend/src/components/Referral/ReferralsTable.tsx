@@ -13,7 +13,7 @@ import {
 } from '@chakra-ui/react';
 import { Table } from '@/components/ui/Table/Table';
 import { BigNumber } from 'ethers';
-import { getLocalDateString } from '@/utils/time';
+import { getLocalDateTimeString } from '@/utils/time';
 import { getReadableAmount } from '@/utils/number';
 
 const COLLAPSED_LIMIT = 6;
@@ -26,6 +26,7 @@ type Referral = {
   token2Balance: BigNumber;
   isStakingSubscriptionActive: boolean;
   isReferralSubscriptionActive: boolean;
+  isSquadSubscriptionActive: boolean;
 };
 type ReferralsTableProps = {
   referrals: Referral[];
@@ -65,19 +66,20 @@ export const ReferralsTable: FC<ReferralsTableProps> = ({ referrals, userLevels 
             <Th textAlign="center" width="360px">
               Wallet
             </Th>
-            <Th textAlign="center">Start Date</Th>
+            <Th textAlign="center">Start</Th>
             <Th textAlign="center" width="200px">
               <Flex alignItems="center" justifyContent="center">
-                Have SAV
+                SAV
               </Flex>
             </Th>
             <Th textAlign="center" width="200px">
               <Flex alignItems="center" justifyContent="center">
-                Have SAVR
+                SAVR
               </Flex>
             </Th>
             <Th width="90px">Staking</Th>
             <Th width="90px">Referral</Th>
+            <Th width="90px">Team</Th>
             <Th width="90px">Status</Th>
           </Tr>
         </Thead>
@@ -86,7 +88,7 @@ export const ReferralsTable: FC<ReferralsTableProps> = ({ referrals, userLevels 
             <Tr key={index}>
               <Td textAlign="center">{referral.level.toNumber()}</Td>
               <Td textAlign="center">{referral.referralAddress}</Td>
-              <Td textAlign="center">{getLocalDateString(referral.activationDate)}</Td>
+              <Td textAlign="center">{getLocalDateTimeString(referral.activationDate)}</Td>
               <Td textAlign="center">{getReadableAmount(referral.token1Balance)}</Td>
               <Td textAlign="center">{getReadableAmount(referral.token2Balance)}</Td>
               <Td textAlign="center">
@@ -96,12 +98,16 @@ export const ReferralsTable: FC<ReferralsTableProps> = ({ referrals, userLevels 
                 {referral.isReferralSubscriptionActive ? GreenCircle : RedCircle}
               </Td>
               <Td textAlign="center">
+                {referral.isSquadSubscriptionActive ? GreenCircle : RedCircle}
+              </Td>
+              <Td textAlign="center">
                 {hasSubscription(referral.level.toNumber() - 1) ? GreenCircle : RedCircle}
               </Td>
             </Tr>
           ))}
           {Array.from({ length: emptyRows }).map((_, index) => (
             <Tr key={`empty-${index}`}>
+              <Td></Td>
               <Td></Td>
               <Td></Td>
               <Td></Td>

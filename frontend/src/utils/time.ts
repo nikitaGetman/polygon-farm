@@ -16,11 +16,11 @@ export const getLocalDateTimeString = (timestamp: BigNumberish) => {
   const date = new Date(t);
 
   const year = date.getFullYear();
-  const month = date.getMonth();
-  const day = date.getDate();
-  const hours = date.getHours();
-  const minutes = date.getMinutes();
-  const secs = date.getSeconds();
+  const month = String(date.getMonth()).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  const hours = String(date.getHours()).padStart(2, '0');
+  const minutes = String(date.getMinutes()).padStart(2, '0');
+  const secs = String(date.getSeconds()).padStart(2, '0');
 
   return `${year}-${month + 1}-${day}, ${hours}:${minutes}:${secs}`;
 };
@@ -30,8 +30,8 @@ export const getLocalDateString = (timestamp: BigNumberish) => {
   const date = new Date(t);
 
   const year = date.getFullYear();
-  const month = date.getMonth();
-  const day = date.getDate();
+  const month = String(date.getMonth()).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
 
   return `${year}-${month + 1}-${day}`;
 };

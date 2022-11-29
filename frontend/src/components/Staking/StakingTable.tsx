@@ -30,6 +30,9 @@ type Stake = {
   reward: BigNumber;
   isClaimed: boolean;
   isToken2: boolean;
+  planId: number;
+  stakeId: number;
+  period: number;
 };
 
 enum StakeStatusEnum {
@@ -48,7 +51,7 @@ export const StakingTable = ({
   stakes,
   onClaim,
 }: {
-  stakes: { planId: number; stakeId: number; period: number; reward: BigNumber; stake: Stake }[];
+  stakes: Stake[];
   onClaim: (planId: number, stakeId: number) => Promise<void>;
 }) => {
   const { isOpen, onToggle } = useDisclosure();
@@ -57,8 +60,8 @@ export const StakingTable = ({
   const modifiedItems = useMemo(
     () =>
       stakes
-        .map((s) => ({ ...s, status: getStakeStatus(s.stake) }))
-        .sort((a, b) => b.stake.timeStart.sub(a.stake.timeStart).toNumber()),
+        .map((s) => ({ ...s, status: getStakeStatus(s) }))
+        .sort((a, b) => b.timeStart.sub(a.timeStart).toNumber()),
     [stakes]
   );
 
@@ -91,10 +94,10 @@ export const StakingTable = ({
               Period
             </Th>
             <Th width="200px" textAlign="center">
-              Start Date
+              Start
             </Th>
             <Th width="200px" textAlign="center">
-              End Date
+              Finish
             </Th>
             <Th width="200px" textAlign="center">
               Reward
@@ -108,7 +111,7 @@ export const StakingTable = ({
           </Tr>
         </Thead>
         <Tbody>
-          {visibleItems.map(({ period, status, stake, planId, stakeId, reward }, index) => (
+          {visibleItems.map((stake, index) => (
             <Tr key={index}>
               <Td>
                 <Flex alignItems="center">
@@ -118,28 +121,23 @@ export const StakingTable = ({
                   {bigNumberToString(stake.amount)} {stake.isToken2 ? 'SAVR' : 'SAV'}
                 </Flex>
               </Td>
-              <Td textAlign="center">{getReadableDuration(period)}</Td>
+              <Td textAlign="center">{getReadableDuration(stake.period)}</Td>
               <Td textAlign="center">{getLocalDateTimeString(stake.timeStart)}</Td>
               <Td textAlign="center">{getLocalDateTimeString(stake.timeEnd)}</Td>
-              <Td textAlign="center">
-                {bigNumberToString(
-                  status === StakeStatusEnum.Claimed ? calculateStakeReward(stake) : reward
-                )}{' '}
-                SAV
-              </Td>
+              <Td textAlign="center">{bigNumberToString(stake.profit)} SAV</Td>
               <Td textAlign="center">{bigNumberToString(calculateStakeReward(stake))} SAV</Td>
               <Td textAlign="center">
-                {status === StakeStatusEnum.Completed ? (
+                {stake.status === StakeStatusEnum.Completed ? (
                   <Button
                     size="xs"
                     variant="outlinedWhite"
                     isLoading={loadingIndex === index}
-                    onClick={() => handleClaim(planId, stakeId, index)}
+                    onClick={() => handleClaim(stake.planId, stake.stakeId, index)}
                   >
                     Claim
                   </Button>
                 ) : (
-                  status
+                  stake.status
                 )}
               </Td>
             </Tr>

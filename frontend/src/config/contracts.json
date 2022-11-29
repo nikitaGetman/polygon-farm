@@ -186,7 +186,7 @@
                   "type": "uint8"
                 }
               ],
-              "stateMutability": "view",
+              "stateMutability": "pure",
               "type": "function"
             },
             {
@@ -434,6 +434,11 @@
                     {
                       "internalType": "bool",
                       "name": "isStakingSubscriptionActive",
+                      "type": "bool"
+                    },
+                    {
+                      "internalType": "bool",
+                      "name": "isSquadSubscriptionActive",
                       "type": "bool"
                     }
                   ],
@@ -3383,6 +3388,25 @@
               "name": "grantRole",
               "outputs": [],
               "stateMutability": "nonpayable",
+              "type": "function"
+            },
+            {
+              "inputs": [
+                {
+                  "internalType": "address",
+                  "name": "user",
+                  "type": "address"
+                }
+              ],
+              "name": "hasAnySubscription",
+              "outputs": [
+                {
+                  "internalType": "bool",
+                  "name": "",
+                  "type": "bool"
+                }
+              ],
+              "stateMutability": "view",
               "type": "function"
             },
             {
@@ -9224,7 +9248,7 @@
                   "type": "uint8"
                 }
               ],
-              "stateMutability": "view",
+              "stateMutability": "pure",
               "type": "function"
             },
             {
@@ -9472,6 +9496,11 @@
                     {
                       "internalType": "bool",
                       "name": "isStakingSubscriptionActive",
+                      "type": "bool"
+                    },
+                    {
+                      "internalType": "bool",
+                      "name": "isSquadSubscriptionActive",
                       "type": "bool"
                     }
                   ],
@@ -12421,6 +12450,25 @@
               "name": "grantRole",
               "outputs": [],
               "stateMutability": "nonpayable",
+              "type": "function"
+            },
+            {
+              "inputs": [
+                {
+                  "internalType": "address",
+                  "name": "user",
+                  "type": "address"
+                }
+              ],
+              "name": "hasAnySubscription",
+              "outputs": [
+                {
+                  "internalType": "bool",
+                  "name": "",
+                  "type": "bool"
+                }
+              ],
+              "stateMutability": "view",
               "type": "function"
             },
             {
@@ -18083,7 +18131,7 @@
       "chainId": "80001",
       "contracts": {
         "ERC20BurnableMock": {
-          "address": "0x2cBCD70def135784bc230b56f676334cF9eD09b6",
+          "address": "0xe177bE3F89e14A360E4A88E23D47739704D28Cf1",
           "abi": [
             {
               "inputs": [
@@ -18264,7 +18312,7 @@
                   "type": "uint8"
                 }
               ],
-              "stateMutability": "view",
+              "stateMutability": "pure",
               "type": "function"
             },
             {
@@ -18410,7 +18458,7 @@
           ]
         },
         "Helper": {
-          "address": "0x9D4047BA0F46680D77E4cB6AfA4680FFc4E44743",
+          "address": "0xD0a90442B41897959F8270aCdD4C76afB7A1Fb87",
           "abi": [
             {
               "inputs": [
@@ -18512,6 +18560,11 @@
                     {
                       "internalType": "bool",
                       "name": "isStakingSubscriptionActive",
+                      "type": "bool"
+                    },
+                    {
+                      "internalType": "bool",
+                      "name": "isSquadSubscriptionActive",
                       "type": "bool"
                     }
                   ],
@@ -20011,7 +20064,7 @@
           ]
         },
         "ReferralManager": {
-          "address": "0x05F3EB0023b4d7a0aCa0C7A83c64FD1814F7f9F6",
+          "address": "0xe2D039C7a84A71C8640e034b8D0770FE9Df0DF25",
           "abi": [
             {
               "inputs": [
@@ -20938,7 +20991,7 @@
           ]
         },
         "Squads": {
-          "address": "0x7cc1EBC03577933Bef4F1CFfA333A5691Db0609d",
+          "address": "0xbdd83275392cc4c24ecf4846c92b8DD96f5BA64A",
           "abi": [
             {
               "inputs": [
@@ -21466,6 +21519,25 @@
             {
               "inputs": [
                 {
+                  "internalType": "address",
+                  "name": "user",
+                  "type": "address"
+                }
+              ],
+              "name": "hasAnySubscription",
+              "outputs": [
+                {
+                  "internalType": "bool",
+                  "name": "",
+                  "type": "bool"
+                }
+              ],
+              "stateMutability": "view",
+              "type": "function"
+            },
+            {
+              "inputs": [
+                {
                   "internalType": "bytes32",
                   "name": "role",
                   "type": "bytes32"
@@ -21883,7 +21955,7 @@
           ]
         },
         "Staking": {
-          "address": "0xcE75Aab2eDd23a49A2314869D5a659379E051E0F",
+          "address": "0x6c26A13919f96d4eD1479fa32e44cAb1378fDeDC",
           "abi": [
             {
               "inputs": [
@@ -26438,7 +26510,7 @@
           ]
         },
         "VendorSell": {
-          "address": "0x341821c9023a565e67832Acb0a0512008F61C143",
+          "address": "0x22c28f4681F62b33ecA18Db0C9Ec649CF952c909",
           "abi": [
             {
               "inputs": [

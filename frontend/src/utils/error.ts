@@ -4,8 +4,16 @@ export function getErrorMessage(error: unknown): string {
   return String(error);
 }
 
-export function tryToGetErrorData(error: unknown): { title: string; description?: string } {
+export function tryToGetErrorData(error: unknown): {
+  title: string;
+  description?: string;
+  isReplaced?: boolean;
+} {
   const message = getErrorMessage(error);
+
+  if (message.includes('TRANSACTION_REPLACED')) {
+    return { title: 'Transaction replaced', isReplaced: true };
+  }
 
   if (message.includes('user rejected transaction')) {
     return { title: 'Failed', description: 'Rejected by user' };

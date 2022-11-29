@@ -6,11 +6,6 @@ const REFERRER_STORAGE_KEY = 'ref';
 export const useLocalReferrer = () => {
   const [localReferrer, setReferrer] = useState<string>();
 
-  useEffect(() => {
-    const localRef = localStorage.getItem(REFERRER_STORAGE_KEY);
-    setReferrer(localRef ?? undefined);
-  }, []);
-
   const setLocalReferrer = useCallback((ref: string | undefined) => {
     if (!ref) {
       localStorage.removeItem(REFERRER_STORAGE_KEY);
@@ -20,8 +15,18 @@ export const useLocalReferrer = () => {
     setReferrer(ref);
   }, []);
 
+  const getLocalReferrer = useCallback(() => {
+    return localStorage.getItem(REFERRER_STORAGE_KEY);
+  }, []);
+
+  useEffect(() => {
+    const localRef = getLocalReferrer();
+    setReferrer(localRef ?? undefined);
+  }, [getLocalReferrer]);
+
   return {
     localReferrer,
     setLocalReferrer,
+    getLocalReferrer,
   };
 };

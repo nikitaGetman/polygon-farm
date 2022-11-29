@@ -1,5 +1,5 @@
-import React from 'react';
-import { Box, Container, Flex, Heading, Link, Spinner } from '@chakra-ui/react';
+import React, { useEffect } from 'react';
+import { Box, Button, Container, Flex, Heading, Link, Spinner } from '@chakra-ui/react';
 import { Link as RouterLink } from 'react-router-dom';
 import { ArrowBackIcon } from '@chakra-ui/icons';
 import { ReferralInfo } from '../Referral/ReferralInfo';
@@ -16,6 +16,10 @@ import { ReferralRewardsList } from '../Referral/ReferralRewardsList';
 export const SquadsPage = () => {
   const { userReferralInfo, claimDividends } = useReferralManager();
 
+  useEffect(() => {
+    document.title = 'iSaver | Build a team';
+  }, []);
+
   const availableRewards = useMemo(() => {
     const { totalDividends, totalClaimedDividends } = userReferralInfo.data || {};
     if (totalDividends && totalClaimedDividends) {
@@ -25,10 +29,12 @@ export const SquadsPage = () => {
   }, [userReferralInfo]);
 
   const claimRewards = useCallback(() => {
-    if (availableRewards.gt(0)) {
+    if (availableRewards.gt(0) && !claimDividends.isLoading) {
       claimDividends.mutate(availableRewards);
     }
   }, [claimDividends, availableRewards]);
+
+  const isClaimDisabled = useMemo(() => availableRewards.toNumber() === 0, [availableRewards]);
 
   return (
     <Container variant="dashboard" pt="60px">
@@ -46,7 +52,7 @@ export const SquadsPage = () => {
       </Box>
 
       <Heading textStyle="h3" fontSize="26px" textTransform="uppercase" mb="30px">
-        Your team
+        Your teams
       </Heading>
 
       <Box mb="100px">
@@ -66,21 +72,25 @@ export const SquadsPage = () => {
               SAVR
             </Box>
           </StatBlock>
-          <Box
-            as="button"
+          <Button
             display="block"
             width="170px"
+            height="unset"
             padding="30px"
             bgColor="blue"
             boxShadow="0px 9px 19px rgba(26, 220, 226, 0.3)"
             borderRadius="sm"
             textStyle="button"
-            _hover={{ boxShadow: '0px 12px 22px rgba(26, 220, 226, 0.5)' }}
+            _hover={{
+              boxShadow: '0px 12px 22px rgba(26, 220, 226, 0.5)',
+              _disabled: { boxShadow: 'none' },
+            }}
             transition="all 0.2s"
+            disabled={isClaimDisabled}
             onClick={claimRewards}
           >
             {claimDividends.isLoading ? <Spinner color="white" thickness="4px" /> : 'Claim'}
-          </Box>
+          </Button>
         </Flex>
       </Box>
 

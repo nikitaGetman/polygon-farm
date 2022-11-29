@@ -110,8 +110,6 @@ contract Squads is ISquads, AccessControl {
             squadMembers[planId][referrer].push(member);
             uint256 membersAmount = squadMembers[planId][referrer].length;
 
-            emit MemberAdded(referrer, planId, member, membersAmount);
-
             if (membersAmount >= plans[planId].squadSize) {
                 Squad storage partner = userSubscriptions[planId][referrer];
 
@@ -126,11 +124,13 @@ contract Squads is ISquads, AccessControl {
                         1,
                         plans[planId].stakingThreshold,
                         stakingPlanId,
-                        0
+                        4
                     )
                 );
 
                 emit SquadFilled(referrer, planId, partner.squadsFilled);
+            } else {
+                emit MemberAdded(referrer, planId, member, membersAmount);
             }
 
             return true;
@@ -193,6 +193,15 @@ contract Squads is ISquads, AccessControl {
         returns (bool)
     {
         return userSubscriptions[planId][user].subscription > block.timestamp;
+    }
+
+    function hasAnySubscription(address user) public view returns (bool) {
+        for (uint256 i = 0; i < plans.length; i++) {
+            if (userHasPlanSubscription(user, i)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     function getSufficientPlanIdByStakingAmount(uint256 amount)

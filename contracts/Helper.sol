@@ -38,6 +38,7 @@ contract Helper is Ownable {
         uint256 token2Balance;
         bool isReferralSubscriptionActive;
         bool isStakingSubscriptionActive;
+        bool isSquadSubscriptionActive;
     }
 
     // level = 1..10
@@ -65,7 +66,8 @@ contract Helper is Ownable {
                 token2Balance: token2.balanceOf(refAddress),
                 isStakingSubscriptionActive: staking.hasAnySubscription(
                     refAddress
-                )
+                ),
+                isSquadSubscriptionActive: squads.hasAnySubscription(refAddress)
             });
         }
 

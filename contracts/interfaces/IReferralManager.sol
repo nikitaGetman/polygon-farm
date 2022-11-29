@@ -21,6 +21,7 @@ interface IReferralManager {
         // 1 - no ref subscription
         // 2 - no user stake
         // 3 - trancated by user stake
+        // 4 - team
         uint256 reason;
     }
 

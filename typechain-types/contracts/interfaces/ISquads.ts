@@ -67,6 +67,7 @@ export interface ISquadsInterface extends utils.Interface {
     "getSufficientPlanIdByStakingAmount(uint256)": FunctionFragment;
     "getUserSquadMembers(address,uint256)": FunctionFragment;
     "getUserSubscription(address,uint256)": FunctionFragment;
+    "hasAnySubscription(address)": FunctionFragment;
     "subscribe(uint256)": FunctionFragment;
     "tryToAddMember(uint256,address,address,uint256)": FunctionFragment;
     "userHasPlanSubscription(address,uint256)": FunctionFragment;
@@ -80,6 +81,7 @@ export interface ISquadsInterface extends utils.Interface {
       | "getSufficientPlanIdByStakingAmount"
       | "getUserSquadMembers"
       | "getUserSubscription"
+      | "hasAnySubscription"
       | "subscribe"
       | "tryToAddMember"
       | "userHasPlanSubscription"
@@ -102,6 +104,10 @@ export interface ISquadsInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "getUserSubscription",
     values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "hasAnySubscription",
+    values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
     functionFragment: "subscribe",
@@ -137,6 +143,10 @@ export interface ISquadsInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "getUserSubscription",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "hasAnySubscription",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "subscribe", data: BytesLike): Result;
@@ -209,6 +219,11 @@ export interface ISquads extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[ISquads.SquadStructOutput]>;
 
+    hasAnySubscription(
+      user: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<[boolean]>;
+
     subscribe(
       planId: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -258,6 +273,11 @@ export interface ISquads extends BaseContract {
     planId: PromiseOrValue<BigNumberish>,
     overrides?: CallOverrides
   ): Promise<ISquads.SquadStructOutput>;
+
+  hasAnySubscription(
+    user: PromiseOrValue<string>,
+    overrides?: CallOverrides
+  ): Promise<boolean>;
 
   subscribe(
     planId: PromiseOrValue<BigNumberish>,
@@ -310,6 +330,11 @@ export interface ISquads extends BaseContract {
       planId: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<ISquads.SquadStructOutput>;
+
+    hasAnySubscription(
+      user: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
 
     subscribe(
       planId: PromiseOrValue<BigNumberish>,
@@ -364,6 +389,11 @@ export interface ISquads extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    hasAnySubscription(
+      user: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     subscribe(
       planId: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -412,6 +442,11 @@ export interface ISquads extends BaseContract {
     getUserSubscription(
       user: PromiseOrValue<string>,
       planId: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    hasAnySubscription(
+      user: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 

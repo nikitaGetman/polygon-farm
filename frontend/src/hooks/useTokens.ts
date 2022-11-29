@@ -1,4 +1,3 @@
-import { tryToGetErrorData } from '@/utils/error';
 import { useMutation } from '@tanstack/react-query';
 import { BigNumber, BigNumberish, ethers } from 'ethers';
 import { ContractsEnum } from './contracts/useContractAbi';
@@ -14,7 +13,7 @@ const INCREASE_TOKEN_ALLOWANCE_MUTATION = 'increase-allowance';
 export const useTokens = () => {
   const savToken = useTokenContract(ContractsEnum.SAV);
   const savRToken = useTokenContract(ContractsEnum.SAVR);
-  const { success, error } = useNotification();
+  const { success, handleError } = useNotification();
 
   const increaseAllowanceIfRequired = useMutation(
     [INCREASE_TOKEN_ALLOWANCE_MUTATION],
@@ -43,8 +42,7 @@ export const useTokens = () => {
     },
     {
       onError: (err) => {
-        const errData = tryToGetErrorData(err);
-        error(errData);
+        handleError(err);
       },
     }
   );

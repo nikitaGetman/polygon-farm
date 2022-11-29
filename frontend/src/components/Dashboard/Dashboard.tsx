@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Container, Box } from '@chakra-ui/react';
 import { Staking } from '@/components/Staking/Staking';
 import { ReferralInfo } from '@/components/Referral/ReferralInfo';
@@ -6,6 +6,10 @@ import { WalletPortfolio } from '@/components/Dashboard/WalletPortfolio';
 import { SquadsList } from '../Squads/SquadsList';
 
 export const Dashboard = () => {
+  useEffect(() => {
+    document.title = 'iSaver | Dashboard';
+  }, []);
+
   return (
     <Container variant="dashboard">
       <Box mt="50px">

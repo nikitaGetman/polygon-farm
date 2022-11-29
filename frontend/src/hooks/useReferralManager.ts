@@ -1,5 +1,4 @@
-import { tryToGetErrorData } from '@/utils/error';
-import { getReadableAmount } from '@/utils/number';
+import { bigNumberToString } from '@/utils/number';
 import { createReferralLink } from '@/utils/referralLinks';
 import { useMutation } from '@tanstack/react-query';
 import { BigNumber, ethers } from 'ethers';
@@ -29,7 +28,7 @@ export const useReferralManager = () => {
 
   const queryClient = useQueryClient();
   const referralContract = useReferralContract();
-  const { success, error } = useNotification();
+  const { success, handleError } = useNotification();
   const tokens = useTokens();
   const { connect } = useConnectWallet();
   const { stakingPlans } = useStaking();
@@ -133,8 +132,7 @@ export const useReferralManager = () => {
         queryClient.invalidateQueries({ queryKey: [SAV_BALANCE_REQUEST] });
       },
       onError: (err) => {
-        const errData = tryToGetErrorData(err);
-        error(errData);
+        handleError(err);
       },
     }
   );
@@ -167,8 +165,7 @@ export const useReferralManager = () => {
         queryClient.invalidateQueries({ queryKey: [SAV_BALANCE_REQUEST] });
       },
       onError: (err) => {
-        const errData = tryToGetErrorData(err);
-        error(errData);
+        handleError(err);
       },
     }
   );
@@ -189,8 +186,7 @@ export const useReferralManager = () => {
         queryClient.invalidateQueries({ queryKey: [SAV_BALANCE_REQUEST] });
       },
       onError: (err) => {
-        const errData = tryToGetErrorData(err);
-        error(errData);
+        handleError(err);
       },
     }
   );
@@ -206,7 +202,7 @@ export const useReferralManager = () => {
       const txHash = await referralContract.claimRewards(rewards);
       success({
         title: 'Success',
-        description: `${getReadableAmount(rewards)} SAVR rewards claimed`,
+        description: `${bigNumberToString(rewards)} SAVR Referral Rewards claimed`,
         txHash,
       });
     },
@@ -216,8 +212,7 @@ export const useReferralManager = () => {
         queryClient.invalidateQueries({ queryKey: [SAVR_BALANCE_REQUEST] });
       },
       onError: (err) => {
-        const errData = tryToGetErrorData(err);
-        error(errData);
+        handleError(err);
       },
     }
   );
