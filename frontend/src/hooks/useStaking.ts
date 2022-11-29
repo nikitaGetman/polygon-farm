@@ -1,4 +1,3 @@
-import { tryToGetErrorData } from '@/utils/error';
 import { bigNumberToString } from '@/utils/number';
 import { getReadableDuration } from '@/utils/time';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
@@ -28,7 +27,7 @@ export const useStaking = () => {
 
   const queryClient = useQueryClient();
   const stakingContract = useStakingContract();
-  const { success, error } = useNotification();
+  const { success, handleError } = useNotification();
   const tokens = useTokens();
 
   const { connect } = useConnectWallet();
@@ -143,8 +142,7 @@ export const useStaking = () => {
         queryClient.invalidateQueries({ queryKey: [SAV_BALANCE_REQUEST] });
       },
       onError: (err) => {
-        const errData = tryToGetErrorData(err);
-        error(errData);
+        handleError(err);
       },
     }
   );
@@ -195,8 +193,7 @@ export const useStaking = () => {
         queryClient.invalidateQueries({ queryKey: [SAVR_BALANCE_REQUEST] });
       },
       onError: (err) => {
-        const errData = tryToGetErrorData(err);
-        error(errData);
+        handleError(err);
       },
     }
   );
@@ -215,8 +212,7 @@ export const useStaking = () => {
         queryClient.invalidateQueries({ queryKey: [SAV_BALANCE_REQUEST] });
       },
       onError: (err) => {
-        const errData = tryToGetErrorData(err);
-        error(errData);
+        handleError(err);
       },
     }
   );
@@ -235,8 +231,7 @@ export const useStaking = () => {
         queryClient.invalidateQueries({ queryKey: [SAV_BALANCE_REQUEST] });
       },
       onError: (err) => {
-        const errData = tryToGetErrorData(err);
-        error(errData);
+        handleError(err);
       },
     }
   );

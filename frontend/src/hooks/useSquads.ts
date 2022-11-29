@@ -1,4 +1,3 @@
-import { tryToGetErrorData } from '@/utils/error';
 import { bigNumberToString } from '@/utils/number';
 import { getReadableDuration } from '@/utils/time';
 import { useMutation } from '@tanstack/react-query';
@@ -22,7 +21,7 @@ export const useSquads = () => {
 
   const queryClient = useQueryClient();
   const squadsContract = useSquadsContract();
-  const { success, error } = useNotification();
+  const { success, handleError } = useNotification();
   const tokens = useTokens();
   const { connect } = useConnectWallet();
   const { stakingPlans } = useStaking();
@@ -80,8 +79,7 @@ export const useSquads = () => {
         queryClient.invalidateQueries({ queryKey: [SAV_BALANCE_REQUEST] });
       },
       onError: (err) => {
-        const errData = tryToGetErrorData(err);
-        error(errData);
+        handleError(err);
       },
     }
   );
