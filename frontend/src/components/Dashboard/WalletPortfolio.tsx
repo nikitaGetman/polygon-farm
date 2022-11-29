@@ -50,7 +50,13 @@ export const WalletPortfolio = () => {
         {isConnected ? (
           <>
             <Box h="220px">
-              <BalanceHistoryChart data={balanceHistory.data} />
+              {balanceHistory.data?.length ? (
+                <BalanceHistoryChart data={balanceHistory.data} />
+              ) : (
+                <Box color="bgGreen.600">
+                  <PuzzlesIcon />
+                </Box>
+              )}
             </Box>
             <Flex mt="17px" justifyContent="space-between">
               <Flex flexWrap="wrap" maxW="200px">
@@ -79,12 +85,7 @@ export const WalletPortfolio = () => {
           </>
         ) : (
           <>
-            <Box
-              height="220px"
-              color="bgGreen.600"
-              transition="all .3s ease"
-              _hover={{ color: 'green.500' }}
-            >
+            <Box color="bgGreen.600" transition="all .3s ease" _hover={{ color: 'green.500' }}>
               <PuzzlesIcon />
             </Box>
             <Flex mt="23px" mb="22px" justifyContent="space-between">

@@ -1,4 +1,5 @@
 import { Notification, NotificationProps } from '@/components/ui/Notification/Notification';
+import { tryToGetErrorData } from '@/utils/error';
 import { useToast } from '@chakra-ui/react';
 import { useCallback } from 'react';
 
@@ -40,9 +41,22 @@ export const useNotification = () => {
     [toast]
   );
 
+  const handleError = useCallback(
+    (err: any) => {
+      const errData = tryToGetErrorData(err);
+      if (!errData.isReplaced) {
+        error({ title: errData.title, description: errData.description });
+      }
+
+      return errData;
+    },
+    [error]
+  );
+
   return {
     success,
     error,
     info,
+    handleError,
   };
 };
