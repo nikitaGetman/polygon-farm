@@ -1,6 +1,7 @@
 import { getBalanceHistoryFromTransfers } from '@/utils/balance';
 import { useQuery } from '@tanstack/react-query';
-import { useAccount } from 'wagmi';
+import { useMemo } from 'react';
+import { useAccount, useProvider } from 'wagmi';
 import { ContractsEnum } from './contracts/useContractAbi';
 import { useTokenContract } from './contracts/useTokenContract';
 import { useUsdtTokenContract } from './contracts/useUsdtTokenContract';
@@ -30,7 +31,7 @@ export const useUsdtBalance = () => {
   const usdtContract = useUsdtTokenContract();
   const { address } = useAccount();
 
-  return useQuery([SAVR_BALANCE_REQUEST, { address }], async () => {
+  return useQuery([USDT_BALANCE_REQUEST, { address }], async () => {
     return address ? await usdtContract.balanceOf(address) : null;
   });
 };
@@ -40,20 +41,35 @@ export const useTokenBalanceHistory = () => {
   const savContract = useTokenContract(ContractsEnum.SAV);
   const savrContract = useTokenContract(ContractsEnum.SAVR);
   const { address } = useAccount();
+  const provider = useProvider();
+  const savBalance = useSavBalance();
+  const savrBalance = useSavRBalance();
 
-  return useQuery(
+  const transfersHistoryRequest = useQuery(
     [SAV_BALANCE_REQUEST, SAVR_BALANCE_REQUEST, BALANCE_HISTORY_REQUEST, { address }],
     async () => {
       if (!address) return null;
 
-      const transfers = await Promise.all([
+      return await Promise.all([
         savContract.getBalanceHistoryTransfers(address),
         savrContract.getBalanceHistoryTransfers(address),
       ]);
-
-      const balanceHistory = getBalanceHistoryFromTransfers(transfers[0], transfers[1], address);
-
-      return balanceHistory;
     }
   );
+
+  const balanceHistory = useMemo(() => {
+    if (transfersHistoryRequest.data && savBalance.data && savrBalance.data && address) {
+      return getBalanceHistoryFromTransfers(
+        transfersHistoryRequest.data[0],
+        transfersHistoryRequest.data[1],
+        savBalance.data,
+        savrBalance.data,
+        provider.blockNumber,
+        address
+      );
+    }
+    return [];
+  }, [savBalance.data, savrBalance.data, transfersHistoryRequest.data, address, provider]);
+
+  return { transfersHistoryRequest, balanceHistory };
 };
