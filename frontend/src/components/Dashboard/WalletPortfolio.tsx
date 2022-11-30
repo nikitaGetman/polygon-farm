@@ -18,7 +18,7 @@ export const WalletPortfolio = () => {
   const { data: savBalance } = useSavBalance();
   const { data: savrBalance } = useSavRBalance();
 
-  const balanceHistory = useTokenBalanceHistory();
+  const { balanceHistory } = useTokenBalanceHistory();
 
   const { tvl, totalClaimed } = useStaking();
 
@@ -50,8 +50,8 @@ export const WalletPortfolio = () => {
         {isConnected ? (
           <>
             <Box h="220px">
-              {balanceHistory.data?.length ? (
-                <BalanceHistoryChart data={balanceHistory.data} />
+              {balanceHistory.length ? (
+                <BalanceHistoryChart data={balanceHistory} />
               ) : (
                 <Box color="bgGreen.600">
                   <PuzzlesIcon />
