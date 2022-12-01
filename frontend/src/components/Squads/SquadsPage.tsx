@@ -8,7 +8,7 @@ import { StatBlock } from '../ui/StatBlock/StatBlock';
 import { BigNumber } from 'ethers';
 import { useReferralManager } from '@/hooks/useReferralManager';
 import { useMemo } from 'react';
-import { getReadableAmount } from '@/utils/number';
+import { bigNumberToNumber, getReadableAmount } from '@/utils/number';
 import { useCallback } from 'react';
 import { SquadsList } from './SquadsList';
 import { ReferralRewardsList } from '../Referral/ReferralRewardsList';
@@ -34,7 +34,10 @@ export const SquadsPage = () => {
     }
   }, [claimDividends, availableRewards]);
 
-  const isClaimDisabled = useMemo(() => availableRewards.toNumber() === 0, [availableRewards]);
+  const isClaimDisabled = useMemo(
+    () => bigNumberToNumber(availableRewards) === 0,
+    [availableRewards]
+  );
 
   return (
     <Container variant="dashboard" pt="60px">

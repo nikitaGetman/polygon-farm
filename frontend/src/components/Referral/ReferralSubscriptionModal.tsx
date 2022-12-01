@@ -26,10 +26,8 @@ type ReferralSubscriptionModalProps = {
   fullSubscriptionTill: number;
   levelsSubscriptionTill: number[];
   isLoading: boolean;
-  isFullLoading: boolean;
-  isLevelLoading: boolean;
-  onLevelSubscribe: (level: number) => void;
-  onFullSubscribe: () => void;
+  onLevelSubscribe: (level: number) => Promise<void>;
+  onFullSubscribe: () => Promise<void>;
   onClose: () => void;
 };
 export const ReferralSubscriptionModal: FC<ReferralSubscriptionModalProps> = ({
@@ -39,29 +37,31 @@ export const ReferralSubscriptionModal: FC<ReferralSubscriptionModalProps> = ({
   fullSubscriptionTill,
   levelsSubscriptionTill,
   isLoading,
-  isFullLoading,
-  isLevelLoading,
   onLevelSubscribe,
   onFullSubscribe,
   onClose,
 }) => {
-  const [selected, setSelected] = useState<number>();
+  const [isFullLoading, setIsFullLoading] = useState(false);
+  const [isLevelLoading, setIsLevelLoading] = useState(false);
 
   const handleSubscribeToLevel = useCallback(
-    (level: number) => {
-      setSelected(level);
-      onLevelSubscribe(level);
+    async (level: number) => {
+      setIsLevelLoading(true);
+      onLevelSubscribe(level).finally(() => {
+        setIsLevelLoading(false);
+      });
     },
-    [setSelected, onLevelSubscribe]
+    [onLevelSubscribe, setIsLevelLoading]
   );
 
-  useEffect(() => {
-    if (!isLevelLoading) {
-      setSelected(undefined);
-    }
-  }, [isLevelLoading]);
+  const handleSubscribeToFull = useCallback(async () => {
+    setIsFullLoading(true);
+    onFullSubscribe().finally(() => {
+      setIsFullLoading(false);
+    });
+  }, [setIsFullLoading, onFullSubscribe]);
 
-  const isButtonsDisabled = isFullLoading || !!selected;
+  const isButtonsDisabled = isFullLoading || isLevelLoading;
 
   return (
     <Modal isCentered isOpen={true} onClose={onClose} scrollBehavior="inside">
@@ -85,7 +85,7 @@ export const ReferralSubscriptionModal: FC<ReferralSubscriptionModalProps> = ({
               subscriptionTill={fullSubscriptionTill}
               disabled={isButtonsDisabled}
               isLoading={isFullLoading}
-              onSubscribe={onFullSubscribe}
+              onSubscribe={handleSubscribeToFull}
             />
           </Box>
           <Divider mt="30px" />
@@ -103,7 +103,7 @@ export const ReferralSubscriptionModal: FC<ReferralSubscriptionModalProps> = ({
                       isButtonsDisabled ||
                       (index > 0 && levelsSubscriptionTill[index - 1] < Date.now() / 1000)
                     }
-                    isLoading={selected === index + 1}
+                    isLoading={isLevelLoading}
                     onSubscribe={() => handleSubscribeToLevel(index + 1)}
                   />
                 </Box>
