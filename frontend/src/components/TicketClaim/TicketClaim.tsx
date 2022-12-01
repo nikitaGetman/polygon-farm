@@ -4,9 +4,9 @@ import { ReactComponent as TicketFirst } from '@/assets/images/ticket.svg';
 import { ReactComponent as TicketMiddle } from '@/assets/images/ticket-middle.svg';
 import { ReactComponent as TicketLast } from '@/assets/images/ticket-last.svg';
 import { ReactComponent as TicketDouble } from '@/assets/images/ticket-two-circles.svg';
-import { ReactComponent as CheckIcon } from '@/assets/images/icons/check.svg';
+import { ReactComponent as CheckIcon } from '@/assets/images/icons/check_ticket.svg';
 import './TicketClaim.scss';
-import { ConnectWalletButton } from '@/components/ConnectWalletButton/ConnectWalletButton';
+import { ConnectWalletButton } from '@/components/ui/ConnectWalletButton/ConnectWalletButton';
 import { useAccount } from 'wagmi';
 
 export const TicketClaim = () => {
@@ -54,7 +54,9 @@ export const TicketClaim = () => {
               top="50%"
               transform="translate(-65%, -50%)"
             >
-              <CheckIcon />
+              <Box mb="10px">
+                <CheckIcon />
+              </Box>
               Claim
             </Center>
           </Box>
@@ -81,7 +83,9 @@ export const TicketClaim = () => {
               top="50%"
               transform="translate(-62%, -50%)"
             >
-              <CheckIcon />
+              <Box mb="10px">
+                <CheckIcon />
+              </Box>
               Claim
             </Center>
           </Box>
@@ -114,8 +118,9 @@ export const TicketClaim = () => {
               textStyle="text1"
               color="whiteAlpha.500"
               position="absolute"
-              left="50%"
+              left="55%"
               top="50%"
+              whiteSpace="nowrap"
               transform="translate(-50%, -50%)"
             >
               00h 00m 00s
@@ -129,18 +134,21 @@ export const TicketClaim = () => {
             filter="drop-shadow(0px 6px 11px rgba(0, 0, 0, 0.25));"
             position="relative"
           >
-            <TicketDouble />
-            <Text
-              textStyle="textExtraBoldUpper"
-              color="whiteAlpha.500"
-              textAlign="center"
-              position="absolute"
-              left="50%"
-              top="50%"
-              transform="translate(-50%, -50%)"
-            >
-              Mint my <br /> ticket
-            </Text>
+            <div className="ticket-double">
+              <TicketDouble />
+
+              <Text
+                textStyle="textExtraBoldUpper"
+                color="whiteAlpha.500"
+                textAlign="center"
+                position="absolute"
+                left="50%"
+                top="50%"
+                transform="translate(-50%, -50%)"
+              >
+                Mint my <br /> ticket
+              </Text>
+            </div>
           </Box>
         </Flex>
       </Flex>

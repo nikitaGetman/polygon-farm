@@ -4,6 +4,7 @@ import { Staking } from '@/components/Staking/Staking';
 import { ReferralInfo } from '@/components/Referral/ReferralInfo';
 import { WalletPortfolio } from '@/components/Dashboard/WalletPortfolio';
 import { SquadsList } from '../Squads/SquadsList';
+import { TicketClaim } from '@/components/TicketClaim/TicketClaim';
 
 export const Dashboard = () => {
   useEffect(() => {
@@ -12,6 +13,9 @@ export const Dashboard = () => {
 
   return (
     <Container variant="dashboard">
+      <Box mt="150px" mb="300px">
+        <TicketClaim />
+      </Box>
       <Box mt="50px">
         <WalletPortfolio />
       </Box>
