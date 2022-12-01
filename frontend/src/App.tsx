@@ -21,7 +21,8 @@ import { Modals } from '@/components/Modals';
 import { SwitchTransition, CSSTransition } from 'react-transition-group';
 import { SquadsPage } from './components/Squads/SquadsPage';
 import { REFERRER_SEARCH_PARAMS_KEY, useLocalReferrer } from './hooks/useLocalReferrer';
-import { ExchangePage } from './components/Exchange/ExchangePage';
+import { ExchangePage } from '@/components/Exchange/ExchangePage';
+import { LotteryPage } from './components/Lottery/LotteryPage';
 
 import '@/assets/styles/index.scss';
 
@@ -30,6 +31,7 @@ const routes = [
   { path: '/staking', name: 'Staking', element: <StakingPage />, nodeRef: createRef() },
   { path: '/team', name: 'Squads', element: <SquadsPage />, nodeRef: createRef() },
   { path: '/exchange', name: 'Exchange', element: <ExchangePage />, nodeRef: createRef() },
+  { path: '/lottery/:id', name: 'Lottery', element: <LotteryPage />, nodeRef: createRef() },
 ];
 
 const router = createBrowserRouter([
@@ -51,7 +53,11 @@ const router = createBrowserRouter([
 function Layout() {
   const location = useLocation();
   const currentOutlet = useOutlet();
-  const { nodeRef } = routes.find((route) => route.path === location.pathname) ?? {};
+  const { nodeRef } =
+    routes.find((route) =>
+      // TODO: Hack for '/lottery/:id' route
+      route.path.includes(location.pathname.split('/')[1])
+    ) ?? {};
 
   const scrollToTop = useCallback(() => {
     window?.scroll(0, 0);
