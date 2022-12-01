@@ -112,6 +112,19 @@ const outlined = defineStyle({
   },
 });
 
+const filledRed = defineStyle({
+  ...commonProps,
+  bgColor: 'red',
+  borderRadius: 'sm',
+
+  _hover: {
+    opacity: '.8',
+    _disabled: {
+      background: 'gray.200',
+    },
+  },
+});
+
 const outlinedWhite = defineStyle({
   ...commonProps,
   border: '1px solid white',
@@ -146,6 +159,7 @@ export const buttonTheme = defineStyleConfig({
     secondary,
     outlined,
     outlinedWhite,
+    filledRed,
     link,
     inputTransparent,
     inputTransparentWhite,
