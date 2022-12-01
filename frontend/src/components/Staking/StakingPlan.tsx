@@ -1,8 +1,8 @@
-import React, { FC } from 'react';
+import React, { FC, useCallback, useState } from 'react';
 import { Box, Text, Flex, Button } from '@chakra-ui/react';
 
 import { BigNumber, BigNumberish } from 'ethers';
-import { getReadableDuration } from '@/utils/time';
+import { getLocalDateString, getReadableDuration } from '@/utils/time';
 import { bigNumberToString, getReadableAmount } from '@/utils/number';
 
 type StakingPlanProps = {
@@ -16,13 +16,12 @@ type StakingPlanProps = {
   apr: number | string;
   userStakeSav: BigNumberish;
   userStakeSavR: BigNumberish;
-  userReward?: BigNumber;
+  userTotalReward?: BigNumber;
   isClaimAvailable?: boolean;
-  isSubscribeLoading?: boolean;
 
-  onSubscribe: () => void;
+  onSubscribe: () => Promise<void>;
   onDeposit: () => void;
-  onClaim: () => void;
+  onClaim: () => Promise<void>;
 };
 export const StakingPlan: FC<StakingPlanProps> = ({
   isSubscribed,
@@ -35,59 +34,75 @@ export const StakingPlan: FC<StakingPlanProps> = ({
   apr,
   userStakeSav,
   userStakeSavR,
-  userReward,
+  userTotalReward,
   isClaimAvailable,
-  isSubscribeLoading,
   onSubscribe,
   onDeposit,
   onClaim,
 }) => {
-  const untilSubscriptionDate =
-    subscribedTill &&
-    new Date(BigNumber.from(subscribedTill).toNumber() * 1000).toLocaleDateString();
+  const [isSubscribeLoading, setIsSubscribeLoading] = useState(false);
+  const [isClaimLoading, setIsClaimLoading] = useState(false);
+
+  const handleSubscribe = useCallback(() => {
+    setIsSubscribeLoading(true);
+    onSubscribe().finally(() => {
+      setIsSubscribeLoading(false);
+    });
+  }, [setIsSubscribeLoading, onSubscribe]);
+
+  const handleClaim = useCallback(() => {
+    setIsClaimLoading(true);
+    onClaim().finally(() => {
+      setIsClaimLoading(false);
+    });
+  }, [setIsClaimLoading, onClaim]);
 
   return (
-    <Box borderRadius="md" overflow="hidden" filter="drop-shadow(0px 4px 4px rgba(0, 0, 0, 0.25))">
+    <Box borderRadius="md" overflow="hidden">
       <Flex
-        bgColor={isSubscribed ? 'green.10050' : 'grey.200'}
+        bgColor={isSubscribed ? 'green.10050' : 'gray.200'}
         p="10px 20px"
         justifyContent="flex-end"
         height="60px"
         alignItems="center"
       >
-        {isSubscribed ? (
-          isSubscriptionEnding ? (
-            <>
-              <Text textStyle="textSansBold">
-                <>Until {untilSubscriptionDate}</>
-              </Text>
-              <Button
-                variant="outlined-white"
-                onClick={onSubscribe}
-                isLoading={isSubscribeLoading}
-                size="md"
-                ml={5}
-                w="140px"
-              >
-                Prolong
-              </Button>
-            </>
-          ) : (
-            <Text textStyle="textSansBold" px="44px">
-              Active
-            </Text>
-          )
-        ) : (
-          <>
-            <Text textStyle="textSansBold">
-              {bigNumberToString(subscriptionCost, 18, 0)} SAV /{' '}
-              {getReadableDuration(subscriptionDuration)}
-            </Text>
-            <Button onClick={onSubscribe} isLoading={isSubscribeLoading} size="md" ml={5}>
-              Activate
-            </Button>
-          </>
-        )}
+        {isSubscriptionEnding ? (
+          <Text textStyle="textSansBold" mr={5}>
+            <>Until {getLocalDateString(BigNumber.from(subscribedTill).toNumber())}</>
+          </Text>
+        ) : null}
+
+        {!isSubscribed || isSubscriptionEnding ? (
+          <Text textStyle="textSansBold">
+            {bigNumberToString(subscriptionCost, 18, 0)} SAV /{' '}
+            {getReadableDuration(subscriptionDuration)}
+          </Text>
+        ) : null}
+
+        {isSubscriptionEnding ? (
+          <Button
+            variant="outlinedWhite"
+            onClick={handleSubscribe}
+            isLoading={isSubscribeLoading}
+            size="md"
+            ml={5}
+            w="140px"
+          >
+            Prolong
+          </Button>
+        ) : null}
+
+        {!isSubscribed ? (
+          <Button onClick={handleSubscribe} isLoading={isSubscribeLoading} size="md" ml={5}>
+            Activate
+          </Button>
+        ) : null}
+
+        {isSubscribed && !isSubscriptionEnding ? (
+          <Text textStyle="textSansBold" mr="46px">
+            Active
+          </Text>
+        ) : null}
       </Flex>
 
       <Box bgColor="rgba(38, 71, 55, 0.5)" boxShadow="0px 6px 11px rgba(0, 0, 0, 0.25)" p="20px">
@@ -102,13 +117,17 @@ export const StakingPlan: FC<StakingPlanProps> = ({
             </Flex>
             <Flex justifyContent="space-between">
               <StakingParameter title="Your Stake">
-                <Box as="span" ml={3} mr={6}>
-                  {getReadableAmount(userStakeSav)} SAV
-                </Box>
-                <Box as="span">{getReadableAmount(userStakeSavR)} SAVR</Box>
+                <Flex flexWrap="wrap">
+                  <Box as="span" ml={2} mr={2}>
+                    {getReadableAmount(userStakeSav, { shortify: true })} SAV
+                  </Box>
+                  <Box as="span" mr={2} ml={2}>
+                    {getReadableAmount(userStakeSavR, { shortify: true })} SAVR
+                  </Box>
+                </Flex>
               </StakingParameter>
               <StakingParameter title="Your rewards">
-                {getReadableAmount(userReward || 0)} SAV
+                {getReadableAmount(userTotalReward || 0)} SAV
               </StakingParameter>
             </Flex>
           </Box>
@@ -117,7 +136,12 @@ export const StakingPlan: FC<StakingPlanProps> = ({
             <Button onClick={onDeposit} variant="outlined" disabled={!isSubscribed}>
               Deposit
             </Button>
-            <Button onClick={onClaim} variant="outlined" disabled={!isClaimAvailable}>
+            <Button
+              onClick={handleClaim}
+              variant="outlined"
+              disabled={!isClaimAvailable || isClaimLoading}
+              isLoading={isClaimLoading}
+            >
               Claim
             </Button>
           </Flex>
@@ -130,8 +154,10 @@ export const StakingPlan: FC<StakingPlanProps> = ({
 const StakingParameter = ({ title, children }: { title: string; children: any }) => {
   return (
     <Flex alignItems="center">
-      <Text textStyle="textSansSmall" mr="10px">{`${title}`}</Text>
-      <Text textStyle="textSansBold">{children}</Text>
+      <Box textStyle="textSansSmall" mr="10px" whiteSpace="nowrap">{`${title}`}</Box>
+      <Box textStyle="textSansBold" whiteSpace="nowrap">
+        {children}
+      </Box>
     </Flex>
   );
 };

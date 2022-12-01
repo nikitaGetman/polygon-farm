@@ -13,23 +13,16 @@ import {
 import { useAccount, useConnect } from 'wagmi';
 import { ReactComponent as MetamaskIcon } from '@/assets/images/icons/metamask.svg';
 import { ReactComponent as WalletConnectIcon } from '@/assets/images/icons/walletconnect.svg';
+import { metamaskConnector, walletConnector } from '@/modules/wagmi';
 
 type ConnectWalletModalProps = {
   isOpen: boolean;
   onClose: () => void;
 };
 
-const getIcon = (connectorId: string) => {
-  if (connectorId === 'metaMask') return <MetamaskIcon />;
-  if (connectorId === 'walletConnect') return <WalletConnectIcon />;
-
-  return null;
-};
-
 export const ConnectWalletModal: FC<ConnectWalletModalProps> = ({ onClose, isOpen }) => {
   const {
     connect,
-    connectors,
     error: connectError,
     isLoading: isConnectLoading,
     pendingConnector,
@@ -54,24 +47,27 @@ export const ConnectWalletModal: FC<ConnectWalletModalProps> = ({ onClose, isOpe
       <ModalOverlay />
       <ModalContent>
         <ModalHeader justifyContent="center">
-          <Text textStyle="textBold">Connect to a wallet</Text>
+          <Text textStyle="textBold">Connect Wallet</Text>
           <ModalCloseButton onClick={onClose} size="lg" right="20px" top="20px" />
         </ModalHeader>
         <ModalBody>
-          {connectError && (
+          {connectError ? (
             <Text color="error" textAlign="center" textStyle="textBold">
               {connectError.message}
             </Text>
-          )}
-          {connectors.map((c) => (
-            <ConnectButton
-              key={c.id}
-              text={c.name}
-              icon={getIcon(c.id)}
-              onClick={() => handleConnect(c)}
-              isLoading={isConnectLoading && pendingConnector?.id === c.id}
-            />
-          ))}
+          ) : null}
+          <ConnectButton
+            text={metamaskConnector.name}
+            icon={<MetamaskIcon />}
+            onClick={() => handleConnect(metamaskConnector)}
+            isLoading={isConnectLoading && pendingConnector?.id === metamaskConnector.id}
+          />
+          <ConnectButton
+            text={walletConnector.name}
+            icon={<WalletConnectIcon />}
+            onClick={() => handleConnect(walletConnector)}
+            isLoading={isConnectLoading && pendingConnector?.id === walletConnector.id}
+          />
         </ModalBody>
       </ModalContent>
     </Modal>
@@ -89,7 +85,6 @@ const ConnectButton: FC<ConnectButtonProps> = ({ text, icon, onClick, isLoading 
     <Button
       background="linear-gradient(96.85deg, rgba(35, 157, 113, 0.54) -8.44%, rgba(35, 54, 72, 0.54) 102.66%)"
       boxShadow="0px 6px 20px rgba(0, 0, 0, 0.25)"
-      backdropFilter="blur(22.5px)"
       borderRadius="md"
       w="100%"
       mt="10px"
@@ -97,6 +92,7 @@ const ConnectButton: FC<ConnectButtonProps> = ({ text, icon, onClick, isLoading 
       size="xl"
       onClick={onClick}
       isLoading={isLoading}
+      textTransform="none"
     >
       <Flex justifyContent="space-between" alignItems="center" w="100%">
         {icon}

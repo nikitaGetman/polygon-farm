@@ -1,30 +1,47 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import { useAccount, useDisconnect } from 'wagmi';
 import { Box, Circle, Container, Flex, IconButton, useDisclosure } from '@chakra-ui/react';
-import { ConnectWalletButton } from '@/components/ConnectWalletButton/ConnectWalletButton';
+import { ConnectWalletButton } from '@/components/ui/ConnectWalletButton/ConnectWalletButton';
 import { Menu } from '@/components/Menu/Menu';
 import { ReactComponent as BurgerIcon } from '@/assets/images/icons/burger.svg';
-import { WalletMenu } from '@/components/WalletMenu/WalletMenu';
+import { WalletMenu } from '@/components/Header/WalletMenu';
 import Logo from '@/assets/images/logo.svg';
-import './Header.scss';
 import { useStaking } from '@/hooks/useStaking';
+import { useReferralManager } from '@/hooks/useReferralManager';
+import { useLocalReferrer } from '@/hooks/useLocalReferrer';
+import { Link, useNavigate } from 'react-router-dom';
+import { useSquads } from '@/hooks/useSquads';
+import './Header.scss';
 
 export const Header = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const { address, isConnected, connector } = useAccount();
   const { disconnect } = useDisconnect();
+  const navigate = useNavigate();
+  const { setLocalReferrer } = useLocalReferrer();
   const { hasEndingSubscription } = useStaking();
+  const { hasEndingReferralSubscription } = useReferralManager();
+  const { hasEndingSquadsSubscription } = useSquads();
+
+  const hasNotification =
+    hasEndingSubscription || hasEndingReferralSubscription || hasEndingSquadsSubscription;
+
+  const handleDisconnect = useCallback(() => {
+    setLocalReferrer(undefined);
+    disconnect();
+    navigate('/');
+  }, [setLocalReferrer, disconnect, navigate]);
 
   return (
     <div className="app-header">
       <Container variant="header">
-        <div className="app-header__logo">
+        <Link to="/">
           <img src={Logo} alt="Logo" />
-        </div>
+        </Link>
 
         <Flex>
           {isConnected ? (
-            <WalletMenu address={address} connector={connector} disconnect={disconnect} />
+            <WalletMenu address={address} connector={connector} disconnect={handleDisconnect} />
           ) : (
             <ConnectWalletButton />
           )}
@@ -38,9 +55,9 @@ export const Header = () => {
               onClick={onOpen}
               padding="7px"
             />
-            {hasEndingSubscription && (
+            {hasNotification ? (
               <Circle as="span" size="10px" bg="red" position="absolute" right="-2px" top="-2px" />
-            )}
+            ) : null}
           </Box>
         </Flex>
       </Container>

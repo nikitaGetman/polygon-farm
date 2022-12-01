@@ -1,45 +1,93 @@
 import React, { FC, useCallback, useEffect, useState } from 'react';
-import { Box, Button, Input, InputGroup, InputRightElement, Text } from '@chakra-ui/react';
-import { BigNumberish } from 'ethers';
+import {
+  Box,
+  Button,
+  Flex,
+  Input,
+  InputGroup,
+  InputLeftElement,
+  InputRightElement,
+  Text,
+} from '@chakra-ui/react';
 
 type InputAmountProps = {
-  total?: BigNumberish;
+  total?: string | null;
   placeholder?: string;
-  value?: number;
-  onChange: (value?: number) => void;
+  value?: string | number;
+
+  tokenTicker?: string;
+  tokenIcon?: any;
+
+  onChange: (value?: string) => void;
 };
 
-export const InputAmount: FC<InputAmountProps> = ({ placeholder, value, total, onChange }) => {
+export const InputAmount: FC<InputAmountProps> = ({
+  placeholder,
+  value,
+  tokenIcon,
+  tokenTicker,
+  total,
+  onChange,
+}) => {
   const [localValue, setLocalValue] = useState('');
 
   useEffect(() => {
-    onChange(localValue ? parseFloat(localValue) : undefined);
-  }, [localValue, onChange]);
+    setLocalValue(value ? value.toString() : '');
+  }, [value, setLocalValue]);
 
   const handleChange = useCallback(
-    (e: any) => {
-      setLocalValue(e.target.value);
+    (val: string) => {
+      setLocalValue(val);
+      onChange(val);
     },
-    [setLocalValue]
+    [setLocalValue, onChange]
   );
 
-  const MaxButton = total ? (
-    <Button variant="transparent" color="green.400" onClick={() => setLocalValue(total.toString())}>
-      MAX
-    </Button>
-  ) : null;
+  const inputPaddingRight = tokenTicker ? '150px' : undefined;
 
   return (
     <Box>
-      <InputGroup>
-        <Input type="number" placeholder={placeholder} value={localValue} onChange={handleChange} />
-        <InputRightElement children={MaxButton} />
+      <InputGroup variant="secondary">
+        {tokenTicker ? (
+          <InputLeftElement width="130px" padding="0 0 0 20px">
+            <Flex
+              alignItems="center"
+              justifyContent="flex-start"
+              width="100%"
+              borderRight="1px solid white"
+            >
+              {tokenIcon}
+              <Text textStyle="textSansBold">{tokenTicker}</Text>
+            </Flex>
+          </InputLeftElement>
+        ) : null}
+
+        <Input
+          type="number"
+          placeholder={placeholder}
+          value={localValue}
+          paddingLeft={inputPaddingRight}
+          paddingRight="64px"
+          textOverflow="ellipsis"
+          onChange={(e) => handleChange(e.target.value)}
+        />
+
+        <InputRightElement mr="12px">
+          {!!total && (
+            <Button
+              variant="transparent"
+              color="white"
+              _hover={{ opacity: 0.7 }}
+              onClick={() => handleChange(total)}
+            >
+              MAX
+            </Button>
+          )}
+        </InputRightElement>
       </InputGroup>
-      {total !== undefined && (
-        <Text textStyle="textSansSmall" textAlign="right" m="4px">
-          <>You have: {total || 0}</>
-        </Text>
-      )}
+      <Text textStyle="textSansSmall" textAlign="right" mt="8px" height="16px">
+        {total ? <>You have: {total}</> : null}
+      </Text>
     </Box>
   );
 };

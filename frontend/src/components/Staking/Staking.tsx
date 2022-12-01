@@ -13,7 +13,7 @@ import {
   Skeleton,
 } from '@chakra-ui/react';
 import { WarningTwoIcon } from '@chakra-ui/icons';
-import { ConnectWalletButton } from '@/components/ConnectWalletButton/ConnectWalletButton';
+import { ConnectWalletButton } from '@/components/ui/ConnectWalletButton/ConnectWalletButton';
 import { useAccount } from 'wagmi';
 import { useStaking } from '@/hooks/useStaking';
 import { getReadableAmount, getYearlyAPR, makeBigNumber } from '@/utils/number';
@@ -21,21 +21,23 @@ import { StakingPlan } from './StakingPlan';
 import { useConnectWallet } from '@/hooks/useConnectWallet';
 import { StakingModal } from './StakingModal';
 import { TOKENS } from '@/hooks/useTokens';
-import { Link, useNavigate } from 'react-router-dom';
-import { StatBlock } from '../ui/StatBlock/StatBlock';
+import { Link } from 'react-router-dom';
+import { StatBlock } from '@/components/ui/StatBlock/StatBlock';
 import { BigNumber } from 'ethers';
+import { useLocalReferrer } from '@/hooks/useLocalReferrer';
 
 type StakingProps = {
   isPageView?: boolean;
 };
 export const Staking: FC<StakingProps> = ({ isPageView }) => {
-  const { isConnected } = useAccount();
+  const { isConnected, address } = useAccount();
   const { connect } = useConnectWallet();
-  const { isOpen, onOpen, onClose } = useDisclosure();
+  const { isOpen, onOpen, onClose } = useDisclosure(); // StakingModal toggle
   const [selectedPlan, setSelectedPlan] = useState<number>();
-  const navigate = useNavigate();
+  const { getLocalReferrer } = useLocalReferrer();
 
-  const { activeStakingPlans, hasEndingSubscription, subscribe, deposit } = useStaking();
+  const { activeStakingPlans, hasEndingSubscription, subscribe, deposit, withdrawAll } =
+    useStaking();
 
   const openModal = useCallback(
     (index: number) => {
@@ -49,40 +51,25 @@ export const Staking: FC<StakingProps> = ({ isPageView }) => {
     onClose();
   }, [setSelectedPlan, onClose]);
 
-  const onSubscribe = useCallback(
-    (planId: number) => {
-      setSelectedPlan(planId);
-      subscribe.mutate(planId);
-    },
-    [setSelectedPlan, subscribe]
-  );
-
   const onDeposit = useCallback(
     async (token: TOKENS, amount: number) => {
       if (isConnected && selectedPlan !== undefined) {
         const amountBN = makeBigNumber(amount);
+        const localReferrer = getLocalReferrer() || '';
 
         await deposit.mutateAsync({
           planId: selectedPlan,
           amount: amountBN,
           isToken2: token === TOKENS.SAVR,
+          referrer: localReferrer !== address ? localReferrer : undefined,
         });
         closeModal();
       } else {
         connect();
       }
     },
-    [deposit, connect, isConnected, selectedPlan, closeModal]
+    [deposit, connect, isConnected, selectedPlan, closeModal, getLocalReferrer, address]
   );
-
-  const onClaim = useCallback(() => {
-    if (isPageView) {
-      const element = document.getElementById('stakings-list');
-      element?.scrollIntoView({ behavior: 'smooth' });
-    } else {
-      navigate('/staking');
-    }
-  }, [navigate, isPageView]);
 
   const totalStakeSav = useMemo(
     () =>
@@ -109,7 +96,7 @@ export const Staking: FC<StakingProps> = ({ isPageView }) => {
         <Box>
           {isConnected ? (
             <Box display="flex" alignItems="center">
-              {hasEndingSubscription && (
+              {hasEndingSubscription ? (
                 <Text
                   textStyle="textBold"
                   color="error"
@@ -122,27 +109,27 @@ export const Staking: FC<StakingProps> = ({ isPageView }) => {
                     Check your subscription!
                   </>
                 </Text>
-              )}
-              {!isPageView && (
+              ) : null}
+              {!isPageView ? (
                 <Button as={Link} to="/staking">
                   My stake
                 </Button>
-              )}
+              ) : null}
             </Box>
-          ) : (
-            !isPageView && <ConnectWalletButton />
-          )}
+          ) : !isPageView ? (
+            <ConnectWalletButton />
+          ) : null}
         </Box>
       </Flex>
 
-      <Box maxWidth="530px" mt={5}>
+      <Box maxWidth="640px" mt={5}>
         <Text textStyle="text1">
-          Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has
-          been the industry's standard dummy ...
+          Stake your SAV or SAVR holdings to earn more SAV. The longer you stake, the more you
+          yield. Accumulate more SAV, so you can increase your governance in the future iSaver DAO.
         </Text>
       </Box>
 
-      {isPageView && (
+      {isPageView ? (
         <Flex justifyContent="flex-end" mt="30px">
           <StatBlock width="260px">
             <Box textStyle="text1" mb="10px">
@@ -167,7 +154,7 @@ export const Staking: FC<StakingProps> = ({ isPageView }) => {
             </Box>
           </StatBlock>
         </Flex>
-      )}
+      ) : null}
 
       <Grid
         mt={isPageView ? '30px' : '40px'}
@@ -175,16 +162,17 @@ export const Staking: FC<StakingProps> = ({ isPageView }) => {
         templateRows="repeat(2, 1fr)"
         templateColumns="repeat(2, 1fr)"
       >
-        {!activeStakingPlans.length &&
-          Array.from({ length: 4 }).map((_, index) => (
-            <Skeleton
-              key={index}
-              height="210px"
-              borderRadius="md"
-              startColor="grey.200"
-              endColor="bgGreen.200"
-            />
-          ))}
+        {!activeStakingPlans.length
+          ? Array.from({ length: 4 }).map((_, index) => (
+              <Skeleton
+                key={index}
+                height="210px"
+                borderRadius="md"
+                startColor="gray.200"
+                endColor="bgGreen.200"
+              />
+            ))
+          : null}
         {activeStakingPlans.map((planData, index) => (
           <GridItem colSpan={1} rowSpan={1} key={planData.planId}>
             <StakingPlan
@@ -198,17 +186,16 @@ export const Staking: FC<StakingProps> = ({ isPageView }) => {
               apr={getYearlyAPR(planData.profitPercent, planData.stakingDuration)}
               userStakeSav={planData.currentToken1Staked || 0}
               userStakeSavR={planData.currentToken2Staked || 0}
-              userReward={planData.currentReward}
+              userTotalReward={planData.totalReward}
               isClaimAvailable={planData.hasReadyStakes}
-              onSubscribe={isConnected ? () => onSubscribe(planData.planId) : connect}
-              isSubscribeLoading={selectedPlan === planData.planId && subscribe.isLoading}
+              onSubscribe={() => subscribe.mutateAsync(planData.planId)}
               onDeposit={() => openModal(planData.planId)}
-              onClaim={onClaim}
+              onClaim={() => withdrawAll.mutateAsync(planData.planId)}
             />
           </GridItem>
         ))}
       </Grid>
-      {isOpen && selectedPlan !== undefined && (
+      {isOpen && selectedPlan !== undefined ? (
         <StakingModal
           apr={getYearlyAPR(
             activeStakingPlans[selectedPlan].profitPercent,
@@ -219,7 +206,7 @@ export const Staking: FC<StakingProps> = ({ isPageView }) => {
           onClose={closeModal}
           onStake={onDeposit}
         />
-      )}
+      ) : null}
     </Container>
   );
 };

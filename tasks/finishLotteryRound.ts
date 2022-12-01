@@ -17,5 +17,9 @@ task("finish-lottery-round", "Finish lottery round")
     const pk = [[]];
 
     console.log(lottery.address, taskArgs.round, pk);
-    await lottery.finishLotteryRound(BigNumber.from(taskArgs.round), pk);
+    const tx = await lottery.finishLotteryRound(
+      BigNumber.from(taskArgs.round),
+      pk
+    );
+    await tx.wait();
   });

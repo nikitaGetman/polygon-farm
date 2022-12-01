@@ -3,11 +3,21 @@ import { BigNumber, BigNumberish, ethers } from 'ethers';
 export const bigNumberToString = (
   value: BigNumberish,
   decimals: number = 18,
-  precision: number = 3
+  precision: number = 2
 ) => {
   const parts = ethers.utils.formatUnits(value, decimals).split('.');
-  const fractional = parts[1].slice(0, precision);
+  let fractional = parts[1].slice(0, precision);
+  if (fractional === '0') fractional = '00';
   return fractional ? `${parts[0]}.${fractional}` : `${parts[0]}`;
+};
+
+export const bigNumberToNumber = (
+  value: BigNumberish,
+  decimals: number = 18,
+  precision: number = 2
+) => {
+  const stringValue = bigNumberToString(value, decimals, precision);
+  return parseFloat(stringValue);
 };
 
 const PERCENT_DIVIDER = 1000.0;
@@ -21,16 +31,24 @@ export const getYearlyAPR = (profit: BigNumberish, duration: BigNumberish) => {
 
 export const getReadableAmount = (
   amount: BigNumberish,
-  decimals: number = 18,
-  precision: number = 2
+  {
+    decimals = 18,
+    precision = 2,
+    shortify = false,
+  }: {
+    decimals?: number;
+    precision?: number;
+    shortify?: boolean;
+  } = {}
 ) => {
-  const amountFloat = parseFloat(ethers.utils.formatUnits(amount, decimals));
+  const realAmount = parseFloat(ethers.utils.formatUnits(amount, decimals));
+  const shortAmount = shortify ? realAmount * 10 : realAmount;
 
-  if (amountFloat < 1000) return `${amountFloat.toFixed(precision)}`;
-  if (amountFloat < 1000000) return `${(amountFloat / 1000).toFixed(precision)}k`;
-  return `${(amountFloat / 1000000).toFixed(precision)}M`;
+  if (shortAmount < 1000) return `${realAmount.toFixed(precision)}`;
+  if (shortAmount < 1000000) return `${(realAmount / 1000).toFixed(precision)}k`;
+  return `${(shortAmount / 1000000).toFixed(precision)}M`;
 };
 
-export const makeBigNumber = (value: BigNumberish) => {
-  return ethers.utils.parseEther(value.toString());
+export const makeBigNumber = (value: BigNumberish, decimals: number = 18) => {
+  return ethers.utils.parseUnits(value.toString(), decimals);
 };

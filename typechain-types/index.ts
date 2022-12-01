@@ -16,6 +16,8 @@ export type { AccessControl } from "./@openzeppelin/contracts/access/AccessContr
 export { AccessControl__factory } from "./factories/@openzeppelin/contracts/access/AccessControl__factory";
 export type { IAccessControl } from "./@openzeppelin/contracts/access/IAccessControl";
 export { IAccessControl__factory } from "./factories/@openzeppelin/contracts/access/IAccessControl__factory";
+export type { Ownable } from "./@openzeppelin/contracts/access/Ownable";
+export { Ownable__factory } from "./factories/@openzeppelin/contracts/access/Ownable__factory";
 export type { Pausable } from "./@openzeppelin/contracts/security/Pausable";
 export { Pausable__factory } from "./factories/@openzeppelin/contracts/security/Pausable__factory";
 export type { ERC1155 } from "./@openzeppelin/contracts/token/ERC1155/ERC1155";
@@ -50,6 +52,8 @@ export type { Blacklist } from "./contracts/extensions/Blacklist";
 export { Blacklist__factory } from "./factories/contracts/extensions/Blacklist__factory";
 export type { ERC20Blacklist } from "./contracts/extensions/ERC20Blacklist";
 export { ERC20Blacklist__factory } from "./factories/contracts/extensions/ERC20Blacklist__factory";
+export type { Helper } from "./contracts/Helper";
+export { Helper__factory } from "./factories/contracts/Helper__factory";
 export type { IReferralManager } from "./contracts/interfaces/IReferralManager";
 export { IReferralManager__factory } from "./factories/contracts/interfaces/IReferralManager__factory";
 export type { ISquads } from "./contracts/interfaces/ISquads";

@@ -13,14 +13,46 @@ const _abi = [
   {
     inputs: [
       {
-        internalType: "address",
-        name: "user",
-        type: "address",
-      },
-      {
-        internalType: "uint256",
-        name: "reward",
-        type: "uint256",
+        components: [
+          {
+            internalType: "address",
+            name: "user",
+            type: "address",
+          },
+          {
+            internalType: "uint256",
+            name: "reward",
+            type: "uint256",
+          },
+          {
+            internalType: "address",
+            name: "referral",
+            type: "address",
+          },
+          {
+            internalType: "uint256",
+            name: "level",
+            type: "uint256",
+          },
+          {
+            internalType: "uint256",
+            name: "depositAmount",
+            type: "uint256",
+          },
+          {
+            internalType: "uint256",
+            name: "stakingPlanId",
+            type: "uint256",
+          },
+          {
+            internalType: "uint256",
+            name: "reason",
+            type: "uint256",
+          },
+        ],
+        internalType: "struct IReferralManager.AddDividendsParams",
+        name: "params",
+        type: "tuple",
       },
     ],
     name: "addUserDividends",
@@ -63,6 +95,52 @@ const _abi = [
       },
     ],
     stateMutability: "pure",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "userAddress",
+        type: "address",
+      },
+      {
+        internalType: "uint256",
+        name: "level",
+        type: "uint256",
+      },
+    ],
+    name: "getUserReferralsByLevel",
+    outputs: [
+      {
+        components: [
+          {
+            internalType: "address",
+            name: "referralAddress",
+            type: "address",
+          },
+          {
+            internalType: "uint256",
+            name: "level",
+            type: "uint256",
+          },
+          {
+            internalType: "uint256",
+            name: "activationDate",
+            type: "uint256",
+          },
+          {
+            internalType: "bool",
+            name: "isReferralSubscriptionActive",
+            type: "bool",
+          },
+        ],
+        internalType: "struct IReferralManager.Referral[]",
+        name: "",
+        type: "tuple[]",
+      },
+    ],
+    stateMutability: "view",
     type: "function",
   },
   {

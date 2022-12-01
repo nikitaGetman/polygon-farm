@@ -27,15 +27,47 @@ import type {
   PromiseOrValue,
 } from "../common";
 
-export declare namespace ReferralManager {
+export declare namespace IReferralManager {
+  export type AddDividendsParamsStruct = {
+    user: PromiseOrValue<string>;
+    reward: PromiseOrValue<BigNumberish>;
+    referral: PromiseOrValue<string>;
+    level: PromiseOrValue<BigNumberish>;
+    depositAmount: PromiseOrValue<BigNumberish>;
+    stakingPlanId: PromiseOrValue<BigNumberish>;
+    reason: PromiseOrValue<BigNumberish>;
+  };
+
+  export type AddDividendsParamsStructOutput = [
+    string,
+    BigNumber,
+    string,
+    BigNumber,
+    BigNumber,
+    BigNumber,
+    BigNumber
+  ] & {
+    user: string;
+    reward: BigNumber;
+    referral: string;
+    level: BigNumber;
+    depositAmount: BigNumber;
+    stakingPlanId: BigNumber;
+    reason: BigNumber;
+  };
+
   export type ReferralStruct = {
     referralAddress: PromiseOrValue<string>;
     level: PromiseOrValue<BigNumberish>;
+    activationDate: PromiseOrValue<BigNumberish>;
+    isReferralSubscriptionActive: PromiseOrValue<boolean>;
   };
 
-  export type ReferralStructOutput = [string, BigNumber] & {
+  export type ReferralStructOutput = [string, BigNumber, BigNumber, boolean] & {
     referralAddress: string;
     level: BigNumber;
+    activationDate: BigNumber;
+    isReferralSubscriptionActive: boolean;
   };
 }
 
@@ -45,17 +77,17 @@ export interface ReferralManagerInterface extends utils.Interface {
     "LEVELS()": FunctionFragment;
     "REFERRAL_PERCENTS(uint256)": FunctionFragment;
     "SUBSCRIPTION_PERIOD_DAYS()": FunctionFragment;
-    "addUserDividends(address,uint256)": FunctionFragment;
+    "addUserDividends((address,uint256,address,uint256,uint256,uint256,uint256))": FunctionFragment;
     "authorizeContract(address)": FunctionFragment;
     "calculateRefReward(uint256,uint256)": FunctionFragment;
     "claimDividends(uint256)": FunctionFragment;
     "fullSubscriptionCost()": FunctionFragment;
     "getReferralLevels()": FunctionFragment;
     "getRoleAdmin(bytes32)": FunctionFragment;
+    "getTimestamp()": FunctionFragment;
     "getUser1LvlReferrals(address)": FunctionFragment;
     "getUserInfo(address)": FunctionFragment;
-    "getUserLvlReferralsCount(address,uint256)": FunctionFragment;
-    "getUserReferrals(address,uint256)": FunctionFragment;
+    "getUserReferralsByLevel(address,uint256)": FunctionFragment;
     "getUserReferrer(address)": FunctionFragment;
     "grantRole(bytes32,address)": FunctionFragment;
     "hasRole(bytes32,address)": FunctionFragment;
@@ -78,6 +110,7 @@ export interface ReferralManagerInterface extends utils.Interface {
     "updateRewardToken(address)": FunctionFragment;
     "updateSubscriptionPeriod(uint256)": FunctionFragment;
     "updateSubscriptionToken(address)": FunctionFragment;
+    "userHasAnySubscription(address)": FunctionFragment;
     "userHasSubscription(address,uint256)": FunctionFragment;
   };
 
@@ -94,10 +127,10 @@ export interface ReferralManagerInterface extends utils.Interface {
       | "fullSubscriptionCost"
       | "getReferralLevels"
       | "getRoleAdmin"
+      | "getTimestamp"
       | "getUser1LvlReferrals"
       | "getUserInfo"
-      | "getUserLvlReferralsCount"
-      | "getUserReferrals"
+      | "getUserReferralsByLevel"
       | "getUserReferrer"
       | "grantRole"
       | "hasRole"
@@ -120,6 +153,7 @@ export interface ReferralManagerInterface extends utils.Interface {
       | "updateRewardToken"
       | "updateSubscriptionPeriod"
       | "updateSubscriptionToken"
+      | "userHasAnySubscription"
       | "userHasSubscription"
   ): FunctionFragment;
 
@@ -138,7 +172,7 @@ export interface ReferralManagerInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "addUserDividends",
-    values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]
+    values: [IReferralManager.AddDividendsParamsStruct]
   ): string;
   encodeFunctionData(
     functionFragment: "authorizeContract",
@@ -165,6 +199,10 @@ export interface ReferralManagerInterface extends utils.Interface {
     values: [PromiseOrValue<BytesLike>]
   ): string;
   encodeFunctionData(
+    functionFragment: "getTimestamp",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
     functionFragment: "getUser1LvlReferrals",
     values: [PromiseOrValue<string>]
   ): string;
@@ -173,11 +211,7 @@ export interface ReferralManagerInterface extends utils.Interface {
     values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
-    functionFragment: "getUserLvlReferralsCount",
-    values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "getUserReferrals",
+    functionFragment: "getUserReferralsByLevel",
     values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
@@ -269,6 +303,10 @@ export interface ReferralManagerInterface extends utils.Interface {
     values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
+    functionFragment: "userHasAnySubscription",
+    values: [PromiseOrValue<string>]
+  ): string;
+  encodeFunctionData(
     functionFragment: "userHasSubscription",
     values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]
   ): string;
@@ -315,6 +353,10 @@ export interface ReferralManagerInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "getTimestamp",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "getUser1LvlReferrals",
     data: BytesLike
   ): Result;
@@ -323,11 +365,7 @@ export interface ReferralManagerInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "getUserLvlReferralsCount",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "getUserReferrals",
+    functionFragment: "getUserReferralsByLevel",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -410,11 +448,16 @@ export interface ReferralManagerInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "userHasAnySubscription",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "userHasSubscription",
     data: BytesLike
   ): Result;
 
   events: {
+    "DividendsAdded(address,address,uint256,uint256,uint256,uint256,uint256,uint256)": EventFragment;
     "ReferralAdded(address,address)": EventFragment;
     "RoleAdminChanged(bytes32,bytes32,bytes32)": EventFragment;
     "RoleGranted(bytes32,address,address)": EventFragment;
@@ -422,12 +465,39 @@ export interface ReferralManagerInterface extends utils.Interface {
     "Subscribed(address,uint256,uint256)": EventFragment;
   };
 
+  getEvent(nameOrSignatureOrTopic: "DividendsAdded"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "ReferralAdded"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "RoleAdminChanged"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "RoleGranted"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "RoleRevoked"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Subscribed"): EventFragment;
 }
+
+export interface DividendsAddedEventObject {
+  referrer: string;
+  referral: string;
+  level: BigNumber;
+  depositAmount: BigNumber;
+  rewardAmount: BigNumber;
+  stakingPlanId: BigNumber;
+  reason: BigNumber;
+  timestamp: BigNumber;
+}
+export type DividendsAddedEvent = TypedEvent<
+  [
+    string,
+    string,
+    BigNumber,
+    BigNumber,
+    BigNumber,
+    BigNumber,
+    BigNumber,
+    BigNumber
+  ],
+  DividendsAddedEventObject
+>;
+
+export type DividendsAddedEventFilter = TypedEventFilter<DividendsAddedEvent>;
 
 export interface ReferralAddedEventObject {
   referrer: string;
@@ -528,8 +598,7 @@ export interface ReferralManager extends BaseContract {
     SUBSCRIPTION_PERIOD_DAYS(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     addUserDividends(
-      user: PromiseOrValue<string>,
-      reward: PromiseOrValue<BigNumberish>,
+      params: IReferralManager.AddDividendsParamsStruct,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -558,6 +627,8 @@ export interface ReferralManager extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[string]>;
 
+    getTimestamp(overrides?: CallOverrides): Promise<[BigNumber]>;
+
     getUser1LvlReferrals(
       userAddress: PromiseOrValue<string>,
       overrides?: CallOverrides
@@ -567,26 +638,34 @@ export interface ReferralManager extends BaseContract {
       userAddress: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<
-      [string, BigNumber, BigNumber, BigNumber, BigNumber] & {
+      [
+        string,
+        BigNumber[],
+        BigNumber,
+        BigNumber,
+        string[],
+        BigNumber[],
+        BigNumber,
+        boolean,
+        BigNumber
+      ] & {
         referrer: string;
+        activeLevels: BigNumber[];
         totalDividends: BigNumber;
         totalClaimedDividends: BigNumber;
-        referrals_1_lvl: BigNumber;
+        referrals_1_lvl: string[];
+        refCount: BigNumber[];
         totalReferrals: BigNumber;
+        isActiveSubscriber: boolean;
+        activationDate: BigNumber;
       }
     >;
 
-    getUserLvlReferralsCount(
+    getUserReferralsByLevel(
       userAddress: PromiseOrValue<string>,
       level: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
-
-    getUserReferrals(
-      userAddress: PromiseOrValue<string>,
-      currentLevel: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<[ReferralManager.ReferralStructOutput[]]>;
+    ): Promise<[IReferralManager.ReferralStructOutput[]]>;
 
     getUserReferrer(
       user: PromiseOrValue<string>,
@@ -694,6 +773,11 @@ export interface ReferralManager extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
+    userHasAnySubscription(
+      user: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<[boolean]>;
+
     userHasSubscription(
       user: PromiseOrValue<string>,
       level: PromiseOrValue<BigNumberish>,
@@ -713,8 +797,7 @@ export interface ReferralManager extends BaseContract {
   SUBSCRIPTION_PERIOD_DAYS(overrides?: CallOverrides): Promise<BigNumber>;
 
   addUserDividends(
-    user: PromiseOrValue<string>,
-    reward: PromiseOrValue<BigNumberish>,
+    params: IReferralManager.AddDividendsParamsStruct,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -743,6 +826,8 @@ export interface ReferralManager extends BaseContract {
     overrides?: CallOverrides
   ): Promise<string>;
 
+  getTimestamp(overrides?: CallOverrides): Promise<BigNumber>;
+
   getUser1LvlReferrals(
     userAddress: PromiseOrValue<string>,
     overrides?: CallOverrides
@@ -752,26 +837,34 @@ export interface ReferralManager extends BaseContract {
     userAddress: PromiseOrValue<string>,
     overrides?: CallOverrides
   ): Promise<
-    [string, BigNumber, BigNumber, BigNumber, BigNumber] & {
+    [
+      string,
+      BigNumber[],
+      BigNumber,
+      BigNumber,
+      string[],
+      BigNumber[],
+      BigNumber,
+      boolean,
+      BigNumber
+    ] & {
       referrer: string;
+      activeLevels: BigNumber[];
       totalDividends: BigNumber;
       totalClaimedDividends: BigNumber;
-      referrals_1_lvl: BigNumber;
+      referrals_1_lvl: string[];
+      refCount: BigNumber[];
       totalReferrals: BigNumber;
+      isActiveSubscriber: boolean;
+      activationDate: BigNumber;
     }
   >;
 
-  getUserLvlReferralsCount(
+  getUserReferralsByLevel(
     userAddress: PromiseOrValue<string>,
     level: PromiseOrValue<BigNumberish>,
     overrides?: CallOverrides
-  ): Promise<BigNumber>;
-
-  getUserReferrals(
-    userAddress: PromiseOrValue<string>,
-    currentLevel: PromiseOrValue<BigNumberish>,
-    overrides?: CallOverrides
-  ): Promise<ReferralManager.ReferralStructOutput[]>;
+  ): Promise<IReferralManager.ReferralStructOutput[]>;
 
   getUserReferrer(
     user: PromiseOrValue<string>,
@@ -879,6 +972,11 @@ export interface ReferralManager extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
+  userHasAnySubscription(
+    user: PromiseOrValue<string>,
+    overrides?: CallOverrides
+  ): Promise<boolean>;
+
   userHasSubscription(
     user: PromiseOrValue<string>,
     level: PromiseOrValue<BigNumberish>,
@@ -898,8 +996,7 @@ export interface ReferralManager extends BaseContract {
     SUBSCRIPTION_PERIOD_DAYS(overrides?: CallOverrides): Promise<BigNumber>;
 
     addUserDividends(
-      user: PromiseOrValue<string>,
-      reward: PromiseOrValue<BigNumberish>,
+      params: IReferralManager.AddDividendsParamsStruct,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -928,6 +1025,8 @@ export interface ReferralManager extends BaseContract {
       overrides?: CallOverrides
     ): Promise<string>;
 
+    getTimestamp(overrides?: CallOverrides): Promise<BigNumber>;
+
     getUser1LvlReferrals(
       userAddress: PromiseOrValue<string>,
       overrides?: CallOverrides
@@ -937,26 +1036,34 @@ export interface ReferralManager extends BaseContract {
       userAddress: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<
-      [string, BigNumber, BigNumber, BigNumber, BigNumber] & {
+      [
+        string,
+        BigNumber[],
+        BigNumber,
+        BigNumber,
+        string[],
+        BigNumber[],
+        BigNumber,
+        boolean,
+        BigNumber
+      ] & {
         referrer: string;
+        activeLevels: BigNumber[];
         totalDividends: BigNumber;
         totalClaimedDividends: BigNumber;
-        referrals_1_lvl: BigNumber;
+        referrals_1_lvl: string[];
+        refCount: BigNumber[];
         totalReferrals: BigNumber;
+        isActiveSubscriber: boolean;
+        activationDate: BigNumber;
       }
     >;
 
-    getUserLvlReferralsCount(
+    getUserReferralsByLevel(
       userAddress: PromiseOrValue<string>,
       level: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    getUserReferrals(
-      userAddress: PromiseOrValue<string>,
-      currentLevel: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<ReferralManager.ReferralStructOutput[]>;
+    ): Promise<IReferralManager.ReferralStructOutput[]>;
 
     getUserReferrer(
       user: PromiseOrValue<string>,
@@ -1062,6 +1169,11 @@ export interface ReferralManager extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
+    userHasAnySubscription(
+      user: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
+
     userHasSubscription(
       user: PromiseOrValue<string>,
       level: PromiseOrValue<BigNumberish>,
@@ -1070,6 +1182,27 @@ export interface ReferralManager extends BaseContract {
   };
 
   filters: {
+    "DividendsAdded(address,address,uint256,uint256,uint256,uint256,uint256,uint256)"(
+      referrer?: PromiseOrValue<string> | null,
+      referral?: PromiseOrValue<string> | null,
+      level?: PromiseOrValue<BigNumberish> | null,
+      depositAmount?: null,
+      rewardAmount?: null,
+      stakingPlanId?: null,
+      reason?: null,
+      timestamp?: null
+    ): DividendsAddedEventFilter;
+    DividendsAdded(
+      referrer?: PromiseOrValue<string> | null,
+      referral?: PromiseOrValue<string> | null,
+      level?: PromiseOrValue<BigNumberish> | null,
+      depositAmount?: null,
+      rewardAmount?: null,
+      stakingPlanId?: null,
+      reason?: null,
+      timestamp?: null
+    ): DividendsAddedEventFilter;
+
     "ReferralAdded(address,address)"(
       referrer?: PromiseOrValue<string> | null,
       referral?: PromiseOrValue<string> | null
@@ -1137,8 +1270,7 @@ export interface ReferralManager extends BaseContract {
     SUBSCRIPTION_PERIOD_DAYS(overrides?: CallOverrides): Promise<BigNumber>;
 
     addUserDividends(
-      user: PromiseOrValue<string>,
-      reward: PromiseOrValue<BigNumberish>,
+      params: IReferralManager.AddDividendsParamsStruct,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -1167,6 +1299,8 @@ export interface ReferralManager extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    getTimestamp(overrides?: CallOverrides): Promise<BigNumber>;
+
     getUser1LvlReferrals(
       userAddress: PromiseOrValue<string>,
       overrides?: CallOverrides
@@ -1177,15 +1311,9 @@ export interface ReferralManager extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    getUserLvlReferralsCount(
+    getUserReferralsByLevel(
       userAddress: PromiseOrValue<string>,
       level: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    getUserReferrals(
-      userAddress: PromiseOrValue<string>,
-      currentLevel: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -1295,6 +1423,11 @@ export interface ReferralManager extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
+    userHasAnySubscription(
+      user: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     userHasSubscription(
       user: PromiseOrValue<string>,
       level: PromiseOrValue<BigNumberish>,
@@ -1319,8 +1452,7 @@ export interface ReferralManager extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     addUserDividends(
-      user: PromiseOrValue<string>,
-      reward: PromiseOrValue<BigNumberish>,
+      params: IReferralManager.AddDividendsParamsStruct,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -1351,6 +1483,8 @@ export interface ReferralManager extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
+    getTimestamp(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
     getUser1LvlReferrals(
       userAddress: PromiseOrValue<string>,
       overrides?: CallOverrides
@@ -1361,15 +1495,9 @@ export interface ReferralManager extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    getUserLvlReferralsCount(
+    getUserReferralsByLevel(
       userAddress: PromiseOrValue<string>,
       level: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    getUserReferrals(
-      userAddress: PromiseOrValue<string>,
-      currentLevel: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
@@ -1479,6 +1607,11 @@ export interface ReferralManager extends BaseContract {
     updateSubscriptionToken(
       token: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    userHasAnySubscription(
+      user: PromiseOrValue<string>,
+      overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     userHasSubscription(

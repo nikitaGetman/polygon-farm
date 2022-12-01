@@ -17,12 +17,26 @@ const baseStyle = definePartsStyle({
     },
   },
   th: {
+    textTransform: 'capitalize',
     fontSize: 'inherit',
     bgColor: 'rgba(45, 150, 154, 0.3)',
   },
   td: {},
 });
 
+const main = definePartsStyle({
+  td: {
+    py: '8px',
+    height: '40px',
+  },
+  th: {
+    height: '50px',
+    fontSize: '16px',
+    fontWeight: '400',
+  },
+});
+
 export const tableTheme = defineMultiStyleConfig({
+  variants: { main },
   baseStyle,
 });

@@ -136,18 +136,21 @@ contract Staking is IStaking, AccessControl {
                 referralManager.setUserReferrer(_msgSender(), referrer);
                 userReferrer = referralManager.getUserReferrer(_msgSender());
             }
-            _assignRefRewards(planId, _msgSender(), stakingProfit);
+            _assignRefRewards(
+                planId,
+                _msgSender(),
+                stakingProfit,
+                depositAmount
+            );
 
             // Squads
             if (address(squadsManager) != address(0)) {
-                try
-                    squadsManager.tryToAddMember(
-                        planId,
-                        userReferrer,
-                        _msgSender(),
-                        depositAmount
-                    )
-                {} catch {}
+                squadsManager.tryToAddMember(
+                    planId,
+                    userReferrer,
+                    _msgSender(),
+                    depositAmount
+                );
             }
         }
         emit Staked(
@@ -193,10 +196,21 @@ contract Staking is IStaking, AccessControl {
         );
     }
 
+    function withdrawAll(uint256 planId) public {
+        Stake[] storage stakes = users[planId][_msgSender()].stakes;
+
+        for (uint256 i = 0; i < stakes.length; i++) {
+            if (!stakes[i].isClaimed && stakes[i].timeEnd <= getTimestamp()) {
+                withdraw(planId, i);
+            }
+        }
+    }
+
     function _assignRefRewards(
         uint256 planId,
         address depositSender,
-        uint256 stakingReward
+        uint256 stakingReward,
+        uint256 depositAmount
     ) internal {
         uint256 totalLevels = referralManager.getReferralLevels();
         address currentLevelUser = depositSender;
@@ -207,20 +221,46 @@ contract Staking is IStaking, AccessControl {
             );
 
             if (referrer != address(0)) {
+                uint256 refReward = 0;
+                // REASONS:
+                // 0 - full reward
+                // 1 - no ref subscription
+                // 2 - no user stake
+                // 3 - trancated by user stake
+                uint256 reason = 1;
+
                 if (referralManager.userHasSubscription(referrer, level)) {
-                    uint256 refReward = referralManager.calculateRefReward(
+                    refReward = referralManager.calculateRefReward(
                         stakingReward,
                         level
                     );
                     uint256 currentToken1Staked = users[planId][referrer]
                         .currentToken1Staked;
 
-                    uint256 truncatedReward = refReward <= currentToken1Staked
+                    if (currentToken1Staked == 0) {
+                        reason = 2;
+                    } else if (refReward > currentToken1Staked) {
+                        reason = 3;
+                    } else {
+                        reason = 0;
+                    }
+
+                    refReward = refReward <= currentToken1Staked
                         ? refReward
                         : currentToken1Staked;
-
-                    referralManager.addUserDividends(referrer, truncatedReward);
                 }
+
+                referralManager.addUserDividends(
+                    IReferralManager.AddDividendsParams(
+                        referrer,
+                        refReward,
+                        depositSender,
+                        level,
+                        depositAmount,
+                        planId,
+                        reason
+                    )
+                );
 
                 currentLevelUser = referrer;
             } else break;
@@ -232,8 +272,12 @@ contract Staking is IStaking, AccessControl {
         require(plan.isActive, "Staking plan is not active");
 
         token1.burnFrom(_msgSender(), plan.subscriptionCost);
+        uint256 startDate = users[planId][_msgSender()].subscription <
+            getTimestamp()
+            ? getTimestamp()
+            : users[planId][_msgSender()].subscription;
         users[planId][_msgSender()].subscription =
-            getTimestamp() +
+            startDate +
             plan.subscriptionDuration *
             TIME_STEP;
 
@@ -346,7 +390,7 @@ contract Staking is IStaking, AccessControl {
         return users[planId][userAddress].stakes;
     }
 
-    // TODO: can i optimize it?
+    // TODO: how to optimize it?
     function getUserStakesWithRewards(uint256 planId, address userAddress)
         public
         view
@@ -390,6 +434,15 @@ contract Staking is IStaking, AccessControl {
         returns (bool)
     {
         return users[planId][user].subscription > getTimestamp();
+    }
+
+    function hasAnySubscription(address user) public view returns (bool) {
+        for (uint256 i = 0; i < stakingPlans.length; i++) {
+            if (hasSubscription(i, user)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     // --------- Administrative functions ---------

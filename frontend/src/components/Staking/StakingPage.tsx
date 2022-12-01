@@ -1,5 +1,5 @@
-import React, { useCallback, useMemo } from 'react';
-import { Box, Button, Container, Flex, Heading, Link } from '@chakra-ui/react';
+import React, { useCallback, useEffect, useMemo } from 'react';
+import { Box, Button, Container, Flex, Link, Text } from '@chakra-ui/react';
 import { ArrowBackIcon, DownloadIcon } from '@chakra-ui/icons';
 import { Link as RouterLink } from 'react-router-dom';
 import { Staking } from './Staking';
@@ -8,6 +8,10 @@ import { StakingTable } from './StakingTable';
 
 export const StakingPage = () => {
   const { userStakes, stakingPlans, withdraw } = useStaking();
+
+  useEffect(() => {
+    document.title = 'iSaver | Earn by staking';
+  }, []);
 
   const stakesList = useMemo(
     () =>
@@ -25,8 +29,8 @@ export const StakingPage = () => {
   );
 
   const onClaim = useCallback(
-    (planId: number, stakeId: number) => {
-      withdraw.mutate({ planId, stakeId });
+    async (planId: number, stakeId: number) => {
+      await withdraw.mutateAsync({ planId, stakeId });
     },
     [withdraw]
   );
@@ -43,9 +47,9 @@ export const StakingPage = () => {
       </Box>
 
       <Flex justifyContent="space-between" alignItems="center" mb={5}>
-        <Heading textStyle="h3" textTransform="uppercase" id="stakings-list">
+        <Text textStyle="h3" textTransform="uppercase" id="stakings-list">
           Your staking
-        </Heading>
+        </Text>
 
         <Button variant="link" display="none">
           Export

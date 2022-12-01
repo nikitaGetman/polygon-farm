@@ -16,6 +16,32 @@ body {
 #root {
   background-color: $color-green-back;
   min-height: 100vh;
+  position: relative;
+}
+
+.background {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 0;
+  background: linear-gradient(180deg, #0b200a 0%, #113b32 58.58%, #1e5a52 100%);
+}
+
+.with-custom-scroll {
+  &::-webkit-scrollbar {
+    width: 4px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background-color: rgba(255, 255, 255, 0.1);
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background-color: #6bc95b;
+    border-radius: 12px;
+  }
 }
 
 .route-transition-enter {

@@ -11,20 +11,6 @@ import "./interfaces/IReferralManager.sol";
 contract Squads is ISquads, AccessControl {
     uint256 public SUBSCRIPTION_PERIOD_DAYS = 365;
 
-    struct Squad {
-        uint256 subscription; // when subscription expire
-        uint256 squadsFilled; // how much squads user filled
-    }
-
-    struct SquadPlan {
-        uint256 subscriptionCost;
-        uint256 reward; // reward for filling full squad
-        uint256 stakingThreshold; // min staking amount that member should do
-        uint256 squadSize; // amount of squad members
-        uint256 stakingPlanId;
-        bool isActive;
-    }
-
     SquadPlan[] public plans;
     mapping(uint256 => mapping(address => Squad)) private userSubscriptions;
     mapping(uint256 => mapping(address => address[])) private squadMembers;
@@ -86,10 +72,17 @@ contract Squads is ISquads, AccessControl {
         subscriptionToken.burnFrom(subscriber, plan.subscriptionCost);
 
         squadMembers[planId][subscriber] = new address[](0);
-        userSubscriptions[planId][subscriber]
-            .subscription = _getSubscriptionEnd();
 
-        emit Subscribed(subscriber, planId, block.timestamp);
+        uint256 startDate = userSubscriptions[planId][subscriber].subscription <
+            getTimestamp()
+            ? getTimestamp()
+            : userSubscriptions[planId][subscriber].subscription;
+        userSubscriptions[planId][subscriber].subscription =
+            startDate +
+            SUBSCRIPTION_PERIOD_DAYS *
+            1 days;
+
+        emit Subscribed(subscriber, planId, startDate);
     }
 
     function tryToAddMember(
@@ -98,19 +91,15 @@ contract Squads is ISquads, AccessControl {
         address member,
         uint256 amount
     ) public returns (bool) {
-        require(referrer != address(0), "Referrer is zero address");
-        require(member != address(0), "Member is zero address");
+        if (referrer == address(0) || member == address(0)) return false;
 
         int256 _planId = getSufficientPlanIdByStakingAmount(amount);
 
-        require(_planId >= 0);
+        if (_planId < 0) return false;
 
         uint256 planId = uint256(_planId);
 
-        require(
-            plans[planId].stakingPlanId == stakingPlanId,
-            "Staking plan do not match"
-        );
+        if (plans[planId].stakingPlanId != stakingPlanId) return false;
 
         if (
             _isSenderAuthorized(_msgSender()) &&
@@ -121,8 +110,6 @@ contract Squads is ISquads, AccessControl {
             squadMembers[planId][referrer].push(member);
             uint256 membersAmount = squadMembers[planId][referrer].length;
 
-            emit MemberAdded(referrer, planId, member, membersAmount);
-
             if (membersAmount >= plans[planId].squadSize) {
                 Squad storage partner = userSubscriptions[planId][referrer];
 
@@ -130,11 +117,20 @@ contract Squads is ISquads, AccessControl {
                 partner.subscription = 0;
 
                 referralManager.addUserDividends(
-                    referrer,
-                    plans[planId].reward
+                    IReferralManager.AddDividendsParams(
+                        referrer,
+                        plans[planId].reward,
+                        address(this),
+                        1,
+                        plans[planId].stakingThreshold,
+                        stakingPlanId,
+                        4
+                    )
                 );
 
                 emit SquadFilled(referrer, planId, partner.squadsFilled);
+            } else {
+                emit MemberAdded(referrer, planId, member, membersAmount);
             }
 
             return true;
@@ -144,26 +140,12 @@ contract Squads is ISquads, AccessControl {
     }
 
     // --------- Helper functions ---------
-    function getUserSquadInfo(uint256 planId, address user)
+    function getUserSubscription(address user, uint256 planId)
         public
         view
         returns (Squad memory)
     {
         return userSubscriptions[planId][user];
-    }
-
-    function getUserSquadsInfo(address user)
-        public
-        view
-        returns (Squad[] memory)
-    {
-        Squad[] memory squadsInfo = new Squad[](plans.length);
-
-        for (uint256 i = 0; i < plans.length; i++) {
-            squadsInfo[i] = getUserSquadInfo(i, user);
-        }
-
-        return squadsInfo;
     }
 
     function getUserSquadMembers(address user, uint256 planId)
@@ -172,6 +154,10 @@ contract Squads is ISquads, AccessControl {
         returns (address[] memory)
     {
         return squadMembers[planId][user];
+    }
+
+    function getPlan(uint256 planId) public view returns (SquadPlan memory) {
+        return plans[planId];
     }
 
     function getPlans() public view returns (SquadPlan[] memory) {
@@ -188,12 +174,12 @@ contract Squads is ISquads, AccessControl {
             user
         );
 
-        for (uint256 i = 0; i < stakes.length; i++) {
+        for (uint256 i = stakes.length; i > 0; i--) {
             // stake is: active + in SAV token + sufficient amount
             if (
-                stakes[i].timeEnd > block.timestamp &&
-                !stakes[i].isToken2 &&
-                getSufficientPlanIdByStakingAmount(stakes[i].amount) ==
+                stakes[i - 1].timeEnd > block.timestamp &&
+                !stakes[i - 1].isToken2 &&
+                getSufficientPlanIdByStakingAmount(stakes[i - 1].amount) ==
                 int256(planId)
             ) return true;
         }
@@ -207,6 +193,15 @@ contract Squads is ISquads, AccessControl {
         returns (bool)
     {
         return userSubscriptions[planId][user].subscription > block.timestamp;
+    }
+
+    function hasAnySubscription(address user) public view returns (bool) {
+        for (uint256 i = 0; i < plans.length; i++) {
+            if (userHasPlanSubscription(user, i)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     function getSufficientPlanIdByStakingAmount(uint256 amount)
@@ -236,8 +231,8 @@ contract Squads is ISquads, AccessControl {
         return false;
     }
 
-    function _getSubscriptionEnd() internal view returns (uint256) {
-        return block.timestamp + SUBSCRIPTION_PERIOD_DAYS * 1 days;
+    function getTimestamp() public view returns (uint256) {
+        return block.timestamp;
     }
 
     function _isSenderAuthorized(address contractAddress)

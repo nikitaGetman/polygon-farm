@@ -150,6 +150,7 @@ export interface StakingInterface extends utils.Interface {
     "getUserStakes(uint256,address)": FunctionFragment;
     "getUserStakesWithRewards(uint256,address)": FunctionFragment;
     "grantRole(bytes32,address)": FunctionFragment;
+    "hasAnySubscription(address)": FunctionFragment;
     "hasRole(bytes32,address)": FunctionFragment;
     "hasSubscription(uint256,address)": FunctionFragment;
     "referralManager()": FunctionFragment;
@@ -177,6 +178,7 @@ export interface StakingInterface extends utils.Interface {
     "updateToken1(address)": FunctionFragment;
     "updateToken2(address)": FunctionFragment;
     "withdraw(uint256,uint256)": FunctionFragment;
+    "withdrawAll(uint256)": FunctionFragment;
   };
 
   getFunction(
@@ -197,6 +199,7 @@ export interface StakingInterface extends utils.Interface {
       | "getUserStakes"
       | "getUserStakesWithRewards"
       | "grantRole"
+      | "hasAnySubscription"
       | "hasRole"
       | "hasSubscription"
       | "referralManager"
@@ -224,6 +227,7 @@ export interface StakingInterface extends utils.Interface {
       | "updateToken1"
       | "updateToken2"
       | "withdraw"
+      | "withdrawAll"
   ): FunctionFragment;
 
   encodeFunctionData(
@@ -300,6 +304,10 @@ export interface StakingInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "grantRole",
     values: [PromiseOrValue<BytesLike>, PromiseOrValue<string>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "hasAnySubscription",
+    values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
     functionFragment: "hasRole",
@@ -403,6 +411,10 @@ export interface StakingInterface extends utils.Interface {
     functionFragment: "withdraw",
     values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>]
   ): string;
+  encodeFunctionData(
+    functionFragment: "withdrawAll",
+    values: [PromiseOrValue<BigNumberish>]
+  ): string;
 
   decodeFunctionResult(
     functionFragment: "DEFAULT_ADMIN_ROLE",
@@ -459,6 +471,10 @@ export interface StakingInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "grantRole", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "hasAnySubscription",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "hasRole", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "hasSubscription",
@@ -549,6 +565,10 @@ export interface StakingInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "withdraw", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "withdrawAll",
+    data: BytesLike
+  ): Result;
 
   events: {
     "ActivityChanged(uint256,bool)": EventFragment;
@@ -778,6 +798,11 @@ export interface Staking extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
+    hasAnySubscription(
+      user: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<[boolean]>;
+
     hasRole(
       role: PromiseOrValue<BytesLike>,
       account: PromiseOrValue<string>,
@@ -937,6 +962,11 @@ export interface Staking extends BaseContract {
       stakeId: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
+
+    withdrawAll(
+      planId: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
   };
 
   DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<string>;
@@ -1015,6 +1045,11 @@ export interface Staking extends BaseContract {
     account: PromiseOrValue<string>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
+
+  hasAnySubscription(
+    user: PromiseOrValue<string>,
+    overrides?: CallOverrides
+  ): Promise<boolean>;
 
   hasRole(
     role: PromiseOrValue<BytesLike>,
@@ -1174,6 +1209,11 @@ export interface Staking extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
+  withdrawAll(
+    planId: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
   callStatic: {
     DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<string>;
 
@@ -1251,6 +1291,11 @@ export interface Staking extends BaseContract {
       account: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<void>;
+
+    hasAnySubscription(
+      user: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
 
     hasRole(
       role: PromiseOrValue<BytesLike>,
@@ -1407,6 +1452,11 @@ export interface Staking extends BaseContract {
     withdraw(
       planId: PromiseOrValue<BigNumberish>,
       stakeId: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    withdrawAll(
+      planId: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<void>;
   };
@@ -1587,6 +1637,11 @@ export interface Staking extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
+    hasAnySubscription(
+      user: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     hasRole(
       role: PromiseOrValue<BytesLike>,
       account: PromiseOrValue<string>,
@@ -1718,6 +1773,11 @@ export interface Staking extends BaseContract {
       stakeId: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
+
+    withdrawAll(
+      planId: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
   };
 
   populateTransaction: {
@@ -1796,6 +1856,11 @@ export interface Staking extends BaseContract {
       role: PromiseOrValue<BytesLike>,
       account: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    hasAnySubscription(
+      user: PromiseOrValue<string>,
+      overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     hasRole(
@@ -1927,6 +1992,11 @@ export interface Staking extends BaseContract {
     withdraw(
       planId: PromiseOrValue<BigNumberish>,
       stakeId: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    withdrawAll(
+      planId: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
   };

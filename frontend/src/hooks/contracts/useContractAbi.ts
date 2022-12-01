@@ -7,6 +7,9 @@ export enum ContractsEnum {
   'SAVR' = 'Token2',
   'Staking' = 'Staking',
   'ReferralManager' = 'ReferralManager',
+  'Squads' = 'Squads',
+  'Helper' = 'Helper',
+  'VendorSell' = 'VendorSell',
 }
 
 type ContractAbi = {
@@ -22,7 +25,7 @@ export const useContractAbi = ({
   const { chain } = useNetwork();
 
   //   TODO: fix TS return type
-  let chainId = ChainIDsEnum.hardhat; // default is hardhat chain ID
+  let chainId = process.env.NODE_ENV === 'production' ? ChainIDsEnum.mumbai : ChainIDsEnum.hardhat;
   if (chain?.network === 'maticmum') {
     chainId = ChainIDsEnum.mumbai;
   }

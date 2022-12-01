@@ -12,6 +12,7 @@ import { ReactComponent as MetamaskIcon } from '@/assets/images/icons/metamask.s
 import { ReactComponent as WalletConnectIcon } from '@/assets/images/icons/walletconnect.svg';
 import { ReactComponent as ChevronDownIcon } from '@/assets/images/icons/chevron-down.svg';
 import { trimAddress } from '@/utils/address';
+import { useNotification } from '@/hooks/useNotification';
 
 const CONNECTOR_ICON: Record<string, any> = {
   MetaMask: <MetamaskIcon />,
@@ -37,6 +38,13 @@ const menuItemStyle = {
 export const WalletMenu: FC<Props> = ({ connector, disconnect, address }) => {
   const connectorIcon = connector ? CONNECTOR_ICON[connector.name] : undefined;
   const { onCopy, setValue, hasCopied } = useClipboard(address || '');
+
+  const { success } = useNotification();
+  useEffect(() => {
+    if (hasCopied) {
+      success({ title: 'Copied!' });
+    }
+  }, [hasCopied, success]);
 
   useEffect(() => {
     setValue(address || '');

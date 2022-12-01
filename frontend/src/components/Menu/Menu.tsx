@@ -23,9 +23,13 @@ import { ReactComponent as RocketIcon } from '@/assets/images/icons/rocket.svg';
 import { ReactComponent as WalletIcon } from '@/assets/images/icons/wallet.svg';
 import { ReactComponent as TabletIcon } from '@/assets/images/icons/tablet.svg';
 import { useStaking } from '@/hooks/useStaking';
+import { useReferralManager } from '@/hooks/useReferralManager';
+import { useSquads } from '@/hooks/useSquads';
 
 export const Menu = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) => {
   const { hasEndingSubscription } = useStaking();
+  const { hasEndingReferralSubscription } = useReferralManager();
+  const { hasEndingSquadsSubscription } = useSquads();
   const navigate = useNavigate();
 
   const handleNavigate = useCallback(
@@ -38,11 +42,10 @@ export const Menu = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => void
 
   return (
     <Drawer isOpen={isOpen} onClose={onClose} size="lg">
-      <DrawerOverlay backdropFilter="blur(4.5px)" background="rgba(13, 35, 16, 0.5)" />
+      <DrawerOverlay background="rgba(13, 35, 16, 0.5)" />
       <DrawerContent
         boxShadow="0px 6px 20px rgba(0, 0, 0, 0.25)"
-        background="linear-gradient(96.85deg, rgba(35, 157, 113, 0.5) -8.44%, rgba(35, 54, 72, 0.5) 102.66%)"
-        backdropFilter="blur(22.5px)"
+        background="linear-gradient(96.85deg, #1a7b58 -8.44%, #1b3339 100%)"
       >
         <DrawerHeader p="30px 30px" display="flex" justifyContent="space-between">
           <Text textStyle="h2" textTransform="uppercase">
@@ -66,7 +69,19 @@ export const Menu = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => void
             hasAlert={hasEndingSubscription}
             textAlert={hasEndingSubscription ? 'Check your subscription!' : undefined}
           />
-          <NavMenuItem text="Team" icon={<StarsIcon />} onClick={() => handleNavigate('/squads')} />
+          <NavMenuItem
+            text="Team"
+            icon={<StarsIcon />}
+            onClick={() => handleNavigate('/team')}
+            hasAlert={hasEndingReferralSubscription || hasEndingSquadsSubscription}
+            textAlert={
+              hasEndingReferralSubscription
+                ? 'Check your levels'
+                : hasEndingSquadsSubscription
+                ? 'Check your squads'
+                : undefined
+            }
+          />
           <NavMenuItem text="Play everyday" icon={<GameboyIcon />} />
           <NavMenuItem
             text="Lottery"
@@ -74,7 +89,11 @@ export const Menu = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => void
             onClick={() => handleNavigate('/lottery')}
           />
           <Divider mb="30px" borderBottomWidth="2px" borderColor="white" />
-          <NavMenuItem text="Buy token" icon={<WalletIcon />} />
+          <NavMenuItem
+            text="Buy token"
+            icon={<WalletIcon />}
+            onClick={() => handleNavigate('/exchange')}
+          />
           <NavMenuItem text="Whitepaper" icon={<TabletIcon />} />
         </DrawerBody>
       </DrawerContent>
@@ -123,7 +142,7 @@ const NavMenuItem = ({
           <Flex alignItems="center">
             <Text as="span" position="relative" textStyle="menuDefault">
               {text}
-              {hasAlert && (
+              {hasAlert ? (
                 <Circle
                   as="span"
                   size="10px"
@@ -132,15 +151,15 @@ const NavMenuItem = ({
                   right="-10px"
                   top="-3px"
                 />
-              )}
+              ) : null}
             </Text>
-            {textAlert && (
+            {textAlert ? (
               <Text color="red" ml="25px" position="relative" textStyle="textBold">
                 {textAlert}
               </Text>
-            )}
+            ) : null}
           </Flex>
-          {subtitle && <Text textStyle="text1">{subtitle}</Text>}
+          {subtitle ? <Text textStyle="text1">{subtitle}</Text> : null}
         </Flex>
       </Flex>
     </Link>

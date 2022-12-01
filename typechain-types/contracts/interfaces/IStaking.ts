@@ -81,6 +81,7 @@ export interface IStakingInterface extends utils.Interface {
     "getAvailableStakeReward(uint256,address,uint256)": FunctionFragment;
     "getUserPlanInfo(uint256,address)": FunctionFragment;
     "getUserStakes(uint256,address)": FunctionFragment;
+    "hasAnySubscription(address)": FunctionFragment;
     "hasSubscription(uint256,address)": FunctionFragment;
     "subscribe(uint256)": FunctionFragment;
     "withdraw(uint256,uint256)": FunctionFragment;
@@ -92,6 +93,7 @@ export interface IStakingInterface extends utils.Interface {
       | "getAvailableStakeReward"
       | "getUserPlanInfo"
       | "getUserStakes"
+      | "hasAnySubscription"
       | "hasSubscription"
       | "subscribe"
       | "withdraw"
@@ -123,6 +125,10 @@ export interface IStakingInterface extends utils.Interface {
     values: [PromiseOrValue<BigNumberish>, PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
+    functionFragment: "hasAnySubscription",
+    values: [PromiseOrValue<string>]
+  ): string;
+  encodeFunctionData(
     functionFragment: "hasSubscription",
     values: [PromiseOrValue<BigNumberish>, PromiseOrValue<string>]
   ): string;
@@ -146,6 +152,10 @@ export interface IStakingInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "getUserStakes",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "hasAnySubscription",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -214,6 +224,11 @@ export interface IStaking extends BaseContract {
       [IStaking.StakeStructOutput[]] & { stakes: IStaking.StakeStructOutput[] }
     >;
 
+    hasAnySubscription(
+      user: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<[boolean]>;
+
     hasSubscription(
       planId: PromiseOrValue<BigNumberish>,
       user: PromiseOrValue<string>,
@@ -259,6 +274,11 @@ export interface IStaking extends BaseContract {
     overrides?: CallOverrides
   ): Promise<IStaking.StakeStructOutput[]>;
 
+  hasAnySubscription(
+    user: PromiseOrValue<string>,
+    overrides?: CallOverrides
+  ): Promise<boolean>;
+
   hasSubscription(
     planId: PromiseOrValue<BigNumberish>,
     user: PromiseOrValue<string>,
@@ -303,6 +323,11 @@ export interface IStaking extends BaseContract {
       userAddress: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<IStaking.StakeStructOutput[]>;
+
+    hasAnySubscription(
+      user: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
 
     hasSubscription(
       planId: PromiseOrValue<BigNumberish>,
@@ -352,6 +377,11 @@ export interface IStaking extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    hasAnySubscription(
+      user: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     hasSubscription(
       planId: PromiseOrValue<BigNumberish>,
       user: PromiseOrValue<string>,
@@ -395,6 +425,11 @@ export interface IStaking extends BaseContract {
     getUserStakes(
       planId: PromiseOrValue<BigNumberish>,
       userAddress: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    hasAnySubscription(
+      user: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 

@@ -17,7 +17,8 @@ task("pause-token1", "Pause token 1")
       await ethers.getSigner(accountAddr)
     );
 
-    await token.pause();
+    const tx = await token.pause();
+    await tx.wait();
 
     console.log(`[Token1] paused`);
   });
@@ -38,7 +39,8 @@ task("pause-token2", "Pause token 2")
       await ethers.getSigner(accountAddr)
     );
 
-    await token.pause();
+    const tx = await token.pause();
+    await tx.wait();
 
     console.log(`[Token2] paused`);
   });
@@ -59,7 +61,8 @@ task("unpause-token1", "Pause token 1")
       await ethers.getSigner(accountAddr)
     );
 
-    await token.unpause();
+    const tx = await token.unpause();
+    await tx.wait();
 
     console.log(`[Token1] unpaused`);
   });
@@ -80,7 +83,8 @@ task("unpause-token2", "Pause token 2")
       await ethers.getSigner(accountAddr)
     );
 
-    await token.unpause();
+    const tx = await token.unpause();
+    await tx.wait();
 
     console.log(`[Token2] unpaused`);
   });

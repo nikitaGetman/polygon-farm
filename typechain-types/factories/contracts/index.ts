@@ -5,6 +5,7 @@ export * as extensions from "./extensions";
 export * as interfaces from "./interfaces";
 export * as mocks from "./mocks";
 export * as tokens from "./tokens";
+export { Helper__factory } from "./Helper__factory";
 export { Lottery__factory } from "./Lottery__factory";
 export { ReferralManager__factory } from "./ReferralManager__factory";
 export { Squads__factory } from "./Squads__factory";
