@@ -8,6 +8,7 @@ import { Numbers } from '@/components/Landing/Numbers';
 import { Plans } from '@/components/Landing/Plans';
 import { Banner } from '@/components/Landing/Banner';
 import { Lottery } from '@/components/Landing/Lottery';
+import { Footer } from '@/components/Footer/Footer';
 
 export const Landing = () => {
   return (
@@ -25,6 +26,7 @@ export const Landing = () => {
       <Box className="main-container">
         <Lottery />
       </Box>
+      <Footer />
     </>
   );
 };

@@ -23,6 +23,24 @@ const main = {
   },
 };
 
+const mailing = {
+  field: {
+    border: 'none',
+    boxShadow: '0px 6px 11px rgba(0, 0, 0, 0.25)',
+    bgColor: 'rgba(38, 71, 55, 0.5)',
+    borderRadius: '10px',
+    fontWeight: '400',
+    fontSize: '12px',
+    color: 'rgba(255, 255, 255, 0.5)',
+
+    _placeholder: {
+      fontWeight: '400',
+      fontSize: '12px',
+      color: 'rgba(255, 255, 255, 0.5)',
+    },
+  },
+};
+
 const primary = {
   field: {
     background: 'rgba(38, 71, 55, 0.5)',
@@ -61,7 +79,7 @@ const sizes = {
 };
 
 export const inputTheme = defineMultiStyleConfig({
-  variants: { main, primary, secondary },
+  variants: { main, primary, mailing, secondary },
   sizes,
   defaultProps: {
     variant: 'main',
