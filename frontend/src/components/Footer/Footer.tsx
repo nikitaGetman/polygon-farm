@@ -26,8 +26,8 @@ export const Footer = () => {
                 <InputRightElement mr="0" children={<ArrowIcon />} />
               </InputGroup>
             </Flex>
-            <Flex>
-              <Box className="sav-container">
+            <Flex className="sav-container">
+              <Box>
                 <Flex className="sav-container__item" alignItems="center">
                   <SavIcon />
                   <Text ml="12px">1 SAV = 1 USDT</Text>

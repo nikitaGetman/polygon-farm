@@ -8,9 +8,9 @@ import { ReactComponent as PeopleIcon } from './images/b_people.svg';
 
 export const Benefits = () => {
   return (
-    <Flex mb="180px" justifyContent="center" flexWrap="wrap">
+    <Flex justifyContent="center" flexWrap="wrap" className="benefit">
       <h4 className="heading">Our benefits</h4>
-      <Flex mt="50px" justifyContent="space-between" className="benefit-container">
+      <Flex justifyContent="space-between" className="benefit-container">
         <Flex className="icons-card card--shadow">
           <BankIcon />
           <Text className="icons-card__heading">

@@ -8,7 +8,7 @@ export const Numbers = () => {
       <Flex w="100%" justifyContent="center">
         <h4 className="heading">Our numbers</h4>
       </Flex>
-      <Flex mt="80px" flexWrap="wrap" justifyContent="space-between">
+      <Flex flexWrap="wrap" justifyContent="space-between" className="number">
         <Flex className="number-item">
           <Text className="number-item__heading">Token Symbol:</Text>
           <Text className="number-item__text">SAV</Text>

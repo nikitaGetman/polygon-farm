@@ -1,3 +1,5 @@
+@import '@/assets/styles/vars.scss';
+
 .footer {
   padding-bottom: 63px;
 
@@ -112,4 +114,118 @@
     align-items: center;
     min-height: 44px;
   }
+}
+
+@media screen and (max-width: $xl) {
+  .footer-top, .footer-bottom {
+    padding-right: 40px;
+    padding-left: 40px;
+  }
+  .footer-top {
+    flex-wrap: wrap;
+
+    &__left {
+      width: 100%;
+      margin-bottom: 42px;
+    }
+
+    &__right {
+      width: 100%;
+      align-items: center;
+      justify-content: space-between;
+
+      .mail-list {
+        order: 2;
+        margin-right: 0;
+      }
+
+      .sav-container {
+        order: 1;
+      }
+    }
+  }
+}
+
+@media screen and (max-width: $lg) {
+  .footer {
+    padding-bottom: 46px;
+  }
+  .footer-top, .footer-bottom {
+    padding-right: 20px;
+    padding-left: 20px;
+  }
+  .sav-container {
+    p {
+      font-size: 16px;
+      line-height: 20px;
+    }
+  }
+  .mail-list {
+    &__heading {
+      font-size: 16px;
+      line-height: 20px;
+      margin-bottom: 10px;
+    }
+  }
+}
+
+@media screen and (max-width: $md) {
+  .footer {
+    padding-bottom: 37px;
+  }
+  .footer-top, .footer-bottom {
+    padding-right: 10px;
+    padding-left: 10px;
+  }
+  .footer-top__right {
+    flex-wrap: wrap;
+
+    .sav-container {
+      width: 100%;
+      order: 2;
+
+      p {
+        font-size: 26px;
+        line-height: 32px;
+      }
+    }
+
+    .mail-list {
+      width: 100%;
+      order: 1;
+      text-align: center;
+      margin-bottom: 40px;
+
+      &__heading {
+        font-size: 26px;
+        line-height: 32px;
+        margin-bottom: 5px;
+      }
+    }
+  }
+  .footer-bottom {
+    &__left {
+      display: flex;
+      flex-direction: column;
+      order: 2;
+      width: 100%;
+      max-width: initial;
+    }
+
+    &__right {
+      justify-content: center;
+      align-items: center;
+      padding-top: 0;
+      order: 1;
+      width: 100%;
+      margin-bottom: 45px;
+      .contact-heading{
+        display: none;
+      }
+    }
+  }
+}
+
+@media screen and (max-width: $sm) {
+
 }

@@ -6,10 +6,10 @@ import { ReactComponent as GreenboxIcon } from './images/greenbox.svg';
 
 export const About = () => {
   return (
-    <Flex className="about-container" paddingTop="20px" mb="180px">
+    <Flex className="about-container">
       <Box className="main-container">
-        <Flex flexWrap="wrap" alignItems="center">
-          <Box>
+        <Flex alignItems="center">
+          <Box className="about-container__img">
             <BlueboxIcon />
           </Box>
           <Flex className="heading-container" flexWrap="wrap" justifyContent="center" maxW="620px">
@@ -26,7 +26,7 @@ export const About = () => {
               game based on Non-Fungible Tokens.
             </Text>
           </Flex>
-          <Box>
+          <Box className="about-container__img">
             <GreenboxIcon />
           </Box>
         </Flex>

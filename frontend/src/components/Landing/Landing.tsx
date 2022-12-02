@@ -1,6 +1,5 @@
 import React from 'react';
 import { Box } from '@chakra-ui/react';
-import './Landing.scss';
 import { Main } from '@/components/Landing/Main';
 import { About } from '@/components/Landing/About';
 import { Benefits } from '@/components/Landing/Benefits';
@@ -9,6 +8,7 @@ import { Plans } from '@/components/Landing/Plans';
 import { Banner } from '@/components/Landing/Banner';
 import { Lottery } from '@/components/Landing/Lottery';
 import { Footer } from '@/components/Footer/Footer';
+import './Landing.scss';
 
 export const Landing = () => {
   return (

@@ -5,8 +5,13 @@ import { ReactComponent as CoinsIcon } from './images/coins.svg';
 
 export const Main = () => {
   return (
-    <Flex justifyContent="space-between" alignItems="center" mb="150px">
-      <Flex flexDirection="column">
+    <Flex
+      justifyContent="space-between"
+      alignItems="center"
+      flexWrap="wrap"
+      className="main-banner"
+    >
+      <Flex flexDirection="column" className="main-banner__top">
         <Box>
           <h1 className="main-heading">
             <span className="no-wrap">Build a team.</span>
@@ -24,8 +29,16 @@ export const Main = () => {
           <Button variant="filledRed">Get started</Button>
         </Flex>
       </Flex>
-      <Flex flexDirection="column" alignItems="center" position="relative" top="-60px">
-        <CoinsIcon />
+      <Flex
+        flexDirection="column"
+        alignItems="center"
+        position="relative"
+        top="-60px"
+        className="main-banner__bottom"
+      >
+        <Box className="coins-text__img">
+          <CoinsIcon />
+        </Box>
         <Text className="coins-text__primary">500 000 000 SAV</Text>
         <Text className="coins-text__secondary">In staking rewards pool</Text>
       </Flex>

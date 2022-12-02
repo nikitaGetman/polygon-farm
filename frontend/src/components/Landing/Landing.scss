@@ -106,10 +106,20 @@
   }
 }
 
+.main-banner {
+  margin-bottom: 80px;
+}
+
 .about-container {
   background: rgba(28, 74, 64, 0.3);
   backdrop-filter: blur(22.5px);
   border-radius: 5px;
+  margin-bottom: 180px;
+  padding-top: 20px;
+
+  &__img {
+
+  }
 }
 
 .coins-text__primary {
@@ -154,10 +164,24 @@
   }
 }
 
+.benefit {
+  margin-bottom: 180px;
+}
+
+.number {
+  margin-top: 80px;
+}
+
 .benefit-container {
+  margin-top: 50px;
+
   .icons-card {
     width: calc(25% - 16px);
   }
+}
+
+.plans, .banner {
+  margin-bottom: 180px;
 }
 
 .card--shadow {
@@ -184,6 +208,7 @@
     line-height: 31px;
     text-align: center;
     color: #FFFFFF;
+    margin-bottom: 20px;
   }
 
   &__text {
@@ -230,6 +255,9 @@
   background-position: center;
 
   &__img {
+    &-container {
+      margin-bottom: 38px;
+    }
   }
 
   &__btn {
@@ -278,4 +306,367 @@
     text-transform: uppercase;
     color: #FFFFFF;
   }
+}
+
+@media screen and (max-width: $xl2) {
+
+}
+
+@media screen and (max-width: $xl) {
+  .main-container {
+    max-width: 100%;
+    padding: 0 40px;
+  }
+  .main-heading {
+    font-size: 52px;
+    line-height: 130%;
+  }
+  .main-subheading {
+    font-size: 18px;
+    line-height: 130%;
+    margin-bottom: 65px;
+  }
+  .main-text {
+    font-size: 26px;
+    line-height: 130%;
+    margin-bottom: 15px;
+  }
+  .coins-text__img {
+    svg {
+      width: 307px;
+      height: 346px;
+    }
+  }
+  .coins-text__primary {
+    font-size: 26px;
+    line-height: 130%;
+  }
+  .coins-text__secondary {
+    font-size: 18px;
+    line-height: 130%;
+  }
+  .main-banner {
+    margin-bottom: 80px;
+  }
+  .about-container {
+    margin-bottom: 100px;
+
+    &__img {
+      svg {
+        width: 200px;
+        height: 304px;
+      }
+    }
+
+    .subheading {
+      margin-bottom: 20px;
+    }
+  }
+  .heading-container {
+    padding: 0 27px;
+  }
+  .heading {
+    font-size: 26px;
+    line-height: 130%;
+  }
+  .subheading {
+    font-size: 18px;
+    line-height: 22px;
+  }
+  .text {
+    font-size: 12px;
+    line-height: 130%;
+  }
+  .icons-card {
+    padding-top: 40px;
+  }
+  .benefit-container .icons-card {
+    svg {
+    }
+  }
+  .icons-card__heading {
+    margin-top: 22px;
+    font-size: 18px;
+    line-height: 23px;
+
+    br {
+      //display: none;
+    }
+  }
+  .icons-card__text {
+    font-size: 12px;
+    line-height: 130%;
+  }
+  .plans-item {
+    padding: 53px 24px 37px 30px;
+
+    &__heading {
+      font-size: 18px;
+      line-height: 130%;
+      margin-bottom: 20px;
+    }
+
+    &__text {
+      font-size: 12px;
+      line-height: 130%;
+    }
+  }
+  .plans, .banner {
+    margin-bottom: 100px;
+  }
+  .banner {
+    &__img {
+      width: 85px;
+      height: 29px;
+
+      &-container {
+        padding-left: 40px;
+        margin-bottom: 19px;
+      }
+    }
+
+    &__heading {
+      font-size: 52px;
+      line-height: 130%;
+      margin-bottom: 20px;
+    }
+
+    &__subheading {
+      font-size: 18px;
+      line-height: 130%;
+      margin-bottom: 30px;
+    }
+
+    &__btn {
+    }
+  }
+  .lottery {
+    &__text {
+      font-size: 26px;
+      line-height: 32px;
+    }
+
+    &__heading {
+      font-size: 26px;
+      line-height: 130%;
+    }
+  }
+}
+
+@media screen and (max-width: $lg) {
+  .main-container {
+    padding: 0 20px;
+  }
+  .main-heading {
+    font-size: 26px;
+    margin-bottom: 10px;
+  }
+  .main-subheading {
+    font-size: 12px;
+    margin-bottom: 60px;
+  }
+  .main-text {
+    font-size: 18px;
+    margin-bottom: 13px;
+  }
+  .coins-text__img {
+    svg {
+      width: 253px;
+      height: 242px;
+    }
+  }
+  .coins-text__primary {
+    font-size: 18px;
+    margin-bottom: 5px;
+  }
+  .coins-text__secondary {
+    font-size: 16px;
+  }
+  .about-container {
+    margin-bottom: 80px;
+    padding-bottom: 30px;
+
+    &__img {
+      display: none;
+
+      svg {
+        width: 200px;
+        height: 304px;
+      }
+    }
+  }
+  .main-btns {
+    button:first-child {
+      margin-right: 15px;
+    }
+
+    button:last-child, button:first-child {
+      font-size: 12px;
+      max-width: 150px;
+      min-width: initial;
+    }
+  }
+  .heading-container {
+    padding: 0 27px;
+  }
+  .heading {
+    font-size: 16px;
+  }
+  .icons-card {
+    padding-top: 40px;
+  }
+  .benefit {
+    margin-bottom: 80px;
+  }
+  .number {
+    margin-top: 30px;
+  }
+  .number-item {
+    margin-bottom: 50px;
+
+    &__heading {
+      font-size: 16px;
+      line-height: 21px;
+      margin-bottom: 10px;
+    }
+
+    &__text {
+      font-size: 26px;
+      line-height: 130%;
+    }
+  }
+  .benefit-container {
+    margin-top: 30px;
+    flex-wrap: wrap;
+
+    .icons-card {
+      width: calc(50% - 5px);
+      margin-bottom: 10px;
+    }
+  }
+  .icons-card__heading {
+    margin-top: 22px;
+    font-size: 18px;
+    line-height: 23px;
+
+    br {
+      //display: none;
+    }
+  }
+  .icons-card__text {
+    font-size: 12px;
+    line-height: 130%;
+  }
+  .plans-item {
+    width: calc(50% - 5px);
+    padding: 57px 20px 58px 30px;
+    margin-bottom: 10px;
+
+    &__heading {
+      font-size: 26px;
+      margin-bottom: 25px;
+    }
+
+    &__text {
+      font-size: 18px;
+    }
+  }
+  .plans, .banner {
+    margin-bottom: 80px;
+  }
+  .banner {
+    padding-bottom: 40px;
+
+    &__img {
+      width: 85px;
+      height: 29px;
+
+      &-container {
+        padding-left: 20px;
+        margin-bottom: 18px;
+      }
+    }
+  }
+  .lottery {
+    &__text {
+      font-size: 12px;
+      line-height: 15px;
+    }
+
+    &__heading {
+      font-size: 16px;
+      line-height: 20px;
+    }
+  }
+}
+
+@media screen and (max-width: $md) {
+  .main-container {
+    padding: 0 10px;
+  }
+  .main-heading {
+    font-size: 38px;
+    margin-bottom: 10px;
+  }
+  .main-subheading {
+    font-size: 18px;
+    margin-bottom: 20px;
+  }
+  .main-banner {
+    text-align: center;
+
+    &__top, &__bottom {
+      width: 100%;
+    }
+  }
+  .main-text {
+    font-size: 26px;
+    margin-bottom: 0;
+  }
+  .coins-text__img {
+    svg {
+      width: 350px;
+      height: 334px;
+    }
+  }
+  .number-item {
+    width: 50%;
+
+    &:nth-child(3n) {
+      width: 100%;
+    }
+
+    &:nth-last-child(-n+3) {
+      margin-bottom: 50px;
+    }
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+  .plans-item {
+    padding: 53px 24px 37px 30px;
+
+    &__heading {
+      font-size: 18px;
+    }
+
+    &__text {
+      font-size: 12px;
+    }
+  }
+  .banner {
+    &__heading {
+      font-size: 38px;
+    }
+
+    &__subheading {
+      font-size: 16px;
+      margin-bottom: 25px;
+    }
+  }
+}
+
+@media screen and (max-width: $sm) {
+
 }

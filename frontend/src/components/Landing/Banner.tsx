@@ -5,9 +5,9 @@ import './Landing.scss';
 
 export const Banner = () => {
   return (
-    <Flex mb="180px" justifyContent="center" flexWrap="wrap" className="banner">
+    <Flex justifyContent="center" flexWrap="wrap" className="banner">
       <Box maxW="1260px" m="auto">
-        <Box w="100%" mb="38px">
+        <Box w="100%" className="banner__img-container">
           <img src={Logo} alt="Logo" className="banner__img" />
         </Box>
         <h4 className="banner__heading">No registration, no KYC, no hassle</h4>

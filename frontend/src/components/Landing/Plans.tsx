@@ -4,7 +4,7 @@ import './Landing.scss';
 
 export const Plans = () => {
   return (
-    <Flex mb="180px" justifyContent="center" flexWrap="wrap">
+    <Flex justifyContent="center" flexWrap="wrap" className="plans">
       <Flex w="100%" justifyContent="center" mb="50px">
         <h4 className="heading">Our plans</h4>
       </Flex>
