@@ -332,7 +332,7 @@
           ]
         },
         "Helper": {
-          "address": "0xa85233C63b9Ee964Add6F2cffe00Fd84eb32338f",
+          "address": "0x4A679253410272dd5232B3Ff7cF5dbB88f295319",
           "abi": [
             {
               "inputs": [
@@ -791,7 +791,7 @@
           ]
         },
         "Lottery": {
-          "address": "0x4ed7c70F96B99c776995fB64377f0d4aB3B0e1C1",
+          "address": "0x322813Fd9A801c5507c9de605d63CEA4f2CE6c44",
           "abi": [
             {
               "inputs": [
@@ -1532,6 +1532,38 @@
               "type": "function"
             },
             {
+              "inputs": [],
+              "name": "getTotalRounds",
+              "outputs": [
+                {
+                  "internalType": "uint256",
+                  "name": "",
+                  "type": "uint256"
+                }
+              ],
+              "stateMutability": "view",
+              "type": "function"
+            },
+            {
+              "inputs": [
+                {
+                  "internalType": "address",
+                  "name": "user",
+                  "type": "address"
+                }
+              ],
+              "name": "getWinnerPrize",
+              "outputs": [
+                {
+                  "internalType": "uint256",
+                  "name": "",
+                  "type": "uint256"
+                }
+              ],
+              "stateMutability": "view",
+              "type": "function"
+            },
+            {
               "inputs": [
                 {
                   "internalType": "bytes32",
@@ -1938,7 +1970,7 @@
           ]
         },
         "ReferralManager": {
-          "address": "0x5FC8d32690cc91D4c39d9d3abcBD16989F875707",
+          "address": "0x0165878A594ca255338adfa4d48449f69242Eb8F",
           "abi": [
             {
               "inputs": [
@@ -2865,7 +2897,7 @@
           ]
         },
         "Squads": {
-          "address": "0x9A676e781A523b5d0C0e43731313A708CB607508",
+          "address": "0x0B306BF915C4d645ff596e518fAf3F9669b97016",
           "abi": [
             {
               "inputs": [
@@ -3829,7 +3861,7 @@
           ]
         },
         "Staking": {
-          "address": "0xa513E6E4b8f2a923D98304ec87F64353C4D5C853",
+          "address": "0x2279B7A0a67DB372996a5FaB50D91eAA73d2eBe6",
           "abi": [
             {
               "inputs": [
@@ -5124,7 +5156,7 @@
           ]
         },
         "Ticket": {
-          "address": "0xc6e7DF5E7b4f2A278906862b61205850344D4e7d",
+          "address": "0x59b670e9fA9D0A427751Af201D676719a970857b",
           "abi": [
             {
               "inputs": [],
@@ -7670,7 +7702,7 @@
           ]
         },
         "TokenVesting": {
-          "address": "0xDc64a140Aa3E981100a9becA4E685f962f0cF6C9",
+          "address": "0x5FC8d32690cc91D4c39d9d3abcBD16989F875707",
           "abi": [
             {
               "inputs": [
@@ -8384,7 +8416,7 @@
           ]
         },
         "VRFCoordinatorMock": {
-          "address": "0x59b670e9fA9D0A427751Af201D676719a970857b",
+          "address": "0x4ed7c70F96B99c776995fB64377f0d4aB3B0e1C1",
           "abi": [
             {
               "inputs": [],
@@ -8402,6 +8434,19 @@
               "name": "fulfillRequest",
               "outputs": [],
               "stateMutability": "nonpayable",
+              "type": "function"
+            },
+            {
+              "inputs": [],
+              "name": "getRequestsLength",
+              "outputs": [
+                {
+                  "internalType": "uint256",
+                  "name": "",
+                  "type": "uint256"
+                }
+              ],
+              "stateMutability": "view",
               "type": "function"
             },
             {
@@ -8695,6 +8740,19 @@
               "type": "function"
             },
             {
+              "inputs": [],
+              "name": "DIVIDER",
+              "outputs": [
+                {
+                  "internalType": "uint256",
+                  "name": "",
+                  "type": "uint256"
+                }
+              ],
+              "stateMutability": "view",
+              "type": "function"
+            },
+            {
               "inputs": [
                 {
                   "internalType": "uint256",
@@ -8929,6 +8987,19 @@
               "type": "function"
             },
             {
+              "inputs": [],
+              "name": "sellTokenCommission",
+              "outputs": [
+                {
+                  "internalType": "uint256",
+                  "name": "",
+                  "type": "uint256"
+                }
+              ],
+              "stateMutability": "view",
+              "type": "function"
+            },
+            {
               "inputs": [
                 {
                   "internalType": "uint256",
@@ -9054,6 +9125,19 @@
                 }
               ],
               "name": "updateTokenPool",
+              "outputs": [],
+              "stateMutability": "nonpayable",
+              "type": "function"
+            },
+            {
+              "inputs": [
+                {
+                  "internalType": "uint256",
+                  "name": "sellTokenCommission_",
+                  "type": "uint256"
+                }
+              ],
+              "name": "updatesellTokenCommission",
               "outputs": [],
               "stateMutability": "nonpayable",
               "type": "function"
@@ -10594,6 +10678,19 @@
               "type": "function"
             },
             {
+              "inputs": [],
+              "name": "getTotalRounds",
+              "outputs": [
+                {
+                  "internalType": "uint256",
+                  "name": "",
+                  "type": "uint256"
+                }
+              ],
+              "stateMutability": "view",
+              "type": "function"
+            },
+            {
               "inputs": [
                 {
                   "internalType": "bytes32",
@@ -17464,6 +17561,19 @@
               "name": "fulfillRequest",
               "outputs": [],
               "stateMutability": "nonpayable",
+              "type": "function"
+            },
+            {
+              "inputs": [],
+              "name": "getRequestsLength",
+              "outputs": [
+                {
+                  "internalType": "uint256",
+                  "name": "",
+                  "type": "uint256"
+                }
+              ],
+              "stateMutability": "view",
               "type": "function"
             },
             {

@@ -21,6 +21,14 @@ export const useVendorSellContract = () => {
     return contract.swapRate();
   };
 
+  const getSellTokenCommission = () => {
+    return contract.sellTokenCommission();
+  };
+
+  const getDivider = () => {
+    return contract.DIVIDER();
+  };
+
   const isSellAvailable = () => {
     return contract.isSellAvailable();
   };
@@ -41,6 +49,8 @@ export const useVendorSellContract = () => {
     contract,
     address: contractAddress,
     getSwapRate,
+    getSellTokenCommission,
+    getDivider,
     isSellAvailable,
     buyTokens,
     sellTokens,

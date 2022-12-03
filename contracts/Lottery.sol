@@ -31,6 +31,7 @@ contract Lottery is VRFConsumerBaseV2, AccessControl {
     Round[] public rounds;
     mapping(uint256 => mapping(address => uint256)) roundMembers;
     mapping(address => uint256[]) claims;
+    mapping(address => uint256) winners;
 
     uint256 public TICKET_PRICE;
     uint256 public TICKET_ID;
@@ -282,6 +283,7 @@ contract Lottery is VRFConsumerBaseV2, AccessControl {
 
                 uint256 prizeAmount = totalLevelPrize / round.winners[i].length;
                 rewardToken.transferFrom(rewardPool, winner, prizeAmount);
+                winners[winner] += prizeAmount;
             }
         }
     }
@@ -322,6 +324,14 @@ contract Lottery is VRFConsumerBaseV2, AccessControl {
     }
 
     // --------- Helper functions ---------
+    function getTotalRounds() public view returns (uint256) {
+        return rounds.length;
+    }
+
+    function getWinnerPrize(address user) public view returns (uint256) {
+        return winners[user];
+    }
+
     function getRound(uint256 id) public view returns (Round memory) {
         return rounds[id];
     }

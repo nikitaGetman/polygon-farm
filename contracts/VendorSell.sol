@@ -10,11 +10,12 @@ import "@openzeppelin/contracts/security/Pausable.sol";
 contract VendorSell is Context, AccessControl, Pausable {
     using SafeERC20 for IERC20;
 
-    uint256 private SWAP_RATE_DIVIDER = 1000;
+    uint256 public DIVIDER = 1000;
     uint256 private TOKEN_DECIMALS = 18;
     uint256 private CHANGE_TOKEN_DECIMALS = 6; // USDT decimals
 
-    uint256 public swapRate; // divide on SWAP_RATE_DIVIDER
+    uint256 public swapRate; // div by DIVIDER
+    uint256 public sellTokenCommission = 100; // 10%
     bool private _isSellAvailable;
 
     IERC20 public token;
@@ -54,19 +55,17 @@ contract VendorSell is Context, AccessControl, Pausable {
     function buyTokens(uint256 _amountChangeToken) public whenNotPaused {
         uint256 _amountToken = getEquivalentTokenEstimate(_amountChangeToken);
         require(_amountToken > 0, "Insufficient amount");
+        require(
+            token.balanceOf(_tokenPool) >= _amountToken,
+            "Not enough tokens in pool"
+        );
 
-        require(
-            changeToken.transferFrom(
-                _msgSender(),
-                _changeTokenPool,
-                _amountChangeToken
-            ),
-            "Change token transfer error"
+        changeToken.transferFrom(
+            _msgSender(),
+            _changeTokenPool,
+            _amountChangeToken
         );
-        require(
-            token.transferFrom(_tokenPool, _msgSender(), _amountToken),
-            "Token transfer error"
-        );
+        token.transferFrom(_tokenPool, _msgSender(), _amountToken);
 
         emit TokensPurchased(_msgSender(), _amountToken, _amountChangeToken);
     }
@@ -75,22 +74,24 @@ contract VendorSell is Context, AccessControl, Pausable {
     function sellTokens(uint256 _amountToken) public whenNotPaused {
         require(_isSellAvailable, "Selling is not available");
 
-        uint256 _amountChangeToken = getEquivalentChangeTokenEstimate(
+        uint256 _amountChangeTokenWithFee = getEquivalentChangeTokenEstimate(
             _amountToken
         );
-        require(_amountChangeToken > 0, "Insufficient amount");
+        uint256 fee = (_amountChangeTokenWithFee * sellTokenCommission) /
+            DIVIDER;
+        uint256 _amountChangeToken = _amountChangeTokenWithFee - fee;
 
+        require(_amountChangeToken > 0, "Insufficient amount");
         require(
-            token.transferFrom(_msgSender(), _tokenPool, _amountToken),
-            "Token transfer error"
+            changeToken.balanceOf(_changeTokenPool) >= _amountChangeToken,
+            "Not enough tokens in pool"
         );
-        require(
-            changeToken.transferFrom(
-                _changeTokenPool,
-                _msgSender(),
-                _amountChangeToken
-            ),
-            "Change token transfer error"
+
+        token.transferFrom(_msgSender(), _tokenPool, _amountToken);
+        changeToken.transferFrom(
+            _changeTokenPool,
+            _msgSender(),
+            _amountChangeToken
         );
 
         emit TokensSold(_msgSender(), _amountToken, _amountChangeToken);
@@ -112,7 +113,7 @@ contract VendorSell is Context, AccessControl, Pausable {
         returns (uint256)
     {
         return
-            (((_amountToken * SWAP_RATE_DIVIDER) / swapRate) *
+            (((_amountToken * DIVIDER) / swapRate) *
                 10**CHANGE_TOKEN_DECIMALS) / 10**TOKEN_DECIMALS;
     }
 
@@ -123,8 +124,8 @@ contract VendorSell is Context, AccessControl, Pausable {
         returns (uint256)
     {
         return
-            (((_amountChangeToken * swapRate) / SWAP_RATE_DIVIDER) *
-                10**TOKEN_DECIMALS) / 10**CHANGE_TOKEN_DECIMALS;
+            (((_amountChangeToken * swapRate) / DIVIDER) * 10**TOKEN_DECIMALS) /
+            10**CHANGE_TOKEN_DECIMALS;
     }
 
     function isSellAvailable() public view returns (bool) {
@@ -157,6 +158,13 @@ contract VendorSell is Context, AccessControl, Pausable {
         onlyRole(DEFAULT_ADMIN_ROLE)
     {
         swapRate = swapRate_;
+    }
+
+    function updatesellTokenCommission(uint256 sellTokenCommission_)
+        public
+        onlyRole(DEFAULT_ADMIN_ROLE)
+    {
+        sellTokenCommission = sellTokenCommission_;
     }
 
     function updateChangeTokenPool(address pool)

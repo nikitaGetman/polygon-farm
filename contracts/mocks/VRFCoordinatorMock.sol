@@ -39,4 +39,8 @@ contract VRFCoordinatorMock {
     function setRandomWords(uint256[] memory _randomWords) public {
         randomWords = _randomWords;
     }
+
+    function getRequestsLength() public view returns (uint256) {
+        return requests.length;
+    }
 }

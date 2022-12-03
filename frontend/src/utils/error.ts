@@ -27,6 +27,12 @@ export function tryToGetErrorData(error: unknown): {
     return { title: 'Failed', description: 'This address cannot be the leader' };
   }
 
+  if (message.includes('Not enough tokens in pool')) {
+    return {
+      title: 'Failed',
+      description: 'There are not enough funds in the pool',
+    };
+  }
   if (message.includes('Not enough tokens for reward')) {
     return {
       title: 'Failed',

@@ -100,6 +100,11 @@ contract TokenVesting is AccessControl, ReentrancyGuard {
             0,
             false
         );
+
+        require(
+            _token.balanceOf(_vestingPool) >= _amount,
+            "Not enough tokens in pool"
+        );
         _token.safeTransferFrom(_vestingPool, address(this), _amount);
         vestingSchedulesIds.push(vestingScheduleId);
         uint256 currentVestingCount = holdersVestingCount[_beneficiary];

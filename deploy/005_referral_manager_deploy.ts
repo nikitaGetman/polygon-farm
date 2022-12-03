@@ -3,14 +3,16 @@ import { DeployFunction } from "hardhat-deploy/types";
 import {
   REFERRAL_MANAGER_FULL_SUBSCRIPTION_COST,
   REFERRAL_MANAGER_LEVEL_SUBSCRIPTION_COST,
+  TOKEN2_INITIAL_SUPPLY,
 } from "config";
 import { Token2 } from "typechain-types";
 
 const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
-  const { deployments, getNamedAccounts, ethers } = hre;
+  const { deployments, getNamedAccounts, ethers, network } = hre;
   const { deploy } = deployments;
 
-  const { deployer, admin, referralRewardPool } = await getNamedAccounts();
+  const { deployer, admin, referralRewardPool, token2Holder } =
+    await getNamedAccounts();
 
   const token1Address = (await deployments.get("Token1")).address;
   const token2 = await ethers.getContract<Token2>("Token2");
@@ -39,6 +41,14 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
     .connect(adminSigner)
     .addToWhitelist([referralRewardPoolSigner.address]);
   await tx.wait();
+
+  if (!network.live) {
+    const holderSigner = await ethers.getSigner(token2Holder);
+    tx = await token2
+      .connect(holderSigner)
+      .transfer(referralRewardPool, TOKEN2_INITIAL_SUPPLY.div(2));
+    await tx.wait();
+  }
 };
 func.tags = ["ReferralManager"];
 func.dependencies = ["Token1", "Token2"];

@@ -42,7 +42,8 @@ export const ExchangePage = () => {
   const [amount, setAmount] = useState<string>();
 
   const navigate = useNavigate();
-  const { buyTokens, sellTokens, isSellAvailable } = useVendorSell();
+  const { buyTokens, sellTokens, isSellAvailable, getTokenSellEquivalent, sellCommission } =
+    useVendorSell();
   const usdtBalance = useUsdtBalance();
   const savBalance = useSavBalance();
 
@@ -66,12 +67,20 @@ export const ExchangePage = () => {
   }, [setIsTokenSell, setAmount]);
 
   const isLoading = buyTokens.isLoading || sellTokens.isLoading;
-  const isSwapDisabled = !amount || (isTokenSell && !isSellAvailable);
+  const isSwapDisabled = !amount || parseFloat(amount) === 0 || (isTokenSell && !isSellAvailable);
 
   const tokens = useMemo(
     () => (isTokenSell ? [tokenPair[1], tokenPair[0]] : tokenPair),
     [isTokenSell]
   );
+
+  const sellAmount = useMemo(() => {
+    if (isTokenSell && amount) {
+      return getTokenSellEquivalent(amount);
+    } else {
+      return amount;
+    }
+  }, [isTokenSell, amount, getTokenSellEquivalent]);
 
   return (
     <Container variant="dashboard" pt="60px">
@@ -136,7 +145,7 @@ export const ExchangePage = () => {
             placeholder="0"
             tokenIcon={tokens[1].icon}
             tokenTicker={tokens[1].ticker}
-            value={amount}
+            value={sellAmount}
             onChange={setAmount}
           />
         </Box>
@@ -151,10 +160,11 @@ export const ExchangePage = () => {
           Confirm
         </Button>
 
-        <Text mt="30px" textStyle="text1">
-          Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has
-          been the industry's standard dummy
-        </Text>
+        {isTokenSell ? (
+          <Text mt="30px" textStyle="text1">
+            The commission for the sale of tokens is {(sellCommission || 0) * 100}%
+          </Text>
+        ) : null}
       </Box>
     </Container>
   );

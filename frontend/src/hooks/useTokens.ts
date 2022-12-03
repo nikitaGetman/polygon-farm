@@ -13,7 +13,7 @@ const INCREASE_TOKEN_ALLOWANCE_MUTATION = 'increase-allowance';
 export const useTokens = () => {
   const savToken = useTokenContract(ContractsEnum.SAV);
   const savRToken = useTokenContract(ContractsEnum.SAVR);
-  const { success, handleError } = useNotification();
+  const { success } = useNotification();
 
   const increaseAllowanceIfRequired = useMutation(
     [INCREASE_TOKEN_ALLOWANCE_MUTATION],
@@ -39,11 +39,6 @@ export const useTokens = () => {
         const txHash = await tokenContract.approve(spender, BigNumber.from(allowAmount));
         success({ title: 'Approved!', txHash });
       }
-    },
-    {
-      onError: (err) => {
-        handleError(err);
-      },
     }
   );
 

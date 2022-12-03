@@ -10,8 +10,10 @@ import { ReactComponent as BoxIcon } from '@/assets/images/icons/box.svg';
 import { useSavBalance, useTokenBalanceHistory, useSavRBalance } from '@/hooks/useTokenBalance';
 import { useStaking } from '@/hooks/useStaking';
 import { BalanceHistoryChart } from './BalanceChart';
+import { useNavigate } from 'react-router-dom';
 
 export const WalletPortfolio = () => {
+  const navigate = useNavigate();
   const { isConnected } = useAccount();
   const { addSAV, addSAVR } = useAddTokens();
 
@@ -37,7 +39,7 @@ export const WalletPortfolio = () => {
           </Text>
           <Text textStyle="textMedium">SAVR = 1 USDT</Text>
         </Flex>
-        <Button mt="30px" rightIcon={<BoxIcon />}>
+        <Button mt="30px" rightIcon={<BoxIcon />} onClick={() => navigate('/exchange')}>
           Buy SAV
         </Button>
       </Box>

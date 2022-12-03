@@ -14,14 +14,14 @@ export const LotteryItem: FC<LotteryItemProps> = ({ status, title, timestamp, on
   const { stampStrings } = useCountdown(timestamp);
 
   const elapsedTimeString = useMemo(() => {
-    return `${stampStrings.daysString}d-${stampStrings.hoursString}h\
-    -${stampStrings.minsString}m-${stampStrings.secString}s`;
+    const { daysString, hoursString, minsString, secString } = stampStrings;
+    return `${daysString}d-${hoursString}h-${minsString}m-${secString}s`;
   }, [stampStrings]);
 
   return (
     <Box
       padding="20px"
-      backgroundColor="bgGreen.200"
+      backgroundColor="rgba(38, 71, 55, 0.5)"
       borderRadius="md"
       boxShadow="0px 6px 11px rgba(0, 0, 0, 0.25)"
     >

@@ -15,9 +15,10 @@ import {
 import { useAccount } from 'wagmi';
 import { ConnectWalletButton } from '../ui/ConnectWalletButton/ConnectWalletButton';
 import { StatBlock } from '../ui/StatBlock/StatBlock';
-import { LotteryStatusEnum } from '@/hooks/useLottery';
+import { LotteryStatusEnum, useLottery } from '@/hooks/useLottery';
 import { LotteryItem } from './LotteryItem';
 import { useNavigate } from 'react-router-dom';
+import { getReadableAmount } from '@/utils/number';
 
 const lotteries: any[] = [
   {
@@ -44,6 +45,8 @@ export const LotteryList = () => {
   const { isConnected } = useAccount();
   const [stateFilter, setStateFilter] = useState<LotteryStatusEnum>(LotteryStatusEnum.current);
   const navigate = useNavigate();
+
+  const { ticketBalance, userTotalPrize } = useLottery();
 
   return (
     <Container variant="dashboard">
@@ -90,7 +93,7 @@ export const LotteryList = () => {
             </Box>
             <Box textStyle="text1">
               <Box as="span" textStyle="textSansBold" fontSize="26px" mr="6px">
-                00
+                {ticketBalance || '0'}
               </Box>
             </Box>
           </StatBlock>
@@ -100,7 +103,7 @@ export const LotteryList = () => {
             </Box>
             <Box textStyle="text1">
               <Box as="span" textStyle="textSansBold" fontSize="26px" mr="6px">
-                000
+                {getReadableAmount(userTotalPrize || 0)}
               </Box>
               SAVR
             </Box>
