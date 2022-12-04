@@ -65,7 +65,9 @@ export const useSquads = () => {
       const txHash = await squadsContract.subscribe(planId);
       success({
         title: 'Success',
-        description: `${bigNumberToString(squadPlan.stakingThreshold)}/${getReadableDuration(
+        description: `${bigNumberToString(squadPlan.stakingThreshold, {
+          precision: 0,
+        })}/${getReadableDuration(
           stakingPlan.stakingDuration
         )} team subscription has been activated for one year`,
         txHash,

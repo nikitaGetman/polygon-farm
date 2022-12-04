@@ -39,6 +39,12 @@ export function tryToGetErrorData(error: unknown): {
       description: 'There are not enough funds in the pool to pay the reward',
     };
   }
+  if (message.includes('underlying network changed')) {
+    return {
+      title: 'Failed',
+      description: 'Unsupported network',
+    };
+  }
   if (message.includes('reverted with reason string ')) {
     const errorReg = /reverted with reason string '(?<data>[^']*)'/m;
     const res = Array.from(message.matchAll(errorReg));

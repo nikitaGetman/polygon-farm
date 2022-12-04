@@ -24,7 +24,8 @@ export const Header = () => {
   const { hasEndingSquadsSubscription } = useSquads();
 
   const hasNotification =
-    hasEndingSubscription || hasEndingReferralSubscription || hasEndingSquadsSubscription;
+    isConnected &&
+    (hasEndingSubscription || hasEndingReferralSubscription || hasEndingSquadsSubscription);
 
   const handleDisconnect = useCallback(() => {
     setLocalReferrer(undefined);

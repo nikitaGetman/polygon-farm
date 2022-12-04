@@ -44,24 +44,22 @@ export const ReferralSubscriptionModal: FC<ReferralSubscriptionModalProps> = ({
   const [isFullLoading, setIsFullLoading] = useState(false);
   const [isLevelLoading, setIsLevelLoading] = useState(false);
 
+  const handleSubscribeToFull = useCallback(async () => {
+    setIsFullLoading(true);
+    return onFullSubscribe().finally(() => {
+      setIsFullLoading(false);
+    });
+  }, [setIsFullLoading, onFullSubscribe]);
+
   const handleSubscribeToLevel = useCallback(
     async (level: number) => {
       setIsLevelLoading(true);
-      onLevelSubscribe(level).finally(() => {
+      return onLevelSubscribe(level).finally(() => {
         setIsLevelLoading(false);
       });
     },
     [onLevelSubscribe, setIsLevelLoading]
   );
-
-  const handleSubscribeToFull = useCallback(async () => {
-    setIsFullLoading(true);
-    onFullSubscribe().finally(() => {
-      setIsFullLoading(false);
-    });
-  }, [setIsFullLoading, onFullSubscribe]);
-
-  const isButtonsDisabled = isFullLoading || isLevelLoading;
 
   return (
     <Modal isCentered isOpen={true} onClose={onClose} scrollBehavior="inside">
@@ -83,8 +81,7 @@ export const ReferralSubscriptionModal: FC<ReferralSubscriptionModalProps> = ({
               price={fullSubscriptionCost}
               duration={subscriptionDuration}
               subscriptionTill={fullSubscriptionTill}
-              disabled={isButtonsDisabled}
-              isLoading={isFullLoading}
+              disabled={isLevelLoading}
               onSubscribe={handleSubscribeToFull}
             />
           </Box>
@@ -99,11 +96,7 @@ export const ReferralSubscriptionModal: FC<ReferralSubscriptionModalProps> = ({
                     price={levelSubscriptionCost}
                     duration={subscriptionDuration}
                     subscriptionTill={subTill}
-                    disabled={
-                      isButtonsDisabled ||
-                      (index > 0 && levelsSubscriptionTill[index - 1] < Date.now() / 1000)
-                    }
-                    isLoading={isLevelLoading}
+                    disabled={isFullLoading || isLevelLoading}
                     onSubscribe={() => handleSubscribeToLevel(index + 1)}
                   />
                 </Box>
@@ -122,8 +115,7 @@ type SubscriptionLevelProps = {
   duration: number;
   subscriptionTill: number;
   disabled: boolean;
-  isLoading: boolean;
-  onSubscribe: () => void;
+  onSubscribe: () => Promise<void>;
 };
 const SubscriptionLevel: FC<SubscriptionLevelProps> = ({
   price,
@@ -131,13 +123,21 @@ const SubscriptionLevel: FC<SubscriptionLevelProps> = ({
   title,
   subscriptionTill,
   disabled,
-  isLoading,
   onSubscribe,
 }) => {
   const currentTime = Date.now() / 1000;
   const isActive = subscriptionTill > currentTime;
   const isEnding =
     isActive && subscriptionTill - currentTime < REFERRAL_SUBSCRIPTION_ENDING_NOTIFICATION;
+
+  const [isLoading, setIsLoading] = useState(false);
+
+  const handleSubscribe = useCallback(async () => {
+    setIsLoading(true);
+    onSubscribe().finally(() => {
+      setIsLoading(false);
+    });
+  }, [onSubscribe, setIsLoading]);
 
   return (
     <Box>
@@ -174,16 +174,16 @@ const SubscriptionLevel: FC<SubscriptionLevelProps> = ({
           ) : null}
         </Flex>
         {!isActive ? (
-          <Button onClick={onSubscribe} isLoading={isLoading} disabled={disabled}>
+          <Button onClick={handleSubscribe} isLoading={isLoading} disabled={disabled || isLoading}>
             Activate
           </Button>
         ) : null}
         {isEnding ? (
           <Button
             variant="outlinedWhite"
-            onClick={onSubscribe}
+            onClick={handleSubscribe}
             isLoading={isLoading}
-            disabled={disabled}
+            disabled={disabled || isLoading}
           >
             Prolong
           </Button>

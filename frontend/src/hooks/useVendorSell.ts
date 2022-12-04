@@ -80,7 +80,7 @@ export const useVendorSell = () => {
           vendorSellContract.address,
           BigNumber.from(ethers.constants.MaxUint256)
         );
-        success({ title: 'Approved!', txHash });
+        success({ title: 'Approved', txHash });
       }
 
       const txHash = await vendorSellContract.buyTokens(spendAmount);

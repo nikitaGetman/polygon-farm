@@ -116,7 +116,7 @@ export const StakingModal: FC<StakingModalProps> = ({
           <Box mb={5}>
             <InputAmount
               placeholder={`Min ${MIN_STAKE_LIMIT}`}
-              total={balance ? bigNumberToString(balance, 18, 2) : undefined}
+              total={balance ? bigNumberToString(balance, { precision: 2 }) : undefined}
               onChange={setAmount}
               value={amount}
             />

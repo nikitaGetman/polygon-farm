@@ -88,8 +88,7 @@ export const SquadItem: FC<SquadItemProps> = ({
             </Text>
           ) : (
             <Text textStyle="textSansBold">
-              {bigNumberToString(subscriptionCost, 18, 0)} SAV / 1 Team or{' '}
-              {getReadableDuration(subscriptionDuration)}
+              {bigNumberToString(subscriptionCost, { precision: 0 })} SAV / 1 Team
             </Text>
           )}
         </Box>
@@ -104,7 +103,7 @@ export const SquadItem: FC<SquadItemProps> = ({
           textAlign="center"
         >
           <Text textStyle="text1" fontSize="44px" lineHeight="40px" whiteSpace="nowrap">
-            {bigNumberToString(reward, 18, 0)}
+            {bigNumberToString(reward, { precision: 0 })}
             <Text as="span" fontSize="24px" ml="5px">
               SAV
             </Text>

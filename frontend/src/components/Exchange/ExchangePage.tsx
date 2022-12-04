@@ -35,7 +35,7 @@ const tokenPair = [
 ];
 export const ExchangePage = () => {
   useEffect(() => {
-    document.title = 'iSaver | Buy tokens';
+    document.title = 'iSaver | Buy SAV';
   }, []);
 
   const [isTokenSell, setIsTokenSell] = useState(false);
@@ -105,7 +105,7 @@ export const ExchangePage = () => {
         </Flex>
 
         <Text textStyle="textSansSmall" mb="30px">
-          Trade tokens in an instant
+          Please use only Polygon (MATIC) network
         </Text>
 
         <Box>
@@ -121,7 +121,7 @@ export const ExchangePage = () => {
             total={
               isTokenSell
                 ? bigNumberToString(savBalance.data || 0)
-                : bigNumberToString(usdtBalance.data || 0, 6)
+                : bigNumberToString(usdtBalance.data || 0, { decimals: 6 })
             }
           />
         </Box>
@@ -162,7 +162,11 @@ export const ExchangePage = () => {
 
         {isTokenSell ? (
           <Text mt="30px" textStyle="text1">
-            The commission for the sale of tokens is {(sellCommission || 0) * 100}%
+            {isSellAvailable
+              ? `The commission for the sale of tokens is ${(sellCommission || 0) * 100}%`
+              : `The exchange is not available. Contact your Leader or email us at exchange@isaver.io
+            with your wallet and the amount to be exchanged. Your exchange will be processed within
+            2 business days after verification. `}
           </Text>
         ) : null}
       </Box>

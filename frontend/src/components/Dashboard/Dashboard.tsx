@@ -29,9 +29,7 @@ export const Dashboard = () => {
         <SquadsList />
       </Box>
 
-      <Box mb="300px">
-        <LotteryList />
-      </Box>
+      <Box mb="300px">{/* <LotteryList /> */}</Box>
     </Container>
   );
 };

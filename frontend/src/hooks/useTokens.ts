@@ -37,7 +37,7 @@ export const useTokens = () => {
 
       if (allowance.lt(requiredAmount)) {
         const txHash = await tokenContract.approve(spender, BigNumber.from(allowAmount));
-        success({ title: 'Approved!', txHash });
+        success({ title: 'Approved', txHash });
       }
     }
   );

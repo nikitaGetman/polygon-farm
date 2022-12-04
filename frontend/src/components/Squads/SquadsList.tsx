@@ -11,7 +11,7 @@ export const SquadsList = () => {
   const { userSquadsInfo } = useHelperUserSquadsFullInfo(address);
 
   return (
-    <Flex overflow="auto" gap="20px">
+    <Flex gap="20px">
       {!userSquadsInfo.length
         ? Array.from({ length: 3 }).map((_, index) => (
             <Skeleton

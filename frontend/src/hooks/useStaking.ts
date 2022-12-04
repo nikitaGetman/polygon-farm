@@ -6,8 +6,8 @@ import { useMemo } from 'react';
 import { useAccount } from 'wagmi';
 import { useStakingContract } from './contracts/useStakingContract';
 import { useConnectWallet } from './useConnectWallet';
+import { HELPER_USER_SQUADS_INFO_REQUEST } from './useHelper';
 import { useNotification } from './useNotification';
-import { SQUAD_PLANS_REQUEST } from './useSquads';
 import { SAVR_BALANCE_REQUEST, SAV_BALANCE_REQUEST } from './useTokenBalance';
 import { TOKENS, useTokens } from './useTokens';
 
@@ -73,10 +73,12 @@ export const useStaking = () => {
 
             const stakes = userStakes.data?.[index];
 
-            const totalReward = stakes?.reduce(
-              (sum, stake) => sum.add(stake.profit),
-              BigNumber.from(0)
-            );
+            const totalReward = stakes
+              ? stakes.reduce(
+                  (sum, stake) => (stake.isClaimed ? sum : sum.add(stake.profit)),
+                  BigNumber.from(0)
+                )
+              : undefined;
 
             const hasReadyStakes = stakes?.some(
               (stake) => stake.timeEnd.toNumber() <= currentTime && !stake.isClaimed
@@ -188,7 +190,7 @@ export const useStaking = () => {
         queryClient.invalidateQueries({ queryKey: [STAKING_PLANS_REQUEST] });
         queryClient.invalidateQueries({ queryKey: [USER_STAKING_INFO_REQUEST] });
         queryClient.invalidateQueries({ queryKey: [USER_STAKES_REQUEST] });
-        queryClient.invalidateQueries({ queryKey: [SQUAD_PLANS_REQUEST] });
+        queryClient.invalidateQueries({ queryKey: [HELPER_USER_SQUADS_INFO_REQUEST] });
         queryClient.invalidateQueries({ queryKey: [SAV_BALANCE_REQUEST] });
         queryClient.invalidateQueries({ queryKey: [SAVR_BALANCE_REQUEST] });
       },

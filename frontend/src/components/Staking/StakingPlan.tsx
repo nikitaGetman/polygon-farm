@@ -58,7 +58,7 @@ export const StakingPlan: FC<StakingPlanProps> = ({
   }, [setIsClaimLoading, onClaim]);
 
   return (
-    <Box borderRadius="md" overflow="hidden">
+    <Box borderRadius="md" overflow="hidden" boxShadow="0px 6px 11px rgba(0, 0, 0, 0.25)">
       <Flex
         bgColor={isSubscribed ? 'green.10050' : 'gray.200'}
         p="10px 20px"
@@ -74,7 +74,7 @@ export const StakingPlan: FC<StakingPlanProps> = ({
 
         {!isSubscribed || isSubscriptionEnding ? (
           <Text textStyle="textSansBold">
-            {bigNumberToString(subscriptionCost, 18, 0)} SAV /{' '}
+            {bigNumberToString(subscriptionCost, { precision: 0 })} SAV /{' '}
             {getReadableDuration(subscriptionDuration)}
           </Text>
         ) : null}

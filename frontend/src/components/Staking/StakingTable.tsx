@@ -97,7 +97,7 @@ export const StakingTable = ({
               Start
             </Th>
             <Th width="200px" textAlign="center">
-              Finish
+              End
             </Th>
             <Th width="200px" textAlign="center">
               Reward

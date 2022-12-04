@@ -90,7 +90,7 @@ export const Menu = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => void
           />
           <Divider mb="30px" borderBottomWidth="2px" borderColor="white" />
           <NavMenuItem
-            text="Buy token"
+            text="Buy SAV"
             icon={<WalletIcon />}
             onClick={() => handleNavigate('/exchange')}
           />

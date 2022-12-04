@@ -64,7 +64,7 @@ export const WalletPortfolio = () => {
               <Flex flexWrap="wrap" maxW="200px">
                 <Flex alignItems="baseline" color="green.400">
                   <Text mr="2" textStyle="textMedium">
-                    {savBalance ? bigNumberToString(savBalance, 18) : '---'}
+                    {savBalance ? bigNumberToString(savBalance) : '---'}
                   </Text>
                   <Text textStyle="textSansBold">SAV</Text>
                 </Flex>
@@ -75,7 +75,7 @@ export const WalletPortfolio = () => {
               <Flex flexWrap="wrap" maxW="200px">
                 <Flex alignItems="baseline" color="blue">
                   <Text mr="2" textStyle="textMedium">
-                    {savrBalance ? bigNumberToString(savrBalance, 18) : '---'}
+                    {savrBalance ? bigNumberToString(savrBalance) : '---'}
                   </Text>
                   <Text textStyle="textSansBold">SAVR</Text>
                 </Flex>
