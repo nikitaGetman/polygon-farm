@@ -1,3 +1,4 @@
+import { BigNumberish } from 'ethers';
 import { useContract, useProvider, useSigner } from 'wagmi';
 
 import { Lottery } from '@/types';
@@ -27,7 +28,7 @@ export const useLotteryContract = () => {
     return contract.TICKET_PRICE();
   };
 
-  const getRound = (roundId: number) => {
+  const getRound = (roundId: BigNumberish) => {
     return contract.getRound(roundId);
   };
 

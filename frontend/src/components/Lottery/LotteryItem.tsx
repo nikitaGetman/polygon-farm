@@ -2,7 +2,7 @@ import React, { FC, useMemo } from 'react';
 import { Box, Button, Divider, Text } from '@chakra-ui/react';
 
 import { useCountdown } from '@/hooks/useCountdown';
-import { LotteryStatusEnum } from '@/hooks/useLottery';
+import { LotteryStatusEnum } from '@/lib/lottery';
 
 import { LotteryStatus } from './LotteryStatus';
 

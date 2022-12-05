@@ -29,6 +29,7 @@ import type {
 
 export declare namespace Lottery {
   export type RoundStruct = {
+    id: PromiseOrValue<BigNumberish>;
     startTime: PromiseOrValue<BigNumberish>;
     duration: PromiseOrValue<BigNumberish>;
     isClosed: PromiseOrValue<boolean>;
@@ -49,6 +50,7 @@ export declare namespace Lottery {
   export type RoundStructOutput = [
     BigNumber,
     BigNumber,
+    BigNumber,
     boolean,
     boolean,
     boolean,
@@ -63,6 +65,7 @@ export declare namespace Lottery {
     BigNumber,
     string[][]
   ] & {
+    id: BigNumber;
     startTime: BigNumber;
     duration: BigNumber;
     isClosed: boolean;
@@ -749,6 +752,7 @@ export interface Lottery extends BaseContract {
       [
         BigNumber,
         BigNumber,
+        BigNumber,
         boolean,
         boolean,
         boolean,
@@ -759,6 +763,7 @@ export interface Lottery extends BaseContract {
         BigNumber,
         BigNumber
       ] & {
+        id: BigNumber;
         startTime: BigNumber;
         duration: BigNumber;
         isClosed: boolean;
@@ -972,6 +977,7 @@ export interface Lottery extends BaseContract {
     [
       BigNumber,
       BigNumber,
+      BigNumber,
       boolean,
       boolean,
       boolean,
@@ -982,6 +988,7 @@ export interface Lottery extends BaseContract {
       BigNumber,
       BigNumber
     ] & {
+      id: BigNumber;
       startTime: BigNumber;
       duration: BigNumber;
       isClosed: boolean;
@@ -1193,6 +1200,7 @@ export interface Lottery extends BaseContract {
       [
         BigNumber,
         BigNumber,
+        BigNumber,
         boolean,
         boolean,
         boolean,
@@ -1203,6 +1211,7 @@ export interface Lottery extends BaseContract {
         BigNumber,
         BigNumber
       ] & {
+        id: BigNumber;
         startTime: BigNumber;
         duration: BigNumber;
         isClosed: boolean;

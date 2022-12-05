@@ -15,34 +15,15 @@ import {
 } from '@chakra-ui/react';
 import { useAccount } from 'wagmi';
 
-import { LotteryStatusEnum, useLottery } from '@/hooks/useLottery';
+import { ConnectWalletButton } from '@/components/ui/ConnectWalletButton/ConnectWalletButton';
+import { StatBlock } from '@/components/ui/StatBlock/StatBlock';
+import { useLottery } from '@/hooks/useLottery';
+import { useLotteryRounds } from '@/hooks/useLotteryRounds';
+import { LotteryStatusEnum } from '@/lib/lottery';
+import { getLotteryTitle } from '@/utils/lottery';
 import { getReadableAmount } from '@/utils/number';
 
-import { ConnectWalletButton } from '../ui/ConnectWalletButton/ConnectWalletButton';
-import { StatBlock } from '../ui/StatBlock/StatBlock';
-
 import { LotteryItem } from './LotteryItem';
-
-const lotteries: any[] = [
-  {
-    id: 30,
-    title: 'Ultra raffle 030 + 1day',
-    timestamp: Date.now() + 86_400_000,
-    status: LotteryStatusEnum.upcoming,
-  },
-  {
-    id: 31,
-    title: 'Ultra raffle 031',
-    timestamp: Date.now() + 1000_000,
-    status: LotteryStatusEnum.current,
-  },
-  {
-    id: 32,
-    title: 'Ultra raffle 032',
-    timestamp: Date.now() - 1000_000,
-    status: LotteryStatusEnum.past,
-  },
-];
 
 export const LotteryList = () => {
   const { isConnected } = useAccount();
@@ -50,6 +31,20 @@ export const LotteryList = () => {
   const navigate = useNavigate();
 
   const { ticketBalance, userTotalPrize } = useLottery();
+  const { upcomingRounds, liveRounds, finishedRounds, activeRoundsRequest, finishedRoundsRequest } =
+    useLotteryRounds();
+
+  const lotteries =
+    stateFilter === LotteryStatusEnum.current
+      ? liveRounds
+      : stateFilter === LotteryStatusEnum.upcoming
+      ? upcomingRounds
+      : finishedRounds;
+
+  const isLoading =
+    stateFilter === LotteryStatusEnum.past
+      ? finishedRoundsRequest.isLoading
+      : activeRoundsRequest.isLoading;
 
   return (
     <Container variant="dashboard">
@@ -115,7 +110,7 @@ export const LotteryList = () => {
       </Flex>
 
       <Grid templateColumns="repeat(3, 1fr)" gap="20px">
-        {!lotteries.length
+        {isLoading
           ? Array.from({ length: 3 }).map((_, index) => (
               <GridItem w="100%" key={index}>
                 <Skeleton
@@ -128,16 +123,24 @@ export const LotteryList = () => {
             ))
           : null}
 
-        {lotteries.map(({ id, title, status, timestamp }) => (
+        {lotteries?.map(({ startTime, status, duration, id }) => (
           <GridItem w="100%" key={id}>
             <LotteryItem
-              title={title}
+              title={getLotteryTitle(id + 1)}
               status={status}
-              timestamp={timestamp}
-              onDetails={() => navigate(`/lottery/${id}`)}
+              timestamp={
+                status === LotteryStatusEnum.current
+                  ? (startTime + duration) * 1000
+                  : startTime * 1000
+              }
+              onDetails={() => navigate(`/lottery/${id + 1}`)}
             />
           </GridItem>
         ))}
+
+        {stateFilter === LotteryStatusEnum.past && finishedRoundsRequest.hasNextPage ? (
+          <Button onClick={() => finishedRoundsRequest.fetchNextPage()}>More</Button>
+        ) : null}
       </Grid>
     </Container>
   );

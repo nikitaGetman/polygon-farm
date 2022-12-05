@@ -9,6 +9,7 @@ import "./tokens/Ticket.sol";
 
 contract Lottery is VRFConsumerBaseV2, AccessControl {
     struct Round {
+        uint256 id;
         uint256 startTime;
         uint256 duration;
         bool isClosed;
@@ -31,7 +32,7 @@ contract Lottery is VRFConsumerBaseV2, AccessControl {
     Round[] public rounds;
     mapping(uint256 => mapping(address => uint256)) roundMembers;
     mapping(address => uint256[]) claims;
-    mapping(address => uint256) winners;
+    mapping(address => uint256) winnersRewards;
 
     uint256 public TICKET_PRICE;
     uint256 public TICKET_ID;
@@ -121,6 +122,7 @@ contract Lottery is VRFConsumerBaseV2, AccessControl {
         require(totalPrizePercents == 100, "EC7");
 
         Round memory newRound = Round({
+            id: rounds.length,
             startTime: startTime,
             duration: duration,
             isClosed: false,
@@ -283,7 +285,7 @@ contract Lottery is VRFConsumerBaseV2, AccessControl {
 
                 uint256 prizeAmount = totalLevelPrize / round.winners[i].length;
                 rewardToken.transferFrom(rewardPool, winner, prizeAmount);
-                winners[winner] += prizeAmount;
+                winnersRewards[winner] += prizeAmount;
             }
         }
     }
@@ -329,7 +331,7 @@ contract Lottery is VRFConsumerBaseV2, AccessControl {
     }
 
     function getWinnerPrize(address user) public view returns (uint256) {
-        return winners[user];
+        return winnersRewards[user];
     }
 
     function getRound(uint256 id) public view returns (Round memory) {
@@ -376,12 +378,13 @@ contract Lottery is VRFConsumerBaseV2, AccessControl {
                 } else {
                     remainingRounds -= 1;
                     finishedRounds[remainingRounds] = rounds[i - 1];
+                    if (remainingRounds == 0) {
+                        // return if find required amount of rounds
+                        return finishedRounds;
+                    }
                 }
             }
         }
-
-        // return if find required amount of rounds
-        if (remainingRounds == 0) return finishedRounds;
 
         // else cut empty round items
         uint256 roundsFound = length - remainingRounds;

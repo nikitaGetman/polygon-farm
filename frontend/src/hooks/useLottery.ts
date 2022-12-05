@@ -1,24 +1,20 @@
 import { useMemo } from 'react';
+import { useMutation } from '@tanstack/react-query';
+import { BigNumber } from 'ethers';
 import { useAccount, useQuery, useQueryClient } from 'wagmi';
+
+import { waitForTransaction } from '@/utils/waitForTransaction';
 
 import { useLotteryContract } from './contracts/useLotteryContract';
 import { useTicketContract } from './contracts/useTicketContract';
 import { useConnectWallet } from './useConnectWallet';
 import { useNotification } from './useNotification';
-import { useTokens } from './useTokens';
-
-export enum LotteryStatusEnum {
-  upcoming = 'upcoming',
-  current = 'live',
-  past = 'past',
-}
+import { SAV_BALANCE_REQUEST } from './useTokenBalance';
+import { TOKENS, useTokens } from './useTokens';
 
 const TICKET_BALANCE_REQUEST = 'ticket-balance-request';
 const LOTTERY_TICKET_PRICE_REQUEST = 'lottery-ticket-price-request';
 const LOTTERY_WINNER_PRIZE_REQUEST = 'lottery-winner-prize-request';
-const LOTTERY_ROUND_REQUEST = 'lottery-round-request';
-const LOTTERY_ACTIVE_ROUNDS_REQUEST = 'lottery-active-round-request';
-const LOTTERY_LAST_FINISHED_ROUNDS_REQUEST = 'lottery-finished-rounds-request';
 const LOTTERY_IS_CLAIMED_TODAY_REQUEST = 'lottery-is-claimed-today-request';
 const LOTTERY_CLAIM_STREAK_REQUEST = 'lottery-claim-streak-request';
 const ENTRY_LOTTERY_MUTATION = 'entry-lottery-mutation';
@@ -33,7 +29,6 @@ export const useLottery = () => {
   const ticketContract = useTicketContract();
   const { success, handleError } = useNotification();
   const tokens = useTokens();
-  const { connect } = useConnectWallet();
 
   const ticketPriceRequest = useQuery([LOTTERY_TICKET_PRICE_REQUEST], async () => {
     return await lotteryContract.getTicketPrice();
@@ -53,7 +48,28 @@ export const useLottery = () => {
     [ticketBalanceRequest]
   );
 
-  // ...
+  const buyTickets = useMutation(
+    [BUY_TICKETS_MUTATION],
+    async (amount: number) => {
+      await tokens.increaseAllowanceIfRequired.mutateAsync({
+        token: TOKENS.SAV,
+        spender: lotteryContract.address,
+        requiredAmount: (ticketPrice || BigNumber.from(10).pow(19)).mul(amount),
+      });
+
+      const txHash = await lotteryContract.buyTickets(amount);
+      success({ title: 'Success', description: `You bought ${amount} lottery tickets`, txHash });
+    },
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries({ queryKey: [TICKET_BALANCE_REQUEST] });
+        queryClient.invalidateQueries({ queryKey: [SAV_BALANCE_REQUEST] });
+      },
+      onError: (err) => {
+        handleError(err);
+      },
+    }
+  );
 
   return {
     lotteryContract,
@@ -65,5 +81,7 @@ export const useLottery = () => {
     userTotalPrize,
     ticketBalanceRequest,
     ticketBalance,
+
+    buyTickets,
   };
 };

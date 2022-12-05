@@ -10,7 +10,7 @@ export const calculateFairPercents = (
   if (!numArray.length || !total) {
     return numArray;
   }
-  // в один проход:
+
   const { numSortArray, flooredPercentSum, countMap, numToRawPercentMap } =
     numArray.reduce<{
       numSortArray: Num[];

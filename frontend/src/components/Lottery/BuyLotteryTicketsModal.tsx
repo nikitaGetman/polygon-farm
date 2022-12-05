@@ -3,7 +3,6 @@ import {
   Box,
   Button,
   CloseButton,
-  Input,
   Modal,
   ModalBody,
   ModalContent,
@@ -15,6 +14,7 @@ import {
 } from '@chakra-ui/react';
 import { BigNumber } from 'ethers';
 
+import { InputAmount } from '@/components/ui/InputAmount/InputAmount';
 import { bigNumberToString } from '@/utils/number';
 
 const boxCommonStyles = {
@@ -41,9 +41,9 @@ export const BuyLotteryTicketsModal: FC<BuyLotteryTicketsModalProps> = ({
   const [amount, setAmount] = useState<number>();
 
   const handleUpdate = useCallback(
-    (e: any) => {
+    (val?: string) => {
       const MAX_VALUE = 1_000_000;
-      let value = Math.min(Number(e.target.value), MAX_VALUE);
+      let value = Math.min(Number(val) || 0, MAX_VALUE);
 
       setAmount(value || undefined);
     },
@@ -73,13 +73,7 @@ export const BuyLotteryTicketsModal: FC<BuyLotteryTicketsModalProps> = ({
           <Text mt="26px" mb="10px" textStyle="textSansBold">
             Enter the number of tickets
           </Text>
-          <Input
-            variant="secondary"
-            type="number"
-            placeholder="0"
-            value={amount}
-            onChange={handleUpdate}
-          />
+          <InputAmount placeholder="0" value={amount} onChange={handleUpdate} />
 
           <Text mt="30px" mb="10px" textStyle="textSansBold">
             Price per ticket
@@ -105,7 +99,7 @@ export const BuyLotteryTicketsModal: FC<BuyLotteryTicketsModalProps> = ({
             width="100%"
             variant="outlined"
             onClick={handleBuy}
-            disabled={!amount}
+            disabled={!amount || isLoading}
             isLoading={isLoading}
           >
             Buy

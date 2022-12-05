@@ -26,7 +26,7 @@ task("create-finished-lottery", "Create new round and finish it").setAction(
 
     const chainTime = await getChainTime();
     const startTime = chainTime + 5;
-    const duration = 35;
+    const duration = 40;
     await run("create-lottery", {
       winnersForLevel: JSON.stringify(winners),
       startTime: startTime.toString(),

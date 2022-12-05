@@ -109,14 +109,8 @@ export const useReferralManager = () => {
   const subscribeToLevel = useMutation(
     [SUBSCRIBE_TO_REFERRAL_LEVEL_MUTATION],
     async (level: number) => {
-      if (!account) {
-        connect();
-        return;
-      }
-
       await tokens.increaseAllowanceIfRequired.mutateAsync({
         token: TOKENS.SAV,
-        owner: account,
         spender: referralContract.address,
         requiredAmount: levelSubscriptionCost.data || BigNumber.from(10).pow(18), // fallback to 10 tokens
       });
@@ -142,14 +136,8 @@ export const useReferralManager = () => {
   const subscribeToAllLevels = useMutation(
     [SUBSCRIBE_TO_ALL_REFERRAL_LEVELS_MUTATION],
     async () => {
-      if (!account) {
-        connect();
-        return;
-      }
-
       await tokens.increaseAllowanceIfRequired.mutateAsync({
         token: TOKENS.SAV,
-        owner: account,
         spender: referralContract.address,
         requiredAmount: fullSubscriptionCost.data || BigNumber.from(10).pow(18), // fallback to 10 tokens
       });

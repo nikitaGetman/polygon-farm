@@ -118,16 +118,10 @@ export const useStaking = () => {
   const subscribe = useMutation(
     [STAKING_SUBSCRIBE_MUTATION],
     async (planId: number) => {
-      if (!account) {
-        connect();
-        return;
-      }
-
       const stakingPlan = activeStakingPlans[planId];
 
       await tokens.increaseAllowanceIfRequired.mutateAsync({
         token: TOKENS.SAV,
-        owner: account,
         spender: stakingContract.address,
         requiredAmount: stakingPlan.subscriptionCost,
       });
@@ -164,14 +158,8 @@ export const useStaking = () => {
       isToken2: boolean;
       referrer?: string;
     }) => {
-      if (!account) {
-        connect();
-        return;
-      }
-
       await tokens.increaseAllowanceIfRequired.mutateAsync({
         token: isToken2 ? TOKENS.SAVR : TOKENS.SAV,
-        owner: account,
         spender: stakingContract.address,
         requiredAmount: amount,
       });

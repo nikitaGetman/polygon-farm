@@ -1,7 +1,7 @@
 import React from 'react';
 import { Box, Flex, Text } from '@chakra-ui/react';
 
-import { LotteryStatusEnum } from '@/hooks/useLottery';
+import { LotteryStatusEnum } from '@/lib/lottery';
 
 import backgroundImage from './assets/lottery_background.svg';
 import tokensImage from './assets/tokens.svg';

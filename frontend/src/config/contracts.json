@@ -1214,6 +1214,11 @@
                   "components": [
                     {
                       "internalType": "uint256",
+                      "name": "id",
+                      "type": "uint256"
+                    },
+                    {
+                      "internalType": "uint256",
                       "name": "startTime",
                       "type": "uint256"
                     },
@@ -1334,6 +1339,11 @@
                   "components": [
                     {
                       "internalType": "uint256",
+                      "name": "id",
+                      "type": "uint256"
+                    },
+                    {
+                      "internalType": "uint256",
                       "name": "startTime",
                       "type": "uint256"
                     },
@@ -1447,6 +1457,11 @@
               "outputs": [
                 {
                   "components": [
+                    {
+                      "internalType": "uint256",
+                      "name": "id",
+                      "type": "uint256"
+                    },
                     {
                       "internalType": "uint256",
                       "name": "startTime",
@@ -1720,6 +1735,11 @@
               ],
               "name": "rounds",
               "outputs": [
+                {
+                  "internalType": "uint256",
+                  "name": "id",
+                  "type": "uint256"
+                },
                 {
                   "internalType": "uint256",
                   "name": "startTime",

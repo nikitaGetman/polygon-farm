@@ -43,11 +43,6 @@ export const useSquads = () => {
   const subscribe = useMutation(
     [SUBSCRIBE_TO_SQUADS_PLAN_MUTATION],
     async (planId: number) => {
-      if (!account) {
-        connect();
-        return;
-      }
-
       const squadPlan = squadPlansRequest?.data?.[planId];
       if (!squadPlan) {
         return;
@@ -59,7 +54,6 @@ export const useSquads = () => {
 
       await tokens.increaseAllowanceIfRequired.mutateAsync({
         token: TOKENS.SAV,
-        owner: account,
         spender: squadsContract.address,
         requiredAmount: squadPlan.subscriptionCost,
       });

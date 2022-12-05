@@ -101,14 +101,8 @@ export const useVendorSell = () => {
   const sellTokens = useMutation(
     [SELL_TOKENS_MUTATION],
     async (sellAmount: BigNumberish) => {
-      if (!account) {
-        connect();
-        return;
-      }
-
       await tokens.increaseAllowanceIfRequired.mutateAsync({
         token: TOKENS.SAV,
-        owner: account,
         spender: vendorSellContract.address,
         requiredAmount: sellAmount,
       });
