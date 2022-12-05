@@ -18,7 +18,7 @@ export const getBalanceHistoryFromTransfers = (
   currentBlock: number,
   userAccount: string
 ): BalanceHistoryReturnType => {
-  const token1Address = token1Transfers[0].address;
+  const token1Address = token1Transfers[0] ? token1Transfers[0].address : null;
 
   const tokensHistory = token1Transfers
     .concat(token2Transfers)
@@ -67,6 +67,11 @@ export const getBalanceHistoryFromTransfers = (
       ] as BalanceHistoryType[]
     )
     .reverse();
+
+  // Hack for preventing single dot on chart
+  if (tokensHistory.length === 1) {
+    tokensHistory.push({ ...tokensHistory[0], block: tokensHistory[0].block + 1 });
+  }
 
   return tokensHistory;
 };

@@ -65,7 +65,8 @@ export const ReferralInfo: FC<ReferralInfoProps> = ({ isPageView }) => {
     setMyReferrer,
   } = useReferralManager();
 
-  const isRefSubscribeLoading = fullSubscriptionCost.isLoading || levelSubscriptionCost.isLoading;
+  const isRefSubscribeLoading =
+    userReferralInfo.isLoading || fullSubscriptionCost.isLoading || levelSubscriptionCost.isLoading;
 
   const { success } = useNotification();
   const { onCopy, hasCopied, setValue } = useClipboard('');
@@ -225,11 +226,9 @@ export const ReferralInfo: FC<ReferralInfoProps> = ({ isPageView }) => {
           fullSubscriptionTill={fullSubscription}
           levelsSubscriptionTill={levelsSubscription}
           isLoading={isRefSubscribeLoading}
-          isFullLoading={subscribeToAllLevels.isLoading}
-          isLevelLoading={subscribeToLevel.isLoading}
           onClose={onRefSubscribeClose}
-          onFullSubscribe={subscribeToAllLevels.mutate}
-          onLevelSubscribe={subscribeToLevel.mutate}
+          onFullSubscribe={subscribeToAllLevels.mutateAsync}
+          onLevelSubscribe={subscribeToLevel.mutateAsync}
         />
       ) : null}
 
