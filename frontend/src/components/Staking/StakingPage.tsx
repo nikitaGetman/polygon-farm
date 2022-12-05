@@ -1,9 +1,11 @@
 import React, { useCallback, useEffect, useMemo } from 'react';
-import { Box, Button, Container, Flex, Link, Text } from '@chakra-ui/react';
-import { ArrowBackIcon, DownloadIcon } from '@chakra-ui/icons';
 import { Link as RouterLink } from 'react-router-dom';
-import { Staking } from './Staking';
+import { ArrowBackIcon, DownloadIcon } from '@chakra-ui/icons';
+import { Box, Button, Container, Flex, Link, Text } from '@chakra-ui/react';
+
 import { useStaking } from '@/hooks/useStaking';
+
+import { Staking } from './Staking';
 import { StakingTable } from './StakingTable';
 
 export const StakingPage = () => {

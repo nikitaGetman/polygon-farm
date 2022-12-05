@@ -13,11 +13,13 @@ import {
   Text,
 } from '@chakra-ui/react';
 import { BigNumberish } from 'ethers';
+
 import { ReactComponent as CheckIcon } from '@/assets/images/icons/check.svg';
+import { REFERRAL_SUBSCRIPTION_ENDING_NOTIFICATION } from '@/hooks/useReferralManager';
 import { getReadableAmount } from '@/utils/number';
 import { getLocalDateString, getReadableDuration } from '@/utils/time';
+
 import { CenteredSpinner } from '../ui/CenteredSpinner/CenteredSpinner';
-import { REFERRAL_SUBSCRIPTION_ENDING_NOTIFICATION } from '@/hooks/useReferralManager';
 
 type ReferralSubscriptionModalProps = {
   isOpen: boolean;

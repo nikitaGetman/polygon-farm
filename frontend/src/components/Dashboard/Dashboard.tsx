@@ -1,10 +1,12 @@
 import React, { useEffect } from 'react';
-import { Container, Box } from '@chakra-ui/react';
-import { Staking } from '@/components/Staking/Staking';
-import { ReferralInfo } from '@/components/Referral/ReferralInfo';
+import { Box, Container } from '@chakra-ui/react';
+
 import { WalletPortfolio } from '@/components/Dashboard/WalletPortfolio';
-import { SquadsList } from '../Squads/SquadsList';
+import { ReferralInfo } from '@/components/Referral/ReferralInfo';
+import { Staking } from '@/components/Staking/Staking';
+
 import { LotteryList } from '../Lottery/LotteryList';
+import { SquadsList } from '../Squads/SquadsList';
 
 export const Dashboard = () => {
   useEffect(() => {

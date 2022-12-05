@@ -1,6 +1,7 @@
 import React from 'react';
-import { useCountdown } from '@/hooks/useCountdown';
 import { Box, Flex, Text } from '@chakra-ui/react';
+
+import { useCountdown } from '@/hooks/useCountdown';
 
 export const LotteryCountdown = ({ timestamp }: { timestamp: number }) => {
   const { stampStrings } = useCountdown(timestamp);

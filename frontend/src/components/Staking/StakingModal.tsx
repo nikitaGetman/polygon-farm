@@ -1,5 +1,5 @@
 import React, { FC, useCallback, useState } from 'react';
-import { TOKENS } from '@/hooks/useTokens';
+import { Link as RouterLink } from 'react-router-dom';
 import {
   Box,
   Button,
@@ -21,14 +21,16 @@ import {
   Text,
 } from '@chakra-ui/react';
 import { BigNumberish, ethers } from 'ethers';
-import { Link as RouterLink } from 'react-router-dom';
+
 import { ReactComponent as ChevronDownIcon } from '@/assets/images/icons/chevron-down.svg';
-import { getReadableDuration } from '@/utils/time';
-import { InputAmount } from '../ui/InputAmount/InputAmount';
-import { useSavBalance, useSavRBalance } from '@/hooks/useTokenBalance';
-import { bigNumberToString } from '@/utils/number';
 import { ReactComponent as SavIcon } from '@/assets/images/sav_icon.svg';
 import { ReactComponent as SavrIcon } from '@/assets/images/savr_icon.svg';
+import { useSavBalance, useSavRBalance } from '@/hooks/useTokenBalance';
+import { TOKENS } from '@/hooks/useTokens';
+import { bigNumberToString } from '@/utils/number';
+import { getReadableDuration } from '@/utils/time';
+
+import { InputAmount } from '../ui/InputAmount/InputAmount';
 
 const MIN_STAKE_LIMIT = 0.1;
 

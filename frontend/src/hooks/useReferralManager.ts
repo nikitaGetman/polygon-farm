@@ -1,14 +1,16 @@
-import { bigNumberToString } from '@/utils/number';
-import { createReferralLink } from '@/utils/referralLinks';
+import { useMemo } from 'react';
 import { useMutation } from '@tanstack/react-query';
 import { BigNumber, ethers } from 'ethers';
-import { useMemo } from 'react';
 import { useAccount, useQuery, useQueryClient } from 'wagmi';
+
+import { bigNumberToString } from '@/utils/number';
+import { createReferralLink } from '@/utils/referralLinks';
+
 import { useReferralContract } from './contracts/useReferralContract';
 import { useConnectWallet } from './useConnectWallet';
 import { useNotification } from './useNotification';
 import { useStaking } from './useStaking';
-import { SAVR_BALANCE_REQUEST, SAV_BALANCE_REQUEST } from './useTokenBalance';
+import { SAV_BALANCE_REQUEST, SAVR_BALANCE_REQUEST } from './useTokenBalance';
 import { TOKENS, useTokens } from './useTokens';
 
 export const USER_REFERRAL_INFO_REQUEST = 'user-referrals-info';

@@ -1,4 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { ArrowBackIcon } from '@chakra-ui/icons';
 import {
   Box,
   Button,
@@ -9,15 +11,15 @@ import {
   Link,
   Text,
 } from '@chakra-ui/react';
-import { useNavigate } from 'react-router-dom';
-import { ArrowBackIcon } from '@chakra-ui/icons';
-import { useVendorSell } from '@/hooks/useVendorSell';
-import { InputAmount } from '../ui/InputAmount/InputAmount';
+
+import { ReactComponent as SwapIcon } from '@/assets/images/icons/swap.svg';
 import { ReactComponent as SavIcon } from '@/assets/images/sav_icon.svg';
 import { ReactComponent as UsdtIcon } from '@/assets/images/usdt_icon.svg';
-import { ReactComponent as SwapIcon } from '@/assets/images/icons/swap.svg';
 import { useSavBalance, useUsdtBalance } from '@/hooks/useTokenBalance';
+import { useVendorSell } from '@/hooks/useVendorSell';
 import { bigNumberToString, makeBigNumber } from '@/utils/number';
+
+import { InputAmount } from '../ui/InputAmount/InputAmount';
 
 const tokenPair = [
   {

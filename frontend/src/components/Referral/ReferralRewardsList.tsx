@@ -1,9 +1,12 @@
 import React, { useMemo, useState } from 'react';
 import { DownloadIcon } from '@chakra-ui/icons';
 import { Box, Button, Flex, Text } from '@chakra-ui/react';
-import { TableSearch } from '../ui/Table/TableSearch';
-import { ReferralRewardsTable } from './ReferralRewardsTable';
+
 import { useReferralManager } from '@/hooks/useReferralManager';
+
+import { TableSearch } from '../ui/Table/TableSearch';
+
+import { ReferralRewardsTable } from './ReferralRewardsTable';
 
 export const ReferralRewardsList = () => {
   const [search, setSearch] = useState<string>('');

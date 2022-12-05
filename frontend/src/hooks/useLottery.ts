@@ -1,5 +1,6 @@
 import { useMemo } from 'react';
 import { useAccount, useQuery, useQueryClient } from 'wagmi';
+
 import { useLotteryContract } from './contracts/useLotteryContract';
 import { useTicketContract } from './contracts/useTicketContract';
 import { useConnectWallet } from './useConnectWallet';

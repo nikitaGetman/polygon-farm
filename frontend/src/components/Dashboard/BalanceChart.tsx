@@ -1,5 +1,5 @@
 import React, { FC } from 'react';
-import { AreaChart, Area, ResponsiveContainer, XAxis } from 'recharts';
+import { Area, AreaChart, ResponsiveContainer, XAxis } from 'recharts';
 
 type BalanceData = {
   token1: number;

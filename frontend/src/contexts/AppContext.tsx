@@ -1,4 +1,4 @@
-import { createContext, useContext, useReducer, useMemo, Dispatch } from 'react';
+import { createContext, Dispatch, useContext, useMemo, useReducer } from 'react';
 
 // const mergeStates = (currentState, newState) => ({
 //   ...currentState,

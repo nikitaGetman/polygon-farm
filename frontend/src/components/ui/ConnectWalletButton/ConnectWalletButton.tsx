@@ -1,5 +1,6 @@
 import React from 'react';
 import { Button } from '@chakra-ui/react';
+
 import { useConnectWallet } from '@/hooks/useConnectWallet';
 
 export const ConnectWalletButton = () => {

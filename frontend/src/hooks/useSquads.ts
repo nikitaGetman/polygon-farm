@@ -1,8 +1,10 @@
+import { useMemo } from 'react';
+import { useMutation } from '@tanstack/react-query';
+import { useAccount, useQuery, useQueryClient } from 'wagmi';
+
 import { bigNumberToString } from '@/utils/number';
 import { getReadableDuration } from '@/utils/time';
-import { useMutation } from '@tanstack/react-query';
-import { useMemo } from 'react';
-import { useAccount, useQuery, useQueryClient } from 'wagmi';
+
 import { useSquadsContract } from './contracts/useSquadsContract';
 import { useConnectWallet } from './useConnectWallet';
 import { useHelperUserSquadsFullInfo } from './useHelper';

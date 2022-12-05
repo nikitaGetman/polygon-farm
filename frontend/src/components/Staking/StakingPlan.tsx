@@ -1,9 +1,9 @@
 import React, { FC, useCallback, useState } from 'react';
-import { Box, Text, Flex, Button } from '@chakra-ui/react';
-
+import { Box, Button, Flex, Text } from '@chakra-ui/react';
 import { BigNumber, BigNumberish } from 'ethers';
-import { getLocalDateString, getReadableDuration } from '@/utils/time';
+
 import { bigNumberToString, getReadableAmount } from '@/utils/number';
+import { getLocalDateString, getReadableDuration } from '@/utils/time';
 
 type StakingPlanProps = {
   isSubscribed?: boolean;

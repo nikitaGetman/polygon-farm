@@ -1,4 +1,5 @@
 import React, { useCallback, useMemo, useState } from 'react';
+import { DownloadIcon } from '@chakra-ui/icons';
 import {
   Box,
   Button,
@@ -11,12 +12,13 @@ import {
   Stack,
   Text,
 } from '@chakra-ui/react';
-import { ReferralsTable } from '../Referral/ReferralsTable';
-import { useHelperReferralsFullInfoByLevel } from '@/hooks/useHelper';
 import { useAccount } from 'wagmi';
-import { useReferralManager } from '@/hooks/useReferralManager';
-import { DownloadIcon } from '@chakra-ui/icons';
+
 import { ReactComponent as ChevronDownIcon } from '@/assets/images/icons/chevron-down.svg';
+import { useHelperReferralsFullInfoByLevel } from '@/hooks/useHelper';
+import { useReferralManager } from '@/hooks/useReferralManager';
+
+import { ReferralsTable } from '../Referral/ReferralsTable';
 import { TableSearch } from '../ui/Table/TableSearch';
 
 const TOTAL_LEVELS = 10;

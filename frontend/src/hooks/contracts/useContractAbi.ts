@@ -1,6 +1,7 @@
 import { Chain, useNetwork } from 'wagmi';
-import { ChainIDsEnum } from '@/config/index';
+
 import Contracts from '@/config/contracts.json';
+import { ChainIDsEnum } from '@/config/index';
 
 export enum ContractsEnum {
   'SAV' = 'Token1',

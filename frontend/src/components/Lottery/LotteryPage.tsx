@@ -1,16 +1,17 @@
 import React from 'react';
+import { Link as RouterLink, useParams } from 'react-router-dom';
 import { ArrowBackIcon } from '@chakra-ui/icons';
 import { Box, Container, Grid, GridItem, Link, useDisclosure } from '@chakra-ui/react';
-import { Link as RouterLink, useParams } from 'react-router-dom';
+import { BigNumber } from 'ethers';
 
 import { LotteryStatusEnum } from '@/hooks/useLottery';
-import { LotteryCountdown } from './LotteryCountdown';
-import { LotteryHeading } from './LotteryHeading';
-import { LotteryDescription } from './LotteryDescrption';
-import { BigNumber } from 'ethers';
-import { LotteryTickets } from './LotteryTickets';
-import { LotteryEnter } from './LotteryEnter';
+
 import { BuyLotteryTicketsModal } from './BuyLotteryTicketsModal';
+import { LotteryCountdown } from './LotteryCountdown';
+import { LotteryDescription } from './LotteryDescrption';
+import { LotteryEnter } from './LotteryEnter';
+import { LotteryHeading } from './LotteryHeading';
+import { LotteryTickets } from './LotteryTickets';
 
 const lottery = {
   status: LotteryStatusEnum.upcoming,

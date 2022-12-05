@@ -11,10 +11,11 @@ import {
   Tr,
   useDisclosure,
 } from '@chakra-ui/react';
-import { Table } from '@/components/ui/Table/Table';
 import { BigNumber } from 'ethers';
-import { getLocalDateTimeString } from '@/utils/time';
+
+import { Table } from '@/components/ui/Table/Table';
 import { getReadableAmount } from '@/utils/number';
+import { getLocalDateTimeString } from '@/utils/time';
 
 const COLLAPSED_LIMIT = 6;
 

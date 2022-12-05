@@ -1,5 +1,4 @@
 import React, { FC, useCallback, useState } from 'react';
-import { BigNumber } from 'ethers';
 import {
   Box,
   Button,
@@ -14,6 +13,8 @@ import {
   Spacer,
   Text,
 } from '@chakra-ui/react';
+import { BigNumber } from 'ethers';
+
 import { bigNumberToString } from '@/utils/number';
 
 const boxCommonStyles = {

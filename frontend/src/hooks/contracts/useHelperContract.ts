@@ -1,5 +1,7 @@
-import { Helper } from '@/types';
 import { useContract, useProvider, useSigner } from 'wagmi';
+
+import { Helper } from '@/types';
+
 import { ContractsEnum, useContractAbi } from './useContractAbi';
 
 export const useHelperContract = () => {

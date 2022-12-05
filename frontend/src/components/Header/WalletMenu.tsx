@@ -3,16 +3,17 @@ import {
   Button,
   Menu,
   MenuButton,
-  MenuList,
   MenuItem,
+  MenuList,
   Portal,
   useClipboard,
 } from '@chakra-ui/react';
+
+import { ReactComponent as ChevronDownIcon } from '@/assets/images/icons/chevron-down.svg';
 import { ReactComponent as MetamaskIcon } from '@/assets/images/icons/metamask.svg';
 import { ReactComponent as WalletConnectIcon } from '@/assets/images/icons/walletconnect.svg';
-import { ReactComponent as ChevronDownIcon } from '@/assets/images/icons/chevron-down.svg';
-import { trimAddress } from '@/utils/address';
 import { useNotification } from '@/hooks/useNotification';
+import { trimAddress } from '@/utils/address';
 
 const CONNECTOR_ICON: Record<string, any> = {
   MetaMask: <MetamaskIcon />,

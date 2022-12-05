@@ -1,16 +1,18 @@
 import React from 'react';
-import { Text, Box, Flex, Button } from '@chakra-ui/react';
+import { useNavigate } from 'react-router-dom';
+import { Box, Button, Flex, Text } from '@chakra-ui/react';
 import { useAccount } from 'wagmi';
-import { ReactComponent as PuzzlesIcon } from '@/assets/images/icons/puzzles.svg';
+
+import { ReactComponent as BoxIcon } from '@/assets/images/icons/box.svg';
 import { ReactComponent as PlusIcon } from '@/assets/images/icons/plus.svg';
+import { ReactComponent as PuzzlesIcon } from '@/assets/images/icons/puzzles.svg';
 import { ConnectWalletButton } from '@/components/ui/ConnectWalletButton/ConnectWalletButton';
 import { useAddTokens } from '@/hooks/useAddTokens';
-import { bigNumberToString, getReadableAmount } from '@/utils/number';
-import { ReactComponent as BoxIcon } from '@/assets/images/icons/box.svg';
-import { useSavBalance, useTokenBalanceHistory, useSavRBalance } from '@/hooks/useTokenBalance';
 import { useStaking } from '@/hooks/useStaking';
+import { useSavBalance, useSavRBalance, useTokenBalanceHistory } from '@/hooks/useTokenBalance';
+import { bigNumberToString, getReadableAmount } from '@/utils/number';
+
 import { BalanceHistoryChart } from './BalanceChart';
-import { useNavigate } from 'react-router-dom';
 
 export const WalletPortfolio = () => {
   const navigate = useNavigate();

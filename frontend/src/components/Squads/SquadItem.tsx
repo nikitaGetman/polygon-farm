@@ -1,10 +1,11 @@
 import React, { FC, useCallback, useMemo, useState } from 'react';
-import { BigNumber, BigNumberish } from 'ethers';
 import { Box, Button, Flex, Text } from '@chakra-ui/react';
-import { getLocalDateString, getReadableDuration } from '@/utils/time';
-import { bigNumberToString } from '@/utils/number';
+import { BigNumber, BigNumberish } from 'ethers';
+
 import { ReactComponent as SquadSectionIcon } from '@/assets/images/icons/squad-section.svg';
 import { ReactComponent as SquadSectionFilledIcon } from '@/assets/images/icons/squad-section-filled.svg';
+import { bigNumberToString } from '@/utils/number';
+import { getLocalDateString, getReadableDuration } from '@/utils/time';
 
 type SquadItemProps = {
   subscription?: BigNumber;

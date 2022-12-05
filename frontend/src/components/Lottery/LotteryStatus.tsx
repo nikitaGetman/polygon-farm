@@ -1,6 +1,7 @@
 import React, { useMemo } from 'react';
-import { LotteryStatusEnum } from '@/hooks/useLottery';
 import { Box } from '@chakra-ui/react';
+
+import { LotteryStatusEnum } from '@/hooks/useLottery';
 
 export const LotteryStatus = ({ status }: { status: LotteryStatusEnum }) => {
   const statusColor = useMemo(() => {

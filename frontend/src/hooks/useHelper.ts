@@ -1,7 +1,9 @@
-import { Helper } from '@/types';
+import { useMemo } from 'react';
 import { useQueries, useQuery } from '@tanstack/react-query';
 import { ethers } from 'ethers';
-import { useMemo } from 'react';
+
+import { Helper } from '@/types';
+
 import { useHelperContract } from './contracts/useHelperContract';
 import { SQUADS_SUBSCRIPTION_ENDING_NOTIFICATION } from './useSquads';
 import { useStaking } from './useStaking';

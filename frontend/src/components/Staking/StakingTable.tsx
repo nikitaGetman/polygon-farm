@@ -11,13 +11,15 @@ import {
   Tr,
   useDisclosure,
 } from '@chakra-ui/react';
-import { Table } from '../ui/Table/Table';
+import { BigNumber } from 'ethers';
+
 import { ReactComponent as SavIcon } from '@/assets/images/sav_icon.svg';
 import { ReactComponent as SavrIcon } from '@/assets/images/savr_icon.svg';
-import { BigNumber } from 'ethers';
-import { getLocalDateTimeString, getReadableDuration } from '@/utils/time';
 import { bigNumberToString } from '@/utils/number';
 import { calculateStakeReward } from '@/utils/staking';
+import { getLocalDateTimeString, getReadableDuration } from '@/utils/time';
+
+import { Table } from '../ui/Table/Table';
 
 const COLLAPSED_LIMIT = 6;
 

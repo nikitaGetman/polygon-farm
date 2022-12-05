@@ -1,6 +1,6 @@
 import React from 'react';
-import { Box, Center, Spinner } from '@chakra-ui/react';
 import { FC } from 'react';
+import { Box, Center, Spinner } from '@chakra-ui/react';
 
 type CenteredSpinnerProps = {
   color?: string;

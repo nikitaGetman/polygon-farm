@@ -1,8 +1,9 @@
-import { ERC20 } from '@/types';
 import { BigNumber } from 'ethers';
-import { useContract, useNetwork, erc20ABI, useProvider, useSigner } from 'wagmi';
-import Contracts from '@/config/contracts.json';
+import { erc20ABI, useContract, useNetwork, useProvider, useSigner } from 'wagmi';
+
 import { ChainIDsEnum } from '@/config';
+import Contracts from '@/config/contracts.json';
+import { ERC20 } from '@/types';
 import { waitForTransaction } from '@/utils/waitForTransaction';
 
 const POLYGON_USDT_ADDRESS = '';

@@ -1,28 +1,30 @@
 import React, { createRef, useCallback, useEffect } from 'react';
-import { Box, ChakraProvider } from '@chakra-ui/react';
 import {
-  useLocation,
   createBrowserRouter,
-  useOutlet,
-  RouterProvider,
   Navigate,
+  RouterProvider,
+  useLocation,
+  useOutlet,
   useSearchParams,
 } from 'react-router-dom';
-import { WagmiConfig } from 'wagmi';
-import { Header } from '@/components/Header/Header';
-import { Dashboard } from '@/components/Dashboard/Dashboard';
-import { theme } from '@/modules/chakra';
-import { client } from '@/modules/wagmi';
+import { CSSTransition, SwitchTransition } from 'react-transition-group';
+import { Box, ChakraProvider } from '@chakra-ui/react';
 import { QueryClientProvider } from '@tanstack/react-query';
-import { queryClient } from '@/modules/query';
+import { WagmiConfig } from 'wagmi';
+
+import { Dashboard } from '@/components/Dashboard/Dashboard';
+import { ExchangePage } from '@/components/Exchange/ExchangePage';
+import { Header } from '@/components/Header/Header';
+import { Modals } from '@/components/Modals';
 import { StakingPage } from '@/components/Staking/StakingPage';
 import { AppStateProvider } from '@/contexts/AppContext';
-import { Modals } from '@/components/Modals';
-import { SwitchTransition, CSSTransition } from 'react-transition-group';
+import { theme } from '@/modules/chakra';
+import { queryClient } from '@/modules/query';
+import { client } from '@/modules/wagmi';
+
+import { LotteryPage } from './components/Lottery/LotteryPage';
 import { SquadsPage } from './components/Squads/SquadsPage';
 import { REFERRER_SEARCH_PARAMS_KEY, useLocalReferrer } from './hooks/useLocalReferrer';
-import { ExchangePage } from '@/components/Exchange/ExchangePage';
-import { LotteryPage } from './components/Lottery/LotteryPage';
 
 import '@/assets/styles/index.scss';
 

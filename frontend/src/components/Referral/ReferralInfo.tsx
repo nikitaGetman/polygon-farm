@@ -1,4 +1,5 @@
 import React, { FC, useCallback, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { WarningTwoIcon } from '@chakra-ui/icons';
 import {
   Box,
@@ -15,21 +16,22 @@ import {
   useClipboard,
   useDisclosure,
 } from '@chakra-ui/react';
-import { Link } from 'react-router-dom';
+import { BigNumber } from 'ethers';
 import { useAccount } from 'wagmi';
+
+import { ReactComponent as CopyIcon } from '@/assets/images/icons/copy.svg';
+import { ReactComponent as QRIcon } from '@/assets/images/icons/qr.svg';
 import { ConnectWalletButton } from '@/components/ui/ConnectWalletButton/ConnectWalletButton';
 import { StatBlock } from '@/components/ui/StatBlock/StatBlock';
-import { ReactComponent as QRIcon } from '@/assets/images/icons/qr.svg';
-import { ReactComponent as CopyIcon } from '@/assets/images/icons/copy.svg';
-import { useNotification } from '@/hooks/useNotification';
-import { trimAddress } from '@/utils/address';
-import { useReferralManager } from '@/hooks/useReferralManager';
-import { BigNumber } from 'ethers';
-import { getReadableAmount } from '@/utils/number';
-import { ReferralSubscriptionModal } from './ReferralSubscriptionModal';
 import { useLocalReferrer } from '@/hooks/useLocalReferrer';
-import { ReferralUpdateModal } from './ReferralUpdateModal';
+import { useNotification } from '@/hooks/useNotification';
+import { useReferralManager } from '@/hooks/useReferralManager';
+import { trimAddress } from '@/utils/address';
+import { getReadableAmount } from '@/utils/number';
+
 import { ReferralLinkQRModal } from './ReferralLinkQRModal';
+import { ReferralSubscriptionModal } from './ReferralSubscriptionModal';
+import { ReferralUpdateModal } from './ReferralUpdateModal';
 
 type ReferralInfoProps = {
   isPageView?: boolean;

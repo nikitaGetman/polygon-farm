@@ -1,7 +1,8 @@
+import { useCallback, useMemo } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { BigNumber, BigNumberish, ethers } from 'ethers';
-import { useCallback, useMemo } from 'react';
 import { useAccount, useQuery } from 'wagmi';
+
 import { useUsdtTokenContract } from './contracts/useUsdtTokenContract';
 import { useVendorSellContract } from './contracts/useVendorSellContract';
 import { useConnectWallet } from './useConnectWallet';

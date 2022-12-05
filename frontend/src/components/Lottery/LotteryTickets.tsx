@@ -1,5 +1,6 @@
 import React, { FC } from 'react';
 import { Box, Button, Flex, Text } from '@chakra-ui/react';
+
 import puzzlePattern from './assets/puzzle_pattern.svg';
 
 type LotteryTicketsProps = {

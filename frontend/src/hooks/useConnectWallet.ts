@@ -1,5 +1,6 @@
-import { useAppStateContext } from '@/contexts/AppContext';
 import { useCallback } from 'react';
+
+import { useAppStateContext } from '@/contexts/AppContext';
 
 export const useConnectWallet = () => {
   const { openConnectModal } = useAppStateContext();

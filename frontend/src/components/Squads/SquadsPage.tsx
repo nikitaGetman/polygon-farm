@@ -1,17 +1,20 @@
 import React, { useEffect } from 'react';
-import { Box, Button, Container, Flex, Heading, Link, Spinner } from '@chakra-ui/react';
+import { useMemo } from 'react';
+import { useCallback } from 'react';
 import { Link as RouterLink } from 'react-router-dom';
 import { ArrowBackIcon } from '@chakra-ui/icons';
+import { Box, Button, Container, Flex, Heading, Link, Spinner } from '@chakra-ui/react';
+import { BigNumber } from 'ethers';
+
+import { useReferralManager } from '@/hooks/useReferralManager';
+import { getReadableAmount } from '@/utils/number';
+
 import { ReferralInfo } from '../Referral/ReferralInfo';
+import { ReferralRewardsList } from '../Referral/ReferralRewardsList';
 import { ReferralsList } from '../Referral/ReferralsList';
 import { StatBlock } from '../ui/StatBlock/StatBlock';
-import { BigNumber } from 'ethers';
-import { useReferralManager } from '@/hooks/useReferralManager';
-import { useMemo } from 'react';
-import { getReadableAmount } from '@/utils/number';
-import { useCallback } from 'react';
+
 import { SquadsList } from './SquadsList';
-import { ReferralRewardsList } from '../Referral/ReferralRewardsList';
 
 export const SquadsPage = () => {
   const { userReferralInfo, claimDividends } = useReferralManager();

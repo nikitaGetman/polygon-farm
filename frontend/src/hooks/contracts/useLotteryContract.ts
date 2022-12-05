@@ -1,6 +1,8 @@
+import { useContract, useProvider, useSigner } from 'wagmi';
+
 import { Lottery } from '@/types';
 import { waitForTransaction } from '@/utils/waitForTransaction';
-import { useContract, useProvider, useSigner } from 'wagmi';
+
 import { ContractsEnum, useContractAbi } from './useContractAbi';
 
 export const useLotteryContract = () => {

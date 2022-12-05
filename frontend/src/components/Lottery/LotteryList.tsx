@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import {
   Box,
   Button,
@@ -13,12 +14,14 @@ import {
   Text,
 } from '@chakra-ui/react';
 import { useAccount } from 'wagmi';
+
+import { LotteryStatusEnum, useLottery } from '@/hooks/useLottery';
+import { getReadableAmount } from '@/utils/number';
+
 import { ConnectWalletButton } from '../ui/ConnectWalletButton/ConnectWalletButton';
 import { StatBlock } from '../ui/StatBlock/StatBlock';
-import { LotteryStatusEnum, useLottery } from '@/hooks/useLottery';
+
 import { LotteryItem } from './LotteryItem';
-import { useNavigate } from 'react-router-dom';
-import { getReadableAmount } from '@/utils/number';
 
 const lotteries: any[] = [
   {

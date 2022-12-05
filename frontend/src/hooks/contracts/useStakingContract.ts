@@ -1,7 +1,9 @@
-import { waitForTransaction } from '@/utils/waitForTransaction';
-import { Staking } from '@/types';
 import { BigNumberish, ethers } from 'ethers';
 import { useContract, useProvider, useSigner } from 'wagmi';
+
+import { Staking } from '@/types';
+import { waitForTransaction } from '@/utils/waitForTransaction';
+
 import { ContractsEnum, useContractAbi } from './useContractAbi';
 
 export enum StakingEvent {

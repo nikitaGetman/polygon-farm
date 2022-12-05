@@ -1,7 +1,9 @@
-import { ReferralManager } from '@/types';
-import { waitForTransaction } from '@/utils/waitForTransaction';
 import { BigNumber } from 'ethers';
 import { useContract, useProvider, useSigner } from 'wagmi';
+
+import { ReferralManager } from '@/types';
+import { waitForTransaction } from '@/utils/waitForTransaction';
+
 import { ContractsEnum, useContractAbi } from './useContractAbi';
 
 export const useReferralContract = () => {

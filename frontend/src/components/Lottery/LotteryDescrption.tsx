@@ -1,6 +1,7 @@
 import React, { FC } from 'react';
 import { Box, Flex, Text } from '@chakra-ui/react';
 import { BigNumberish } from 'ethers';
+
 import prizeBackground from './assets/prize_background.svg';
 
 type LotteryDescriptionProps = {

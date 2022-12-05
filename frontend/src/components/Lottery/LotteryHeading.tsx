@@ -1,9 +1,11 @@
 import React from 'react';
 import { Box, Flex, Text } from '@chakra-ui/react';
-import { LotteryStatus } from './LotteryStatus';
+
+import { LotteryStatusEnum } from '@/hooks/useLottery';
+
 import backgroundImage from './assets/lottery_background.svg';
 import tokensImage from './assets/tokens.svg';
-import { LotteryStatusEnum } from '@/hooks/useLottery';
+import { LotteryStatus } from './LotteryStatus';
 
 export const LotteryHeading = ({
   status,

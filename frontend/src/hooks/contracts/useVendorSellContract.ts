@@ -1,7 +1,9 @@
-import { VendorSell } from '@/types';
-import { waitForTransaction } from '@/utils/waitForTransaction';
 import { BigNumberish } from 'ethers';
 import { useContract, useProvider, useSigner } from 'wagmi';
+
+import { VendorSell } from '@/types';
+import { waitForTransaction } from '@/utils/waitForTransaction';
+
 import { ContractsEnum, useContractAbi } from './useContractAbi';
 
 export const useVendorSellContract = () => {

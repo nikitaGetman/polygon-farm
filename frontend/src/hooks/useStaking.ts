@@ -1,14 +1,16 @@
-import { bigNumberToString } from '@/utils/number';
-import { getReadableDuration } from '@/utils/time';
+import { useMemo } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { BigNumber, BigNumberish } from 'ethers';
-import { useMemo } from 'react';
 import { useAccount } from 'wagmi';
+
+import { bigNumberToString } from '@/utils/number';
+import { getReadableDuration } from '@/utils/time';
+
 import { useStakingContract } from './contracts/useStakingContract';
 import { useConnectWallet } from './useConnectWallet';
 import { HELPER_USER_SQUADS_INFO_REQUEST } from './useHelper';
 import { useNotification } from './useNotification';
-import { SAVR_BALANCE_REQUEST, SAV_BALANCE_REQUEST } from './useTokenBalance';
+import { SAV_BALANCE_REQUEST, SAVR_BALANCE_REQUEST } from './useTokenBalance';
 import { TOKENS, useTokens } from './useTokens';
 
 export const STAKING_PLANS_REQUEST = 'staking-plans';
