@@ -54,9 +54,15 @@ export const Footer = () => {
             <Flex className="footer-bottom__right" flexDirection="column" pt="10px">
               <Text className="contact-heading">Contact us</Text>
               <Flex className="contact-icons">
-                <TelegramIcon />
-                <TwitterIcon />
-                <DiscordIcon />
+                <a href="#" target="_blank">
+                  <TelegramIcon />
+                </a>
+                <a href="#" target="_blank">
+                  <TwitterIcon />
+                </a>
+                <a href="#" target="_blank">
+                  <DiscordIcon />
+                </a>
               </Flex>
               <Link className="contact-mail" href="mailto:isaver@gmail.com">
                 isaver@gmail.com

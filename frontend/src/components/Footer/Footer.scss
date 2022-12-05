@@ -1,5 +1,12 @@
 @import '@/assets/styles/vars.scss';
 
+.app-footer {
+  background: linear-gradient(96.85deg, #1F3E2C -8.44%, #1A3435 102.66%);
+  box-shadow: 0px 6px 20px rgba(0, 0, 0, 0.25);
+  backdrop-filter: blur(22.5px);
+  padding-top: 45px;
+}
+
 .footer {
   padding-bottom: 63px;
 
@@ -64,7 +71,7 @@
   &-icons {
     margin-bottom: 8px;
 
-    svg {
+    a {
       margin-right: 15px;
 
       &:last-child {
@@ -147,6 +154,9 @@
 }
 
 @media screen and (max-width: $lg) {
+  .app-footer {
+    padding-top: 40px;
+  }
   .footer {
     padding-bottom: 46px;
   }
@@ -170,6 +180,9 @@
 }
 
 @media screen and (max-width: $md) {
+  .app-footer {
+    padding-top: 35px;
+  }
   .footer {
     padding-bottom: 37px;
   }
@@ -219,13 +232,41 @@
       order: 1;
       width: 100%;
       margin-bottom: 45px;
-      .contact-heading{
+
+      .contact-heading {
         display: none;
       }
     }
   }
 }
 
-@media screen and (max-width: $sm) {
+@media screen and (min-width: $sm) and (max-width: $md) {
+  .app-footer {
+    padding-top: 30px;
+  }
+  .footer-top__left {
+    margin-bottom: 50px;
 
+    img {
+      width: 114px;
+      height: 37px;
+    }
+  }
+  .footer-top__right {
+    .mail-list__heading {
+      font-size: 16px;
+      line-height: 20px;
+      margin-bottom: 10px;
+    }
+
+    .mail-list__subheading {
+      margin-bottom: 17px;
+    }
+
+    .sav-container p {
+      font-size: 16px;
+      line-height: 20px;
+      margin-left: 5px;
+    }
+  }
 }

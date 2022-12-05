@@ -7,7 +7,7 @@ import { modalTheme } from './modal';
 import { tableTheme } from './table';
 
 const breakpoints = {
-  sm: '0px',
+  sm: '10px',
   md: '480px',
   lg: '640px',
   xl: '1024px',
