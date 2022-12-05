@@ -1,4 +1,5 @@
 import { VendorSell } from '@/types';
+import { waitForTransaction } from '@/utils/waitForTransaction';
 import { BigNumberish } from 'ethers';
 import { useContract, useProvider, useSigner } from 'wagmi';
 import { ContractsEnum, useContractAbi } from './useContractAbi';
@@ -35,14 +36,12 @@ export const useVendorSellContract = () => {
 
   const buyTokens = async (spendAmount: BigNumberish) => {
     const tx = await contract.buyTokens(spendAmount);
-    await tx.wait();
-    return tx.hash;
+    return waitForTransaction(tx);
   };
 
   const sellTokens = async (sellAmount: BigNumberish) => {
     const tx = await contract.sellTokens(sellAmount);
-    await tx.wait();
-    return tx.hash;
+    return waitForTransaction(tx);
   };
 
   return {

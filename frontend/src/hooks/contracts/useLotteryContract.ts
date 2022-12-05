@@ -1,4 +1,5 @@
 import { Lottery } from '@/types';
+import { waitForTransaction } from '@/utils/waitForTransaction';
 import { useContract, useProvider, useSigner } from 'wagmi';
 import { ContractsEnum, useContractAbi } from './useContractAbi';
 
@@ -46,20 +47,17 @@ export const useLotteryContract = () => {
 
   const entryLottery = async (roundId: number, tickets: number) => {
     const tx = await contract.entryLottery(roundId, tickets);
-    await tx.wait();
-    return tx.hash;
+    return waitForTransaction(tx);
   };
 
   const buyTickets = async (amount: number) => {
     const tx = await contract.buyTickets(amount);
-    await tx.wait();
-    return tx.hash;
+    return waitForTransaction(tx);
   };
 
   const claimDay = async () => {
     const tx = await contract.claimDay();
-    await tx.wait();
-    return tx.hash;
+    return waitForTransaction(tx);
   };
 
   return {

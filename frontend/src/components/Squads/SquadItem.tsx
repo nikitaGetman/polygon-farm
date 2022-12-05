@@ -84,7 +84,7 @@ export const SquadItem: FC<SquadItemProps> = ({
         <Box>
           {isSubscribed ? (
             <Text textStyle="textSansBold">
-              <>Until {getLocalDateString(BigNumber.from(subscription).toNumber())}</>
+              <>until {getLocalDateString(BigNumber.from(subscription).toNumber())}</>
             </Text>
           ) : (
             <Text textStyle="textSansBold">

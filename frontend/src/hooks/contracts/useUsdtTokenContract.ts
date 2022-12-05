@@ -3,6 +3,7 @@ import { BigNumber } from 'ethers';
 import { useContract, useNetwork, erc20ABI, useProvider, useSigner } from 'wagmi';
 import Contracts from '@/config/contracts.json';
 import { ChainIDsEnum } from '@/config';
+import { waitForTransaction } from '@/utils/waitForTransaction';
 
 const POLYGON_USDT_ADDRESS = '';
 
@@ -42,8 +43,7 @@ export const useUsdtTokenContract = () => {
 
   const approve = async (spender: string, amount: BigNumber): Promise<string> => {
     const tx = await contract.approve(spender, amount);
-    await tx.wait();
-    return tx.hash;
+    return waitForTransaction(tx);
   };
 
   return {

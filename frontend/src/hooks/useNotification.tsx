@@ -44,9 +44,7 @@ export const useNotification = () => {
   const handleError = useCallback(
     (err: any) => {
       const errData = tryToGetErrorData(err);
-      if (!errData.isReplaced) {
-        error({ title: errData.title, description: errData.description });
-      }
+      error({ title: errData.title, description: errData.description });
 
       return errData;
     },

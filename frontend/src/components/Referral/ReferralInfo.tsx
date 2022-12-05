@@ -66,7 +66,9 @@ export const ReferralInfo: FC<ReferralInfoProps> = ({ isPageView }) => {
   } = useReferralManager();
 
   const isRefSubscribeLoading =
-    userReferralInfo.isLoading || fullSubscriptionCost.isLoading || levelSubscriptionCost.isLoading;
+    userReferralInfo.isFetching ||
+    fullSubscriptionCost.isFetching ||
+    levelSubscriptionCost.isFetching;
 
   const { success } = useNotification();
   const { onCopy, hasCopied, setValue } = useClipboard('');
@@ -218,19 +220,18 @@ export const ReferralInfo: FC<ReferralInfoProps> = ({ isPageView }) => {
         </Flex>
       </Flex>
 
-      {isRefSubscribeOpen ? (
-        <ReferralSubscriptionModal
-          fullSubscriptionCost={fullSubscriptionCost.data || 0}
-          levelSubscriptionCost={levelSubscriptionCost.data || 0}
-          subscriptionDuration={subscriptionDuration}
-          fullSubscriptionTill={fullSubscription}
-          levelsSubscriptionTill={levelsSubscription}
-          isLoading={isRefSubscribeLoading}
-          onClose={onRefSubscribeClose}
-          onFullSubscribe={subscribeToAllLevels.mutateAsync}
-          onLevelSubscribe={subscribeToLevel.mutateAsync}
-        />
-      ) : null}
+      <ReferralSubscriptionModal
+        isOpen={isRefSubscribeOpen}
+        fullSubscriptionCost={fullSubscriptionCost.data || 0}
+        levelSubscriptionCost={levelSubscriptionCost.data || 0}
+        subscriptionDuration={subscriptionDuration}
+        fullSubscriptionTill={fullSubscription}
+        levelsSubscriptionTill={levelsSubscription}
+        isLoading={isRefSubscribeLoading}
+        onClose={onRefSubscribeClose}
+        onFullSubscribe={subscribeToAllLevels.mutateAsync}
+        onLevelSubscribe={subscribeToLevel.mutateAsync}
+      />
 
       {isLeaderUpdateOpen ? (
         <ReferralUpdateModal

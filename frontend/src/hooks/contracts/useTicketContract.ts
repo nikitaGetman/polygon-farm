@@ -1,4 +1,5 @@
 import { Ticket } from '@/types';
+import { waitForTransaction } from '@/utils/waitForTransaction';
 import { useContract, useProvider, useSigner } from 'wagmi';
 import { ContractsEnum, useContractAbi } from './useContractAbi';
 
@@ -25,8 +26,7 @@ export const useTicketContract = () => {
   };
   const setApprovalForAll = async (operator: string, isApproved: boolean) => {
     const tx = await contract.setApprovalForAll(operator, isApproved);
-    await tx.wait();
-    return tx.hash;
+    return waitForTransaction(tx);
   };
 
   return {

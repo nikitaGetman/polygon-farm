@@ -20,6 +20,7 @@ import { CenteredSpinner } from '../ui/CenteredSpinner/CenteredSpinner';
 import { REFERRAL_SUBSCRIPTION_ENDING_NOTIFICATION } from '@/hooks/useReferralManager';
 
 type ReferralSubscriptionModalProps = {
+  isOpen: boolean;
   fullSubscriptionCost: BigNumberish;
   levelSubscriptionCost: BigNumberish;
   subscriptionDuration: number;
@@ -31,6 +32,7 @@ type ReferralSubscriptionModalProps = {
   onClose: () => void;
 };
 export const ReferralSubscriptionModal: FC<ReferralSubscriptionModalProps> = ({
+  isOpen,
   fullSubscriptionCost,
   levelSubscriptionCost,
   subscriptionDuration,
@@ -42,7 +44,7 @@ export const ReferralSubscriptionModal: FC<ReferralSubscriptionModalProps> = ({
   onClose,
 }) => {
   const [isFullLoading, setIsFullLoading] = useState(false);
-  const [isLevelLoading, setIsLevelLoading] = useState(false);
+  const [levelLoading, setLevelLoading] = useState<number>();
 
   const handleSubscribeToFull = useCallback(async () => {
     setIsFullLoading(true);
@@ -53,16 +55,18 @@ export const ReferralSubscriptionModal: FC<ReferralSubscriptionModalProps> = ({
 
   const handleSubscribeToLevel = useCallback(
     async (level: number) => {
-      setIsLevelLoading(true);
+      setLevelLoading(level);
       return onLevelSubscribe(level).finally(() => {
-        setIsLevelLoading(false);
+        setLevelLoading(undefined);
       });
     },
-    [onLevelSubscribe, setIsLevelLoading]
+    [onLevelSubscribe, setLevelLoading]
   );
 
+  const isLevelLoading = levelLoading !== undefined;
+
   return (
-    <Modal isCentered isOpen={true} onClose={onClose} scrollBehavior="inside">
+    <Modal isCentered isOpen={isOpen} onClose={onClose} scrollBehavior="inside">
       <ModalOverlay />
       <ModalContent position="relative">
         <ModalHeader textStyle="textSansBold" fontSize={26}>
@@ -81,7 +85,8 @@ export const ReferralSubscriptionModal: FC<ReferralSubscriptionModalProps> = ({
               price={fullSubscriptionCost}
               duration={subscriptionDuration}
               subscriptionTill={fullSubscriptionTill}
-              disabled={isLevelLoading}
+              disabled={isLevelLoading || isFullLoading}
+              isLoading={isFullLoading}
               onSubscribe={handleSubscribeToFull}
             />
           </Box>
@@ -97,6 +102,7 @@ export const ReferralSubscriptionModal: FC<ReferralSubscriptionModalProps> = ({
                     duration={subscriptionDuration}
                     subscriptionTill={subTill}
                     disabled={isFullLoading || isLevelLoading}
+                    isLoading={levelLoading === index + 1}
                     onSubscribe={() => handleSubscribeToLevel(index + 1)}
                   />
                 </Box>
@@ -114,6 +120,7 @@ type SubscriptionLevelProps = {
   price: BigNumberish;
   duration: number;
   subscriptionTill: number;
+  isLoading: boolean;
   disabled: boolean;
   onSubscribe: () => Promise<void>;
 };
@@ -122,6 +129,7 @@ const SubscriptionLevel: FC<SubscriptionLevelProps> = ({
   duration,
   title,
   subscriptionTill,
+  isLoading,
   disabled,
   onSubscribe,
 }) => {
@@ -129,15 +137,6 @@ const SubscriptionLevel: FC<SubscriptionLevelProps> = ({
   const isActive = subscriptionTill > currentTime;
   const isEnding =
     isActive && subscriptionTill - currentTime < REFERRAL_SUBSCRIPTION_ENDING_NOTIFICATION;
-
-  const [isLoading, setIsLoading] = useState(false);
-
-  const handleSubscribe = useCallback(async () => {
-    setIsLoading(true);
-    onSubscribe().finally(() => {
-      setIsLoading(false);
-    });
-  }, [onSubscribe, setIsLoading]);
 
   return (
     <Box>
@@ -174,14 +173,14 @@ const SubscriptionLevel: FC<SubscriptionLevelProps> = ({
           ) : null}
         </Flex>
         {!isActive ? (
-          <Button onClick={handleSubscribe} isLoading={isLoading} disabled={disabled || isLoading}>
+          <Button onClick={onSubscribe} isLoading={isLoading} disabled={disabled || isLoading}>
             Activate
           </Button>
         ) : null}
         {isEnding ? (
           <Button
             variant="outlinedWhite"
-            onClick={handleSubscribe}
+            onClick={onSubscribe}
             isLoading={isLoading}
             disabled={disabled || isLoading}
           >

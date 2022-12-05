@@ -1,4 +1,5 @@
 import { ReferralManager } from '@/types';
+import { waitForTransaction } from '@/utils/waitForTransaction';
 import { BigNumber } from 'ethers';
 import { useContract, useProvider, useSigner } from 'wagmi';
 import { ContractsEnum, useContractAbi } from './useContractAbi';
@@ -23,26 +24,22 @@ export const useReferralContract = () => {
 
   const subscribeToLevel = async (level: number): Promise<string> => {
     const tx = await contract.subscribeToLevel(level);
-    await tx.wait();
-    return tx.hash;
+    return waitForTransaction(tx);
   };
 
   const subscribeToAllLevels = async (): Promise<string> => {
     const tx = await contract.subscribeToAllLevels();
-    await tx.wait();
-    return tx.hash;
+    return waitForTransaction(tx);
   };
 
   const setMyReferrer = async (referrer: string) => {
     const tx = await contract.setMyReferrer(referrer);
-    await tx.wait();
-    return tx.hash;
+    return waitForTransaction(tx);
   };
 
   const claimRewards = async (amount: BigNumber) => {
     const tx = await contract.claimDividends(amount);
-    await tx.wait();
-    return tx.hash;
+    return waitForTransaction(tx);
   };
 
   const getRewards = async (account: string) => {
