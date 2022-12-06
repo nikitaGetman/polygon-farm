@@ -1,24 +1,23 @@
-import React, { useCallback, useEffect, useMemo } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import { Link as RouterLink } from 'react-router-dom';
 import { ArrowBackIcon, DownloadIcon } from '@chakra-ui/icons';
 import { Box, Button, Container, Flex, Link, Text } from '@chakra-ui/react';
 
+import { useDocumentTitle } from '@/hooks/useDocumentTitle';
 import { useStaking } from '@/hooks/useStaking';
 
 import { Staking } from './Staking';
 import { StakingTable } from './StakingTable';
 
 export const StakingPage = () => {
-  const { userStakes, stakingPlans, withdraw } = useStaking();
+  useDocumentTitle('iSaver | Earn by staking');
 
-  useEffect(() => {
-    document.title = 'iSaver | Earn by staking';
-  }, []);
+  const { userStakesRequest, stakingPlansRequest, withdraw } = useStaking();
 
   const stakesList = useMemo(
     () =>
-      userStakes.data?.reduce((acc, stakes, index) => {
-        const period = stakingPlans.data?.[index].stakingDuration;
+      userStakesRequest.data?.reduce((acc, stakes, index) => {
+        const period = stakingPlansRequest.data?.[index].stakingDuration;
         const stakesWithPeriod = stakes.map((s, stakeIndex) => ({
           ...s,
           period,
@@ -27,7 +26,7 @@ export const StakingPage = () => {
         }));
         return [...acc, ...stakesWithPeriod];
       }, [] as any) || [],
-    [userStakes, stakingPlans]
+    [userStakesRequest.data, stakingPlansRequest.data]
   );
 
   const onClaim = useCallback(

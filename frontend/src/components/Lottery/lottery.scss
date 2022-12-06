@@ -1,0 +1,17 @@
+.lottery-description {
+  &__table {
+    &,
+    tr,
+    td,
+    th {
+      border: 1px solid rgba(255, 255, 255, 0.5);
+    }
+
+    td,
+    th {
+      font-weight: 500;
+      text-align: left;
+      padding: 15px 20px;
+    }
+  }
+}

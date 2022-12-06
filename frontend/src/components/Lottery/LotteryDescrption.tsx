@@ -1,13 +1,28 @@
-import React, { FC } from 'react';
+import React, { FC, useMemo } from 'react';
 import { Box, Flex, Text } from '@chakra-ui/react';
 import { BigNumberish } from 'ethers';
 
+import { bigNumberToString } from '@/utils/number';
+
 import prizeBackground from './assets/prize_background.svg';
+
+import './lottery.scss';
 
 type LotteryDescriptionProps = {
   prize: BigNumberish;
+  prizeForLevel: number[];
+  winnersForLevel: number[];
 };
-export const LotteryDescription: FC<LotteryDescriptionProps> = ({ prize }) => {
+export const LotteryDescription: FC<LotteryDescriptionProps> = ({
+  prize,
+  prizeForLevel,
+  winnersForLevel,
+}) => {
+  const totalWinners = useMemo(
+    () => winnersForLevel.reduce((acc, winners) => acc + winners, 0),
+    [winnersForLevel]
+  );
+
   return (
     <Box bgColor="bgGreen.50" boxShadow="0px 6px 11px rgba(0, 0, 0, 0.25)" borderRadius="md">
       <Box padding="70px 56px 56px" bgImage={prizeBackground} bgPosition="top left" bgSize="cover">
@@ -34,7 +49,7 @@ export const LotteryDescription: FC<LotteryDescriptionProps> = ({ prize }) => {
             textShadow="0px 4px 10px rgba(0, 0, 0, 0.71)"
             lineHeight="65px"
           >
-            100 000
+            {bigNumberToString(prize, { precision: 0 })}
             <Text as="span" ml="15px" fontSize="46px">
               SAVR
             </Text>
@@ -42,22 +57,28 @@ export const LotteryDescription: FC<LotteryDescriptionProps> = ({ prize }) => {
         </Flex>
       </Box>
       <Flex flexDirection="column" padding="40px">
-        <Text mb="30px" textStyle="h3" textTransform="uppercase">
-          Raffle details
+        <Text mb="26px" textStyle="textMedium" textTransform="uppercase">
+          <>Total winners: {totalWinners}</>
         </Text>
 
-        <Text mb="15px" textStyle="textSemiBold" fontSize="16px" textTransform="uppercase">
-          Наименование
-        </Text>
-        <Text mb="15px" textStyle="textSemiBold" fontSize="16px" textTransform="uppercase">
-          Наименование
-        </Text>
-        <Text mb="15px" textStyle="textSemiBold" fontSize="16px" textTransform="uppercase">
-          Наименование
-        </Text>
-        <Text textStyle="textSemiBold" fontSize="16px" textTransform="uppercase">
-          Наименование
-        </Text>
+        <table className="lottery-description__table">
+          <thead>
+            <tr>
+              <th>Levels</th>
+              <th>Winners</th>
+              <th>% prize pot</th>
+            </tr>
+          </thead>
+          <tbody>
+            {winnersForLevel.map((winners, index) => (
+              <tr key={index}>
+                <td>{index + 1}</td>
+                <td>{winners}</td>
+                <td>{prizeForLevel[index]}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       </Flex>
     </Box>
   );

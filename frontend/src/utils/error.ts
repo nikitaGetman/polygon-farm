@@ -49,7 +49,7 @@ export function tryToGetErrorData(error: any): {
     };
   }
   if (message.includes('reverted with reason string ')) {
-    const errorReg = /reverted with reason string '(?<data>[^']*)'/m;
+    const errorReg = /reverted with reason string '(?<data>[^']*)'/gm;
     const res = Array.from(message.matchAll(errorReg));
 
     if (res && res[0] && res[0][1]) {

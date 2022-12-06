@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ArrowBackIcon } from '@chakra-ui/icons';
 import {
@@ -15,6 +15,7 @@ import {
 import { ReactComponent as SwapIcon } from '@/assets/images/icons/swap.svg';
 import { ReactComponent as SavIcon } from '@/assets/images/sav_icon.svg';
 import { ReactComponent as UsdtIcon } from '@/assets/images/usdt_icon.svg';
+import { useDocumentTitle } from '@/hooks/useDocumentTitle';
 import { useSavBalance, useUsdtBalance } from '@/hooks/useTokenBalance';
 import { useVendorSell } from '@/hooks/useVendorSell';
 import { bigNumberToString, makeBigNumber } from '@/utils/number';
@@ -36,9 +37,7 @@ const tokenPair = [
   },
 ];
 export const ExchangePage = () => {
-  useEffect(() => {
-    document.title = 'iSaver | Buy SAV';
-  }, []);
+  useDocumentTitle('iSaver | Buy SAV');
 
   const [isTokenSell, setIsTokenSell] = useState(false);
   const [amount, setAmount] = useState<string>();

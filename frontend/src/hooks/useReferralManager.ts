@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { BigNumber, ethers } from 'ethers';
-import { useAccount, useQuery, useQueryClient } from 'wagmi';
+import { useAccount } from 'wagmi';
 
 import { bigNumberToString } from '@/utils/number';
 import { createReferralLink } from '@/utils/referralLinks';
@@ -33,7 +33,7 @@ export const useReferralManager = () => {
   const { success, handleError } = useNotification();
   const tokens = useTokens();
   const { connect } = useConnectWallet();
-  const { stakingPlans } = useStaking();
+  const { stakingPlansRequest } = useStaking();
 
   // Hardcode this, hope it would not change
   const levels = 10;
@@ -50,20 +50,23 @@ export const useReferralManager = () => {
     return await referralContract.contract.fullSubscriptionCost();
   });
 
-  const referralRewardsQuery = useQuery([USER_REFERRAL_REWARDS_REQUEST, { account }], async () => {
-    return account ? await referralContract.getRewards(account) : null;
-  });
+  const referralRewardsRequest = useQuery(
+    [USER_REFERRAL_REWARDS_REQUEST, { account }],
+    async () => {
+      return account ? await referralContract.getRewards(account) : null;
+    }
+  );
 
   const referralRewards = useMemo(
     () =>
-      referralRewardsQuery.data?.map(({ args }) => ({
+      referralRewardsRequest.data?.map(({ args }) => ({
         ...args,
         stakingDuration:
-          stakingPlans.data && args.stakingPlanId
-            ? stakingPlans.data[args.stakingPlanId.toNumber()].stakingDuration
+          stakingPlansRequest.data && args.stakingPlanId
+            ? stakingPlansRequest.data[args.stakingPlanId.toNumber()].stakingDuration
             : BigNumber.from(0),
       })) || [],
-    [referralRewardsQuery, stakingPlans]
+    [referralRewardsRequest.data, stakingPlansRequest.data]
   );
 
   const levelsSubscription = useMemo(
@@ -71,7 +74,7 @@ export const useReferralManager = () => {
       (userReferralInfo.data?.activeLevels || Array.from({ length: 10 })).map((till) =>
         BigNumber.from(till || 0).toNumber()
       ),
-    [userReferralInfo.data?.activeLevels]
+    [userReferralInfo.data]
   );
 
   const fullSubscription = useMemo(
@@ -88,7 +91,7 @@ export const useReferralManager = () => {
         till.toNumber() > 0 &&
         till.toNumber() - currentTime < REFERRAL_SUBSCRIPTION_ENDING_NOTIFICATION
     );
-  }, [userReferralInfo.data?.activeLevels]);
+  }, [userReferralInfo.data]);
 
   const referrer = useMemo(
     () =>
@@ -96,7 +99,7 @@ export const useReferralManager = () => {
       userReferralInfo.data.referrer !== ethers.constants.AddressZero
         ? userReferralInfo.data.referrer
         : undefined,
-    [userReferralInfo.data?.referrer]
+    [userReferralInfo.data]
   );
   const referralLink = useMemo(
     () =>
@@ -223,7 +226,7 @@ export const useReferralManager = () => {
     referralLink,
     setMyReferrer,
     claimDividends,
-    referralRewardsQuery,
+    referralRewardsRequest,
     referralRewards,
   };
 };

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   Box,
@@ -19,7 +19,7 @@ import { ConnectWalletButton } from '@/components/ui/ConnectWalletButton/Connect
 import { StatBlock } from '@/components/ui/StatBlock/StatBlock';
 import { useLottery } from '@/hooks/useLottery';
 import { useLotteryRounds } from '@/hooks/useLotteryRounds';
-import { LotteryStatusEnum } from '@/lib/lottery';
+import { getNextLotteryTimestamp, LotteryStatusEnum } from '@/lib/lottery';
 import { getLotteryTitle } from '@/utils/lottery';
 import { getReadableAmount } from '@/utils/number';
 
@@ -40,6 +40,14 @@ export const LotteryList = () => {
       : stateFilter === LotteryStatusEnum.upcoming
       ? upcomingRounds
       : finishedRounds;
+
+  const updateLotteriesState = useCallback(() => {
+    if ([LotteryStatusEnum.upcoming, LotteryStatusEnum.current].includes(stateFilter)) {
+      activeRoundsRequest.refetch();
+    } else {
+      finishedRoundsRequest.refetch();
+    }
+  }, [stateFilter, activeRoundsRequest, finishedRoundsRequest]);
 
   const isLoading =
     stateFilter === LotteryStatusEnum.past
@@ -128,12 +136,9 @@ export const LotteryList = () => {
             <LotteryItem
               title={getLotteryTitle(id + 1)}
               status={status}
-              timestamp={
-                status === LotteryStatusEnum.current
-                  ? (startTime + duration) * 1000
-                  : startTime * 1000
-              }
+              timestamp={getNextLotteryTimestamp({ startTime, duration, status }) * 1000}
               onDetails={() => navigate(`/lottery/${id + 1}`)}
+              onExpire={updateLotteriesState}
             />
           </GridItem>
         ))}

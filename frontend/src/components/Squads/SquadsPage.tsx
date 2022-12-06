@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { useMemo } from 'react';
 import { useCallback } from 'react';
 import { Link as RouterLink } from 'react-router-dom';
@@ -6,6 +6,7 @@ import { ArrowBackIcon } from '@chakra-ui/icons';
 import { Box, Button, Container, Flex, Heading, Link, Spinner } from '@chakra-ui/react';
 import { BigNumber } from 'ethers';
 
+import { useDocumentTitle } from '@/hooks/useDocumentTitle';
 import { useReferralManager } from '@/hooks/useReferralManager';
 import { getReadableAmount } from '@/utils/number';
 
@@ -17,11 +18,9 @@ import { StatBlock } from '../ui/StatBlock/StatBlock';
 import { SquadsList } from './SquadsList';
 
 export const SquadsPage = () => {
-  const { userReferralInfo, claimDividends } = useReferralManager();
+  useDocumentTitle('iSaver | Build a team');
 
-  useEffect(() => {
-    document.title = 'iSaver | Build a team';
-  }, []);
+  const { userReferralInfo, claimDividends } = useReferralManager();
 
   const availableRewards = useMemo(() => {
     const { totalDividends, totalClaimedDividends } = userReferralInfo.data || {};
@@ -29,7 +28,7 @@ export const SquadsPage = () => {
       return totalDividends.sub(totalClaimedDividends);
     }
     return BigNumber.from(0);
-  }, [userReferralInfo]);
+  }, [userReferralInfo.data]);
 
   const claimRewards = useCallback(() => {
     if (availableRewards.gt(0) && !claimDividends.isLoading) {

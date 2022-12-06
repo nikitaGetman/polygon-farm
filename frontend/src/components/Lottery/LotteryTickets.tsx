@@ -5,16 +5,19 @@ import puzzlePattern from './assets/puzzle_pattern.svg';
 
 type LotteryTicketsProps = {
   showEntered: boolean;
+  isClosed: boolean;
   enteredTickets?: number;
   tickets: number;
   onBuyClick: () => void;
 };
 export const LotteryTickets: FC<LotteryTicketsProps> = ({
   showEntered,
+  isClosed,
   enteredTickets,
   tickets,
   onBuyClick,
 }) => {
+  const isClosedEmpty = isClosed && !enteredTickets;
   return (
     <Box
       bgColor="bgGreen.50"
@@ -24,13 +27,13 @@ export const LotteryTickets: FC<LotteryTicketsProps> = ({
     >
       {showEntered ? (
         <Box
-          bgColor={!enteredTickets ? 'gray.200' : '#1b5b52'}
+          bgColor={isClosedEmpty ? 'gray.200' : '#1b5b52'}
           textAlign="center"
           padding="23px"
           textStyle="h3"
           textTransform="uppercase"
         >
-          {!enteredTickets ? (
+          {isClosedEmpty ? (
             'Tickets not placed'
           ) : (
             <>

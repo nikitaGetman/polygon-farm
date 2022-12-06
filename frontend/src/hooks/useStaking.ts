@@ -7,7 +7,6 @@ import { bigNumberToString } from '@/utils/number';
 import { getReadableDuration } from '@/utils/time';
 
 import { useStakingContract } from './contracts/useStakingContract';
-import { useConnectWallet } from './useConnectWallet';
 import { HELPER_USER_SQUADS_INFO_REQUEST } from './useHelper';
 import { useNotification } from './useNotification';
 import { SAV_BALANCE_REQUEST, SAVR_BALANCE_REQUEST } from './useTokenBalance';
@@ -32,23 +31,21 @@ export const useStaking = () => {
   const { success, handleError } = useNotification();
   const tokens = useTokens();
 
-  const { connect } = useConnectWallet();
-
-  const stakingPlans = useQuery([STAKING_PLANS_REQUEST], async () => {
+  const stakingPlansRequest = useQuery([STAKING_PLANS_REQUEST], async () => {
     return await stakingContract.getStakingPlans();
   });
 
-  const userPlansInfo = useQuery([USER_STAKING_INFO_REQUEST, { account }], async () => {
+  const userPlansInfoRequest = useQuery([USER_STAKING_INFO_REQUEST, { account }], async () => {
     const res = account ? await stakingContract.getUserStakingInfo(account) : null;
     return res;
   });
 
-  const userStakes = useQuery(
-    [USER_STAKES_REQUEST, { stakingPlans, account }],
+  const userStakesRequest = useQuery(
+    [USER_STAKES_REQUEST, { stakingPlansRequest, account }],
     async () => {
       const res = account
         ? await Promise.all(
-            (stakingPlans.data || []).map((_, index) =>
+            (stakingPlansRequest.data || []).map((_, index) =>
               stakingContract.getUserStakes(account, index)
             )
           )
@@ -62,10 +59,10 @@ export const useStaking = () => {
   );
 
   const activeStakingPlans = useMemo(() => {
-    return stakingPlans.data
-      ? stakingPlans.data
+    return stakingPlansRequest.data
+      ? stakingPlansRequest.data
           .map((plan, index) => {
-            const { subscribedTill, isSubscribed } = userPlansInfo.data?.[index] || {};
+            const { subscribedTill, isSubscribed } = userPlansInfoRequest.data?.[index] || {};
 
             const currentTime = Date.now() / 1000;
             const isSubscriptionEnding =
@@ -73,7 +70,7 @@ export const useStaking = () => {
               (subscribedTill?.toNumber() || 0) - currentTime <
                 STAKING_SUBSCRIPTION_ENDING_NOTIFICATION;
 
-            const stakes = userStakes.data?.[index];
+            const stakes = userStakesRequest.data?.[index];
 
             const totalReward = stakes
               ? stakes.reduce(
@@ -88,17 +85,17 @@ export const useStaking = () => {
 
             return {
               ...plan,
-              ...userPlansInfo.data?.[index],
+              ...userPlansInfoRequest.data?.[index],
               isSubscriptionEnding,
               planId: index,
               totalReward,
-              stakes: userStakes.data?.[index],
+              stakes: userStakesRequest.data?.[index],
               hasReadyStakes,
             };
           })
           .filter((plan) => plan.isActive)
       : [];
-  }, [stakingPlans, userPlansInfo, userStakes]);
+  }, [stakingPlansRequest.data, userPlansInfoRequest.data, userStakesRequest.data]);
 
   const hasEndingSubscription = useMemo(
     () => activeStakingPlans.some((plan) => plan.isSubscriptionEnding),
@@ -106,14 +103,17 @@ export const useStaking = () => {
   );
 
   const tvl = useMemo(() => {
-    return stakingPlans.data?.reduce(
+    return stakingPlansRequest.data?.reduce(
       (acc, plan) => acc.add(plan.currentToken1Locked).add(plan.currentToken2Locked),
       BigNumber.from(0)
     );
-  }, [stakingPlans]);
+  }, [stakingPlansRequest.data]);
   const totalClaimed = useMemo(() => {
-    return stakingPlans.data?.reduce((acc, plan) => acc.add(plan.totalClaimed), BigNumber.from(0));
-  }, [stakingPlans]);
+    return stakingPlansRequest.data?.reduce(
+      (acc, plan) => acc.add(plan.totalClaimed),
+      BigNumber.from(0)
+    );
+  }, [stakingPlansRequest.data]);
 
   const subscribe = useMutation(
     [STAKING_SUBSCRIBE_MUTATION],
@@ -229,9 +229,9 @@ export const useStaking = () => {
   );
 
   return {
-    stakingPlans,
-    userPlansInfo,
-    userStakes,
+    stakingPlansRequest,
+    userPlansInfoRequest,
+    userStakesRequest,
     activeStakingPlans,
     hasEndingSubscription,
     subscribe,

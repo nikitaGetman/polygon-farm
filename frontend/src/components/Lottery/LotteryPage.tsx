@@ -1,5 +1,5 @@
-import React, { useCallback } from 'react';
-import { Link as RouterLink, useParams } from 'react-router-dom';
+import React, { useCallback, useEffect, useMemo } from 'react';
+import { Link as RouterLink, Navigate, useNavigate, useParams } from 'react-router-dom';
 import { ArrowBackIcon } from '@chakra-ui/icons';
 import { Box, Container, Grid, GridItem, Link, useDisclosure } from '@chakra-ui/react';
 import { BigNumber } from 'ethers';
@@ -7,6 +7,7 @@ import { useAccount } from 'wagmi';
 
 import { CenteredSpinner } from '@/components/ui/CenteredSpinner/CenteredSpinner';
 import { useConnectWallet } from '@/hooks/useConnectWallet';
+import { useDocumentTitle } from '@/hooks/useDocumentTitle';
 import { useLottery } from '@/hooks/useLottery';
 import { useLotteryRoundById } from '@/hooks/useLotteryRoundById';
 import { LotteryStatusEnum } from '@/lib/lottery';
@@ -19,21 +20,30 @@ import { LotteryEnter } from './LotteryEnter';
 import { LotteryHeading } from './LotteryHeading';
 import { LotteryTickets } from './LotteryTickets';
 
-const lottery = {
-  status: LotteryStatusEnum.upcoming,
-  title: 'Regular Ref 31',
-  totalTickets: 1000,
-  timestamp: Date.now() + 86400_000,
-
-  prize: BigNumber.from(10).pow(18).mul(100_000),
-  ticketPrice: BigNumber.from(10).pow(18).mul(5),
-};
-
 export const LotteryPage = () => {
-  let { id } = useParams();
+  useDocumentTitle('iSaver | Lottery');
+
+  const { id } = useParams();
+  const roundId = useMemo(() => (id ? parseInt(id) - 1 : undefined), [id]);
   const { isConnected } = useAccount();
   const { connect } = useConnectWallet();
   const { isOpen, onOpen, onClose } = useDisclosure(); // Buy Ticket modal
+  const navigate = useNavigate();
+  const { ticketBalance } = useLottery();
+  const {
+    round,
+    entryLottery,
+    fetchRoundRequest: { refetch, isFetched },
+    userRoundEntryRequest: { data: userEnteredTickets },
+  } = useLotteryRoundById(roundId);
+  const { ticketPrice, buyTickets } = useLottery();
+
+  // Redirect to dashboard if round not found
+  useEffect(() => {
+    if ((isFetched && !round) || !id) {
+      navigate('/');
+    }
+  }, [isFetched, round, navigate, id]);
 
   const handleOpenTicketModal = useCallback(() => {
     if (!isConnected) {
@@ -43,10 +53,23 @@ export const LotteryPage = () => {
     }
   }, [isConnected, connect, onOpen]);
 
-  const { round } = useLotteryRoundById(id ? parseInt(id) - 1 : id);
-  const { buyTickets } = useLottery();
+  const handleEnterLottery = useCallback(
+    (tickets: number) => {
+      return entryLottery.mutateAsync({ roundId: roundId ?? -1, tickets });
+    },
+    [entryLottery, roundId]
+  );
 
-  const { ticketBalance } = useLottery();
+  const isUpcoming = round?.status === LotteryStatusEnum.upcoming;
+  const isActive = round?.status === LotteryStatusEnum.current;
+  const isSoldOut = round?.status === LotteryStatusEnum.soldOut;
+  const isPast = round?.status === LotteryStatusEnum.past;
+
+  const totalPrize = useMemo(() => {
+    if (round) {
+      return round.initialPrize.add(round.tokensForOneTicket.mul(round.totalTickets));
+    } else return BigNumber.from(0);
+  }, [round]);
 
   return (
     <Container variant="dashboard" pt="40px">
@@ -66,12 +89,22 @@ export const LotteryPage = () => {
           </GridItem>
 
           <GridItem colSpan={1}>
-            <Box mb="20px">
-              <LotteryCountdown timestamp={lottery.timestamp} />
-            </Box>
+            {!isPast ? (
+              <Box mb="20px">
+                <LotteryCountdown
+                  startTime={round.startTime}
+                  duration={round.duration}
+                  onExpire={refetch}
+                />
+              </Box>
+            ) : null}
 
             <Box mb="60px">
-              <LotteryDescription prize={lottery.prize} />
+              <LotteryDescription
+                prize={totalPrize}
+                winnersForLevel={round.winnersForLevel}
+                prizeForLevel={round.prizeForLevel}
+              />
             </Box>
           </GridItem>
 
@@ -79,19 +112,23 @@ export const LotteryPage = () => {
             <Box mb="20px">
               <LotteryTickets
                 tickets={ticketBalance || 0}
-                showEntered={false}
-                enteredTickets={0}
+                showEntered={!isUpcoming}
+                isClosed={isSoldOut || isPast}
+                enteredTickets={userEnteredTickets}
                 onBuyClick={handleOpenTicketModal}
               />
             </Box>
 
-            <Box mb="60px">
-              <LotteryEnter
-                maximumAvailableTickets={10}
-                isDisabled={true}
-                onEnter={() => Promise.resolve()}
-              />
-            </Box>
+            {isUpcoming || isActive ? (
+              <Box mb="60px">
+                <LotteryEnter
+                  maximumAvailableTickets={round.maxTicketsFromOneMember}
+                  userEnteredTickets={userEnteredTickets}
+                  isDisabled={!isActive}
+                  onEnter={handleEnterLottery}
+                />
+              </Box>
+            ) : null}
           </GridItem>
         </Grid>
       ) : (
@@ -102,7 +139,7 @@ export const LotteryPage = () => {
 
       {isOpen ? (
         <BuyLotteryTicketsModal
-          ticketPrice={lottery.ticketPrice}
+          ticketPrice={ticketPrice}
           onBuy={buyTickets.mutateAsync}
           onClose={onClose}
         />

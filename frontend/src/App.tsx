@@ -10,6 +10,7 @@ import {
 import { CSSTransition, SwitchTransition } from 'react-transition-group';
 import { Box, ChakraProvider } from '@chakra-ui/react';
 import { QueryClientProvider } from '@tanstack/react-query';
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { WagmiConfig } from 'wagmi';
 
 import { Dashboard } from '@/components/Dashboard/Dashboard';
@@ -109,6 +110,8 @@ function App() {
 
             <Modals />
           </AppStateProvider>
+
+          <ReactQueryDevtools />
         </QueryClientProvider>
       </ChakraProvider>
     </WagmiConfig>

@@ -40,7 +40,7 @@ export const useHelperReferralsFullInfoByLevel = (account?: string, levels?: num
 
 export const useHelperUserSquadsFullInfo = (account?: string) => {
   const helperContract = useHelperContract();
-  const { stakingPlans } = useStaking();
+  const { stakingPlansRequest } = useStaking();
 
   const userSquadsInfoRequest = useQuery(
     [HELPER_USER_SQUADS_INFO_REQUEST, { account }],
@@ -58,7 +58,7 @@ export const useHelperUserSquadsFullInfo = (account?: string) => {
           squadStatus: { ...squadStatus },
           members,
           userHasSufficientStaking,
-          stakingPlan: stakingPlans.data?.[plan.stakingPlanId.toNumber()],
+          stakingPlan: stakingPlansRequest.data?.[plan.stakingPlanId.toNumber()],
           isSubscriptionEnding:
             squadStatus.subscription.toNumber() > 0 &&
             squadStatus.subscription.toNumber() - currentTime <
@@ -66,7 +66,7 @@ export const useHelperUserSquadsFullInfo = (account?: string) => {
         })
       ) || []
     );
-  }, [stakingPlans, userSquadsInfoRequest]);
+  }, [stakingPlansRequest.data, userSquadsInfoRequest.data]);
 
   return {
     userSquadsInfoRequest,

@@ -11,9 +11,16 @@ type LotteryItemProps = {
   title: string;
   timestamp: number;
   onDetails: () => void;
+  onExpire?: () => void;
 };
-export const LotteryItem: FC<LotteryItemProps> = ({ status, title, timestamp, onDetails }) => {
-  const { stampStrings } = useCountdown(timestamp);
+export const LotteryItem: FC<LotteryItemProps> = ({
+  status,
+  title,
+  timestamp,
+  onDetails,
+  onExpire,
+}) => {
+  const { stampStrings } = useCountdown(timestamp, onExpire);
 
   const elapsedTimeString = useMemo(() => {
     const { daysString, hoursString, minsString, secString } = stampStrings;

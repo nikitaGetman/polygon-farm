@@ -7,6 +7,7 @@ export const LotteryStatus = ({ status }: { status: LotteryStatusEnum }) => {
   const statusColor = useMemo(() => {
     if (status === LotteryStatusEnum.upcoming) return 'yellow.200';
     if (status === LotteryStatusEnum.current) return 'green.400';
+    if (status === LotteryStatusEnum.soldOut) return 'red';
     return 'grey.00';
   }, [status]);
 

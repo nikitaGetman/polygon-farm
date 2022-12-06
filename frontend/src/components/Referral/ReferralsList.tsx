@@ -47,7 +47,7 @@ export const ReferralsList = () => {
     },
     [setLevels]
   );
-  const refCount = useMemo(() => userReferralInfo.data?.refCount || [], [userReferralInfo]);
+  const refCount = useMemo(() => userReferralInfo.data?.refCount || [], [userReferralInfo.data]);
 
   const levelsTitle = useMemo(() => calculateTitle(levels), [levels]);
   const totalReferrals = useMemo(

@@ -1,19 +1,34 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 
-export const useCountdown = (timestamp: number) => {
-  const [elapsedTime, setElapsedTime] = useState(0);
+export const useCountdown = (timestamp: number, onExpire?: () => void) => {
+  const [elapsedTime, setElapsedTime] = useState<number>();
+  const interval = useRef<any>();
+  const [isActive, setIsActive] = useState(false);
 
   useEffect(() => {
-    const calculateElapsedTime = () => setElapsedTime(Math.max(0, timestamp - Date.now()));
+    const calculateElapsedTime = () => {
+      const time = timestamp - Date.now();
+      setElapsedTime(Math.max(0, time));
+      if (time > 0) {
+        setIsActive(true);
+      }
+    };
 
-    const interval = setInterval(calculateElapsedTime, 1000);
+    interval.current = setInterval(calculateElapsedTime, 1000);
     calculateElapsedTime();
 
-    return () => clearInterval(interval);
+    return () => clearInterval(interval.current);
   }, [timestamp, setElapsedTime]);
 
+  useEffect(() => {
+    if (elapsedTime === 0 && isActive) {
+      clearInterval(interval.current);
+      onExpire?.();
+    }
+  }, [elapsedTime, onExpire, isActive]);
+
   const stamps = useMemo(() => {
-    const elapsedSeconds = Math.floor(elapsedTime / 1000);
+    const elapsedSeconds = Math.floor((elapsedTime || 0) / 1000);
     const secInMin = 60;
     const secInHour = 60 * secInMin;
     const secInDay = 24 * secInHour;

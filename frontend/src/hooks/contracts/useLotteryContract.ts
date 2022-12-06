@@ -32,6 +32,10 @@ export const useLotteryContract = () => {
     return contract.getRound(roundId);
   };
 
+  const getUserRoundEntry = (user: string, roundId: BigNumberish) => {
+    return contract.getUserRoundEntry(user, roundId);
+  };
+
   const getActiveRounds = () => {
     return contract.getActiveRounds();
   };
@@ -48,12 +52,12 @@ export const useLotteryContract = () => {
     return contract.getClaimStreak(user);
   };
 
-  const entryLottery = async (roundId: number, tickets: number) => {
+  const entryLottery = async (roundId: BigNumberish, tickets: BigNumberish) => {
     const tx = await contract.entryLottery(roundId, tickets);
     return waitForTransaction(tx);
   };
 
-  const buyTickets = async (amount: number) => {
+  const buyTickets = async (amount: BigNumberish) => {
     const tx = await contract.buyTickets(amount);
     return waitForTransaction(tx);
   };
@@ -69,6 +73,7 @@ export const useLotteryContract = () => {
     getTicketPrice,
     getWinnerTotalPrize,
     getRound,
+    getUserRoundEntry,
     getActiveRounds,
     getLastFinishedRounds,
     getClaimStreak,

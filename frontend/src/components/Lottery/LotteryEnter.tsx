@@ -4,11 +4,13 @@ import { Box, Button, Flex, IconButton, Text } from '@chakra-ui/react';
 
 type LotteryEnterProps = {
   maximumAvailableTickets: number;
+  userEnteredTickets?: number;
   isDisabled: boolean;
   onEnter: (tickets: number) => Promise<void>;
 };
 export const LotteryEnter: FC<LotteryEnterProps> = ({
   maximumAvailableTickets,
+  userEnteredTickets,
   isDisabled,
   onEnter,
 }) => {
@@ -25,6 +27,10 @@ export const LotteryEnter: FC<LotteryEnterProps> = ({
     });
   }, [setIsLoading, onEnter, tickets]);
 
+  const leftTickets = userEnteredTickets
+    ? maximumAvailableTickets - userEnteredTickets
+    : maximumAvailableTickets;
+
   return (
     <Box
       bgColor="bgGreen.50"
@@ -38,7 +44,7 @@ export const LotteryEnter: FC<LotteryEnterProps> = ({
           <Text as="span" color="green.400" textStyle="textBold">
             {maximumAvailableTickets}
           </Text>{' '}
-          tickets in this raffle
+          tickets in this raffle {userEnteredTickets ? `(${leftTickets} left)` : null}
         </Text>
 
         <Flex alignItems="center" ml="60px">
@@ -58,7 +64,7 @@ export const LotteryEnter: FC<LotteryEnterProps> = ({
           <IconButton
             variant="outlinedShadow"
             aria-label="add"
-            disabled={isDisabled || tickets >= maximumAvailableTickets}
+            disabled={isDisabled || tickets >= leftTickets}
             onClick={increase}
           >
             <AddIcon />

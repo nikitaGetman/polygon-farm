@@ -1,13 +1,12 @@
 import { useMemo } from 'react';
-import { useMutation } from '@tanstack/react-query';
-import { useAccount, useQuery, useQueryClient } from 'wagmi';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useAccount } from 'wagmi';
 
 import { bigNumberToString } from '@/utils/number';
 import { getReadableDuration } from '@/utils/time';
 
 import { useSquadsContract } from './contracts/useSquadsContract';
-import { useConnectWallet } from './useConnectWallet';
-import { useHelperUserSquadsFullInfo } from './useHelper';
+import { HELPER_USER_SQUADS_INFO_REQUEST, useHelperUserSquadsFullInfo } from './useHelper';
 import { useNotification } from './useNotification';
 import { useStaking } from './useStaking';
 import { SAV_BALANCE_REQUEST } from './useTokenBalance';
@@ -25,9 +24,8 @@ export const useSquads = () => {
   const squadsContract = useSquadsContract();
   const { success, handleError } = useNotification();
   const tokens = useTokens();
-  const { connect } = useConnectWallet();
-  const { stakingPlans } = useStaking();
-  const { userSquadsInfoRequest, userSquadsInfo } = useHelperUserSquadsFullInfo(account);
+  const { stakingPlansRequest } = useStaking();
+  const { userSquadsInfo } = useHelperUserSquadsFullInfo(account);
 
   const subscriptionPeriodDays = 365;
 
@@ -47,7 +45,7 @@ export const useSquads = () => {
       if (!squadPlan) {
         return;
       }
-      const stakingPlan = stakingPlans?.data?.[squadPlan.stakingPlanId.toNumber()];
+      const stakingPlan = stakingPlansRequest?.data?.[squadPlan.stakingPlanId.toNumber()];
       if (!stakingPlan) {
         return;
       }
@@ -71,9 +69,7 @@ export const useSquads = () => {
     },
     {
       onSuccess: () => {
-        userSquadsInfoRequest.refetch();
-        // TODO: invalidateQueries does not work in this case
-        // queryClient.invalidateQueries({ queryKey: [HELPER_USER_SQUADS_INFO_REQUEST] });
+        queryClient.invalidateQueries({ queryKey: [HELPER_USER_SQUADS_INFO_REQUEST] });
         queryClient.invalidateQueries({ queryKey: [SAV_BALANCE_REQUEST] });
       },
       onError: (err) => {

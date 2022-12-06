@@ -31,6 +31,7 @@ contract Lottery is VRFConsumerBaseV2, AccessControl {
 
     Round[] public rounds;
     mapping(uint256 => mapping(address => uint256)) roundMembers;
+    mapping(uint256 => mapping(address => uint256)) roundMembersHistory;
     mapping(address => uint256[]) claims;
     mapping(address => uint256) winnersRewards;
 
@@ -167,6 +168,7 @@ contract Lottery is VRFConsumerBaseV2, AccessControl {
             round.members.push(_msgSender());
         }
         roundMembers[roundId][_msgSender()] = currentTickets + tickets;
+        roundMembersHistory[roundId][_msgSender()] = currentTickets + tickets;
         round.totalTickets += tickets;
     }
 
@@ -248,10 +250,6 @@ contract Lottery is VRFConsumerBaseV2, AccessControl {
         rounds[roundId].isFinished = true;
         emit RoundFinished(roundId);
 
-        if (round.totalTickets == 0) {
-            return;
-        }
-
         uint256 random = round.randomWord;
 
         for (uint256 i = 0; i < round.winners.length; i++) {
@@ -259,6 +257,10 @@ contract Lottery is VRFConsumerBaseV2, AccessControl {
                 round.prizeForLevel[i];
 
             for (uint256 j = 0; j < round.winners[i].length; j++) {
+                if (round.totalTickets == 0) {
+                    return;
+                }
+
                 random = ((random * (i + 1) * (j + 1)) % block.timestamp) + 1;
                 address winner = round.winners[i][j];
 
@@ -336,6 +338,14 @@ contract Lottery is VRFConsumerBaseV2, AccessControl {
 
     function getRound(uint256 id) public view returns (Round memory) {
         return rounds[id];
+    }
+
+    function getUserRoundEntry(address user, uint256 roundId)
+        public
+        view
+        returns (uint256)
+    {
+        return roundMembersHistory[roundId][user];
     }
 
     function getActiveRounds() public view returns (Round[] memory) {

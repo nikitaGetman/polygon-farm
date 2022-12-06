@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
 
-import { LotteryRoundType, parseLotteryFormat } from '@/lib/lottery';
+import { LotteryRoundType, LotteryStatusEnum, parseLotteryFormat } from '@/lib/lottery';
 import { Lottery } from '@/types';
 
 import { useLotteryContract } from './contracts/useLotteryContract';
@@ -13,9 +13,13 @@ const FETCH_LIMIT = 6;
 export const useLotteryRounds = () => {
   const lotteryContract = useLotteryContract();
 
-  const activeRoundsRequest = useQuery([LOTTERY_ACTIVE_ROUNDS_REQUEST], async () => {
-    return lotteryContract.getActiveRounds();
-  });
+  const activeRoundsRequest = useQuery(
+    [LOTTERY_ACTIVE_ROUNDS_REQUEST],
+    async () => {
+      return lotteryContract.getActiveRounds();
+    },
+    { select: (data) => data.map(parseLotteryFormat).sort((a, b) => b.id - a.id) }
+  );
   const finishedRoundsRequest = useInfiniteQuery({
     queryKey: [LOTTERY_LAST_FINISHED_ROUNDS_REQUEST],
     queryFn: async ({ pageParam = 0 }) => {
@@ -32,30 +36,28 @@ export const useLotteryRounds = () => {
   });
 
   const { upcomingRounds, liveRounds } = useMemo(() => {
-    const currentTime = Date.now() / 1000;
     return (activeRoundsRequest.data || []).reduce(
       (acc, round) => {
-        if (round.startTime.toNumber() > currentTime) {
-          acc.upcomingRounds.push(parseLotteryFormat(round));
+        if (round.status === LotteryStatusEnum.upcoming) {
+          acc.upcomingRounds.push(round);
         } else {
-          acc.liveRounds.push(parseLotteryFormat(round));
+          acc.liveRounds.push(round);
         }
         return acc;
       },
       { liveRounds: [] as LotteryRoundType[], upcomingRounds: [] as LotteryRoundType[] }
     );
-  }, [activeRoundsRequest]);
+  }, [activeRoundsRequest.data]);
 
-  const finishedRounds = useMemo(
-    () =>
-      finishedRoundsRequest.data?.pages
-        .reduce((acc, { data }) => {
-          acc.push(...data);
-          return acc;
-        }, [] as Lottery.RoundStruct[])
-        .map(parseLotteryFormat),
-    [finishedRoundsRequest]
-  );
+  const finishedRounds = useMemo(() => {
+    return finishedRoundsRequest.data?.pages
+      .reduce((acc, { data }) => {
+        acc.push(...data);
+        return acc;
+      }, [] as Lottery.RoundStructOutput[])
+      .map((data) => parseLotteryFormat(data))
+      .sort((a, b) => b.id - a.id);
+  }, [finishedRoundsRequest.data]);
 
   return {
     activeRoundsRequest,
