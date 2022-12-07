@@ -97,7 +97,19 @@ const textStyles = {
     fontWeight: '500',
     lineHeight: '130%',
   },
+  textExtraBoldUpper: {
+    fontSize: ['26px'],
+    fontWeight: '700',
+    lineHeight: '130%',
+    textTransform: 'uppercase',
+  },
   textBold: {
+    fontSize: ['18px'],
+    fontWeight: '700',
+    lineHeight: '130%',
+  },
+  textBaldPtSans: {
+    fontFamily: 'PT Sans',
     fontSize: ['18px'],
     fontWeight: '700',
     lineHeight: '130%',
