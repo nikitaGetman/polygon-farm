@@ -1,0 +1,21 @@
+.ticket-double {
+  svg {
+    transition: all .2s ease;
+    color: #264737;
+    fill-opacity: 0.5;
+  }
+
+  &:hover {
+    p {
+      color: #ffffff;
+    }
+
+    svg {
+      color: #1ADCE2;
+    }
+  }
+}
+
+.asd svg {
+  stroke: #6bc95b;
+}
