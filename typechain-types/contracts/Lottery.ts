@@ -27,8 +27,9 @@ import type {
   PromiseOrValue,
 } from "../common";
 
-export declare namespace Lottery {
+export declare namespace ILottery {
   export type RoundStruct = {
+    id: PromiseOrValue<BigNumberish>;
     startTime: PromiseOrValue<BigNumberish>;
     duration: PromiseOrValue<BigNumberish>;
     isClosed: PromiseOrValue<boolean>;
@@ -49,6 +50,7 @@ export declare namespace Lottery {
   export type RoundStructOutput = [
     BigNumber,
     BigNumber,
+    BigNumber,
     boolean,
     boolean,
     boolean,
@@ -63,6 +65,7 @@ export declare namespace Lottery {
     BigNumber,
     string[][]
   ] & {
+    id: BigNumber;
     startTime: BigNumber;
     duration: BigNumber;
     isClosed: boolean;
@@ -99,6 +102,9 @@ export interface LotteryInterface extends utils.Interface {
     "getLastFinishedRounds(uint256,uint256)": FunctionFragment;
     "getRoleAdmin(bytes32)": FunctionFragment;
     "getRound(uint256)": FunctionFragment;
+    "getTotalRounds()": FunctionFragment;
+    "getUserRoundEntry(address,uint256)": FunctionFragment;
+    "getWinnerPrize(address)": FunctionFragment;
     "grantRole(bytes32,address)": FunctionFragment;
     "hasRole(bytes32,address)": FunctionFragment;
     "isClaimedToday(address)": FunctionFragment;
@@ -142,6 +148,9 @@ export interface LotteryInterface extends utils.Interface {
       | "getLastFinishedRounds"
       | "getRoleAdmin"
       | "getRound"
+      | "getTotalRounds"
+      | "getUserRoundEntry"
+      | "getWinnerPrize"
       | "grantRole"
       | "hasRole"
       | "isClaimedToday"
@@ -232,6 +241,18 @@ export interface LotteryInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "getRound",
     values: [PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getTotalRounds",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getUserRoundEntry",
+    values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getWinnerPrize",
+    values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
     functionFragment: "grantRole",
@@ -378,6 +399,18 @@ export interface LotteryInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "getRound", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "getTotalRounds",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getUserRoundEntry",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getWinnerPrize",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "grantRole", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "hasRole", data: BytesLike): Result;
   decodeFunctionResult(
@@ -647,7 +680,7 @@ export interface Lottery extends BaseContract {
 
     getActiveRounds(
       overrides?: CallOverrides
-    ): Promise<[Lottery.RoundStructOutput[]]>;
+    ): Promise<[ILottery.RoundStructOutput[]]>;
 
     getClaimStreak(
       user: PromiseOrValue<string>,
@@ -658,7 +691,7 @@ export interface Lottery extends BaseContract {
       length: PromiseOrValue<BigNumberish>,
       offset: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
-    ): Promise<[Lottery.RoundStructOutput[]]>;
+    ): Promise<[ILottery.RoundStructOutput[]]>;
 
     getRoleAdmin(
       role: PromiseOrValue<BytesLike>,
@@ -668,7 +701,20 @@ export interface Lottery extends BaseContract {
     getRound(
       id: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
-    ): Promise<[Lottery.RoundStructOutput]>;
+    ): Promise<[ILottery.RoundStructOutput]>;
+
+    getTotalRounds(overrides?: CallOverrides): Promise<[BigNumber]>;
+
+    getUserRoundEntry(
+      user: PromiseOrValue<string>,
+      roundId: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
+
+    getWinnerPrize(
+      user: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
 
     grantRole(
       role: PromiseOrValue<BytesLike>,
@@ -722,6 +768,7 @@ export interface Lottery extends BaseContract {
       [
         BigNumber,
         BigNumber,
+        BigNumber,
         boolean,
         boolean,
         boolean,
@@ -732,6 +779,7 @@ export interface Lottery extends BaseContract {
         BigNumber,
         BigNumber
       ] & {
+        id: BigNumber;
         startTime: BigNumber;
         duration: BigNumber;
         isClosed: boolean;
@@ -863,7 +911,7 @@ export interface Lottery extends BaseContract {
 
   getActiveRounds(
     overrides?: CallOverrides
-  ): Promise<Lottery.RoundStructOutput[]>;
+  ): Promise<ILottery.RoundStructOutput[]>;
 
   getClaimStreak(
     user: PromiseOrValue<string>,
@@ -874,7 +922,7 @@ export interface Lottery extends BaseContract {
     length: PromiseOrValue<BigNumberish>,
     offset: PromiseOrValue<BigNumberish>,
     overrides?: CallOverrides
-  ): Promise<Lottery.RoundStructOutput[]>;
+  ): Promise<ILottery.RoundStructOutput[]>;
 
   getRoleAdmin(
     role: PromiseOrValue<BytesLike>,
@@ -884,7 +932,20 @@ export interface Lottery extends BaseContract {
   getRound(
     id: PromiseOrValue<BigNumberish>,
     overrides?: CallOverrides
-  ): Promise<Lottery.RoundStructOutput>;
+  ): Promise<ILottery.RoundStructOutput>;
+
+  getTotalRounds(overrides?: CallOverrides): Promise<BigNumber>;
+
+  getUserRoundEntry(
+    user: PromiseOrValue<string>,
+    roundId: PromiseOrValue<BigNumberish>,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
+  getWinnerPrize(
+    user: PromiseOrValue<string>,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
 
   grantRole(
     role: PromiseOrValue<BytesLike>,
@@ -938,6 +999,7 @@ export interface Lottery extends BaseContract {
     [
       BigNumber,
       BigNumber,
+      BigNumber,
       boolean,
       boolean,
       boolean,
@@ -948,6 +1010,7 @@ export interface Lottery extends BaseContract {
       BigNumber,
       BigNumber
     ] & {
+      id: BigNumber;
       startTime: BigNumber;
       duration: BigNumber;
       isClosed: boolean;
@@ -1077,7 +1140,7 @@ export interface Lottery extends BaseContract {
 
     getActiveRounds(
       overrides?: CallOverrides
-    ): Promise<Lottery.RoundStructOutput[]>;
+    ): Promise<ILottery.RoundStructOutput[]>;
 
     getClaimStreak(
       user: PromiseOrValue<string>,
@@ -1088,7 +1151,7 @@ export interface Lottery extends BaseContract {
       length: PromiseOrValue<BigNumberish>,
       offset: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
-    ): Promise<Lottery.RoundStructOutput[]>;
+    ): Promise<ILottery.RoundStructOutput[]>;
 
     getRoleAdmin(
       role: PromiseOrValue<BytesLike>,
@@ -1098,7 +1161,20 @@ export interface Lottery extends BaseContract {
     getRound(
       id: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
-    ): Promise<Lottery.RoundStructOutput>;
+    ): Promise<ILottery.RoundStructOutput>;
+
+    getTotalRounds(overrides?: CallOverrides): Promise<BigNumber>;
+
+    getUserRoundEntry(
+      user: PromiseOrValue<string>,
+      roundId: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    getWinnerPrize(
+      user: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
     grantRole(
       role: PromiseOrValue<BytesLike>,
@@ -1152,6 +1228,7 @@ export interface Lottery extends BaseContract {
       [
         BigNumber,
         BigNumber,
+        BigNumber,
         boolean,
         boolean,
         boolean,
@@ -1162,6 +1239,7 @@ export interface Lottery extends BaseContract {
         BigNumber,
         BigNumber
       ] & {
+        id: BigNumber;
         startTime: BigNumber;
         duration: BigNumber;
         isClosed: boolean;
@@ -1393,6 +1471,19 @@ export interface Lottery extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    getTotalRounds(overrides?: CallOverrides): Promise<BigNumber>;
+
+    getUserRoundEntry(
+      user: PromiseOrValue<string>,
+      roundId: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    getWinnerPrize(
+      user: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     grantRole(
       role: PromiseOrValue<BytesLike>,
       account: PromiseOrValue<string>,
@@ -1583,6 +1674,19 @@ export interface Lottery extends BaseContract {
 
     getRound(
       id: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    getTotalRounds(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    getUserRoundEntry(
+      user: PromiseOrValue<string>,
+      roundId: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    getWinnerPrize(
+      user: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 

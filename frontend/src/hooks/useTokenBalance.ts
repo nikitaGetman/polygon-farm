@@ -1,7 +1,9 @@
-import { getBalanceHistoryFromTransfers } from '@/utils/balance';
-import { useQuery } from '@tanstack/react-query';
 import { useMemo } from 'react';
+import { useQuery } from '@tanstack/react-query';
 import { useAccount, useProvider } from 'wagmi';
+
+import { getBalanceHistoryFromTransfers } from '@/utils/balance';
+
 import { ContractsEnum } from './contracts/useContractAbi';
 import { useTokenContract } from './contracts/useTokenContract';
 import { useUsdtTokenContract } from './contracts/useUsdtTokenContract';

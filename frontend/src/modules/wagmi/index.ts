@@ -1,9 +1,9 @@
-import { createClient, configureChains, chain } from 'wagmi';
-import { publicProvider } from 'wagmi/providers/public';
-import { alchemyProvider } from 'wagmi/providers/alchemy';
-import { jsonRpcProvider } from 'wagmi/providers/jsonRpc';
+import { chain, configureChains, createClient } from 'wagmi';
 import { MetaMaskConnector } from 'wagmi/connectors/metaMask';
 import { WalletConnectConnector } from 'wagmi/connectors/walletConnect';
+import { alchemyProvider } from 'wagmi/providers/alchemy';
+import { jsonRpcProvider } from 'wagmi/providers/jsonRpc';
+import { publicProvider } from 'wagmi/providers/public';
 
 window.Buffer = require('buffer/').Buffer;
 
@@ -48,4 +48,4 @@ const client = createClient({
   webSocketProvider,
 });
 
-export { client, chains };
+export { chains, client };

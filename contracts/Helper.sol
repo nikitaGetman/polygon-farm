@@ -7,6 +7,7 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 import "./interfaces/IReferralManager.sol";
 import "./interfaces/IStaking.sol";
 import "./interfaces/ISquads.sol";
+import "./interfaces/ILottery.sol";
 
 contract Helper is Ownable {
     IERC20 public token1;
@@ -14,19 +15,22 @@ contract Helper is Ownable {
     IStaking public staking;
     IReferralManager public referralManager;
     ISquads public squads;
+    ILottery public lottery;
 
     constructor(
         address _token1,
         address _token2,
         address _staking,
         address _referralManager,
-        address _squads
+        address _squads,
+        address _lottery
     ) Ownable() {
         token1 = IERC20(_token1);
         token2 = IERC20(_token2);
         staking = IStaking(_staking);
         referralManager = IReferralManager(_referralManager);
         squads = ISquads(_squads);
+        lottery = ILottery(_lottery);
     }
 
     // ------- HELPER FUNCTIONS -------
@@ -114,6 +118,60 @@ contract Helper is Ownable {
         return squadsInfo;
     }
 
+    // Lottery
+    struct LotteryWinnersWithTickets {
+        uint256 level;
+        address winnerAddress;
+        uint256 enteredTickets;
+    }
+
+    function getLotteryRoundWinnersWithTickets(uint256 roundId)
+        public
+        view
+        returns (LotteryWinnersWithTickets[] memory)
+    {
+        ILottery.Round memory round = lottery.getRound(roundId);
+
+        uint256 totalWinners = 0;
+        for (uint256 i = 0; i < round.winners.length; i++) {
+            for (uint256 j = 0; j < round.winners[i].length; j++) {
+                if (round.winners[i][j] != address(0)) {
+                    totalWinners++;
+                }
+            }
+        }
+
+        LotteryWinnersWithTickets[]
+            memory winnersWithTickets = new LotteryWinnersWithTickets[](
+                totalWinners
+            );
+
+        uint256 index = 0;
+        for (uint256 i = 0; i < round.winners.length; i++) {
+            for (uint256 j = 0; j < round.winners[i].length; j++) {
+                address winner = round.winners[i][j];
+                if (winner != address(0)) {
+                    uint256 enteredTickets = lottery.getUserRoundEntry(
+                        winner,
+                        roundId
+                    );
+                    winnersWithTickets[index] = LotteryWinnersWithTickets(
+                        i,
+                        winner,
+                        enteredTickets
+                    );
+
+                    index++;
+                    if (index == totalWinners) {
+                        return winnersWithTickets;
+                    }
+                }
+            }
+        }
+
+        return winnersWithTickets;
+    }
+
     // --------------------------------
 
     function updateToken1(address _token1) public onlyOwner {
@@ -134,5 +192,9 @@ contract Helper is Ownable {
 
     function updateSquads(address _squads) public onlyOwner {
         squads = ISquads(_squads);
+    }
+
+    function updateLottery(address _lottery) public onlyOwner {
+        lottery = ILottery(_lottery);
     }
 }

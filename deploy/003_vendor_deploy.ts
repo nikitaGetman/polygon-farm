@@ -1,7 +1,7 @@
 import { HardhatRuntimeEnvironment } from "hardhat/types";
 import { DeployFunction } from "hardhat-deploy/types";
 import { VENDOR_SELL_SWAP_RATE } from "../config";
-import { ERC20, Token1 } from "typechain-types";
+import { ERC20, Token1, VendorSell } from "typechain-types";
 
 const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   const { deployments, getNamedAccounts, ethers, network } = hre;
@@ -53,6 +53,19 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
     .connect(vendorChangePoolSigner)
     .approve(vendorSell.address, ethers.constants.MaxUint256);
   await tx.wait();
+
+  if (!network.live) {
+    const vendorSellContract = await ethers.getContract<VendorSell>(
+      "VendorSell",
+      deployer
+    );
+    tx = await vendorSellContract.enableSell();
+    await tx.wait();
+
+    console.log("VendorSell: Token sell enabled");
+  } else {
+    console.log("VendorSell: Token sell disabled");
+  }
 };
 func.tags = ["VendorSell"];
 func.dependencies = ["Token1"];

@@ -1,7 +1,8 @@
+import { useCallback } from 'react';
+import { useToast } from '@chakra-ui/react';
+
 import { Notification, NotificationProps } from '@/components/ui/Notification/Notification';
 import { tryToGetErrorData } from '@/utils/error';
-import { useToast } from '@chakra-ui/react';
-import { useCallback } from 'react';
 
 const commonProps = {
   position: 'bottom-left' as const,
@@ -44,9 +45,7 @@ export const useNotification = () => {
   const handleError = useCallback(
     (err: any) => {
       const errData = tryToGetErrorData(err);
-      if (!errData.isReplaced) {
-        error({ title: errData.title, description: errData.description });
-      }
+      error({ title: errData.title, description: errData.description });
 
       return errData;
     },

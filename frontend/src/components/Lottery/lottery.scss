@@ -1,0 +1,66 @@
+.lottery-description {
+  &__table {
+    &,
+    tr,
+    td,
+    th {
+      border: 1px solid rgba(255, 255, 255, 0.5);
+    }
+
+    td,
+    th {
+      font-weight: 500;
+      text-align: left;
+      padding: 15px 20px;
+    }
+  }
+}
+
+.lottery-summary {
+  &__table {
+    width: 100%;
+
+    th {
+      padding: 25px 0;
+      font-weight: 600;
+      font-size: 16px;
+      line-height: 19.5px;
+    }
+    td {
+      padding: 15px 0;
+      font-weight: 500;
+      font-size: 16px;
+      text-transform: lowercase;
+      line-height: 23.4px;
+    }
+
+    &,
+    tr,
+    td,
+    th {
+      border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+    }
+  }
+
+  &__cell {
+    &--heading {
+      text-transform: uppercase;
+    }
+
+    &--level {
+      text-align: left;
+      width: 52px;
+    }
+    &--wallet {
+      text-align: center;
+    }
+    &--tickets {
+      width: 100px;
+      text-align: right;
+    }
+    &--prize {
+      width: 140px;
+      text-align: right;
+    }
+  }
+}

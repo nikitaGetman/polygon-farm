@@ -2,8 +2,13 @@ import { BigNumber, BigNumberish, ethers } from 'ethers';
 
 export const bigNumberToString = (
   value: BigNumberish,
-  decimals: number = 18,
-  precision: number = 2
+  {
+    decimals = 18,
+    precision = 2,
+  }: {
+    decimals?: number;
+    precision?: number;
+  } = {}
 ) => {
   const parts = ethers.utils.formatUnits(value, decimals).split('.');
   let fractional = parts[1].slice(0, precision);
@@ -13,10 +18,15 @@ export const bigNumberToString = (
 
 export const bigNumberToNumber = (
   value: BigNumberish,
-  decimals: number = 18,
-  precision: number = 2
+  {
+    decimals = 18,
+    precision = 2,
+  }: {
+    decimals?: number;
+    precision?: number;
+  } = {}
 ) => {
-  const stringValue = bigNumberToString(value, decimals, precision);
+  const stringValue = bigNumberToString(value, { decimals, precision });
   return parseFloat(stringValue);
 };
 

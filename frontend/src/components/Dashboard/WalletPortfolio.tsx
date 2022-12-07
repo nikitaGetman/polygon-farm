@@ -1,17 +1,21 @@
 import React from 'react';
-import { Text, Box, Flex, Button } from '@chakra-ui/react';
+import { useNavigate } from 'react-router-dom';
+import { Box, Button, Flex, Text } from '@chakra-ui/react';
 import { useAccount } from 'wagmi';
-import { ReactComponent as PuzzlesIcon } from '@/assets/images/icons/puzzles.svg';
+
+import { ReactComponent as BoxIcon } from '@/assets/images/icons/box.svg';
 import { ReactComponent as PlusIcon } from '@/assets/images/icons/plus.svg';
+import { ReactComponent as PuzzlesIcon } from '@/assets/images/icons/puzzles.svg';
 import { ConnectWalletButton } from '@/components/ui/ConnectWalletButton/ConnectWalletButton';
 import { useAddTokens } from '@/hooks/useAddTokens';
-import { bigNumberToString, getReadableAmount } from '@/utils/number';
-import { ReactComponent as BoxIcon } from '@/assets/images/icons/box.svg';
-import { useSavBalance, useTokenBalanceHistory, useSavRBalance } from '@/hooks/useTokenBalance';
 import { useStaking } from '@/hooks/useStaking';
+import { useSavBalance, useSavRBalance, useTokenBalanceHistory } from '@/hooks/useTokenBalance';
+import { bigNumberToString, getReadableAmount } from '@/utils/number';
+
 import { BalanceHistoryChart } from './BalanceChart';
 
 export const WalletPortfolio = () => {
+  const navigate = useNavigate();
   const { isConnected } = useAccount();
   const { addSAV, addSAVR } = useAddTokens();
 
@@ -37,7 +41,7 @@ export const WalletPortfolio = () => {
           </Text>
           <Text textStyle="textMedium">SAVR = 1 USDT</Text>
         </Flex>
-        <Button mt="30px" rightIcon={<BoxIcon />}>
+        <Button mt="30px" rightIcon={<BoxIcon />} onClick={() => navigate('/exchange')}>
           Buy SAV
         </Button>
       </Box>
@@ -62,7 +66,7 @@ export const WalletPortfolio = () => {
               <Flex flexWrap="wrap" maxW="200px">
                 <Flex alignItems="baseline" color="green.400">
                   <Text mr="2" textStyle="textMedium">
-                    {savBalance ? bigNumberToString(savBalance, 18) : '---'}
+                    {savBalance ? bigNumberToString(savBalance) : '---'}
                   </Text>
                   <Text textStyle="textSansBold">SAV</Text>
                 </Flex>
@@ -73,7 +77,7 @@ export const WalletPortfolio = () => {
               <Flex flexWrap="wrap" maxW="200px">
                 <Flex alignItems="baseline" color="blue">
                   <Text mr="2" textStyle="textMedium">
-                    {savrBalance ? bigNumberToString(savrBalance, 18) : '---'}
+                    {savrBalance ? bigNumberToString(savrBalance) : '---'}
                   </Text>
                   <Text textStyle="textSansBold">SAVR</Text>
                 </Flex>

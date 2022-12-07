@@ -1,9 +1,10 @@
 import React, { FC, useMemo } from 'react';
 import { Button, Center, Tbody, Td, Th, Thead, Tr, useDisclosure } from '@chakra-ui/react';
-import { Table } from '@/components/ui/Table/Table';
 import { BigNumber } from 'ethers';
-import { getLocalDateTimeString, getReadableDuration } from '@/utils/time';
+
+import { Table } from '@/components/ui/Table/Table';
 import { bigNumberToString } from '@/utils/number';
+import { getLocalDateTimeString, getReadableDuration } from '@/utils/time';
 
 const COLLAPSED_LIMIT = 6;
 

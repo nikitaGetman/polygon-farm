@@ -1,6 +1,9 @@
-import { VendorSell } from '@/types';
 import { BigNumberish } from 'ethers';
 import { useContract, useProvider, useSigner } from 'wagmi';
+
+import { VendorSell } from '@/types';
+import { waitForTransaction } from '@/utils/waitForTransaction';
+
 import { ContractsEnum, useContractAbi } from './useContractAbi';
 
 export const useVendorSellContract = () => {
@@ -21,26 +24,34 @@ export const useVendorSellContract = () => {
     return contract.swapRate();
   };
 
+  const getSellTokenCommission = () => {
+    return contract.sellTokenCommission();
+  };
+
+  const getDivider = () => {
+    return contract.DIVIDER();
+  };
+
   const isSellAvailable = () => {
     return contract.isSellAvailable();
   };
 
   const buyTokens = async (spendAmount: BigNumberish) => {
     const tx = await contract.buyTokens(spendAmount);
-    await tx.wait();
-    return tx.hash;
+    return waitForTransaction(tx);
   };
 
   const sellTokens = async (sellAmount: BigNumberish) => {
     const tx = await contract.sellTokens(sellAmount);
-    await tx.wait();
-    return tx.hash;
+    return waitForTransaction(tx);
   };
 
   return {
     contract,
     address: contractAddress,
     getSwapRate,
+    getSellTokenCommission,
+    getDivider,
     isSellAvailable,
     buyTokens,
     sellTokens,

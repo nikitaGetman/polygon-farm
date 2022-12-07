@@ -30,6 +30,7 @@ import type {
 export interface VendorSellInterface extends utils.Interface {
   functions: {
     "DEFAULT_ADMIN_ROLE()": FunctionFragment;
+    "DIVIDER()": FunctionFragment;
     "buyTokens(uint256)": FunctionFragment;
     "changeToken()": FunctionFragment;
     "disableSell()": FunctionFragment;
@@ -46,6 +47,7 @@ export interface VendorSellInterface extends utils.Interface {
     "paused()": FunctionFragment;
     "renounceRole(bytes32,address)": FunctionFragment;
     "revokeRole(bytes32,address)": FunctionFragment;
+    "sellTokenCommission()": FunctionFragment;
     "sellTokens(uint256)": FunctionFragment;
     "supportsInterface(bytes4)": FunctionFragment;
     "swapRate()": FunctionFragment;
@@ -56,11 +58,13 @@ export interface VendorSellInterface extends utils.Interface {
     "updateSwapRate(uint256)": FunctionFragment;
     "updateToken(address)": FunctionFragment;
     "updateTokenPool(address)": FunctionFragment;
+    "updatesellTokenCommission(uint256)": FunctionFragment;
   };
 
   getFunction(
     nameOrSignatureOrTopic:
       | "DEFAULT_ADMIN_ROLE"
+      | "DIVIDER"
       | "buyTokens"
       | "changeToken"
       | "disableSell"
@@ -77,6 +81,7 @@ export interface VendorSellInterface extends utils.Interface {
       | "paused"
       | "renounceRole"
       | "revokeRole"
+      | "sellTokenCommission"
       | "sellTokens"
       | "supportsInterface"
       | "swapRate"
@@ -87,12 +92,14 @@ export interface VendorSellInterface extends utils.Interface {
       | "updateSwapRate"
       | "updateToken"
       | "updateTokenPool"
+      | "updatesellTokenCommission"
   ): FunctionFragment;
 
   encodeFunctionData(
     functionFragment: "DEFAULT_ADMIN_ROLE",
     values?: undefined
   ): string;
+  encodeFunctionData(functionFragment: "DIVIDER", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "buyTokens",
     values: [PromiseOrValue<BigNumberish>]
@@ -152,6 +159,10 @@ export interface VendorSellInterface extends utils.Interface {
     values: [PromiseOrValue<BytesLike>, PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
+    functionFragment: "sellTokenCommission",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
     functionFragment: "sellTokens",
     values: [PromiseOrValue<BigNumberish>]
   ): string;
@@ -182,11 +193,16 @@ export interface VendorSellInterface extends utils.Interface {
     functionFragment: "updateTokenPool",
     values: [PromiseOrValue<string>]
   ): string;
+  encodeFunctionData(
+    functionFragment: "updatesellTokenCommission",
+    values: [PromiseOrValue<BigNumberish>]
+  ): string;
 
   decodeFunctionResult(
     functionFragment: "DEFAULT_ADMIN_ROLE",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "DIVIDER", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "buyTokens", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "changeToken",
@@ -230,6 +246,10 @@ export interface VendorSellInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "revokeRole", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "sellTokenCommission",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "sellTokens", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "supportsInterface",
@@ -256,6 +276,10 @@ export interface VendorSellInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "updateTokenPool",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "updatesellTokenCommission",
     data: BytesLike
   ): Result;
 
@@ -382,6 +406,8 @@ export interface VendorSell extends BaseContract {
   functions: {
     DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<[string]>;
 
+    DIVIDER(overrides?: CallOverrides): Promise<[BigNumber]>;
+
     buyTokens(
       _amountChangeToken: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -448,6 +474,8 @@ export interface VendorSell extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
+    sellTokenCommission(overrides?: CallOverrides): Promise<[BigNumber]>;
+
     sellTokens(
       _amountToken: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -490,9 +518,16 @@ export interface VendorSell extends BaseContract {
       pool: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
+
+    updatesellTokenCommission(
+      sellTokenCommission_: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
   };
 
   DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<string>;
+
+  DIVIDER(overrides?: CallOverrides): Promise<BigNumber>;
 
   buyTokens(
     _amountChangeToken: PromiseOrValue<BigNumberish>,
@@ -560,6 +595,8 @@ export interface VendorSell extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
+  sellTokenCommission(overrides?: CallOverrides): Promise<BigNumber>;
+
   sellTokens(
     _amountToken: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -603,8 +640,15 @@ export interface VendorSell extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
+  updatesellTokenCommission(
+    sellTokenCommission_: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
   callStatic: {
     DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<string>;
+
+    DIVIDER(overrides?: CallOverrides): Promise<BigNumber>;
 
     buyTokens(
       _amountChangeToken: PromiseOrValue<BigNumberish>,
@@ -666,6 +710,8 @@ export interface VendorSell extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
+    sellTokenCommission(overrides?: CallOverrides): Promise<BigNumber>;
+
     sellTokens(
       _amountToken: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
@@ -704,6 +750,11 @@ export interface VendorSell extends BaseContract {
 
     updateTokenPool(
       pool: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    updatesellTokenCommission(
+      sellTokenCommission_: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<void>;
   };
@@ -774,6 +825,8 @@ export interface VendorSell extends BaseContract {
   estimateGas: {
     DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<BigNumber>;
 
+    DIVIDER(overrides?: CallOverrides): Promise<BigNumber>;
+
     buyTokens(
       _amountChangeToken: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -840,6 +893,8 @@ export interface VendorSell extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
+    sellTokenCommission(overrides?: CallOverrides): Promise<BigNumber>;
+
     sellTokens(
       _amountToken: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -882,12 +937,19 @@ export interface VendorSell extends BaseContract {
       pool: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
+
+    updatesellTokenCommission(
+      sellTokenCommission_: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
   };
 
   populateTransaction: {
     DEFAULT_ADMIN_ROLE(
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
+
+    DIVIDER(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     buyTokens(
       _amountChangeToken: PromiseOrValue<BigNumberish>,
@@ -957,6 +1019,10 @@ export interface VendorSell extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
+    sellTokenCommission(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     sellTokens(
       _amountToken: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -997,6 +1063,11 @@ export interface VendorSell extends BaseContract {
 
     updateTokenPool(
       pool: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    updatesellTokenCommission(
+      sellTokenCommission_: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
   };

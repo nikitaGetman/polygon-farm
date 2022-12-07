@@ -1,16 +1,18 @@
 import React, { useCallback } from 'react';
-import { useAccount, useDisconnect } from 'wagmi';
-import { Box, Circle, Container, Flex, IconButton, useDisclosure } from '@chakra-ui/react';
-import { ConnectWalletButton } from '@/components/ui/ConnectWalletButton/ConnectWalletButton';
-import { Menu } from '@/components/Menu/Menu';
-import { ReactComponent as BurgerIcon } from '@/assets/images/icons/burger.svg';
-import { WalletMenu } from '@/components/Header/WalletMenu';
-import Logo from '@/assets/images/logo.svg';
-import { useStaking } from '@/hooks/useStaking';
-import { useReferralManager } from '@/hooks/useReferralManager';
-import { useLocalReferrer } from '@/hooks/useLocalReferrer';
 import { Link, useNavigate } from 'react-router-dom';
+import { Box, Circle, Container, Flex, IconButton, useDisclosure } from '@chakra-ui/react';
+import { useAccount, useDisconnect } from 'wagmi';
+
+import { ReactComponent as BurgerIcon } from '@/assets/images/icons/burger.svg';
+import Logo from '@/assets/images/logo.svg';
+import { WalletMenu } from '@/components/Header/WalletMenu';
+import { Menu } from '@/components/Menu/Menu';
+import { ConnectWalletButton } from '@/components/ui/ConnectWalletButton/ConnectWalletButton';
+import { useLocalReferrer } from '@/hooks/useLocalReferrer';
+import { useReferralManager } from '@/hooks/useReferralManager';
 import { useSquads } from '@/hooks/useSquads';
+import { useStaking } from '@/hooks/useStaking';
+
 import './Header.scss';
 
 export const Header = () => {
@@ -24,7 +26,8 @@ export const Header = () => {
   const { hasEndingSquadsSubscription } = useSquads();
 
   const hasNotification =
-    hasEndingSubscription || hasEndingReferralSubscription || hasEndingSquadsSubscription;
+    isConnected &&
+    (hasEndingSubscription || hasEndingReferralSubscription || hasEndingSquadsSubscription);
 
   const handleDisconnect = useCallback(() => {
     setLocalReferrer(undefined);

@@ -1,5 +1,7 @@
-import { TransferEvent } from '@/../../typechain-types/contracts/tokens/BasicToken';
 import { BigNumber } from 'ethers';
+
+import { TransferEvent } from '@/../../typechain-types/contracts/tokens/BasicToken';
+
 import { bigNumberToNumber } from './number';
 
 export const BALANCE_HISTORY_PERIOD = 1 * 30 * 24 * 60 * 60 * 1000; // 1 month

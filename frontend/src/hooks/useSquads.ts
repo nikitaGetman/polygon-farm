@@ -1,11 +1,12 @@
+import { useMemo } from 'react';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useAccount } from 'wagmi';
+
 import { bigNumberToString } from '@/utils/number';
 import { getReadableDuration } from '@/utils/time';
-import { useMutation } from '@tanstack/react-query';
-import { useMemo } from 'react';
-import { useAccount, useQuery, useQueryClient } from 'wagmi';
+
 import { useSquadsContract } from './contracts/useSquadsContract';
-import { useConnectWallet } from './useConnectWallet';
-import { useHelperUserSquadsFullInfo } from './useHelper';
+import { HELPER_USER_SQUADS_INFO_REQUEST, useHelperUserSquadsFullInfo } from './useHelper';
 import { useNotification } from './useNotification';
 import { useStaking } from './useStaking';
 import { SAV_BALANCE_REQUEST } from './useTokenBalance';
@@ -23,9 +24,8 @@ export const useSquads = () => {
   const squadsContract = useSquadsContract();
   const { success, handleError } = useNotification();
   const tokens = useTokens();
-  const { connect } = useConnectWallet();
-  const { stakingPlans } = useStaking();
-  const { userSquadsInfoRequest, userSquadsInfo } = useHelperUserSquadsFullInfo(account);
+  const { stakingPlansRequest } = useStaking();
+  const { userSquadsInfo } = useHelperUserSquadsFullInfo(account);
 
   const subscriptionPeriodDays = 365;
 
@@ -41,23 +41,17 @@ export const useSquads = () => {
   const subscribe = useMutation(
     [SUBSCRIBE_TO_SQUADS_PLAN_MUTATION],
     async (planId: number) => {
-      if (!account) {
-        connect();
-        return;
-      }
-
       const squadPlan = squadPlansRequest?.data?.[planId];
       if (!squadPlan) {
         return;
       }
-      const stakingPlan = stakingPlans?.data?.[squadPlan.stakingPlanId.toNumber()];
+      const stakingPlan = stakingPlansRequest?.data?.[squadPlan.stakingPlanId.toNumber()];
       if (!stakingPlan) {
         return;
       }
 
       await tokens.increaseAllowanceIfRequired.mutateAsync({
         token: TOKENS.SAV,
-        owner: account,
         spender: squadsContract.address,
         requiredAmount: squadPlan.subscriptionCost,
       });
@@ -65,7 +59,9 @@ export const useSquads = () => {
       const txHash = await squadsContract.subscribe(planId);
       success({
         title: 'Success',
-        description: `${bigNumberToString(squadPlan.stakingThreshold)}/${getReadableDuration(
+        description: `${bigNumberToString(squadPlan.stakingThreshold, {
+          precision: 0,
+        })}/${getReadableDuration(
           stakingPlan.stakingDuration
         )} team subscription has been activated for one year`,
         txHash,
@@ -73,9 +69,7 @@ export const useSquads = () => {
     },
     {
       onSuccess: () => {
-        userSquadsInfoRequest.refetch();
-        // TODO: invalidateQueries does not work in this case
-        // queryClient.invalidateQueries({ queryKey: [HELPER_USER_SQUADS_INFO_REQUEST] });
+        queryClient.invalidateQueries({ queryKey: [HELPER_USER_SQUADS_INFO_REQUEST] });
         queryClient.invalidateQueries({ queryKey: [SAV_BALANCE_REQUEST] });
       },
       onError: (err) => {

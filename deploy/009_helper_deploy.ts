@@ -13,6 +13,7 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   const referralManagerAddress = (await deployments.get("ReferralManager"))
     .address;
   const squadsAddress = (await deployments.get("Squads")).address;
+  const lotteryAddress = (await deployments.get("Lottery")).address;
 
   await deploy("Helper", {
     from: deployer,
@@ -22,6 +23,7 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
       stakingAddress,
       referralManagerAddress,
       squadsAddress,
+      lotteryAddress,
     ],
     log: true,
     autoMine: true,

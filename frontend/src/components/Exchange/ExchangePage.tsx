@@ -1,4 +1,6 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { ArrowBackIcon } from '@chakra-ui/icons';
 import {
   Box,
   Button,
@@ -9,15 +11,16 @@ import {
   Link,
   Text,
 } from '@chakra-ui/react';
-import { useNavigate } from 'react-router-dom';
-import { ArrowBackIcon } from '@chakra-ui/icons';
-import { useVendorSell } from '@/hooks/useVendorSell';
-import { InputAmount } from '../ui/InputAmount/InputAmount';
+
+import { ReactComponent as SwapIcon } from '@/assets/images/icons/swap.svg';
 import { ReactComponent as SavIcon } from '@/assets/images/sav_icon.svg';
 import { ReactComponent as UsdtIcon } from '@/assets/images/usdt_icon.svg';
-import { ReactComponent as SwapIcon } from '@/assets/images/icons/swap.svg';
+import { useDocumentTitle } from '@/hooks/useDocumentTitle';
 import { useSavBalance, useUsdtBalance } from '@/hooks/useTokenBalance';
+import { useVendorSell } from '@/hooks/useVendorSell';
 import { bigNumberToString, makeBigNumber } from '@/utils/number';
+
+import { InputAmount } from '../ui/InputAmount/InputAmount';
 
 const tokenPair = [
   {
@@ -34,15 +37,14 @@ const tokenPair = [
   },
 ];
 export const ExchangePage = () => {
-  useEffect(() => {
-    document.title = 'iSaver | Buy tokens';
-  }, []);
+  useDocumentTitle('iSaver | Buy SAV');
 
   const [isTokenSell, setIsTokenSell] = useState(false);
   const [amount, setAmount] = useState<string>();
 
   const navigate = useNavigate();
-  const { buyTokens, sellTokens, isSellAvailable } = useVendorSell();
+  const { buyTokens, sellTokens, isSellAvailable, getTokenSellEquivalent, sellCommission } =
+    useVendorSell();
   const usdtBalance = useUsdtBalance();
   const savBalance = useSavBalance();
 
@@ -66,12 +68,20 @@ export const ExchangePage = () => {
   }, [setIsTokenSell, setAmount]);
 
   const isLoading = buyTokens.isLoading || sellTokens.isLoading;
-  const isSwapDisabled = !amount || (isTokenSell && !isSellAvailable);
+  const isSwapDisabled = !amount || parseFloat(amount) === 0 || (isTokenSell && !isSellAvailable);
 
   const tokens = useMemo(
     () => (isTokenSell ? [tokenPair[1], tokenPair[0]] : tokenPair),
     [isTokenSell]
   );
+
+  const sellAmount = useMemo(() => {
+    if (isTokenSell && amount) {
+      return getTokenSellEquivalent(amount);
+    } else {
+      return amount;
+    }
+  }, [isTokenSell, amount, getTokenSellEquivalent]);
 
   return (
     <Container variant="dashboard" pt="60px">
@@ -96,7 +106,7 @@ export const ExchangePage = () => {
         </Flex>
 
         <Text textStyle="textSansSmall" mb="30px">
-          Trade tokens in an instant
+          Please use only Polygon (MATIC) network
         </Text>
 
         <Box>
@@ -112,7 +122,7 @@ export const ExchangePage = () => {
             total={
               isTokenSell
                 ? bigNumberToString(savBalance.data || 0)
-                : bigNumberToString(usdtBalance.data || 0, 6)
+                : bigNumberToString(usdtBalance.data || 0, { decimals: 6 })
             }
           />
         </Box>
@@ -136,7 +146,7 @@ export const ExchangePage = () => {
             placeholder="0"
             tokenIcon={tokens[1].icon}
             tokenTicker={tokens[1].ticker}
-            value={amount}
+            value={sellAmount}
             onChange={setAmount}
           />
         </Box>
@@ -151,10 +161,15 @@ export const ExchangePage = () => {
           Confirm
         </Button>
 
-        <Text mt="30px" textStyle="text1">
-          Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has
-          been the industry's standard dummy
-        </Text>
+        {isTokenSell ? (
+          <Text mt="30px" textStyle="text1">
+            {isSellAvailable
+              ? `The commission for the sale of tokens is ${(sellCommission || 0) * 100}%`
+              : `The exchange is not available. Contact your Leader or email us at exchange@isaver.io
+            with your wallet and the amount to be exchanged. Your exchange will be processed within
+            2 business days after verification. `}
+          </Text>
+        ) : null}
       </Box>
     </Container>
   );

@@ -1,4 +1,5 @@
 import React, { FC } from 'react';
+import QRCode from 'react-qr-code';
 import {
   Box,
   CloseButton,
@@ -10,7 +11,7 @@ import {
   ModalOverlay,
   Text,
 } from '@chakra-ui/react';
-import QRCode from 'react-qr-code';
+
 import Logo from '@/assets/images/logo.svg';
 
 type ReferralLinkQRModalProps = {

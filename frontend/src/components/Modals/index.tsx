@@ -1,7 +1,9 @@
 import React from 'react';
+
 import { useAppStateContext } from '@/contexts/AppContext';
-import { ConnectWalletModal } from './ConnectWalletModal';
 import { useSwitchNetworkToSupported } from '@/hooks/useSwitchNetworkToSupported';
+
+import { ConnectWalletModal } from './ConnectWalletModal';
 
 export const Modals = () => {
   const { state, closeConnectModal } = useAppStateContext();

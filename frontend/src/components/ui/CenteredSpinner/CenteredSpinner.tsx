@@ -1,11 +1,15 @@
 import React from 'react';
-import { Box, Center, Spinner } from '@chakra-ui/react';
 import { FC } from 'react';
+import { Box, Center, Spinner } from '@chakra-ui/react';
 
 type CenteredSpinnerProps = {
   color?: string;
+  background?: string;
 };
-export const CenteredSpinner: FC<CenteredSpinnerProps> = ({ color = 'green.400' }) => {
+export const CenteredSpinner: FC<CenteredSpinnerProps> = ({
+  color = 'green.400',
+  background = 'rgba(13, 35, 16, 0.3)',
+}) => {
   return (
     <Box
       position="absolute"
@@ -13,7 +17,7 @@ export const CenteredSpinner: FC<CenteredSpinnerProps> = ({ color = 'green.400' 
       top="0"
       width="100%"
       height="100%"
-      background="rgba(13, 35, 16, 0.3)"
+      background={background}
       zIndex="30"
     >
       <Center height="100%">

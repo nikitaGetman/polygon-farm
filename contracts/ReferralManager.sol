@@ -144,6 +144,10 @@ contract ReferralManager is IReferralManager, AccessControl {
         );
 
         user.totalRefDividendsClaimed += amount;
+        require(
+            rewardToken.balanceOf(rewardPool) >= amount,
+            "Not enough tokens in pool"
+        );
         rewardToken.transferFrom(rewardPool, _msgSender(), amount);
     }
 

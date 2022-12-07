@@ -1,14 +1,16 @@
+import { useMemo } from 'react';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { BigNumber, ethers } from 'ethers';
+import { useAccount } from 'wagmi';
+
 import { bigNumberToString } from '@/utils/number';
 import { createReferralLink } from '@/utils/referralLinks';
-import { useMutation } from '@tanstack/react-query';
-import { BigNumber, ethers } from 'ethers';
-import { useMemo } from 'react';
-import { useAccount, useQuery, useQueryClient } from 'wagmi';
+
 import { useReferralContract } from './contracts/useReferralContract';
 import { useConnectWallet } from './useConnectWallet';
 import { useNotification } from './useNotification';
 import { useStaking } from './useStaking';
-import { SAVR_BALANCE_REQUEST, SAV_BALANCE_REQUEST } from './useTokenBalance';
+import { SAV_BALANCE_REQUEST, SAVR_BALANCE_REQUEST } from './useTokenBalance';
 import { TOKENS, useTokens } from './useTokens';
 
 export const USER_REFERRAL_INFO_REQUEST = 'user-referrals-info';
@@ -31,7 +33,7 @@ export const useReferralManager = () => {
   const { success, handleError } = useNotification();
   const tokens = useTokens();
   const { connect } = useConnectWallet();
-  const { stakingPlans } = useStaking();
+  const { stakingPlansRequest } = useStaking();
 
   // Hardcode this, hope it would not change
   const levels = 10;
@@ -48,20 +50,23 @@ export const useReferralManager = () => {
     return await referralContract.contract.fullSubscriptionCost();
   });
 
-  const referralRewardsQuery = useQuery([USER_REFERRAL_REWARDS_REQUEST, { account }], async () => {
-    return account ? await referralContract.getRewards(account) : null;
-  });
+  const referralRewardsRequest = useQuery(
+    [USER_REFERRAL_REWARDS_REQUEST, { account }],
+    async () => {
+      return account ? await referralContract.getRewards(account) : null;
+    }
+  );
 
   const referralRewards = useMemo(
     () =>
-      referralRewardsQuery.data?.map(({ args }) => ({
+      referralRewardsRequest.data?.map(({ args }) => ({
         ...args,
         stakingDuration:
-          stakingPlans.data && args.stakingPlanId
-            ? stakingPlans.data[args.stakingPlanId.toNumber()].stakingDuration
+          stakingPlansRequest.data && args.stakingPlanId
+            ? stakingPlansRequest.data[args.stakingPlanId.toNumber()].stakingDuration
             : BigNumber.from(0),
       })) || [],
-    [referralRewardsQuery, stakingPlans]
+    [referralRewardsRequest.data, stakingPlansRequest.data]
   );
 
   const levelsSubscription = useMemo(
@@ -69,7 +74,7 @@ export const useReferralManager = () => {
       (userReferralInfo.data?.activeLevels || Array.from({ length: 10 })).map((till) =>
         BigNumber.from(till || 0).toNumber()
       ),
-    [userReferralInfo.data?.activeLevels]
+    [userReferralInfo.data]
   );
 
   const fullSubscription = useMemo(
@@ -86,7 +91,7 @@ export const useReferralManager = () => {
         till.toNumber() > 0 &&
         till.toNumber() - currentTime < REFERRAL_SUBSCRIPTION_ENDING_NOTIFICATION
     );
-  }, [userReferralInfo.data?.activeLevels]);
+  }, [userReferralInfo.data]);
 
   const referrer = useMemo(
     () =>
@@ -94,7 +99,7 @@ export const useReferralManager = () => {
       userReferralInfo.data.referrer !== ethers.constants.AddressZero
         ? userReferralInfo.data.referrer
         : undefined,
-    [userReferralInfo.data?.referrer]
+    [userReferralInfo.data]
   );
   const referralLink = useMemo(
     () =>
@@ -107,14 +112,8 @@ export const useReferralManager = () => {
   const subscribeToLevel = useMutation(
     [SUBSCRIBE_TO_REFERRAL_LEVEL_MUTATION],
     async (level: number) => {
-      if (!account) {
-        connect();
-        return;
-      }
-
       await tokens.increaseAllowanceIfRequired.mutateAsync({
         token: TOKENS.SAV,
-        owner: account,
         spender: referralContract.address,
         requiredAmount: levelSubscriptionCost.data || BigNumber.from(10).pow(18), // fallback to 10 tokens
       });
@@ -140,14 +139,8 @@ export const useReferralManager = () => {
   const subscribeToAllLevels = useMutation(
     [SUBSCRIBE_TO_ALL_REFERRAL_LEVELS_MUTATION],
     async () => {
-      if (!account) {
-        connect();
-        return;
-      }
-
       await tokens.increaseAllowanceIfRequired.mutateAsync({
         token: TOKENS.SAV,
-        owner: account,
         spender: referralContract.address,
         requiredAmount: fullSubscriptionCost.data || BigNumber.from(10).pow(18), // fallback to 10 tokens
       });
@@ -233,7 +226,7 @@ export const useReferralManager = () => {
     referralLink,
     setMyReferrer,
     claimDividends,
-    referralRewardsQuery,
+    referralRewardsRequest,
     referralRewards,
   };
 };

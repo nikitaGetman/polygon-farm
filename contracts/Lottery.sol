@@ -5,32 +5,17 @@ import "@openzeppelin/contracts/access/AccessControl.sol";
 import "@openzeppelin/contracts/token/ERC20/extensions/ERC20Burnable.sol";
 import "@chainlink/contracts/src/v0.8/interfaces/VRFCoordinatorV2Interface.sol";
 import "@chainlink/contracts/src/v0.8/VRFConsumerBaseV2.sol";
+import "./interfaces/ILottery.sol";
 import "./tokens/Ticket.sol";
 
-contract Lottery is VRFConsumerBaseV2, AccessControl {
-    struct Round {
-        uint256 startTime;
-        uint256 duration;
-        bool isClosed;
-        bool isOracleFulfilled;
-        bool isFinished;
-        uint256 initialPrize;
-        uint256 totalPrize;
-        uint256 maxTicketsFromOneMember;
-        uint256 tokensForOneTicket;
-        uint256[] winnersForLevel;
-        uint256[] prizeForLevel;
-        uint256 totalTickets;
-        address[] members;
-        uint256 randomWord;
-        address[][] winners;
-    }
-
+contract Lottery is ILottery, VRFConsumerBaseV2, AccessControl {
     bytes32 public constant OPERATOR_ROLE = keccak256("OPERATOR_ROLE");
 
     Round[] public rounds;
     mapping(uint256 => mapping(address => uint256)) roundMembers;
+    mapping(uint256 => mapping(address => uint256)) roundMembersHistory;
     mapping(address => uint256[]) claims;
+    mapping(address => uint256) winnersRewards;
 
     uint256 public TICKET_PRICE;
     uint256 public TICKET_ID;
@@ -120,6 +105,7 @@ contract Lottery is VRFConsumerBaseV2, AccessControl {
         require(totalPrizePercents == 100, "EC7");
 
         Round memory newRound = Round({
+            id: rounds.length,
             startTime: startTime,
             duration: duration,
             isClosed: false,
@@ -164,6 +150,7 @@ contract Lottery is VRFConsumerBaseV2, AccessControl {
             round.members.push(_msgSender());
         }
         roundMembers[roundId][_msgSender()] = currentTickets + tickets;
+        roundMembersHistory[roundId][_msgSender()] = currentTickets + tickets;
         round.totalTickets += tickets;
     }
 
@@ -245,10 +232,6 @@ contract Lottery is VRFConsumerBaseV2, AccessControl {
         rounds[roundId].isFinished = true;
         emit RoundFinished(roundId);
 
-        if (round.totalTickets == 0) {
-            return;
-        }
-
         uint256 random = round.randomWord;
 
         for (uint256 i = 0; i < round.winners.length; i++) {
@@ -256,6 +239,10 @@ contract Lottery is VRFConsumerBaseV2, AccessControl {
                 round.prizeForLevel[i];
 
             for (uint256 j = 0; j < round.winners[i].length; j++) {
+                if (round.totalTickets == 0) {
+                    return;
+                }
+
                 random = ((random * (i + 1) * (j + 1)) % block.timestamp) + 1;
                 address winner = round.winners[i][j];
 
@@ -282,6 +269,7 @@ contract Lottery is VRFConsumerBaseV2, AccessControl {
 
                 uint256 prizeAmount = totalLevelPrize / round.winners[i].length;
                 rewardToken.transferFrom(rewardPool, winner, prizeAmount);
+                winnersRewards[winner] += prizeAmount;
             }
         }
     }
@@ -322,8 +310,24 @@ contract Lottery is VRFConsumerBaseV2, AccessControl {
     }
 
     // --------- Helper functions ---------
+    function getTotalRounds() public view returns (uint256) {
+        return rounds.length;
+    }
+
+    function getWinnerPrize(address user) public view returns (uint256) {
+        return winnersRewards[user];
+    }
+
     function getRound(uint256 id) public view returns (Round memory) {
         return rounds[id];
+    }
+
+    function getUserRoundEntry(address user, uint256 roundId)
+        public
+        view
+        returns (uint256)
+    {
+        return roundMembersHistory[roundId][user];
     }
 
     function getActiveRounds() public view returns (Round[] memory) {
@@ -366,12 +370,13 @@ contract Lottery is VRFConsumerBaseV2, AccessControl {
                 } else {
                     remainingRounds -= 1;
                     finishedRounds[remainingRounds] = rounds[i - 1];
+                    if (remainingRounds == 0) {
+                        // return if find required amount of rounds
+                        return finishedRounds;
+                    }
                 }
             }
         }
-
-        // return if find required amount of rounds
-        if (remainingRounds == 0) return finishedRounds;
 
         // else cut empty round items
         uint256 roundsFound = length - remainingRounds;

@@ -1,4 +1,5 @@
 import { extendTheme } from '@chakra-ui/react';
+
 import { buttonTheme } from './button';
 import { containerTheme } from './container';
 import { inputTheme } from './input';
@@ -7,7 +8,7 @@ import { modalTheme } from './modal';
 import { tableTheme } from './table';
 
 const breakpoints = {
-  sm: '0px',
+  sm: '10px',
   md: '480px',
   lg: '640px',
   xl: '1024px',
@@ -34,6 +35,8 @@ const colors = {
     200: '#4d6655',
   },
   bgGreen: {
+    50: '#174033',
+    100: '#193524',
     200: '#1f3e2c',
     600: '#1a725c',
     800: '#192219',
@@ -82,6 +85,11 @@ const textStyles = {
     fontWeight: '700',
     lineHeight: '130%',
   },
+  heading1: {
+    fontSize: ['36px'],
+    fontWeight: '600',
+    lineHeight: '130%',
+  },
   text1: {
     fontSize: ['18px'],
     fontWeight: '500',
@@ -106,6 +114,11 @@ const textStyles = {
   textBold: {
     fontSize: ['18px'],
     fontWeight: '700',
+    lineHeight: '130%',
+  },
+  textSemiBold: {
+    fontSize: ['18px'],
+    fontWeight: '600',
     lineHeight: '130%',
   },
   textBaldPtSans: {

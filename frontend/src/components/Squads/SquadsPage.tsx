@@ -1,24 +1,26 @@
-import React, { useEffect } from 'react';
-import { Box, Button, Container, Flex, Heading, Link, Spinner } from '@chakra-ui/react';
+import React from 'react';
+import { useMemo } from 'react';
+import { useCallback } from 'react';
 import { Link as RouterLink } from 'react-router-dom';
 import { ArrowBackIcon } from '@chakra-ui/icons';
+import { Box, Button, Container, Flex, Heading, Link, Spinner } from '@chakra-ui/react';
+import { BigNumber } from 'ethers';
+
+import { useDocumentTitle } from '@/hooks/useDocumentTitle';
+import { useReferralManager } from '@/hooks/useReferralManager';
+import { getReadableAmount } from '@/utils/number';
+
 import { ReferralInfo } from '../Referral/ReferralInfo';
+import { ReferralRewardsList } from '../Referral/ReferralRewardsList';
 import { ReferralsList } from '../Referral/ReferralsList';
 import { StatBlock } from '../ui/StatBlock/StatBlock';
-import { BigNumber } from 'ethers';
-import { useReferralManager } from '@/hooks/useReferralManager';
-import { useMemo } from 'react';
-import { bigNumberToNumber, getReadableAmount } from '@/utils/number';
-import { useCallback } from 'react';
+
 import { SquadsList } from './SquadsList';
-import { ReferralRewardsList } from '../Referral/ReferralRewardsList';
 
 export const SquadsPage = () => {
-  const { userReferralInfo, claimDividends } = useReferralManager();
+  useDocumentTitle('iSaver | Build a team');
 
-  useEffect(() => {
-    document.title = 'iSaver | Build a team';
-  }, []);
+  const { userReferralInfo, claimDividends } = useReferralManager();
 
   const availableRewards = useMemo(() => {
     const { totalDividends, totalClaimedDividends } = userReferralInfo.data || {};
@@ -26,7 +28,7 @@ export const SquadsPage = () => {
       return totalDividends.sub(totalClaimedDividends);
     }
     return BigNumber.from(0);
-  }, [userReferralInfo]);
+  }, [userReferralInfo.data]);
 
   const claimRewards = useCallback(() => {
     if (availableRewards.gt(0) && !claimDividends.isLoading) {
@@ -34,10 +36,7 @@ export const SquadsPage = () => {
     }
   }, [claimDividends, availableRewards]);
 
-  const isClaimDisabled = useMemo(
-    () => bigNumberToNumber(availableRewards) === 0,
-    [availableRewards]
-  );
+  const isClaimDisabled = useMemo(() => availableRewards.eq(0), [availableRewards]);
 
   return (
     <Container variant="dashboard" pt="60px">

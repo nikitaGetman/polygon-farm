@@ -26,6 +26,7 @@ import type {
 export interface VRFCoordinatorMockInterface extends utils.Interface {
   functions: {
     "fulfillRequest(uint256)": FunctionFragment;
+    "getRequestsLength()": FunctionFragment;
     "randomWords(uint256)": FunctionFragment;
     "requestRandomWords(bytes32,uint64,uint16,uint32,uint32)": FunctionFragment;
     "requests(uint256)": FunctionFragment;
@@ -35,6 +36,7 @@ export interface VRFCoordinatorMockInterface extends utils.Interface {
   getFunction(
     nameOrSignatureOrTopic:
       | "fulfillRequest"
+      | "getRequestsLength"
       | "randomWords"
       | "requestRandomWords"
       | "requests"
@@ -44,6 +46,10 @@ export interface VRFCoordinatorMockInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "fulfillRequest",
     values: [PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getRequestsLength",
+    values?: undefined
   ): string;
   encodeFunctionData(
     functionFragment: "randomWords",
@@ -70,6 +76,10 @@ export interface VRFCoordinatorMockInterface extends utils.Interface {
 
   decodeFunctionResult(
     functionFragment: "fulfillRequest",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getRequestsLength",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -121,6 +131,8 @@ export interface VRFCoordinatorMock extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
+    getRequestsLength(overrides?: CallOverrides): Promise<[BigNumber]>;
+
     randomWords(
       arg0: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
@@ -151,6 +163,8 @@ export interface VRFCoordinatorMock extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
+  getRequestsLength(overrides?: CallOverrides): Promise<BigNumber>;
+
   randomWords(
     arg0: PromiseOrValue<BigNumberish>,
     overrides?: CallOverrides
@@ -180,6 +194,8 @@ export interface VRFCoordinatorMock extends BaseContract {
       requestId: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<void>;
+
+    getRequestsLength(overrides?: CallOverrides): Promise<BigNumber>;
 
     randomWords(
       arg0: PromiseOrValue<BigNumberish>,
@@ -214,6 +230,8 @@ export interface VRFCoordinatorMock extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
+    getRequestsLength(overrides?: CallOverrides): Promise<BigNumber>;
+
     randomWords(
       arg0: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
@@ -244,6 +262,8 @@ export interface VRFCoordinatorMock extends BaseContract {
       requestId: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
+
+    getRequestsLength(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     randomWords(
       arg0: PromiseOrValue<BigNumberish>,
