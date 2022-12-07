@@ -32,8 +32,10 @@ export const useLotteryContract = () => {
     return contract.getRound(roundId);
   };
 
-  const getUserRoundEntry = (user: string, roundId: BigNumberish) => {
-    return contract.getUserRoundEntry(user, roundId);
+  const getUserRoundEntry = (user?: string, roundId?: BigNumberish) => {
+    return user && roundId !== undefined
+      ? contract.getUserRoundEntry(user, roundId)
+      : Promise.reject('incorrect request params');
   };
 
   const getActiveRounds = () => {

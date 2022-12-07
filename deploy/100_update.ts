@@ -7,6 +7,7 @@ import {
   Token1,
   Token2,
   Helper,
+  Lottery,
 } from "typechain-types";
 
 const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
@@ -23,6 +24,7 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
     admin
   );
   const squadsManager = await ethers.getContract<Squads>("Squads", admin);
+  const lottery = await ethers.getContract<Lottery>("Lottery", admin);
   const helper = await ethers.getContract<Helper>("Helper", admin);
 
   // --------------------- STAKING ------------------------
@@ -141,6 +143,13 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   if (helperSquads !== squadsManager.address) {
     console.log("Update Squads in Helper");
     const tx = await helper.updateSquads(squadsManager.address);
+    await tx.wait();
+  }
+  // check Lottery in Helper
+  const helperLottery = await helper.lottery();
+  if (helperLottery !== lottery.address) {
+    console.log("Update Lottery in Helper");
+    const tx = await helper.updateLottery(lottery.address);
     await tx.wait();
   }
 

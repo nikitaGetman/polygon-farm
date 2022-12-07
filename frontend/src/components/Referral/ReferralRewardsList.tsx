@@ -2,9 +2,8 @@ import React, { useMemo, useState } from 'react';
 import { DownloadIcon } from '@chakra-ui/icons';
 import { Box, Button, Flex, Text } from '@chakra-ui/react';
 
+import { SearchWallet } from '@/components/ui/SearchWallet/SearchWallet';
 import { useReferralManager } from '@/hooks/useReferralManager';
-
-import { TableSearch } from '../ui/Table/TableSearch';
 
 import { ReferralRewardsTable } from './ReferralRewardsTable';
 
@@ -30,7 +29,7 @@ export const ReferralRewardsList = () => {
 
         <Flex alignItems="center">
           <Box mr="10px">
-            <TableSearch buttonText="Search wallet" onChange={setSearch} />
+            <SearchWallet buttonText="Search wallet" onChange={setSearch} />
           </Box>
           <Button variant="link" display="none">
             Export

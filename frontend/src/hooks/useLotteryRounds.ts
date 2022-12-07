@@ -2,7 +2,7 @@ import { useMemo } from 'react';
 import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
 
 import { LotteryRoundType, LotteryStatusEnum, parseLotteryFormat } from '@/lib/lottery';
-import { Lottery } from '@/types';
+import { ILottery } from '@/types';
 
 import { useLotteryContract } from './contracts/useLotteryContract';
 
@@ -54,7 +54,7 @@ export const useLotteryRounds = () => {
       .reduce((acc, { data }) => {
         acc.push(...data);
         return acc;
-      }, [] as Lottery.RoundStructOutput[])
+      }, [] as ILottery.RoundStructOutput[])
       .map((data) => parseLotteryFormat(data))
       .sort((a, b) => b.id - a.id);
   }, [finishedRoundsRequest.data]);

@@ -5,28 +5,10 @@ import "@openzeppelin/contracts/access/AccessControl.sol";
 import "@openzeppelin/contracts/token/ERC20/extensions/ERC20Burnable.sol";
 import "@chainlink/contracts/src/v0.8/interfaces/VRFCoordinatorV2Interface.sol";
 import "@chainlink/contracts/src/v0.8/VRFConsumerBaseV2.sol";
+import "./interfaces/ILottery.sol";
 import "./tokens/Ticket.sol";
 
-contract Lottery is VRFConsumerBaseV2, AccessControl {
-    struct Round {
-        uint256 id;
-        uint256 startTime;
-        uint256 duration;
-        bool isClosed;
-        bool isOracleFulfilled;
-        bool isFinished;
-        uint256 initialPrize;
-        uint256 totalPrize;
-        uint256 maxTicketsFromOneMember;
-        uint256 tokensForOneTicket;
-        uint256[] winnersForLevel;
-        uint256[] prizeForLevel;
-        uint256 totalTickets;
-        address[] members;
-        uint256 randomWord;
-        address[][] winners;
-    }
-
+contract Lottery is ILottery, VRFConsumerBaseV2, AccessControl {
     bytes32 public constant OPERATOR_ROLE = keccak256("OPERATOR_ROLE");
 
     Round[] public rounds;

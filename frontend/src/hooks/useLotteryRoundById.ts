@@ -35,11 +35,8 @@ export const useLotteryRoundById = (id?: BigNumberish) => {
 
   const userRoundEntryRequest = useQuery({
     queryKey: [LOTTERY_ROUND_USER_TICKETS_REQUEST, { id, address }],
-    queryFn: async () => {
-      if (!address) return;
-      return await lotteryContract.getUserRoundEntry(address, id as number);
-    },
-    enabled,
+    queryFn: async () => lotteryContract.getUserRoundEntry(address, id as number),
+    enabled: enabled && Boolean(address),
     select: (data) => data?.toNumber(),
   });
 

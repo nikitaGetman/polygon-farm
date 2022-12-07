@@ -15,11 +15,10 @@ import {
 import { useAccount } from 'wagmi';
 
 import { ReactComponent as ChevronDownIcon } from '@/assets/images/icons/chevron-down.svg';
+import { ReferralsTable } from '@/components/Referral/ReferralsTable';
+import { SearchWallet } from '@/components/ui/SearchWallet/SearchWallet';
 import { useHelperReferralsFullInfoByLevel } from '@/hooks/useHelper';
 import { useReferralManager } from '@/hooks/useReferralManager';
-
-import { ReferralsTable } from '../Referral/ReferralsTable';
-import { TableSearch } from '../ui/Table/TableSearch';
 
 const TOTAL_LEVELS = 10;
 
@@ -118,7 +117,7 @@ export const ReferralsList = () => {
 
         <Flex alignItems="center">
           <Box mr="10px">
-            <TableSearch buttonText="Search wallet" onChange={setSearch} />
+            <SearchWallet buttonText="Search wallet" onChange={setSearch} />
           </Box>
           <Button variant="link" display="none">
             Export

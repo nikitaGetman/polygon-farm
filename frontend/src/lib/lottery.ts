@@ -1,6 +1,6 @@
 import { BigNumber } from 'ethers';
 
-import { Lottery } from '@/types';
+import { Helper, ILottery } from '@/types';
 
 export enum LotteryStatusEnum {
   upcoming = 'upcoming',
@@ -20,10 +20,10 @@ type LotteryRoundOverload = {
   status: LotteryStatusEnum;
 };
 
-export type LotteryRoundType = Omit<Lottery.RoundStructOutput, keyof LotteryRoundOverload> &
+export type LotteryRoundType = Omit<ILottery.RoundStructOutput, keyof LotteryRoundOverload> &
   LotteryRoundOverload;
 
-export const parseLotteryFormat = (round: Lottery.RoundStructOutput): LotteryRoundType => {
+export const parseLotteryFormat = (round: ILottery.RoundStructOutput): LotteryRoundType => {
   const startTime = BigNumber.from(round.startTime).toNumber();
   const duration = BigNumber.from(round.duration).toNumber();
 
@@ -62,4 +62,41 @@ export const getNextLotteryTimestamp = ({
   duration,
 }: Pick<LotteryRoundType, 'status' | 'startTime' | 'duration'>) => {
   return status === LotteryStatusEnum.current ? startTime + duration : startTime;
+};
+
+export type LotteryWinners = {
+  level: number;
+  address: string;
+  tickets: number;
+  prize: BigNumber;
+};
+export const calculateLotteryWinnersPrize = (
+  winners: Helper.LotteryWinnersWithTicketsStructOutput[],
+  round?: LotteryRoundType
+): LotteryWinners[] => {
+  if (!round) return [];
+
+  return winners.map((winner) => ({
+    level: winner.level.toNumber(),
+    address: winner.winnerAddress,
+    tickets: winner.enteredTickets.toNumber(),
+    prize: getWinnerPrize(
+      winner.level.toNumber(),
+      round.winnersForLevel,
+      round.prizeForLevel,
+      round.totalPrize
+    ),
+  }));
+};
+
+const getWinnerPrize = (
+  level: number,
+  winnersForLevel: number[],
+  prizeForLevel: number[],
+  totalPrize: BigNumber
+) => {
+  const levelPrize = totalPrize.mul(prizeForLevel[level]).div(100);
+  const winnerPrize = levelPrize.div(winnersForLevel[level]);
+
+  return winnerPrize;
 };

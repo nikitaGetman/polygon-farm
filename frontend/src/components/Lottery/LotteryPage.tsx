@@ -8,6 +8,7 @@ import { useAccount } from 'wagmi';
 import { CenteredSpinner } from '@/components/ui/CenteredSpinner/CenteredSpinner';
 import { useConnectWallet } from '@/hooks/useConnectWallet';
 import { useDocumentTitle } from '@/hooks/useDocumentTitle';
+import { useHelperLotteryRoundWinners } from '@/hooks/useHelper';
 import { useLottery } from '@/hooks/useLottery';
 import { useLotteryRoundById } from '@/hooks/useLotteryRoundById';
 import { LotteryStatusEnum } from '@/lib/lottery';
@@ -18,6 +19,7 @@ import { LotteryCountdown } from './LotteryCountdown';
 import { LotteryDescription } from './LotteryDescrption';
 import { LotteryEnter } from './LotteryEnter';
 import { LotteryHeading } from './LotteryHeading';
+import { LotterySummary } from './LotterySummary';
 import { LotteryTickets } from './LotteryTickets';
 
 export const LotteryPage = () => {
@@ -25,7 +27,7 @@ export const LotteryPage = () => {
 
   const { id } = useParams();
   const roundId = useMemo(() => (id ? parseInt(id) - 1 : undefined), [id]);
-  const { isConnected } = useAccount();
+  const { isConnected, address } = useAccount();
   const { connect } = useConnectWallet();
   const { isOpen, onOpen, onClose } = useDisclosure(); // Buy Ticket modal
   const navigate = useNavigate();
@@ -65,11 +67,18 @@ export const LotteryPage = () => {
   const isSoldOut = round?.status === LotteryStatusEnum.soldOut;
   const isPast = round?.status === LotteryStatusEnum.past;
 
+  const roundWinners = useHelperLotteryRoundWinners(isPast ? roundId : undefined);
+
   const totalPrize = useMemo(() => {
     if (round) {
       return round.initialPrize.add(round.tokensForOneTicket.mul(round.totalTickets));
     } else return BigNumber.from(0);
   }, [round]);
+
+  const userPrize = useMemo(
+    () => roundWinners?.data?.find((winner) => winner.address === address)?.prize,
+    [roundWinners.data, address]
+  );
 
   return (
     <Container variant="dashboard" pt="40px">
@@ -79,7 +88,7 @@ export const LotteryPage = () => {
       </Link>
 
       {round ? (
-        <Grid gridTemplateColumns="1fr 1fr" gap="20px">
+        <Grid gridTemplateColumns="1fr 1fr" gap="20px" mb="80px">
           <GridItem colSpan={2}>
             <LotteryHeading
               status={round.status}
@@ -112,7 +121,7 @@ export const LotteryPage = () => {
             <Box mb="20px">
               <LotteryTickets
                 tickets={ticketBalance || 0}
-                showEntered={!isUpcoming}
+                showEntered={!isUpcoming && isConnected}
                 isClosed={isSoldOut || isPast}
                 enteredTickets={userEnteredTickets}
                 onBuyClick={handleOpenTicketModal}
@@ -128,6 +137,10 @@ export const LotteryPage = () => {
                   onEnter={handleEnterLottery}
                 />
               </Box>
+            ) : null}
+
+            {isPast ? (
+              <LotterySummary userPrize={userPrize} winners={roundWinners.data || []} />
             ) : null}
           </GridItem>
         </Grid>

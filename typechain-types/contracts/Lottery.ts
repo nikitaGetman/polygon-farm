@@ -27,7 +27,7 @@ import type {
   PromiseOrValue,
 } from "../common";
 
-export declare namespace Lottery {
+export declare namespace ILottery {
   export type RoundStruct = {
     id: PromiseOrValue<BigNumberish>;
     startTime: PromiseOrValue<BigNumberish>;
@@ -680,7 +680,7 @@ export interface Lottery extends BaseContract {
 
     getActiveRounds(
       overrides?: CallOverrides
-    ): Promise<[Lottery.RoundStructOutput[]]>;
+    ): Promise<[ILottery.RoundStructOutput[]]>;
 
     getClaimStreak(
       user: PromiseOrValue<string>,
@@ -691,7 +691,7 @@ export interface Lottery extends BaseContract {
       length: PromiseOrValue<BigNumberish>,
       offset: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
-    ): Promise<[Lottery.RoundStructOutput[]]>;
+    ): Promise<[ILottery.RoundStructOutput[]]>;
 
     getRoleAdmin(
       role: PromiseOrValue<BytesLike>,
@@ -701,7 +701,7 @@ export interface Lottery extends BaseContract {
     getRound(
       id: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
-    ): Promise<[Lottery.RoundStructOutput]>;
+    ): Promise<[ILottery.RoundStructOutput]>;
 
     getTotalRounds(overrides?: CallOverrides): Promise<[BigNumber]>;
 
@@ -911,7 +911,7 @@ export interface Lottery extends BaseContract {
 
   getActiveRounds(
     overrides?: CallOverrides
-  ): Promise<Lottery.RoundStructOutput[]>;
+  ): Promise<ILottery.RoundStructOutput[]>;
 
   getClaimStreak(
     user: PromiseOrValue<string>,
@@ -922,7 +922,7 @@ export interface Lottery extends BaseContract {
     length: PromiseOrValue<BigNumberish>,
     offset: PromiseOrValue<BigNumberish>,
     overrides?: CallOverrides
-  ): Promise<Lottery.RoundStructOutput[]>;
+  ): Promise<ILottery.RoundStructOutput[]>;
 
   getRoleAdmin(
     role: PromiseOrValue<BytesLike>,
@@ -932,7 +932,7 @@ export interface Lottery extends BaseContract {
   getRound(
     id: PromiseOrValue<BigNumberish>,
     overrides?: CallOverrides
-  ): Promise<Lottery.RoundStructOutput>;
+  ): Promise<ILottery.RoundStructOutput>;
 
   getTotalRounds(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -1140,7 +1140,7 @@ export interface Lottery extends BaseContract {
 
     getActiveRounds(
       overrides?: CallOverrides
-    ): Promise<Lottery.RoundStructOutput[]>;
+    ): Promise<ILottery.RoundStructOutput[]>;
 
     getClaimStreak(
       user: PromiseOrValue<string>,
@@ -1151,7 +1151,7 @@ export interface Lottery extends BaseContract {
       length: PromiseOrValue<BigNumberish>,
       offset: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
-    ): Promise<Lottery.RoundStructOutput[]>;
+    ): Promise<ILottery.RoundStructOutput[]>;
 
     getRoleAdmin(
       role: PromiseOrValue<BytesLike>,
@@ -1161,7 +1161,7 @@ export interface Lottery extends BaseContract {
     getRound(
       id: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
-    ): Promise<Lottery.RoundStructOutput>;
+    ): Promise<ILottery.RoundStructOutput>;
 
     getTotalRounds(overrides?: CallOverrides): Promise<BigNumber>;
 

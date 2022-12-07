@@ -10,14 +10,18 @@ import {
   useDisclosure,
 } from '@chakra-ui/react';
 
-type TableSearchProps = {
+type SearchWalletProps = {
+  variant?: string;
+  minWidth?: string;
   buttonText: string;
   placeholder?: string;
   onChange: (search: string) => void;
 };
-export const TableSearch: FC<TableSearchProps> = ({
-  onChange,
+export const SearchWallet: FC<SearchWalletProps> = ({
   buttonText,
+  onChange,
+  minWidth = '340px',
+  variant = 'primary',
   placeholder = '0x...',
 }) => {
   const [search, setSearch] = useState<string>('');
@@ -41,7 +45,7 @@ export const TableSearch: FC<TableSearchProps> = ({
   return (
     <Box>
       {isOpen || search ? (
-        <InputGroup variant="primary" size="md" minWidth="340px">
+        <InputGroup variant={variant} size="md" minWidth={minWidth}>
           <Input
             placeholder={placeholder}
             value={search}
