@@ -305,13 +305,13 @@ contract Lottery is ILottery, VRFConsumerBaseV2, AccessControl {
     }
 
     function mintMyTicket() public {
-        if (isMintAvailable(_msgSender())) {
-            _mintTicket(_msgSender(), 1);
-            // Cut fractionaal part
-            lastTicketMint[_msgSender()] =
-                (block.timestamp / CLAIM_PERIOD + 1) *
-                CLAIM_PERIOD;
-        }
+        require(isMintAvailable(_msgSender()), "Ticket mint is not available");
+
+        _mintTicket(_msgSender(), 1);
+        // Cut fractionaal part
+        lastTicketMint[_msgSender()] =
+            (block.timestamp / CLAIM_PERIOD + 1) *
+            CLAIM_PERIOD;
     }
 
     function _mintTicket(address user, uint256 amount) internal {
