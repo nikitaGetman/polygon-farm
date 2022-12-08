@@ -149,6 +149,10 @@ const active = defineStyle({
   _hover: {
     boxShadow: 'none',
     cursor: 'default',
+    _disabled: {
+      background: 'gray.200',
+      color: '#9faca3',
+    },
   },
 });
 const inactive = defineStyle({
@@ -161,7 +165,10 @@ const inactive = defineStyle({
   _hover: {
     color: 'white',
     bgColor: 'green.400',
-    // _disabled: {},
+    _disabled: {
+      background: 'gray.200',
+      color: '#9faca3',
+    },
   },
 });
 

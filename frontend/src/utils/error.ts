@@ -6,11 +6,18 @@ export function getErrorMessage(error: unknown): string {
   return String(error);
 }
 
-export function tryToGetErrorData(error: any): {
-  title: string;
-  description?: string;
-} {
+export function tryToGetErrorData(error: any):
+  | {
+      title: string;
+      description?: string;
+    }
+  | undefined {
   const message = getErrorMessage(error);
+
+  // rejected by user
+  if (error.code === 4001) {
+    return undefined;
+  }
 
   if (error.code === Logger.errors.TRANSACTION_REPLACED) {
     if (error.cancelled) {

@@ -1,9 +1,10 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   Box,
   Button,
   ButtonGroup,
+  Center,
   Container,
   Flex,
   Grid,
@@ -54,6 +55,12 @@ export const LotteryList = () => {
       ? finishedRoundsRequest.isLoading
       : activeRoundsRequest.isLoading;
 
+  useEffect(() => {
+    if (!liveRounds.length && stateFilter === LotteryStatusEnum.current) {
+      setStateFilter(LotteryStatusEnum.upcoming);
+    }
+  }, [liveRounds, stateFilter, setStateFilter]);
+
   return (
     <Container variant="dashboard">
       <Flex alignItems="center" gap="2">
@@ -71,6 +78,7 @@ export const LotteryList = () => {
         <ButtonGroup isAttached>
           <Button
             borderRadius="sm"
+            disabled={!liveRounds.length}
             variant={stateFilter === LotteryStatusEnum.current ? 'active' : 'inactive'}
             onClick={() => setStateFilter(LotteryStatusEnum.current)}
           >
@@ -142,11 +150,23 @@ export const LotteryList = () => {
             />
           </GridItem>
         ))}
-
-        {stateFilter === LotteryStatusEnum.past && finishedRoundsRequest.hasNextPage ? (
-          <Button onClick={() => finishedRoundsRequest.fetchNextPage()}>More</Button>
-        ) : null}
       </Grid>
+
+      {!isLoading && !lotteries?.length ? (
+        <Center mt="60px">
+          <Text textStyle="textMedium" opacity={0.3}>
+            No raffle rounds yet
+          </Text>
+        </Center>
+      ) : null}
+
+      {stateFilter === LotteryStatusEnum.past && finishedRoundsRequest.hasNextPage ? (
+        <Center mt="10px">
+          <Button variant="link" onClick={() => finishedRoundsRequest.fetchNextPage()}>
+            Load more
+          </Button>
+        </Center>
+      ) : null}
     </Container>
   );
 };

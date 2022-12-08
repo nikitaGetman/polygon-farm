@@ -21,11 +21,12 @@ export const useCountdown = (timestamp: number, onExpire?: () => void) => {
   }, [timestamp, setElapsedTime]);
 
   useEffect(() => {
-    if (elapsedTime === 0 && isActive) {
+    if (elapsedTime === 0 && isActive && timestamp) {
       clearInterval(interval.current);
+      setIsActive(false);
       onExpire?.();
     }
-  }, [elapsedTime, onExpire, isActive]);
+  }, [elapsedTime, onExpire, isActive, timestamp]);
 
   const stamps = useMemo(() => {
     const elapsedSeconds = Math.floor((elapsedTime || 0) / 1000);

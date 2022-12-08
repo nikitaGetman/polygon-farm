@@ -7,15 +7,25 @@
     color: #264737;
   }
 
-  &--enabled:hover {
-    cursor: pointer;
-    p {
-      color: #ffffff;
+  &--disabled:hover {
+    cursor: not-allowed;
+  }
+  &--enabled {
+    svg {
+      fill-opacity: 0.3;
+      color: #1adce2;
     }
 
-    svg {
-      fill-opacity: 0.8;
-      color: #1adce2;
+    &:hover,
+    &:focus {
+      cursor: pointer;
+      p {
+        color: #ffffff;
+      }
+
+      svg {
+        fill-opacity: 0.8;
+      }
     }
   }
 }
