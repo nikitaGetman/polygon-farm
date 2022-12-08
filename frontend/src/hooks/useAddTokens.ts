@@ -1,12 +1,12 @@
 import { useCallback } from 'react';
 
 import { ContractsEnum, useContractAbi } from './contracts/useContractAbi';
-// import savIcon from '@/assets/images/sav_icon.svg';
-// import savrIcon from '@/assets/images/savr_icon.svg';
+import { useNotification } from './useNotification';
 
 export const useAddTokens = () => {
   const { address: savAddress } = useContractAbi({ contract: ContractsEnum.SAV });
   const { address: savrAddress } = useContractAbi({ contract: ContractsEnum.SAVR });
+  const { success, handleError } = useNotification();
 
   const addToWallet = useCallback(
     async (tokenName: string) => {
@@ -15,13 +15,13 @@ export const useAddTokens = () => {
           address: savAddress,
           symbol: 'SAV',
           decimals: 18,
-          // image: savIcon,
+          image: `${window.origin}/sav.png`,
         },
         SAVR: {
           address: savrAddress,
           symbol: 'SAVR',
           decimals: 18,
-          // image: savrIcon,
+          image: `${window.origin}/savr.png`,
         },
       };
 
@@ -43,19 +43,17 @@ export const useAddTokens = () => {
           },
         });
         if (wasAdded) {
-          console.log('Thanks for your interest!');
-        } else {
-          console.log('Your loss!');
+          success({ title: 'Token added' });
         }
-      } catch (error) {
-        console.log(error);
+      } catch (err) {
+        handleError(err);
       }
     },
-    [savAddress, savrAddress]
+    [savAddress, savrAddress, success, handleError]
   );
 
-  const addSAV = useCallback(() => addToWallet('SAV'), [addToWallet]);
-  const addSAVR = useCallback(() => addToWallet('SAVR'), [addToWallet]);
+  const addSAV = () => addToWallet('SAV');
+  const addSAVR = () => addToWallet('SAVR');
 
   return { addSAV, addSAVR };
 };

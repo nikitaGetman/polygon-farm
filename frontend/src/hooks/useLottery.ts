@@ -12,11 +12,16 @@ import { TOKENS, useTokens } from './useTokens';
 export const TICKET_BALANCE_REQUEST = 'ticket-balance-request';
 const LOTTERY_TICKET_PRICE_REQUEST = 'lottery-ticket-price-request';
 const LOTTERY_WINNER_PRIZE_REQUEST = 'lottery-winner-prize-request';
+const LOTTERY_CLAIM_PERIOD_REQUEST = 'lottery-claim-period-request';
 const LOTTERY_IS_CLAIMED_TODAY_REQUEST = 'lottery-is-claimed-today-request';
+const LOTTERY_GET_LAST_CLAIM_REQUEST = 'lottery-get-last-claim-request';
 const LOTTERY_CLAIM_STREAK_REQUEST = 'lottery-claim-streak-request';
+const LOTTERY_IS_MINT_AVAILABLE_REQUEST = 'lottery-is-mint-available-request';
 const BUY_TICKETS_MUTATION = 'buy-tickets-mutation';
 const CLAIM_DAY_MUTATION = 'claim-day-mutation';
+const MINT_TICKET_MUTATION = 'mint-ticket-mutation';
 
+const claimStreakForTicket = 5;
 export const useLottery = () => {
   const { address: account } = useAccount();
 
@@ -47,6 +52,77 @@ export const useLottery = () => {
     [ticketBalanceRequest.data]
   );
 
+  const claimPeriod = useQuery(
+    [LOTTERY_CLAIM_PERIOD_REQUEST],
+    () => lotteryContract.getClaimPeriod(),
+    { select: (data) => data.toNumber() }
+  );
+
+  const isClaimedToday = useQuery(
+    [LOTTERY_IS_CLAIMED_TODAY_REQUEST, { account }],
+    () => lotteryContract.isClaimedToday(account),
+    { enabled: Boolean(account) }
+  );
+
+  const claimStreak = useQuery(
+    [LOTTERY_CLAIM_STREAK_REQUEST, { account }],
+    () => lotteryContract.getClaimStreak(account),
+    {
+      enabled: Boolean(account),
+      select: (data) => data.toNumber(),
+    }
+  );
+
+  const lastClaim = useQuery(
+    [LOTTERY_GET_LAST_CLAIM_REQUEST, { account }],
+    () => lotteryContract.getLastClaimTime(account),
+    {
+      enabled: Boolean(account),
+      select: (data) => data.toNumber(),
+    }
+  );
+
+  const isMintAvailable = useQuery(
+    [LOTTERY_IS_MINT_AVAILABLE_REQUEST, { account }],
+    () => lotteryContract.isMintAvailable(account),
+    { enabled: Boolean(account) }
+  );
+
+  const claimDay = useMutation(
+    [CLAIM_DAY_MUTATION],
+    async () => {
+      const txHash = await lotteryContract.claimDay();
+      success({ title: 'Success', description: 'You claimed today', txHash });
+    },
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries({ queryKey: [LOTTERY_IS_CLAIMED_TODAY_REQUEST] });
+        queryClient.invalidateQueries({ queryKey: [LOTTERY_CLAIM_STREAK_REQUEST] });
+        queryClient.invalidateQueries({ queryKey: [LOTTERY_GET_LAST_CLAIM_REQUEST] });
+        queryClient.invalidateQueries({ queryKey: [LOTTERY_IS_MINT_AVAILABLE_REQUEST] });
+      },
+      onError: handleError,
+    }
+  );
+
+  const mintMyTicket = useMutation(
+    [MINT_TICKET_MUTATION],
+    async () => {
+      const txHash = await lotteryContract.mintMyTicket();
+      success({ title: 'Success', description: 'You minted 1 lottery ticket', txHash });
+    },
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries({ queryKey: [TICKET_BALANCE_REQUEST] });
+        queryClient.invalidateQueries({ queryKey: [LOTTERY_IS_CLAIMED_TODAY_REQUEST] });
+        queryClient.invalidateQueries({ queryKey: [LOTTERY_CLAIM_STREAK_REQUEST] });
+        queryClient.invalidateQueries({ queryKey: [LOTTERY_GET_LAST_CLAIM_REQUEST] });
+        queryClient.invalidateQueries({ queryKey: [LOTTERY_IS_MINT_AVAILABLE_REQUEST] });
+      },
+      onError: handleError,
+    }
+  );
+
   const buyTickets = useMutation(
     [BUY_TICKETS_MUTATION],
     async (amount: number) => {
@@ -64,9 +140,7 @@ export const useLottery = () => {
         queryClient.invalidateQueries({ queryKey: [TICKET_BALANCE_REQUEST] });
         queryClient.invalidateQueries({ queryKey: [SAV_BALANCE_REQUEST] });
       },
-      onError: (err) => {
-        handleError(err);
-      },
+      onError: handleError,
     }
   );
 
@@ -74,6 +148,12 @@ export const useLottery = () => {
     lotteryContract,
     ticketContract,
 
+    claimPeriod,
+    claimStreakForTicket,
+    isClaimedToday,
+    claimStreak,
+    lastClaim,
+    isMintAvailable,
     ticketPriceRequest,
     ticketPrice,
     userTotalPrizeRequest,
@@ -82,5 +162,7 @@ export const useLottery = () => {
     ticketBalance,
 
     buyTickets,
+    claimDay,
+    mintMyTicket,
   };
 };

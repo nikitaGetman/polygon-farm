@@ -1390,6 +1390,25 @@
             {
               "inputs": [
                 {
+                  "internalType": "address",
+                  "name": "user",
+                  "type": "address"
+                }
+              ],
+              "name": "getLastClaimTime",
+              "outputs": [
+                {
+                  "internalType": "uint256",
+                  "name": "",
+                  "type": "uint256"
+                }
+              ],
+              "stateMutability": "view",
+              "type": "function"
+            },
+            {
+              "inputs": [
+                {
                   "internalType": "uint256",
                   "name": "length",
                   "type": "uint256"
@@ -1733,12 +1752,38 @@
             {
               "inputs": [
                 {
+                  "internalType": "address",
+                  "name": "user",
+                  "type": "address"
+                }
+              ],
+              "name": "isMintAvailable",
+              "outputs": [
+                {
+                  "internalType": "bool",
+                  "name": "",
+                  "type": "bool"
+                }
+              ],
+              "stateMutability": "view",
+              "type": "function"
+            },
+            {
+              "inputs": [
+                {
                   "internalType": "uint256",
                   "name": "roundId",
                   "type": "uint256"
                 }
               ],
               "name": "manuallyGetWinners",
+              "outputs": [],
+              "stateMutability": "nonpayable",
+              "type": "function"
+            },
+            {
+              "inputs": [],
+              "name": "mintMyTicket",
               "outputs": [],
               "stateMutability": "nonpayable",
               "type": "function"
@@ -18352,7 +18397,7 @@
       "chainId": "80001",
       "contracts": {
         "ERC20BurnableMock": {
-          "address": "0xe177bE3F89e14A360E4A88E23D47739704D28Cf1",
+          "address": "0x616fcd8FB7c2A556eCB1fE414324dDDCEE6d8b4E",
           "abi": [
             {
               "inputs": [
@@ -18679,7 +18724,7 @@
           ]
         },
         "Helper": {
-          "address": "0xD0a90442B41897959F8270aCdD4C76afB7A1Fb87",
+          "address": "0x9405CA1f42792558BE01756762295Aa8388C5B29",
           "abi": [
             {
               "inputs": [
@@ -18707,6 +18752,11 @@
                   "internalType": "address",
                   "name": "_squads",
                   "type": "address"
+                },
+                {
+                  "internalType": "address",
+                  "name": "_lottery",
+                  "type": "address"
                 }
               ],
               "stateMutability": "nonpayable",
@@ -18730,6 +18780,42 @@
               ],
               "name": "OwnershipTransferred",
               "type": "event"
+            },
+            {
+              "inputs": [
+                {
+                  "internalType": "uint256",
+                  "name": "roundId",
+                  "type": "uint256"
+                }
+              ],
+              "name": "getLotteryRoundWinnersWithTickets",
+              "outputs": [
+                {
+                  "components": [
+                    {
+                      "internalType": "uint256",
+                      "name": "level",
+                      "type": "uint256"
+                    },
+                    {
+                      "internalType": "address",
+                      "name": "winnerAddress",
+                      "type": "address"
+                    },
+                    {
+                      "internalType": "uint256",
+                      "name": "enteredTickets",
+                      "type": "uint256"
+                    }
+                  ],
+                  "internalType": "struct Helper.LotteryWinnersWithTickets[]",
+                  "name": "",
+                  "type": "tuple[]"
+                }
+              ],
+              "stateMutability": "view",
+              "type": "function"
             },
             {
               "inputs": [
@@ -18974,6 +19060,19 @@
             },
             {
               "inputs": [],
+              "name": "lottery",
+              "outputs": [
+                {
+                  "internalType": "contract ILottery",
+                  "name": "",
+                  "type": "address"
+                }
+              ],
+              "stateMutability": "view",
+              "type": "function"
+            },
+            {
+              "inputs": [],
               "name": "owner",
               "outputs": [
                 {
@@ -19074,6 +19173,19 @@
               "inputs": [
                 {
                   "internalType": "address",
+                  "name": "_lottery",
+                  "type": "address"
+                }
+              ],
+              "name": "updateLottery",
+              "outputs": [],
+              "stateMutability": "nonpayable",
+              "type": "function"
+            },
+            {
+              "inputs": [
+                {
+                  "internalType": "address",
                   "name": "_referralManager",
                   "type": "address"
                 }
@@ -19138,7 +19250,7 @@
           ]
         },
         "Lottery": {
-          "address": "0xcBd1422EF22E69709D1161f37Efd92d541bBF564",
+          "address": "0x9E2c27A47E841aD57dD3acEcCA0c7882BFC22BFa",
           "abi": [
             {
               "inputs": [
@@ -19561,6 +19673,11 @@
                   "components": [
                     {
                       "internalType": "uint256",
+                      "name": "id",
+                      "type": "uint256"
+                    },
+                    {
+                      "internalType": "uint256",
                       "name": "startTime",
                       "type": "uint256"
                     },
@@ -19635,7 +19752,7 @@
                       "type": "address[][]"
                     }
                   ],
-                  "internalType": "struct Lottery.Round[]",
+                  "internalType": "struct ILottery.Round[]",
                   "name": "",
                   "type": "tuple[]"
                 }
@@ -19665,6 +19782,25 @@
             {
               "inputs": [
                 {
+                  "internalType": "address",
+                  "name": "user",
+                  "type": "address"
+                }
+              ],
+              "name": "getLastClaimTime",
+              "outputs": [
+                {
+                  "internalType": "uint256",
+                  "name": "",
+                  "type": "uint256"
+                }
+              ],
+              "stateMutability": "view",
+              "type": "function"
+            },
+            {
+              "inputs": [
+                {
                   "internalType": "uint256",
                   "name": "length",
                   "type": "uint256"
@@ -19679,6 +19815,11 @@
               "outputs": [
                 {
                   "components": [
+                    {
+                      "internalType": "uint256",
+                      "name": "id",
+                      "type": "uint256"
+                    },
                     {
                       "internalType": "uint256",
                       "name": "startTime",
@@ -19755,7 +19896,7 @@
                       "type": "address[][]"
                     }
                   ],
-                  "internalType": "struct Lottery.Round[]",
+                  "internalType": "struct ILottery.Round[]",
                   "name": "",
                   "type": "tuple[]"
                 }
@@ -19796,6 +19937,11 @@
                   "components": [
                     {
                       "internalType": "uint256",
+                      "name": "id",
+                      "type": "uint256"
+                    },
+                    {
+                      "internalType": "uint256",
                       "name": "startTime",
                       "type": "uint256"
                     },
@@ -19870,9 +20016,65 @@
                       "type": "address[][]"
                     }
                   ],
-                  "internalType": "struct Lottery.Round",
+                  "internalType": "struct ILottery.Round",
                   "name": "",
                   "type": "tuple"
+                }
+              ],
+              "stateMutability": "view",
+              "type": "function"
+            },
+            {
+              "inputs": [],
+              "name": "getTotalRounds",
+              "outputs": [
+                {
+                  "internalType": "uint256",
+                  "name": "",
+                  "type": "uint256"
+                }
+              ],
+              "stateMutability": "view",
+              "type": "function"
+            },
+            {
+              "inputs": [
+                {
+                  "internalType": "address",
+                  "name": "user",
+                  "type": "address"
+                },
+                {
+                  "internalType": "uint256",
+                  "name": "roundId",
+                  "type": "uint256"
+                }
+              ],
+              "name": "getUserRoundEntry",
+              "outputs": [
+                {
+                  "internalType": "uint256",
+                  "name": "",
+                  "type": "uint256"
+                }
+              ],
+              "stateMutability": "view",
+              "type": "function"
+            },
+            {
+              "inputs": [
+                {
+                  "internalType": "address",
+                  "name": "user",
+                  "type": "address"
+                }
+              ],
+              "name": "getWinnerPrize",
+              "outputs": [
+                {
+                  "internalType": "uint256",
+                  "name": "",
+                  "type": "uint256"
                 }
               ],
               "stateMutability": "view",
@@ -19942,12 +20144,38 @@
             {
               "inputs": [
                 {
+                  "internalType": "address",
+                  "name": "user",
+                  "type": "address"
+                }
+              ],
+              "name": "isMintAvailable",
+              "outputs": [
+                {
+                  "internalType": "bool",
+                  "name": "",
+                  "type": "bool"
+                }
+              ],
+              "stateMutability": "view",
+              "type": "function"
+            },
+            {
+              "inputs": [
+                {
                   "internalType": "uint256",
                   "name": "roundId",
                   "type": "uint256"
                 }
               ],
               "name": "manuallyGetWinners",
+              "outputs": [],
+              "stateMutability": "nonpayable",
+              "type": "function"
+            },
+            {
+              "inputs": [],
+              "name": "mintMyTicket",
               "outputs": [],
               "stateMutability": "nonpayable",
               "type": "function"
@@ -20035,6 +20263,11 @@
               ],
               "name": "rounds",
               "outputs": [
+                {
+                  "internalType": "uint256",
+                  "name": "id",
+                  "type": "uint256"
+                },
                 {
                   "internalType": "uint256",
                   "name": "startTime",
@@ -20285,7 +20518,7 @@
           ]
         },
         "ReferralManager": {
-          "address": "0xe2D039C7a84A71C8640e034b8D0770FE9Df0DF25",
+          "address": "0x43030c0eD974D15290C4b72fB45a9378f80c8253",
           "abi": [
             {
               "inputs": [
@@ -21212,7 +21445,7 @@
           ]
         },
         "Squads": {
-          "address": "0xbdd83275392cc4c24ecf4846c92b8DD96f5BA64A",
+          "address": "0xd9ed43765EAc579E52d4F33f0F44fD30ba487100",
           "abi": [
             {
               "inputs": [
@@ -22176,7 +22409,7 @@
           ]
         },
         "Staking": {
-          "address": "0x6c26A13919f96d4eD1479fa32e44cAb1378fDeDC",
+          "address": "0x52765C08857A9CD5478C8d1422a4019e4fe7a551",
           "abi": [
             {
               "inputs": [
@@ -24223,7 +24456,7 @@
           ]
         },
         "Token1": {
-          "address": "0xb971Bbda8043267e8047372A29A5bfA8B78A2D04",
+          "address": "0x663cA197fdC464D131737a37bE850c4A038400BA",
           "abi": [
             {
               "inputs": [
@@ -25149,7 +25382,7 @@
           ]
         },
         "Token2": {
-          "address": "0xbaD18847048E47f58f90B049A3C2b5A308Fb0E66",
+          "address": "0xc3b31F44d8a9A501C46EE551b9F7D3e50e9F3E52",
           "abi": [
             {
               "inputs": [
@@ -26017,7 +26250,7 @@
           ]
         },
         "TokenVesting": {
-          "address": "0x73507bc6c981F12cfE9d41ea4d583e05EeCe8312",
+          "address": "0x61C51A28907444f784Fc130d048c7d0c7cC235ad",
           "abi": [
             {
               "inputs": [
@@ -26731,7 +26964,7 @@
           ]
         },
         "VendorSell": {
-          "address": "0x22c28f4681F62b33ecA18Db0C9Ec649CF952c909",
+          "address": "0x88948bdd936305C4fA24B758e1569509d35A0232",
           "abi": [
             {
               "inputs": [
@@ -26923,6 +27156,19 @@
                   "internalType": "bytes32",
                   "name": "",
                   "type": "bytes32"
+                }
+              ],
+              "stateMutability": "view",
+              "type": "function"
+            },
+            {
+              "inputs": [],
+              "name": "DIVIDER",
+              "outputs": [
+                {
+                  "internalType": "uint256",
+                  "name": "",
+                  "type": "uint256"
                 }
               ],
               "stateMutability": "view",
@@ -27163,6 +27409,19 @@
               "type": "function"
             },
             {
+              "inputs": [],
+              "name": "sellTokenCommission",
+              "outputs": [
+                {
+                  "internalType": "uint256",
+                  "name": "",
+                  "type": "uint256"
+                }
+              ],
+              "stateMutability": "view",
+              "type": "function"
+            },
+            {
               "inputs": [
                 {
                   "internalType": "uint256",
@@ -27288,6 +27547,19 @@
                 }
               ],
               "name": "updateTokenPool",
+              "outputs": [],
+              "stateMutability": "nonpayable",
+              "type": "function"
+            },
+            {
+              "inputs": [
+                {
+                  "internalType": "uint256",
+                  "name": "sellTokenCommission_",
+                  "type": "uint256"
+                }
+              ],
+              "name": "updatesellTokenCommission",
               "outputs": [],
               "stateMutability": "nonpayable",
               "type": "function"

@@ -1,21 +1,31 @@
-.ticket-double {
+.mint-ticket {
+  p {
+    transition: all 0.2s;
+  }
   svg {
-    transition: all .2s ease;
+    transition: all 0.2s;
     color: #264737;
-    fill-opacity: 0.5;
   }
 
-  &:hover {
-    p {
-      color: #ffffff;
-    }
-
+  &--disabled:hover {
+    cursor: not-allowed;
+  }
+  &--enabled {
     svg {
-      color: #1ADCE2;
+      fill-opacity: 0.3;
+      color: #1adce2;
+    }
+
+    &:hover,
+    &:focus {
+      cursor: pointer;
+      p {
+        color: #ffffff;
+      }
+
+      svg {
+        fill-opacity: 0.8;
+      }
     }
   }
-}
-
-.asd svg {
-  stroke: #6bc95b;
 }

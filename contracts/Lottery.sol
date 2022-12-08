@@ -16,10 +16,11 @@ contract Lottery is ILottery, VRFConsumerBaseV2, AccessControl {
     mapping(uint256 => mapping(address => uint256)) roundMembersHistory;
     mapping(address => uint256[]) claims;
     mapping(address => uint256) winnersRewards;
+    mapping(address => uint256) lastTicketMint;
 
     uint256 public TICKET_PRICE;
     uint256 public TICKET_ID;
-    uint256 public DAYS_STREAK_FOR_TICKET;
+    uint256 public DAYS_STREAK_FOR_TICKET = 5;
     uint256 public CLAIM_PERIOD = 1 days;
 
     Ticket ticketToken;
@@ -294,14 +295,23 @@ contract Lottery is ILottery, VRFConsumerBaseV2, AccessControl {
 
         for (uint256 i = 0; i < claims[_msgSender()].length; i++) {
             if (claims[_msgSender()][i] == 0) {
-                claims[_msgSender()][i] = block.timestamp;
+                // Cut fractionaal part
+                claims[_msgSender()][i] =
+                    (block.timestamp / CLAIM_PERIOD) *
+                    CLAIM_PERIOD;
                 break;
             }
         }
+    }
 
-        if (streak + 1 == DAYS_STREAK_FOR_TICKET) {
-            _mintTicket(_msgSender(), 1);
-        }
+    function mintMyTicket() public {
+        require(isMintAvailable(_msgSender()), "Ticket mint is not available");
+
+        _mintTicket(_msgSender(), 1);
+        // Cut fractionaal part
+        lastTicketMint[_msgSender()] =
+            (block.timestamp / CLAIM_PERIOD + 1) *
+            CLAIM_PERIOD;
     }
 
     function _mintTicket(address user, uint256 amount) internal {
@@ -390,19 +400,27 @@ contract Lottery is ILottery, VRFConsumerBaseV2, AccessControl {
     }
 
     function isClaimedToday(address user) public view returns (bool) {
+        uint256 today = block.timestamp / CLAIM_PERIOD;
+        return getLastClaimTime(user) / CLAIM_PERIOD == today;
+    }
+
+    function getLastClaimTime(address user) public view returns (uint256) {
         uint256[] storage userClaims = claims[user];
 
-        if (userClaims.length == 0) return false;
-
-        uint256 today = block.timestamp / CLAIM_PERIOD;
+        if (userClaims.length == 0) return 0;
 
         for (uint256 i = userClaims.length; i > 0; i--) {
             if (userClaims[i - 1] > 0) {
-                return userClaims[i - 1] / CLAIM_PERIOD == today;
+                return userClaims[i - 1];
             }
         }
 
-        return false;
+        return 0;
+    }
+
+    function isMintAvailable(address user) public view returns (bool) {
+        uint256 streak = getClaimStreak(user);
+        return streak == DAYS_STREAK_FOR_TICKET;
     }
 
     function getClaimStreak(address user) public view returns (uint256) {
@@ -427,6 +445,15 @@ contract Lottery is ILottery, VRFConsumerBaseV2, AccessControl {
 
         // reset streak if current time more than claim period from the last claim
         if (block.timestamp / CLAIM_PERIOD > lastClaim + 1) {
+            return 0;
+        }
+
+        // reset streak if ticket minted today
+        uint256 lastMint = lastTicketMint[user] / CLAIM_PERIOD;
+        if (
+            lastMint >= block.timestamp / CLAIM_PERIOD &&
+            streak == DAYS_STREAK_FOR_TICKET
+        ) {
             return 0;
         }
 

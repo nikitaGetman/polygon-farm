@@ -46,12 +46,24 @@ export const useLotteryContract = () => {
     return contract.getLastFinishedRounds(length, offset);
   };
 
-  const isClaimedToday = (user: string) => {
-    return contract.isClaimedToday(user);
+  const getClaimPeriod = () => {
+    return contract.CLAIM_PERIOD();
   };
 
-  const getClaimStreak = (user: string) => {
-    return contract.getClaimStreak(user);
+  const isClaimedToday = (user?: string) => {
+    return user ? contract.isClaimedToday(user) : Promise.reject('incorrect request data');
+  };
+
+  const getLastClaimTime = (user?: string) => {
+    return user ? contract.getLastClaimTime(user) : Promise.reject('incorrect request data');
+  };
+
+  const getClaimStreak = (user?: string) => {
+    return user ? contract.getClaimStreak(user) : Promise.reject('incorrect request data');
+  };
+
+  const isMintAvailable = (user?: string) => {
+    return user ? contract.isMintAvailable(user) : Promise.reject('incorrect request data');
   };
 
   const entryLottery = async (roundId: BigNumberish, tickets: BigNumberish) => {
@@ -69,6 +81,11 @@ export const useLotteryContract = () => {
     return waitForTransaction(tx);
   };
 
+  const mintMyTicket = async () => {
+    const tx = await contract.mintMyTicket();
+    return waitForTransaction(tx);
+  };
+
   return {
     contract,
     address: contractAddress,
@@ -78,10 +95,16 @@ export const useLotteryContract = () => {
     getUserRoundEntry,
     getActiveRounds,
     getLastFinishedRounds,
+
+    getClaimPeriod,
     getClaimStreak,
     isClaimedToday,
+    getLastClaimTime,
+    isMintAvailable,
+
     entryLottery,
     buyTickets,
     claimDay,
+    mintMyTicket,
   };
 };
