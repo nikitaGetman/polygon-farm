@@ -1,6 +1,8 @@
 import React from 'react';
 import { Box, Button, Flex, Text } from '@chakra-ui/react';
+
 import Logo from '@/assets/images/logo.svg';
+
 import './Landing.scss';
 
 export const Banner = () => {

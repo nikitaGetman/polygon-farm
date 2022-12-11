@@ -163,11 +163,20 @@ export const ExchangePage = () => {
 
         {isTokenSell ? (
           <Text mt="30px" textStyle="text1">
-            {isSellAvailable
-              ? `The commission for the sale of tokens is ${(sellCommission || 0) * 100}%`
-              : `The exchange is not available. Contact your Leader or email us at exchange@isaver.io
-            with your wallet and the amount to be exchanged. Your exchange will be processed within
-            2 business days after verification. `}
+            {isSellAvailable ? (
+              <>The commission for the sale of tokens is {(sellCommission || 0) * 100}%</>
+            ) : (
+              <>
+                The exchange is not available.
+                <br />
+                Contact your Leader or email us at{' '}
+                <Link color="blue" href="mailto:exchange@isaver.io">
+                  exchange@isaver.io
+                </Link>{' '}
+                with your wallet and the amount to be exchanged. Your exchange will be processed
+                within 2 business days after verification.
+              </>
+            )}
           </Text>
         ) : null}
       </Box>

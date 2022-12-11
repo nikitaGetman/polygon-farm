@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   Box,
@@ -35,13 +35,6 @@ export const LotteryList = () => {
   const { upcomingRounds, liveRounds, finishedRounds, activeRoundsRequest, finishedRoundsRequest } =
     useLotteryRounds();
 
-  const lotteries =
-    stateFilter === LotteryStatusEnum.current
-      ? liveRounds
-      : stateFilter === LotteryStatusEnum.upcoming
-      ? upcomingRounds
-      : finishedRounds;
-
   const updateLotteriesState = useCallback(() => {
     if ([LotteryStatusEnum.upcoming, LotteryStatusEnum.current].includes(stateFilter)) {
       activeRoundsRequest.refetch();
@@ -55,11 +48,26 @@ export const LotteryList = () => {
       ? finishedRoundsRequest.isLoading
       : activeRoundsRequest.isLoading;
 
-  useEffect(() => {
-    if (!liveRounds.length && stateFilter === LotteryStatusEnum.current) {
-      setStateFilter(LotteryStatusEnum.upcoming);
+  const loadedStateFilter = useMemo(() => {
+    if (stateFilter === LotteryStatusEnum.current && liveRounds.length > 0) return stateFilter;
+    if (stateFilter === LotteryStatusEnum.upcoming && upcomingRounds.length > 0) return stateFilter;
+    if (stateFilter === LotteryStatusEnum.past && finishedRounds && finishedRounds.length > 0) {
+      return stateFilter;
     }
-  }, [liveRounds, stateFilter, setStateFilter]);
+
+    return (
+      (liveRounds.length > 0 && LotteryStatusEnum.current) ||
+      (upcomingRounds.length > 0 && LotteryStatusEnum.upcoming) ||
+      (finishedRounds && finishedRounds.length > 0 && LotteryStatusEnum.past)
+    );
+  }, [stateFilter, liveRounds, upcomingRounds, finishedRounds]);
+
+  const lotteries =
+    loadedStateFilter === LotteryStatusEnum.current
+      ? liveRounds
+      : loadedStateFilter === LotteryStatusEnum.upcoming
+      ? upcomingRounds
+      : finishedRounds;
 
   return (
     <Container variant="dashboard">
@@ -70,7 +78,7 @@ export const LotteryList = () => {
       </Flex>
       <Box maxWidth="505px" mt={5}>
         <Text textStyle="text1">
-          Join iSaver Raffles gives you a chance to win big prizes! It's easy if you have a ticket.
+          Join iSaver Raffles gives you a chance to win big prizes! It's easy if you have a Ticket.
         </Text>
       </Box>
 
@@ -79,21 +87,22 @@ export const LotteryList = () => {
           <Button
             borderRadius="sm"
             disabled={!liveRounds.length}
-            variant={stateFilter === LotteryStatusEnum.current ? 'active' : 'inactive'}
+            variant={loadedStateFilter === LotteryStatusEnum.current ? 'active' : 'inactive'}
             onClick={() => setStateFilter(LotteryStatusEnum.current)}
           >
             Live
           </Button>
           <Button
             borderRadius="sm"
-            variant={stateFilter === LotteryStatusEnum.upcoming ? 'active' : 'inactive'}
+            disabled={!upcomingRounds.length}
+            variant={loadedStateFilter === LotteryStatusEnum.upcoming ? 'active' : 'inactive'}
             onClick={() => setStateFilter(LotteryStatusEnum.upcoming)}
           >
             Upcoming
           </Button>
           <Button
             borderRadius="sm"
-            variant={stateFilter === LotteryStatusEnum.past ? 'active' : 'inactive'}
+            variant={loadedStateFilter === LotteryStatusEnum.past ? 'active' : 'inactive'}
             onClick={() => setStateFilter(LotteryStatusEnum.past)}
           >
             Past
@@ -103,7 +112,7 @@ export const LotteryList = () => {
         <Flex>
           <StatBlock width="260px">
             <Box textStyle="text1" mb="10px">
-              Your tickets
+              Your Tickets
             </Box>
             <Box textStyle="text1">
               <Box as="span" textStyle="textSansBold" fontSize="26px" mr="6px">
@@ -145,7 +154,7 @@ export const LotteryList = () => {
               title={getLotteryTitle(id + 1)}
               status={status}
               timestamp={getNextLotteryTimestamp({ startTime, duration, status }) * 1000}
-              onDetails={() => navigate(`/lottery/${id + 1}`)}
+              onDetails={() => navigate(`/raffle/${id + 1}`)}
               onExpire={updateLotteriesState}
             />
           </GridItem>
@@ -155,12 +164,12 @@ export const LotteryList = () => {
       {!isLoading && !lotteries?.length ? (
         <Center mt="60px">
           <Text textStyle="textMedium" opacity={0.3}>
-            No raffle rounds yet
+            No Raffle rounds yet
           </Text>
         </Center>
       ) : null}
 
-      {stateFilter === LotteryStatusEnum.past && finishedRoundsRequest.hasNextPage ? (
+      {loadedStateFilter === LotteryStatusEnum.past && finishedRoundsRequest.hasNextPage ? (
         <Center mt="10px">
           <Button variant="link" onClick={() => finishedRoundsRequest.fetchNextPage()}>
             Load more

@@ -1,10 +1,12 @@
 import React from 'react';
-import { Box, Flex, Text } from '@chakra-ui/react';
-import './Landing.scss';
+import { Flex, Text } from '@chakra-ui/react';
+
 import { ReactComponent as BankIcon } from './images/b_bank.svg';
-import { ReactComponent as ScalesIcon } from './images/b_scales.svg';
 import { ReactComponent as BurnIcon } from './images/b_burn.svg';
 import { ReactComponent as PeopleIcon } from './images/b_people.svg';
+import { ReactComponent as ScalesIcon } from './images/b_scales.svg';
+
+import './Landing.scss';
 
 export const Benefits = () => {
   return (

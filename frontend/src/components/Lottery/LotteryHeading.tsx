@@ -42,7 +42,7 @@ export const LotteryHeading = ({
           <Text textTransform="uppercase" textStyle="heading1">
             {title}
           </Text>
-          <Text textStyle="textMedium">Total tickets this round: {totalTickets}</Text>
+          <Text textStyle="textMedium">Total Tickets this round: {totalTickets}</Text>
         </Flex>
       </Flex>
     </Box>

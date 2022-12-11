@@ -56,7 +56,7 @@ export const getReadableAmount = (
 
   if (shortAmount < 1000) return `${realAmount.toFixed(precision)}`;
   if (shortAmount < 1000000) return `${(realAmount / 1000).toFixed(precision)}k`;
-  return `${(shortAmount / 1000000).toFixed(precision)}M`;
+  return `${(realAmount / 1000000).toFixed(precision)}M`;
 };
 
 export const makeBigNumber = (value: BigNumberish, decimals: number = 18) => {

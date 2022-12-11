@@ -1,12 +1,14 @@
 import React from 'react';
 import { Box, Flex, Input, InputGroup, InputRightElement, Link, Text } from '@chakra-ui/react';
+
 import Logo from '@/assets/images/logo.svg';
-import { ReactComponent as TelegramIcon } from '@/components/Landing/images/tg.svg';
-import { ReactComponent as TwitterIcon } from '@/components/Landing/images/twitter.svg';
+import { ReactComponent as ArrowIcon } from '@/components/Landing/images/arrow-left.svg';
 import { ReactComponent as DiscordIcon } from '@/components/Landing/images/discord.svg';
 import { ReactComponent as SavIcon } from '@/components/Landing/images/sav.svg';
 import { ReactComponent as SavrIcon } from '@/components/Landing/images/savr.svg';
-import { ReactComponent as ArrowIcon } from '@/components/Landing/images/arrow-left.svg';
+import { ReactComponent as TelegramIcon } from '@/components/Landing/images/tg.svg';
+import { ReactComponent as TwitterIcon } from '@/components/Landing/images/twitter.svg';
+
 import './Footer.scss';
 
 export const Footer = () => {

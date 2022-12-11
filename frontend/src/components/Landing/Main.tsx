@@ -1,7 +1,9 @@
 import React from 'react';
-import { Box, Button, Flex, Text, useBreakpoint } from '@chakra-ui/react';
-import './Landing.scss';
+import { Box, Button, Flex, useBreakpoint } from '@chakra-ui/react';
+
 import { CoinImage } from '@/components/Landing/CoinImage';
+
+import './Landing.scss';
 
 export const Main = () => {
   return (

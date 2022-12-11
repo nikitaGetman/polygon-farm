@@ -62,6 +62,15 @@ const secondary = {
   },
 };
 
+const transparent = {
+  field: {
+    background: 'transparent',
+    boxShadow: 'none',
+    border: 'none',
+    padding: '0',
+  },
+};
+
 const xl = defineStyle({
   fontSize: 'lg',
   h: '52px',
@@ -79,7 +88,7 @@ const sizes = {
 };
 
 export const inputTheme = defineMultiStyleConfig({
-  variants: { main, primary, mailing, secondary },
+  variants: { main, primary, mailing, secondary, transparent },
   sizes,
   defaultProps: {
     variant: 'main',

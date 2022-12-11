@@ -1,10 +1,12 @@
 import React from 'react';
 import { Box, Flex, Text, useBreakpoint } from '@chakra-ui/react';
-import './Landing.scss';
+
 import { ReactComponent as BlueboxIcon } from './images/bluebox.svg';
-import { ReactComponent as GreenboxIcon } from './images/greenbox.svg';
 import { ReactComponent as BlueboxIconSm } from './images/bluebox_sm.svg';
+import { ReactComponent as GreenboxIcon } from './images/greenbox.svg';
 import { ReactComponent as GreenboxIconSm } from './images/greenbox_sm.svg';
+
+import './Landing.scss';
 
 export const About = () => {
   return (

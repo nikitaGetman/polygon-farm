@@ -1,5 +1,4 @@
 import React, { useCallback } from 'react';
-import { useNavigate } from 'react-router-dom';
 import {
   Box,
   Circle,
@@ -23,6 +22,7 @@ import { ReactComponent as RocketIcon } from '@/assets/images/icons/rocket.svg';
 import { ReactComponent as StarsIcon } from '@/assets/images/icons/stars.svg';
 import { ReactComponent as TabletIcon } from '@/assets/images/icons/tablet.svg';
 import { ReactComponent as WalletIcon } from '@/assets/images/icons/wallet.svg';
+import { useNavigateByHash } from '@/hooks/useNavigateByHash';
 import { useReferralManager } from '@/hooks/useReferralManager';
 import { useSquads } from '@/hooks/useSquads';
 import { useStaking } from '@/hooks/useStaking';
@@ -31,7 +31,7 @@ export const Menu = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => void
   const { hasEndingSubscription } = useStaking();
   const { hasEndingReferralSubscription } = useReferralManager();
   const { hasEndingSquadsSubscription } = useSquads();
-  const navigate = useNavigate();
+  const navigate = useNavigateByHash();
 
   const handleNavigate = useCallback(
     (to: string) => {
@@ -83,11 +83,15 @@ export const Menu = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => void
                 : undefined
             }
           />
-          <NavMenuItem text="Play everyday" icon={<GameboyIcon />} />
           <NavMenuItem
-            text="Lottery"
+            text="Play everyday"
+            onClick={() => handleNavigate('/#claim-ticket')}
+            icon={<GameboyIcon />}
+          />
+          <NavMenuItem
+            text="Raffles"
             icon={<RocketIcon />}
-            onClick={() => handleNavigate('/lottery')}
+            onClick={() => handleNavigate('/#raffles')}
           />
           <Divider mb="30px" borderBottomWidth="2px" borderColor="white" />
           <NavMenuItem

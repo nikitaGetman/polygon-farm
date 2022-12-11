@@ -41,7 +41,7 @@ export const LotteryTickets: FC<LotteryTicketsProps> = ({
               <Text as="span" color="green.400">
                 {enteredTickets}
               </Text>{' '}
-              tickets
+              Tickets
             </>
           )}
         </Box>
@@ -49,12 +49,12 @@ export const LotteryTickets: FC<LotteryTicketsProps> = ({
 
       <Box padding="36px 40px" bgImage={puzzlePattern} bgSize="cover">
         <Flex alignItems="center">
-          <Text textStyle="h3">Your tickets:</Text>
+          <Text textStyle="h3">Your Tickets:</Text>
           <Text ml="20px" lineHeight="50px" textStyle="textRegular" fontSize="55px">
             {tickets}
           </Text>
           <Button ml="auto" onClick={onBuyClick}>
-            Buy tickets
+            Buy Tickets
           </Button>
         </Flex>
       </Box>

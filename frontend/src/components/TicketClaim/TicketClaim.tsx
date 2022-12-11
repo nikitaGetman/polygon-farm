@@ -117,15 +117,16 @@ export const TicketClaim = () => {
             Or you can buy Raffle Tickets
           </Text>
           <Text textStyle="textBaldPtSans" mr="7">
-            1 Ticket / {bigNumberToString(ticketPrice, { precision: 0 })} SAV
+            {bigNumberToString(ticketPrice, { precision: 0 })} SAV / 1 Ticket
           </Text>
-          {!isConnected ? <ConnectWalletButton /> : <Button onClick={onOpen}>Buy tickets</Button>}
+          {!isConnected ? <ConnectWalletButton /> : <Button onClick={onOpen}>Buy Tickets</Button>}
         </Flex>
       </Flex>
-      <Box maxWidth="530px" mt={5}>
+      <Box maxWidth="640px" mt={5}>
         <Text textStyle="text1">
-          Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has
-          been the industry's standard dummy ...
+          Claim puzzle every day to get a free ticket to iSaver Raffles.
+          <br /> Just five days and you can mint a Ticket. Also, everyone can buy any number of
+          Tickets.
         </Text>
       </Box>
       <Flex w="100%" p="10" pb="8" mt="12" justifyContent="space-between" className="box-gradient">
@@ -171,7 +172,7 @@ export const TicketClaim = () => {
                   top="46%"
                   transform="translate(-50%, -50%)"
                 >
-                  Mint my <br /> ticket
+                  Mint my <br /> Ticket
                 </Text>
               )}
             </div>

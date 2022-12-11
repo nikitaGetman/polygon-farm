@@ -1,35 +1,50 @@
-import React, { FC, useCallback, useState } from 'react';
+import React, { ChangeEvent, FC, useCallback, useState } from 'react';
 import { AddIcon, MinusIcon, WarningTwoIcon } from '@chakra-ui/icons';
-import { Box, Button, Flex, IconButton, Text } from '@chakra-ui/react';
+import { Box, Button, Flex, IconButton, Input, Text } from '@chakra-ui/react';
 
 type LotteryEnterProps = {
   maximumAvailableTickets: number;
   userEnteredTickets?: number;
+  userTickets?: number;
   isDisabled: boolean;
   onEnter: (tickets: number) => Promise<void>;
 };
 export const LotteryEnter: FC<LotteryEnterProps> = ({
   maximumAvailableTickets,
   userEnteredTickets,
+  userTickets,
   isDisabled,
   onEnter,
 }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [tickets, setTickets] = useState(0);
 
-  const increase = useCallback(() => setTickets(tickets + 1), [setTickets, tickets]);
-  const decrease = useCallback(() => setTickets(tickets - 1), [setTickets, tickets]);
-
-  const handleEnter = useCallback(() => {
-    setIsLoading(true);
-    onEnter(tickets).finally(() => {
-      setIsLoading(false);
-    });
-  }, [setIsLoading, onEnter, tickets]);
-
   const leftTickets = userEnteredTickets
     ? maximumAvailableTickets - userEnteredTickets
     : maximumAvailableTickets;
+
+  const increase = () => setTickets((prev) => prev + 1);
+  const decrease = () => setTickets((prev) => prev - 1);
+  const handleTicketsChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const value = parseInt(e.target.value) || 0;
+    const leftTrimmed = Math.min(value, leftTickets);
+    const userBalanceTrimmed =
+      userTickets !== undefined ? Math.min(userTickets, leftTrimmed) : leftTrimmed;
+    setTickets(userBalanceTrimmed);
+  };
+
+  const handleEnter = useCallback(() => {
+    setIsLoading(true);
+    onEnter(tickets)
+      .then(() => {
+        setTickets(0);
+      })
+      .finally(() => {
+        setIsLoading(false);
+      });
+  }, [setIsLoading, onEnter, tickets]);
+
+  const canIncrease = userTickets ? tickets < leftTickets && tickets < userTickets : false;
 
   return (
     <Box
@@ -44,7 +59,7 @@ export const LotteryEnter: FC<LotteryEnterProps> = ({
           <Text as="span" color="green.400" textStyle="textBold">
             {maximumAvailableTickets}
           </Text>{' '}
-          tickets in this raffle {userEnteredTickets ? `(${leftTickets} left)` : null}
+          Tickets in this Raffle {userEnteredTickets ? `(${leftTickets} left)` : null}
         </Text>
 
         <Flex alignItems="center" ml="60px">
@@ -57,14 +72,20 @@ export const LotteryEnter: FC<LotteryEnterProps> = ({
             <MinusIcon />
           </IconButton>
 
-          <Text width="80px" textAlign="center" textStyle="textRegular" fontSize="41px">
-            {tickets}
-          </Text>
+          <Input
+            value={tickets}
+            variant="transparent"
+            width="80px"
+            textAlign="center"
+            textStyle="textRegular"
+            fontSize="41px"
+            onChange={handleTicketsChange}
+          />
 
           <IconButton
             variant="outlinedShadow"
             aria-label="add"
-            disabled={isDisabled || tickets >= leftTickets}
+            disabled={isDisabled || !canIncrease}
             onClick={increase}
           >
             <AddIcon />
@@ -86,7 +107,7 @@ export const LotteryEnter: FC<LotteryEnterProps> = ({
         <Flex color="error" mt="25px">
           <WarningTwoIcon mr="10px" mt="4px" />
           <Text textStyle="text1">
-            Please note, after the bet you will not be able to take your tickets back
+            Please note, after the bet you will not be able to take your Tickets back
           </Text>
         </Flex>
       ) : null}

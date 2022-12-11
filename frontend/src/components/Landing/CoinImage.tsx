@@ -1,7 +1,9 @@
 import React from 'react';
 import { Box, Text } from '@chakra-ui/react';
-import './Landing.scss';
+
 import { ReactComponent as CoinsIcon } from './images/coins.svg';
+
+import './Landing.scss';
 
 export const CoinImage = () => {
   return (

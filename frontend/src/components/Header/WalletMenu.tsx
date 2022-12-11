@@ -31,6 +31,7 @@ const menuItemStyle = {
   textAlign: 'right' as const,
   display: 'block',
   borderRadius: 'sm',
+  bgColor: 'transparent',
   _hover: focusStyle,
   _focus: focusStyle,
   _active: focusStyle,

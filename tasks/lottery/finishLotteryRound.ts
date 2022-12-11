@@ -2,7 +2,7 @@ import { BigNumber } from "ethers";
 import { task, types } from "hardhat/config";
 import { Lottery } from "typechain-types";
 
-task("finish-lottery-round", "Finish lottery round")
+task("finish-lottery", "Finish lottery round")
   .addParam("round", "Round ID", null, types.int)
   //   .addOptionalParam("pk", "Winner public keys", null, types.any)
   .setAction(async (taskArgs, { ethers, getNamedAccounts }) => {
@@ -11,8 +11,9 @@ task("finish-lottery-round", "Finish lottery round")
     const lottery = await ethers.getContract<Lottery>("Lottery", adminSigner);
 
     // const pk = [
-    //   ["0xFCDF39C0FbE806857608f5Cc82CF5Dd6Ca69733D"],
-    //   ["0x228B300FBfD88a46FED579C40Ad3630555E9339C"],
+    //   ["0x1E0B929A89Db54E0771E848ca5Ca3c601D93EAdE"],
+    //   ["0x1839E2Baa7a4E3EEE4452Dae58E88FD7F0883f87"],
+    //   ["0x09C8F037a9b779294aa1e2a1d9cAe9D73A71Ba40"],
     // ];
     const pk = [[]];
 

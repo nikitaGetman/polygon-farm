@@ -175,7 +175,7 @@ export const Staking: FC<StakingProps> = ({ isPageView }) => {
               />
             ))
           : null}
-        {activeStakingPlans.map((planData, index) => (
+        {activeStakingPlans.map((planData) => (
           <GridItem colSpan={1} rowSpan={1} key={planData.planId}>
             <StakingPlan
               isSubscribed={planData.isSubscribed}

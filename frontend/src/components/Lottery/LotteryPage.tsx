@@ -23,7 +23,7 @@ import { LotterySummary } from './LotterySummary';
 import { LotteryTickets } from './LotteryTickets';
 
 export const LotteryPage = () => {
-  useDocumentTitle('iSaver | Lottery');
+  useDocumentTitle('iSaver | Raffle');
 
   const { id } = useParams();
   const roundId = useMemo(() => (id ? parseInt(id) - 1 : undefined), [id]);
@@ -132,6 +132,7 @@ export const LotteryPage = () => {
               <Box mb="60px">
                 <LotteryEnter
                   maximumAvailableTickets={round.maxTicketsFromOneMember}
+                  userTickets={ticketBalance}
                   userEnteredTickets={userEnteredTickets}
                   isDisabled={!isActive}
                   onEnter={handleEnterLottery}

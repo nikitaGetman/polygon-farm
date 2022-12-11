@@ -31,11 +31,11 @@ export const Dashboard = () => {
         <SquadsList />
       </Box>
 
-      <Box mb="150px">
+      <Box mb="150px" id="claim-ticket">
         <TicketClaim />
       </Box>
 
-      <Box mb="300px">
+      <Box mb="300px" id="raffles">
         <LotteryList />
       </Box>
     </Container>

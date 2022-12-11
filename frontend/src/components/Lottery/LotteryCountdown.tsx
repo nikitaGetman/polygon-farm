@@ -43,7 +43,7 @@ export const LotteryCountdown = ({
           <Box mb="23px">
             <Timer {...startTimeStamps} />
           </Box>
-          <Text textStyle="button">This raffle will soon be available</Text>
+          <Text textStyle="button">This Raffle will soon be available</Text>
         </>
       ) : null}
 

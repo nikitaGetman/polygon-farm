@@ -16,6 +16,7 @@ import { WagmiConfig } from 'wagmi';
 import { Dashboard } from '@/components/Dashboard/Dashboard';
 import { ExchangePage } from '@/components/Exchange/ExchangePage';
 import { Header } from '@/components/Header/Header';
+import { Landing } from '@/components/Landing/Landing';
 import { Modals } from '@/components/Modals';
 import { StakingPage } from '@/components/Staking/StakingPage';
 import { AppStateProvider } from '@/contexts/AppContext';
@@ -28,7 +29,6 @@ import { SquadsPage } from './components/Squads/SquadsPage';
 import { REFERRER_SEARCH_PARAMS_KEY, useLocalReferrer } from './hooks/useLocalReferrer';
 
 import '@/assets/styles/index.scss';
-import { Landing } from '@/components/Landing/Landing';
 
 const routes = [
   { path: '/', name: 'Dashboard', element: <Dashboard />, nodeRef: createRef() },
@@ -36,7 +36,7 @@ const routes = [
   { path: '/team', name: 'Squads', element: <SquadsPage />, nodeRef: createRef() },
   { path: '/exchange', name: 'Exchange', element: <ExchangePage />, nodeRef: createRef() },
   { path: '/landing', name: 'Landing', element: <Landing />, nodeRef: createRef() },
-  { path: '/lottery/:id', name: 'Lottery', element: <LotteryPage />, nodeRef: createRef() },
+  { path: '/raffle/:id', name: 'Raffle', element: <LotteryPage />, nodeRef: createRef() },
 ];
 
 const router = createBrowserRouter([
@@ -60,7 +60,7 @@ function Layout() {
   const currentOutlet = useOutlet();
   const { nodeRef } =
     routes.find((route) =>
-      // TODO: Hack for '/lottery/:id' route
+      // TODO: Hack for '/raffle/:id' route
       route.path.includes(location.pathname.split('/')[1])
     ) ?? {};
 
@@ -79,7 +79,7 @@ function Layout() {
 
   return (
     <>
-      {/*<Header />*/}
+      <Header />
       <SwitchTransition>
         <CSSTransition
           key={location.pathname}

@@ -127,8 +127,9 @@ export const ReferralInfo: FC<ReferralInfoProps> = ({ isPageView }) => {
 
       <Box maxWidth="640px" mt={5}>
         <Text textStyle="text1">
-          Invite your friends and maximize your rewards. Earn up to 100% in SAVR from your partners'
-          earnings. And additional rewards when six partners fulfill the specified conditions.
+          Invite your friends and maximize your iSaver Referral Rewards. Earn up to 100% in SAVR
+          from your partners' earnings. And additional Rewards when six partners fulfill the
+          specified conditions.
         </Text>
       </Box>
 
@@ -142,7 +143,7 @@ export const ReferralInfo: FC<ReferralInfoProps> = ({ isPageView }) => {
             <>
               {!referrer ? (
                 <Button mb="15px" onClick={onLeaderUpdateOpen}>
-                  Add leader
+                  Add Leader
                 </Button>
               ) : null}
 
@@ -202,7 +203,7 @@ export const ReferralInfo: FC<ReferralInfoProps> = ({ isPageView }) => {
         <Flex justifyContent="flex-end">
           <StatBlock width="260px">
             <Box textStyle="text1" mb="10px">
-              Your partners
+              Your Partners
             </Box>
             <Box textStyle="textSansBold" fontSize="26px" mr="6px">
               {BigNumber.from(userReferralInfo.data?.totalReferrals || 0).toNumber()}
