@@ -116,6 +116,19 @@ const outlinedShadow = defineStyle({
   boxShadow: '0px 9px 19px rgba(107, 201, 91, 0.33)',
 });
 
+const filledRed = defineStyle({
+  ...commonProps,
+  bgColor: 'red',
+  borderRadius: 'sm',
+
+  _hover: {
+    opacity: '.8',
+    _disabled: {
+      background: 'gray.200',
+    },
+  },
+});
+
 const outlinedWhite = defineStyle({
   ...commonProps,
   border: '1px solid white',
@@ -179,6 +192,7 @@ export const buttonTheme = defineStyleConfig({
     secondary,
     outlined,
     outlinedWhite,
+    filledRed,
     outlinedShadow,
     link,
     inputTransparent,

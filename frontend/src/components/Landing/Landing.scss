@@ -1,0 +1,789 @@
+@import '@/assets/styles/normalize.css';
+@import '@/assets/styles/vars.scss';
+
+body {
+  min-width: 320px;
+}
+
+.main-container {
+  max-width: 1360px;
+  margin: auto;
+}
+
+.color-green {
+  color: $color-green;
+}
+
+.color-blue {
+  color: $color-blue;
+}
+
+.no-wrap {
+  white-space: nowrap;
+}
+
+.heading {
+  font-weight: 700;
+  font-size: 38px;
+  line-height: 130%;
+  text-transform: uppercase;
+  color: #FFFFFF;
+  text-shadow: 0 4px 4px rgba(0, 0, 0, 0.25);
+  position: relative;
+
+  &::before, &::after {
+    content: '';
+    background: #FFFFFF;
+    width: 70px;
+    height: 2px;
+    position: absolute;
+    top: calc(50% - 1px);
+  }
+
+  &::before {
+    right: -80px;
+  }
+
+  &::after {
+    left: -80px;
+  }
+}
+
+.heading-container {
+  .heading {
+    margin-bottom: 20px;
+  }
+
+  .subheading {
+    margin-bottom: 40px;
+  }
+}
+
+.subheading {
+  font-weight: 500;
+  font-size: 26px;
+  line-height: 32px;
+  text-align: center;
+  text-transform: uppercase;
+  color: #FFFFFF;
+}
+
+.text {
+  font-weight: 500;
+  font-size: 18px;
+  line-height: 130%;
+  color: #FFFFFF;
+}
+
+.main-heading {
+  font-weight: 700;
+  font-size: 90px;
+  line-height: 110%;
+  text-transform: uppercase;
+  color: #FFFFFF;
+  margin: 0 0 5px 0;
+}
+
+.main-subheading {
+  font-weight: 500;
+  font-size: 32px;
+  line-height: 130%;
+  color: #FFFFFF;
+  margin-bottom: 80px;
+}
+
+.main-text {
+  font-weight: 700;
+  font-size: 38px;
+  line-height: 130%;
+  text-transform: uppercase;
+  margin-bottom: 40px;
+}
+
+.main-btns button {
+  &:first-child {
+    margin-right: 34px;
+  }
+
+  &:last-child {
+    min-width: 220px;
+  }
+}
+
+.main-banner {
+  margin-bottom: 80px;
+
+  &__bottom {
+    top: -60px;
+  }
+}
+
+.about-container {
+  background: rgba(28, 74, 64, 0.3);
+  backdrop-filter: blur(22.5px);
+  border-radius: 5px;
+  margin-bottom: 180px;
+  padding-top: 20px;
+
+  .text {
+    padding-bottom: 25px;
+  }
+
+  &__img {
+
+  }
+}
+
+.coins-text__primary {
+  font-weight: 700;
+  font-size: 38px;
+  line-height: 130%;
+  text-transform: uppercase;
+  color: #FFFFFF;
+  margin-bottom: 7px;
+}
+
+.coins-text__secondary {
+  font-weight: 500;
+  font-size: 26px;
+  line-height: 32px;
+  text-transform: uppercase;
+  color: #FFFFFF;
+}
+
+.icons-card {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  text-align: center;
+  padding: 50px 25px 28px 25px;
+
+  &__heading {
+    font-weight: 700;
+    font-size: 24px;
+    line-height: 31px;
+    text-align: center;
+    color: #FFFFFF;
+    margin-top: 50px;
+  }
+
+  &__text {
+    font-weight: 500;
+    font-size: 18px;
+    line-height: 130%;
+    color: #FFFFFF;
+    margin-top: 15px;
+  }
+}
+
+.benefit {
+  margin-bottom: 180px;
+}
+
+.number {
+  margin-top: 80px;
+}
+
+.benefit-container {
+  margin-top: 50px;
+
+  .icons-card {
+    width: calc(25% - 16px);
+  }
+}
+
+.plans, .banner {
+  margin-bottom: 180px;
+}
+
+.card--shadow {
+  background: rgba(28, 74, 64, 0.3);
+  box-shadow: inset 8px 9px 14px #0B200A;
+  backdrop-filter: blur(22.5px);
+  border-radius: 5px;
+}
+
+.number-item {
+  display: flex;
+  width: 33%;
+  align-items: center;
+  flex-direction: column;
+  margin-bottom: 160px;
+
+  &:nth-last-child(-n+3) {
+    margin-bottom: 0;
+  }
+
+  &__heading {
+    font-weight: 700;
+    font-size: 24px;
+    line-height: 31px;
+    text-align: center;
+    color: #FFFFFF;
+    margin-bottom: 20px;
+  }
+
+  &__text {
+    color: $color-green;
+    font-weight: 700;
+    font-size: 52px;
+    line-height: 130%;
+    text-align: center;
+    text-transform: uppercase;
+  }
+}
+
+.plans-item {
+  width: calc(25% - 20px);
+  padding: 57px 20px 58px 30px;
+  margin-bottom: 33px;
+  background-image: url(./images/p_texture.svg);
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
+
+  &__heading {
+    font-weight: 700;
+    font-size: 26px;
+    line-height: 130%;
+    text-transform: uppercase;
+    margin-bottom: 25px;
+  }
+
+  &__text {
+    font-weight: 500;
+    font-size: 16px;
+    line-height: 130%;
+    color: #FFFFFF;
+  }
+}
+
+.banner {
+  padding-top: 24px;
+  padding-bottom: 60px;
+  background-image: url(./images/banner_bg.svg);
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
+
+  &__img {
+    &-container {
+      margin-bottom: 38px;
+    }
+  }
+
+  &__btn {
+    min-width: 220px;
+  }
+
+  &__heading {
+    font-weight: 700;
+    font-size: 90px;
+    line-height: 110%;
+    text-align: center;
+    text-transform: uppercase;
+    color: #FFFFFF;
+    margin-bottom: 25px;
+  }
+
+  &__subheading {
+    font-weight: 700;
+    font-size: 26px;
+    line-height: 130%;
+    text-align: center;
+    text-transform: uppercase;
+    color: #FFFFFF;
+    margin-bottom: 35px;
+  }
+}
+
+.lottery {
+  .heading {
+    margin-bottom: 10px;
+  }
+
+  &__text {
+    font-weight: 500;
+    font-size: 26px;
+    line-height: 32px;
+    text-transform: uppercase;
+    color: #FFFFFF;
+  }
+
+  &__heading {
+    text-align: right;
+    font-weight: 700;
+    font-size: 52px;
+    line-height: 130%;
+    text-transform: uppercase;
+    color: #FFFFFF;
+  }
+}
+
+@media screen and (max-width: $xl2) {
+
+}
+
+@media screen and (max-width: $xl) {
+  .heading::before {
+    right: -40px;
+  }
+  .heading::after {
+    left: -40px;
+  }
+  .heading::before, .heading::after {
+    width: 30px;
+  }
+  .main-container {
+    max-width: 100%;
+    padding: 0 40px;
+  }
+  .main-heading {
+    font-size: 52px;
+    line-height: 130%;
+  }
+  .main-subheading {
+    font-size: 18px;
+    line-height: 130%;
+    margin-bottom: 65px;
+  }
+  .main-text {
+    font-size: 26px;
+    line-height: 130%;
+    margin-bottom: 15px;
+  }
+  .coins-text__img {
+    svg {
+      width: 307px;
+      height: 346px;
+    }
+  }
+  .coins-text__primary {
+    font-size: 26px;
+    line-height: 130%;
+  }
+  .coins-text__secondary {
+    font-size: 18px;
+    line-height: 130%;
+  }
+  .main-banner {
+    margin-bottom: 80px;
+
+    &__bottom {
+      top: -35px;
+    }
+  }
+  .about-container {
+    margin-bottom: 100px;
+
+    .text {
+      padding-bottom: 30px;
+    }
+
+    &__img {
+      svg {
+        width: 200px;
+        height: 304px;
+      }
+    }
+
+    .subheading {
+      margin-bottom: 20px;
+    }
+  }
+  .heading-container {
+    padding: 0 27px;
+  }
+  .heading {
+    font-size: 26px;
+    line-height: 130%;
+  }
+  .subheading {
+    font-size: 18px;
+    line-height: 22px;
+  }
+  .text {
+    font-size: 12px;
+    line-height: 130%;
+  }
+  .icons-card {
+    padding-top: 40px;
+  }
+  .benefit-container .icons-card {
+    svg {
+    }
+  }
+  .icons-card__heading {
+    margin-top: 22px;
+    font-size: 18px;
+    line-height: 23px;
+
+    br {
+      //display: none;
+    }
+  }
+  .icons-card__text {
+    font-size: 12px;
+    line-height: 130%;
+  }
+  .plans-item {
+    padding: 53px 24px 37px 30px;
+
+    &__heading {
+      font-size: 18px;
+      line-height: 130%;
+      margin-bottom: 20px;
+    }
+
+    &__text {
+      font-size: 12px;
+      line-height: 130%;
+    }
+  }
+  .plans, .banner {
+    margin-bottom: 100px;
+  }
+  .banner {
+    &__img {
+      width: 85px;
+      height: 29px;
+
+      &-container {
+        padding-left: 40px;
+        margin-bottom: 19px;
+      }
+    }
+
+    &__heading {
+      font-size: 52px;
+      line-height: 130%;
+      margin-bottom: 20px;
+    }
+
+    &__subheading {
+      font-size: 18px;
+      line-height: 130%;
+      margin-bottom: 30px;
+    }
+
+    &__btn {
+    }
+  }
+  .lottery {
+    &__text {
+      font-size: 26px;
+      line-height: 32px;
+    }
+
+    &__heading {
+      font-size: 26px;
+      line-height: 130%;
+    }
+  }
+}
+
+@media screen and (max-width: $lg) {
+  .main-container {
+    padding: 0 20px;
+  }
+  .main-heading {
+    font-size: 26px;
+    margin-bottom: 10px;
+  }
+  .main-subheading {
+    font-size: 12px;
+    margin-bottom: 60px;
+  }
+  .main-text {
+    font-size: 18px;
+    margin-bottom: 13px;
+  }
+  .coins-text__img {
+    svg {
+      width: 253px;
+      height: 242px;
+    }
+  }
+  .coins-text__primary {
+    font-size: 18px;
+    margin-bottom: 5px;
+  }
+  .coins-text__secondary {
+    font-size: 16px;
+  }
+  .about-container {
+    margin-bottom: 80px;
+
+    &__img {
+      display: none;
+
+      svg {
+        width: 200px;
+        height: 304px;
+      }
+    }
+  }
+  .main-btns {
+    button:first-child {
+      margin-right: 15px;
+    }
+
+    button:last-child, button:first-child {
+      font-size: 12px;
+      max-width: 150px;
+      min-width: initial;
+    }
+  }
+  .heading-container {
+    padding: 0 27px;
+  }
+  .heading {
+    font-size: 16px;
+  }
+  .icons-card {
+    padding-top: 40px;
+  }
+  .benefit {
+    margin-bottom: 80px;
+  }
+  .number {
+    margin-top: 30px;
+  }
+  .number-item {
+    margin-bottom: 50px;
+
+    &__heading {
+      font-size: 16px;
+      line-height: 21px;
+      margin-bottom: 10px;
+    }
+
+    &__text {
+      font-size: 26px;
+      line-height: 130%;
+    }
+  }
+  .benefit-container {
+    margin-top: 30px;
+    flex-wrap: wrap;
+
+    .icons-card {
+      width: calc(50% - 5px);
+      margin-bottom: 10px;
+    }
+  }
+  .icons-card__heading {
+    margin-top: 22px;
+    font-size: 18px;
+    line-height: 23px;
+
+    br {
+      //display: none;
+    }
+  }
+  .icons-card__text {
+    font-size: 12px;
+    line-height: 130%;
+  }
+  .plans-item {
+    width: calc(50% - 5px);
+    padding: 57px 20px 58px 30px;
+    margin-bottom: 10px;
+
+    &__heading {
+      font-size: 26px;
+      margin-bottom: 25px;
+    }
+
+    &__text {
+      font-size: 18px;
+    }
+  }
+  .plans, .banner {
+    margin-bottom: 80px;
+  }
+  .banner {
+    padding-bottom: 40px;
+
+    &__img {
+      width: 85px;
+      height: 29px;
+
+      &-container {
+        padding-left: 20px;
+        margin-bottom: 18px;
+      }
+    }
+  }
+  .lottery {
+    &__text {
+      font-size: 12px;
+      line-height: 15px;
+    }
+
+    &__heading {
+      font-size: 16px;
+      line-height: 20px;
+    }
+  }
+}
+
+@media screen and (max-width: $md) {
+  .main-container {
+    padding: 0 10px;
+  }
+  .main-heading {
+    font-size: 38px;
+    margin-bottom: 10px;
+  }
+  .main-subheading {
+    font-size: 18px;
+    margin-bottom: 20px;
+  }
+  .main-btns button:last-child, .main-btns button:first-child {
+    max-width: calc(50% - 8px);
+    width: 100%;
+  }
+  .main-btns {
+    width: 100%;
+    margin-top: 30px;
+  }
+  .main-banner {
+    text-align: center;
+
+    &__bottom {
+      display: none;
+    }
+
+    &__top {
+      width: 100%;
+    }
+  }
+  .main-text {
+    font-size: 26px;
+    margin-bottom: 0;
+  }
+  .coins-text__img {
+    margin: auto;
+
+    svg {
+      width: 350px;
+      height: 334px;
+    }
+  }
+  .number-item {
+    width: 50%;
+
+    &:nth-child(3n) {
+      width: 100%;
+    }
+
+    &:nth-last-child(-n+3) {
+      margin-bottom: 50px;
+    }
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+  .plans-item {
+    padding: 53px 24px 37px 30px;
+
+    &__heading {
+      font-size: 18px;
+    }
+
+    &__text {
+      font-size: 12px;
+    }
+  }
+  .banner {
+    &__heading {
+      font-size: 38px;
+    }
+
+    &__subheading {
+      font-size: 16px;
+      margin-bottom: 25px;
+    }
+  }
+}
+
+@media screen and (min-width: $sm) and (max-width: $md) {
+  .main-text {
+    position: relative;
+    z-index: 2;
+  }
+  .main-heading {
+    font-size: 26px;
+    margin-bottom: 5px;
+  }
+  .main-subheading {
+    font-size: 12px;
+  }
+  .main-text {
+    font-size: 18px;
+  }
+  .coins-text__img {
+    margin-top: -40px;
+    position: relative;
+    z-index: 1;
+
+    svg {
+      width: 271px;
+      height: 259px;
+    }
+  }
+  .banner {
+    &__heading {
+      font-size: 26px;
+    }
+
+    &__subheading {
+      font-size: 12px;
+      margin-bottom: 30px;
+    }
+  }
+  .benefit-container {
+    .icons-card {
+      width: 100%;
+
+      &__heading {
+        font-size: 24px;
+        line-height: 31px;
+      }
+
+      &__text {
+        font-size: 18px;
+        line-height: 130%;
+      }
+    }
+  }
+  .plans-item {
+    width: 100%;
+    justify-content: center;
+    min-height: 300px;
+    max-height: 300px;
+
+    &__heading {
+      font-size: 26px;
+      line-height: 130%;
+    }
+
+    &__text {
+      font-size: 18px;
+      line-height: 130%;
+    }
+  }
+  .number-item {
+    &__heading {
+      font-size: 12px;
+      line-height: 16px;
+    }
+  }
+  .about-container {
+    .subheading {
+      margin-bottom: 30px;
+    }
+  }
+}

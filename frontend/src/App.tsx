@@ -28,12 +28,14 @@ import { SquadsPage } from './components/Squads/SquadsPage';
 import { REFERRER_SEARCH_PARAMS_KEY, useLocalReferrer } from './hooks/useLocalReferrer';
 
 import '@/assets/styles/index.scss';
+import { Landing } from '@/components/Landing/Landing';
 
 const routes = [
   { path: '/', name: 'Dashboard', element: <Dashboard />, nodeRef: createRef() },
   { path: '/staking', name: 'Staking', element: <StakingPage />, nodeRef: createRef() },
   { path: '/team', name: 'Squads', element: <SquadsPage />, nodeRef: createRef() },
   { path: '/exchange', name: 'Exchange', element: <ExchangePage />, nodeRef: createRef() },
+  { path: '/landing', name: 'Landing', element: <Landing />, nodeRef: createRef() },
   { path: '/lottery/:id', name: 'Lottery', element: <LotteryPage />, nodeRef: createRef() },
 ];
 
@@ -77,7 +79,7 @@ function Layout() {
 
   return (
     <>
-      <Header />
+      {/*<Header />*/}
       <SwitchTransition>
         <CSSTransition
           key={location.pathname}
