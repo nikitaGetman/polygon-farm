@@ -1,14 +1,16 @@
-import { Helper } from '@/types';
+import { useMemo } from 'react';
 import { useQueries, useQuery } from '@tanstack/react-query';
 import { ethers } from 'ethers';
-import { useMemo } from 'react';
+
+import { calculateLotteryWinnersPrize } from '@/lib/lottery';
+import { Helper } from '@/types';
+
 import { useHelperContract } from './contracts/useHelperContract';
+import { useLotteryRoundById } from './useLotteryRoundById';
 import { SQUADS_SUBSCRIPTION_ENDING_NOTIFICATION } from './useSquads';
 import { useStaking } from './useStaking';
 
 export const HELPER_REFERRALS_LIST_REQUEST = 'helper-referrals-list';
-export const HELPER_USER_SQUADS_INFO_REQUEST = 'helper-user-squads-info';
-
 export const useHelperReferralsFullInfoByLevel = (account?: string, levels?: number[]) => {
   const helperContract = useHelperContract();
 
@@ -36,9 +38,10 @@ export const useHelperReferralsFullInfoByLevel = (account?: string, levels?: num
   return referralsFullInfoList;
 };
 
+export const HELPER_USER_SQUADS_INFO_REQUEST = 'helper-user-squads-info';
 export const useHelperUserSquadsFullInfo = (account?: string) => {
   const helperContract = useHelperContract();
-  const { stakingPlans } = useStaking();
+  const { stakingPlansRequest } = useStaking();
 
   const userSquadsInfoRequest = useQuery(
     [HELPER_USER_SQUADS_INFO_REQUEST, { account }],
@@ -56,7 +59,7 @@ export const useHelperUserSquadsFullInfo = (account?: string) => {
           squadStatus: { ...squadStatus },
           members,
           userHasSufficientStaking,
-          stakingPlan: stakingPlans.data?.[plan.stakingPlanId.toNumber()],
+          stakingPlan: stakingPlansRequest.data?.[plan.stakingPlanId.toNumber()],
           isSubscriptionEnding:
             squadStatus.subscription.toNumber() > 0 &&
             squadStatus.subscription.toNumber() - currentTime <
@@ -64,10 +67,27 @@ export const useHelperUserSquadsFullInfo = (account?: string) => {
         })
       ) || []
     );
-  }, [stakingPlans, userSquadsInfoRequest]);
+  }, [stakingPlansRequest.data, userSquadsInfoRequest.data]);
 
   return {
     userSquadsInfoRequest,
     userSquadsInfo,
   };
+};
+
+export const HELPER_LOTTERY_ROUND_WINNERS_REQUEST = 'helper-lottery-round-winners';
+export const useHelperLotteryRoundWinners = (roundId?: number) => {
+  const helperContract = useHelperContract();
+  const { fetchRoundRequest } = useLotteryRoundById(roundId);
+
+  const roundWinnersRequest = useQuery(
+    [HELPER_LOTTERY_ROUND_WINNERS_REQUEST],
+    async () => helperContract.getLotteryRoundWinnersWithTickets(roundId),
+    {
+      enabled: roundId !== undefined && Boolean(fetchRoundRequest.data),
+      select: (winners) => calculateLotteryWinnersPrize(winners, fetchRoundRequest.data),
+    }
+  );
+
+  return roundWinnersRequest;
 };

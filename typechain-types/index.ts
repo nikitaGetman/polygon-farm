@@ -54,6 +54,8 @@ export type { ERC20Blacklist } from "./contracts/extensions/ERC20Blacklist";
 export { ERC20Blacklist__factory } from "./factories/contracts/extensions/ERC20Blacklist__factory";
 export type { Helper } from "./contracts/Helper";
 export { Helper__factory } from "./factories/contracts/Helper__factory";
+export type { ILottery } from "./contracts/interfaces/ILottery";
+export { ILottery__factory } from "./factories/contracts/interfaces/ILottery__factory";
 export type { IReferralManager } from "./contracts/interfaces/IReferralManager";
 export { IReferralManager__factory } from "./factories/contracts/interfaces/IReferralManager__factory";
 export type { ISquads } from "./contracts/interfaces/ISquads";

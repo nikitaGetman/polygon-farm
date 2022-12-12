@@ -111,6 +111,10 @@ const outlined = defineStyle({
     },
   },
 });
+const outlinedShadow = defineStyle({
+  ...outlined,
+  boxShadow: '0px 9px 19px rgba(107, 201, 91, 0.33)',
+});
 
 const filledRed = defineStyle({
   ...commonProps,
@@ -152,6 +156,35 @@ const link = defineStyle({
   },
 });
 
+const active = defineStyle({
+  ...primary,
+  padding: '0 25px',
+  _hover: {
+    boxShadow: 'none',
+    cursor: 'default',
+    _disabled: {
+      background: 'gray.200',
+      color: '#9faca3',
+    },
+  },
+});
+const inactive = defineStyle({
+  ...commonProps,
+  padding: '0 25px',
+  border: 'none',
+  bgColor: 'bgGreen.200',
+  color: '#9faca3',
+
+  _hover: {
+    color: 'white',
+    bgColor: 'green.400',
+    _disabled: {
+      background: 'gray.200',
+      color: '#9faca3',
+    },
+  },
+});
+
 export const buttonTheme = defineStyleConfig({
   variants: {
     primary,
@@ -160,9 +193,12 @@ export const buttonTheme = defineStyleConfig({
     outlined,
     outlinedWhite,
     filledRed,
+    outlinedShadow,
     link,
     inputTransparent,
     inputTransparentWhite,
+    active,
+    inactive,
   },
   sizes: {
     lg: {

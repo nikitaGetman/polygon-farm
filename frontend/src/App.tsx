@@ -1,27 +1,31 @@
 import React, { createRef, useCallback, useEffect } from 'react';
-import { Box, ChakraProvider } from '@chakra-ui/react';
 import {
-  useLocation,
   createBrowserRouter,
-  useOutlet,
-  RouterProvider,
   Navigate,
+  RouterProvider,
+  useLocation,
+  useOutlet,
   useSearchParams,
 } from 'react-router-dom';
-import { WagmiConfig } from 'wagmi';
-import { Header } from '@/components/Header/Header';
-import { Dashboard } from '@/components/Dashboard/Dashboard';
-import { theme } from '@/modules/chakra';
-import { client } from '@/modules/wagmi';
+import { CSSTransition, SwitchTransition } from 'react-transition-group';
+import { Box, ChakraProvider } from '@chakra-ui/react';
 import { QueryClientProvider } from '@tanstack/react-query';
-import { queryClient } from '@/modules/query';
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
+import { WagmiConfig } from 'wagmi';
+
+import { Dashboard } from '@/components/Dashboard/Dashboard';
+import { ExchangePage } from '@/components/Exchange/ExchangePage';
+import { Header } from '@/components/Header/Header';
+import { Modals } from '@/components/Modals';
 import { StakingPage } from '@/components/Staking/StakingPage';
 import { AppStateProvider } from '@/contexts/AppContext';
-import { Modals } from '@/components/Modals';
-import { SwitchTransition, CSSTransition } from 'react-transition-group';
+import { theme } from '@/modules/chakra';
+import { queryClient } from '@/modules/query';
+import { client } from '@/modules/wagmi';
+
+import { LotteryPage } from './components/Lottery/LotteryPage';
 import { SquadsPage } from './components/Squads/SquadsPage';
 import { REFERRER_SEARCH_PARAMS_KEY, useLocalReferrer } from './hooks/useLocalReferrer';
-import { ExchangePage } from './components/Exchange/ExchangePage';
 
 import '@/assets/styles/index.scss';
 import { Landing } from '@/components/Landing/Landing';
@@ -32,6 +36,7 @@ const routes = [
   { path: '/team', name: 'Squads', element: <SquadsPage />, nodeRef: createRef() },
   { path: '/exchange', name: 'Exchange', element: <ExchangePage />, nodeRef: createRef() },
   { path: '/landing', name: 'Landing', element: <Landing />, nodeRef: createRef() },
+  { path: '/lottery/:id', name: 'Lottery', element: <LotteryPage />, nodeRef: createRef() },
 ];
 
 const router = createBrowserRouter([
@@ -53,7 +58,11 @@ const router = createBrowserRouter([
 function Layout() {
   const location = useLocation();
   const currentOutlet = useOutlet();
-  const { nodeRef } = routes.find((route) => route.path === location.pathname) ?? {};
+  const { nodeRef } =
+    routes.find((route) =>
+      // TODO: Hack for '/lottery/:id' route
+      route.path.includes(location.pathname.split('/')[1])
+    ) ?? {};
 
   const scrollToTop = useCallback(() => {
     window?.scroll(0, 0);
@@ -103,6 +112,8 @@ function App() {
 
             <Modals />
           </AppStateProvider>
+
+          <ReactQueryDevtools />
         </QueryClientProvider>
       </ChakraProvider>
     </WagmiConfig>

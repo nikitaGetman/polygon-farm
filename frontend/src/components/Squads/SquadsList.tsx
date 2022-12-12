@@ -1,9 +1,11 @@
 import React from 'react';
-import { useSquads } from '@/hooks/useSquads';
 import { Flex, Skeleton } from '@chakra-ui/react';
-import { SquadItem } from './SquadItem';
-import { useHelperUserSquadsFullInfo } from '@/hooks/useHelper';
 import { useAccount } from 'wagmi';
+
+import { useHelperUserSquadsFullInfo } from '@/hooks/useHelper';
+import { useSquads } from '@/hooks/useSquads';
+
+import { SquadItem } from './SquadItem';
 
 export const SquadsList = () => {
   const { address } = useAccount();
@@ -11,7 +13,7 @@ export const SquadsList = () => {
   const { userSquadsInfo } = useHelperUserSquadsFullInfo(address);
 
   return (
-    <Flex overflow="auto" gap="20px">
+    <Flex gap="20px">
       {!userSquadsInfo.length
         ? Array.from({ length: 3 }).map((_, index) => (
             <Skeleton

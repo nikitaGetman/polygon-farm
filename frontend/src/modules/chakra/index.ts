@@ -1,4 +1,5 @@
 import { extendTheme } from '@chakra-ui/react';
+
 import { buttonTheme } from './button';
 import { containerTheme } from './container';
 import { inputTheme } from './input';
@@ -34,7 +35,10 @@ const colors = {
     200: '#4d6655',
   },
   bgGreen: {
+    50: '#174033',
+    100: '#193524',
     200: '#1f3e2c',
+    400: '#264737',
     600: '#1a725c',
     800: '#192219',
     900: '#0B200B',
@@ -82,6 +86,11 @@ const textStyles = {
     fontWeight: '700',
     lineHeight: '130%',
   },
+  heading1: {
+    fontSize: ['36px'],
+    fontWeight: '600',
+    lineHeight: '130%',
+  },
   text1: {
     fontSize: ['18px'],
     fontWeight: '500',
@@ -97,7 +106,24 @@ const textStyles = {
     fontWeight: '500',
     lineHeight: '130%',
   },
+  textExtraBoldUpper: {
+    fontSize: ['26px'],
+    fontWeight: '700',
+    lineHeight: '130%',
+    textTransform: 'uppercase',
+  },
   textBold: {
+    fontSize: ['18px'],
+    fontWeight: '700',
+    lineHeight: '130%',
+  },
+  textSemiBold: {
+    fontSize: ['18px'],
+    fontWeight: '600',
+    lineHeight: '130%',
+  },
+  textBaldPtSans: {
+    fontFamily: 'PT Sans',
     fontSize: ['18px'],
     fontWeight: '700',
     lineHeight: '130%',

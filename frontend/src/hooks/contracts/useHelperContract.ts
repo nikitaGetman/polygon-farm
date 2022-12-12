@@ -1,5 +1,7 @@
-import { Helper } from '@/types';
 import { useContract, useProvider, useSigner } from 'wagmi';
+
+import { Helper } from '@/types';
+
 import { ContractsEnum, useContractAbi } from './useContractAbi';
 
 export const useHelperContract = () => {
@@ -31,10 +33,17 @@ export const useHelperContract = () => {
     }));
   };
 
+  const getLotteryRoundWinnersWithTickets = async (roundId?: number) => {
+    return roundId !== undefined
+      ? await contract.getLotteryRoundWinnersWithTickets(roundId)
+      : Promise.reject('Round id is undefined');
+  };
+
   return {
     contract,
     address: contractAddress,
     getReferralsFullInfoByLevel,
     getUserSquadsInfo,
+    getLotteryRoundWinnersWithTickets,
   };
 };

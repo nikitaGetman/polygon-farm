@@ -13,13 +13,16 @@ import {
   Text,
 } from '@chakra-ui/react';
 import { BigNumberish } from 'ethers';
+
 import { ReactComponent as CheckIcon } from '@/assets/images/icons/check.svg';
+import { REFERRAL_SUBSCRIPTION_ENDING_NOTIFICATION } from '@/hooks/useReferralManager';
 import { getReadableAmount } from '@/utils/number';
 import { getLocalDateString, getReadableDuration } from '@/utils/time';
+
 import { CenteredSpinner } from '../ui/CenteredSpinner/CenteredSpinner';
-import { REFERRAL_SUBSCRIPTION_ENDING_NOTIFICATION } from '@/hooks/useReferralManager';
 
 type ReferralSubscriptionModalProps = {
+  isOpen: boolean;
   fullSubscriptionCost: BigNumberish;
   levelSubscriptionCost: BigNumberish;
   subscriptionDuration: number;
@@ -31,6 +34,7 @@ type ReferralSubscriptionModalProps = {
   onClose: () => void;
 };
 export const ReferralSubscriptionModal: FC<ReferralSubscriptionModalProps> = ({
+  isOpen,
   fullSubscriptionCost,
   levelSubscriptionCost,
   subscriptionDuration,
@@ -42,29 +46,29 @@ export const ReferralSubscriptionModal: FC<ReferralSubscriptionModalProps> = ({
   onClose,
 }) => {
   const [isFullLoading, setIsFullLoading] = useState(false);
-  const [isLevelLoading, setIsLevelLoading] = useState(false);
-
-  const handleSubscribeToLevel = useCallback(
-    async (level: number) => {
-      setIsLevelLoading(true);
-      onLevelSubscribe(level).finally(() => {
-        setIsLevelLoading(false);
-      });
-    },
-    [onLevelSubscribe, setIsLevelLoading]
-  );
+  const [levelLoading, setLevelLoading] = useState<number>();
 
   const handleSubscribeToFull = useCallback(async () => {
     setIsFullLoading(true);
-    onFullSubscribe().finally(() => {
+    return onFullSubscribe().finally(() => {
       setIsFullLoading(false);
     });
   }, [setIsFullLoading, onFullSubscribe]);
 
-  const isButtonsDisabled = isFullLoading || isLevelLoading;
+  const handleSubscribeToLevel = useCallback(
+    async (level: number) => {
+      setLevelLoading(level);
+      return onLevelSubscribe(level).finally(() => {
+        setLevelLoading(undefined);
+      });
+    },
+    [onLevelSubscribe, setLevelLoading]
+  );
+
+  const isLevelLoading = levelLoading !== undefined;
 
   return (
-    <Modal isCentered isOpen={true} onClose={onClose} scrollBehavior="inside">
+    <Modal isCentered isOpen={isOpen} onClose={onClose} scrollBehavior="inside">
       <ModalOverlay />
       <ModalContent position="relative">
         <ModalHeader textStyle="textSansBold" fontSize={26}>
@@ -83,7 +87,7 @@ export const ReferralSubscriptionModal: FC<ReferralSubscriptionModalProps> = ({
               price={fullSubscriptionCost}
               duration={subscriptionDuration}
               subscriptionTill={fullSubscriptionTill}
-              disabled={isButtonsDisabled}
+              disabled={isLevelLoading || isFullLoading}
               isLoading={isFullLoading}
               onSubscribe={handleSubscribeToFull}
             />
@@ -99,11 +103,8 @@ export const ReferralSubscriptionModal: FC<ReferralSubscriptionModalProps> = ({
                     price={levelSubscriptionCost}
                     duration={subscriptionDuration}
                     subscriptionTill={subTill}
-                    disabled={
-                      isButtonsDisabled ||
-                      (index > 0 && levelsSubscriptionTill[index - 1] < Date.now() / 1000)
-                    }
-                    isLoading={isLevelLoading}
+                    disabled={isFullLoading || isLevelLoading}
+                    isLoading={levelLoading === index + 1}
                     onSubscribe={() => handleSubscribeToLevel(index + 1)}
                   />
                 </Box>
@@ -121,17 +122,17 @@ type SubscriptionLevelProps = {
   price: BigNumberish;
   duration: number;
   subscriptionTill: number;
-  disabled: boolean;
   isLoading: boolean;
-  onSubscribe: () => void;
+  disabled: boolean;
+  onSubscribe: () => Promise<void>;
 };
 const SubscriptionLevel: FC<SubscriptionLevelProps> = ({
   price,
   duration,
   title,
   subscriptionTill,
-  disabled,
   isLoading,
+  disabled,
   onSubscribe,
 }) => {
   const currentTime = Date.now() / 1000;
@@ -174,7 +175,7 @@ const SubscriptionLevel: FC<SubscriptionLevelProps> = ({
           ) : null}
         </Flex>
         {!isActive ? (
-          <Button onClick={onSubscribe} isLoading={isLoading} disabled={disabled}>
+          <Button onClick={onSubscribe} isLoading={isLoading} disabled={disabled || isLoading}>
             Activate
           </Button>
         ) : null}
@@ -183,7 +184,7 @@ const SubscriptionLevel: FC<SubscriptionLevelProps> = ({
             variant="outlinedWhite"
             onClick={onSubscribe}
             isLoading={isLoading}
-            disabled={disabled}
+            disabled={disabled || isLoading}
           >
             Prolong
           </Button>

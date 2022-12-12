@@ -1,10 +1,12 @@
-import { useProvider, useSigner, useContract } from 'wagmi';
+import EthDater from 'ethereum-block-by-date';
 import type { BigNumber } from 'ethers';
-import { ContractsEnum, useContractAbi } from './useContractAbi';
+import { useContract, useProvider, useSigner } from 'wagmi';
 
 import { Token1 } from '@/types';
 import { BALANCE_HISTORY_PERIOD } from '@/utils/balance';
-import EthDater from 'ethereum-block-by-date';
+import { waitForTransaction } from '@/utils/waitForTransaction';
+
+import { ContractsEnum, useContractAbi } from './useContractAbi';
 
 export enum SavEvent {
   Transfer = 'Transfer',
@@ -54,8 +56,7 @@ export const useTokenContract = (token: ContractsEnum.SAV | ContractsEnum.SAVR) 
 
   const approve = async (spender: string, amount: BigNumber): Promise<string> => {
     const tx = await contract.approve(spender, amount);
-    await tx.wait();
-    return tx.hash;
+    return waitForTransaction(tx);
   };
 
   return {

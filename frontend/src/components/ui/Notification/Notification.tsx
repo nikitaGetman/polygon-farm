@@ -1,6 +1,6 @@
 import React, { FC, useMemo } from 'react';
 import { Box, CloseButton, Flex, Link, Text } from '@chakra-ui/react';
-import { useNetwork, chain } from 'wagmi';
+import { chain, useNetwork } from 'wagmi';
 
 export type NotificationProps = {
   type: 'success' | 'error' | 'info';

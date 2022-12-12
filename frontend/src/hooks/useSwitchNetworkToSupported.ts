@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
 import { useAccount, useNetwork, useSwitchNetwork } from 'wagmi';
+
 import { useNotification } from './useNotification';
 
 export const useSwitchNetworkToSupported = () => {

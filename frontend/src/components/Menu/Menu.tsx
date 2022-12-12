@@ -1,30 +1,31 @@
 import React, { useCallback } from 'react';
+import { useNavigate } from 'react-router-dom';
 import {
-  IconButton,
+  Box,
+  Circle,
+  Divider,
   Drawer,
-  DrawerOverlay,
+  DrawerBody,
   DrawerContent,
   DrawerHeader,
-  DrawerBody,
-  Text,
-  Link,
-  Box,
+  DrawerOverlay,
   Flex,
-  Divider,
-  Circle,
+  IconButton,
+  Link,
+  Text,
 } from '@chakra-ui/react';
-import { useNavigate } from 'react-router-dom';
+
 import { ReactComponent as CrossIcon } from '@/assets/images/icons/cross.svg';
-import { ReactComponent as HouseIcon } from '@/assets/images/icons/house.svg';
-import { ReactComponent as GraphIcon } from '@/assets/images/icons/graph.svg';
-import { ReactComponent as StarsIcon } from '@/assets/images/icons/stars.svg';
 import { ReactComponent as GameboyIcon } from '@/assets/images/icons/gameboy.svg';
+import { ReactComponent as GraphIcon } from '@/assets/images/icons/graph.svg';
+import { ReactComponent as HouseIcon } from '@/assets/images/icons/house.svg';
 import { ReactComponent as RocketIcon } from '@/assets/images/icons/rocket.svg';
-import { ReactComponent as WalletIcon } from '@/assets/images/icons/wallet.svg';
+import { ReactComponent as StarsIcon } from '@/assets/images/icons/stars.svg';
 import { ReactComponent as TabletIcon } from '@/assets/images/icons/tablet.svg';
-import { useStaking } from '@/hooks/useStaking';
+import { ReactComponent as WalletIcon } from '@/assets/images/icons/wallet.svg';
 import { useReferralManager } from '@/hooks/useReferralManager';
 import { useSquads } from '@/hooks/useSquads';
+import { useStaking } from '@/hooks/useStaking';
 
 export const Menu = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) => {
   const { hasEndingSubscription } = useStaking();
@@ -90,7 +91,7 @@ export const Menu = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => void
           />
           <Divider mb="30px" borderBottomWidth="2px" borderColor="white" />
           <NavMenuItem
-            text="Buy token"
+            text="Buy SAV"
             icon={<WalletIcon />}
             onClick={() => handleNavigate('/exchange')}
           />

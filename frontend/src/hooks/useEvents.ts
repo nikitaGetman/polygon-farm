@@ -1,11 +1,12 @@
-import type { BigNumber, Event } from 'ethers';
-import { constants } from 'ethers';
 import { useEffect } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
+import type { BigNumber, Event } from 'ethers';
+import { constants } from 'ethers';
 import { useAccount } from 'wagmi';
+
+import { ContractsEnum } from './contracts/useContractAbi';
 import { StakingEvent, useStakingContract } from './contracts/useStakingContract';
 import { useTokenContract } from './contracts/useTokenContract';
-import { ContractsEnum } from './contracts/useContractAbi';
 
 // Listen to events and refresh data
 export const useEvents = () => {

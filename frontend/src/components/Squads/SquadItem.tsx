@@ -1,10 +1,11 @@
 import React, { FC, useCallback, useMemo, useState } from 'react';
-import { BigNumber, BigNumberish } from 'ethers';
 import { Box, Button, Flex, Text } from '@chakra-ui/react';
-import { getLocalDateString, getReadableDuration } from '@/utils/time';
-import { bigNumberToString } from '@/utils/number';
+import { BigNumber, BigNumberish } from 'ethers';
+
 import { ReactComponent as SquadSectionIcon } from '@/assets/images/icons/squad-section.svg';
 import { ReactComponent as SquadSectionFilledIcon } from '@/assets/images/icons/squad-section-filled.svg';
+import { bigNumberToString } from '@/utils/number';
+import { getLocalDateString, getReadableDuration } from '@/utils/time';
 
 type SquadItemProps = {
   subscription?: BigNumber;
@@ -84,12 +85,11 @@ export const SquadItem: FC<SquadItemProps> = ({
         <Box>
           {isSubscribed ? (
             <Text textStyle="textSansBold">
-              <>Until {getLocalDateString(BigNumber.from(subscription).toNumber())}</>
+              <>until {getLocalDateString(BigNumber.from(subscription).toNumber())}</>
             </Text>
           ) : (
             <Text textStyle="textSansBold">
-              {bigNumberToString(subscriptionCost, 18, 0)} SAV / 1 Team or{' '}
-              {getReadableDuration(subscriptionDuration)}
+              {bigNumberToString(subscriptionCost, { precision: 0 })} SAV / 1 Team
             </Text>
           )}
         </Box>
@@ -104,7 +104,7 @@ export const SquadItem: FC<SquadItemProps> = ({
           textAlign="center"
         >
           <Text textStyle="text1" fontSize="44px" lineHeight="40px" whiteSpace="nowrap">
-            {bigNumberToString(reward, 18, 0)}
+            {bigNumberToString(reward, { precision: 0 })}
             <Text as="span" fontSize="24px" ml="5px">
               SAV
             </Text>

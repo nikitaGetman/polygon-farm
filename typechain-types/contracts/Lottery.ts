@@ -27,8 +27,9 @@ import type {
   PromiseOrValue,
 } from "../common";
 
-export declare namespace Lottery {
+export declare namespace ILottery {
   export type RoundStruct = {
+    id: PromiseOrValue<BigNumberish>;
     startTime: PromiseOrValue<BigNumberish>;
     duration: PromiseOrValue<BigNumberish>;
     isClosed: PromiseOrValue<boolean>;
@@ -49,6 +50,7 @@ export declare namespace Lottery {
   export type RoundStructOutput = [
     BigNumber,
     BigNumber,
+    BigNumber,
     boolean,
     boolean,
     boolean,
@@ -63,6 +65,7 @@ export declare namespace Lottery {
     BigNumber,
     string[][]
   ] & {
+    id: BigNumber;
     startTime: BigNumber;
     duration: BigNumber;
     isClosed: boolean;
@@ -96,13 +99,19 @@ export interface LotteryInterface extends utils.Interface {
     "finishLotteryRound(uint256,address[][])": FunctionFragment;
     "getActiveRounds()": FunctionFragment;
     "getClaimStreak(address)": FunctionFragment;
+    "getLastClaimTime(address)": FunctionFragment;
     "getLastFinishedRounds(uint256,uint256)": FunctionFragment;
     "getRoleAdmin(bytes32)": FunctionFragment;
     "getRound(uint256)": FunctionFragment;
+    "getTotalRounds()": FunctionFragment;
+    "getUserRoundEntry(address,uint256)": FunctionFragment;
+    "getWinnerPrize(address)": FunctionFragment;
     "grantRole(bytes32,address)": FunctionFragment;
     "hasRole(bytes32,address)": FunctionFragment;
     "isClaimedToday(address)": FunctionFragment;
+    "isMintAvailable(address)": FunctionFragment;
     "manuallyGetWinners(uint256)": FunctionFragment;
+    "mintMyTicket()": FunctionFragment;
     "oracleRequests(uint256)": FunctionFragment;
     "rawFulfillRandomWords(uint256,uint256[])": FunctionFragment;
     "renounceRole(bytes32,address)": FunctionFragment;
@@ -139,13 +148,19 @@ export interface LotteryInterface extends utils.Interface {
       | "finishLotteryRound"
       | "getActiveRounds"
       | "getClaimStreak"
+      | "getLastClaimTime"
       | "getLastFinishedRounds"
       | "getRoleAdmin"
       | "getRound"
+      | "getTotalRounds"
+      | "getUserRoundEntry"
+      | "getWinnerPrize"
       | "grantRole"
       | "hasRole"
       | "isClaimedToday"
+      | "isMintAvailable"
       | "manuallyGetWinners"
+      | "mintMyTicket"
       | "oracleRequests"
       | "rawFulfillRandomWords"
       | "renounceRole"
@@ -222,6 +237,10 @@ export interface LotteryInterface extends utils.Interface {
     values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
+    functionFragment: "getLastClaimTime",
+    values: [PromiseOrValue<string>]
+  ): string;
+  encodeFunctionData(
     functionFragment: "getLastFinishedRounds",
     values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>]
   ): string;
@@ -232,6 +251,18 @@ export interface LotteryInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "getRound",
     values: [PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getTotalRounds",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getUserRoundEntry",
+    values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getWinnerPrize",
+    values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
     functionFragment: "grantRole",
@@ -246,8 +277,16 @@ export interface LotteryInterface extends utils.Interface {
     values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
+    functionFragment: "isMintAvailable",
+    values: [PromiseOrValue<string>]
+  ): string;
+  encodeFunctionData(
     functionFragment: "manuallyGetWinners",
     values: [PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "mintMyTicket",
+    values?: undefined
   ): string;
   encodeFunctionData(
     functionFragment: "oracleRequests",
@@ -370,6 +409,10 @@ export interface LotteryInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "getLastClaimTime",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "getLastFinishedRounds",
     data: BytesLike
   ): Result;
@@ -378,6 +421,18 @@ export interface LotteryInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "getRound", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "getTotalRounds",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getUserRoundEntry",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getWinnerPrize",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "grantRole", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "hasRole", data: BytesLike): Result;
   decodeFunctionResult(
@@ -385,7 +440,15 @@ export interface LotteryInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "isMintAvailable",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "manuallyGetWinners",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "mintMyTicket",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -647,9 +710,14 @@ export interface Lottery extends BaseContract {
 
     getActiveRounds(
       overrides?: CallOverrides
-    ): Promise<[Lottery.RoundStructOutput[]]>;
+    ): Promise<[ILottery.RoundStructOutput[]]>;
 
     getClaimStreak(
+      user: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
+
+    getLastClaimTime(
       user: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
@@ -658,7 +726,7 @@ export interface Lottery extends BaseContract {
       length: PromiseOrValue<BigNumberish>,
       offset: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
-    ): Promise<[Lottery.RoundStructOutput[]]>;
+    ): Promise<[ILottery.RoundStructOutput[]]>;
 
     getRoleAdmin(
       role: PromiseOrValue<BytesLike>,
@@ -668,7 +736,20 @@ export interface Lottery extends BaseContract {
     getRound(
       id: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
-    ): Promise<[Lottery.RoundStructOutput]>;
+    ): Promise<[ILottery.RoundStructOutput]>;
+
+    getTotalRounds(overrides?: CallOverrides): Promise<[BigNumber]>;
+
+    getUserRoundEntry(
+      user: PromiseOrValue<string>,
+      roundId: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
+
+    getWinnerPrize(
+      user: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
 
     grantRole(
       role: PromiseOrValue<BytesLike>,
@@ -687,8 +768,17 @@ export interface Lottery extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[boolean]>;
 
+    isMintAvailable(
+      user: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<[boolean]>;
+
     manuallyGetWinners(
       roundId: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    mintMyTicket(
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -722,6 +812,7 @@ export interface Lottery extends BaseContract {
       [
         BigNumber,
         BigNumber,
+        BigNumber,
         boolean,
         boolean,
         boolean,
@@ -732,6 +823,7 @@ export interface Lottery extends BaseContract {
         BigNumber,
         BigNumber
       ] & {
+        id: BigNumber;
         startTime: BigNumber;
         duration: BigNumber;
         isClosed: boolean;
@@ -863,9 +955,14 @@ export interface Lottery extends BaseContract {
 
   getActiveRounds(
     overrides?: CallOverrides
-  ): Promise<Lottery.RoundStructOutput[]>;
+  ): Promise<ILottery.RoundStructOutput[]>;
 
   getClaimStreak(
+    user: PromiseOrValue<string>,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
+  getLastClaimTime(
     user: PromiseOrValue<string>,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
@@ -874,7 +971,7 @@ export interface Lottery extends BaseContract {
     length: PromiseOrValue<BigNumberish>,
     offset: PromiseOrValue<BigNumberish>,
     overrides?: CallOverrides
-  ): Promise<Lottery.RoundStructOutput[]>;
+  ): Promise<ILottery.RoundStructOutput[]>;
 
   getRoleAdmin(
     role: PromiseOrValue<BytesLike>,
@@ -884,7 +981,20 @@ export interface Lottery extends BaseContract {
   getRound(
     id: PromiseOrValue<BigNumberish>,
     overrides?: CallOverrides
-  ): Promise<Lottery.RoundStructOutput>;
+  ): Promise<ILottery.RoundStructOutput>;
+
+  getTotalRounds(overrides?: CallOverrides): Promise<BigNumber>;
+
+  getUserRoundEntry(
+    user: PromiseOrValue<string>,
+    roundId: PromiseOrValue<BigNumberish>,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
+  getWinnerPrize(
+    user: PromiseOrValue<string>,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
 
   grantRole(
     role: PromiseOrValue<BytesLike>,
@@ -903,8 +1013,17 @@ export interface Lottery extends BaseContract {
     overrides?: CallOverrides
   ): Promise<boolean>;
 
+  isMintAvailable(
+    user: PromiseOrValue<string>,
+    overrides?: CallOverrides
+  ): Promise<boolean>;
+
   manuallyGetWinners(
     roundId: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  mintMyTicket(
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -938,6 +1057,7 @@ export interface Lottery extends BaseContract {
     [
       BigNumber,
       BigNumber,
+      BigNumber,
       boolean,
       boolean,
       boolean,
@@ -948,6 +1068,7 @@ export interface Lottery extends BaseContract {
       BigNumber,
       BigNumber
     ] & {
+      id: BigNumber;
       startTime: BigNumber;
       duration: BigNumber;
       isClosed: boolean;
@@ -1077,9 +1198,14 @@ export interface Lottery extends BaseContract {
 
     getActiveRounds(
       overrides?: CallOverrides
-    ): Promise<Lottery.RoundStructOutput[]>;
+    ): Promise<ILottery.RoundStructOutput[]>;
 
     getClaimStreak(
+      user: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    getLastClaimTime(
       user: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
@@ -1088,7 +1214,7 @@ export interface Lottery extends BaseContract {
       length: PromiseOrValue<BigNumberish>,
       offset: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
-    ): Promise<Lottery.RoundStructOutput[]>;
+    ): Promise<ILottery.RoundStructOutput[]>;
 
     getRoleAdmin(
       role: PromiseOrValue<BytesLike>,
@@ -1098,7 +1224,20 @@ export interface Lottery extends BaseContract {
     getRound(
       id: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
-    ): Promise<Lottery.RoundStructOutput>;
+    ): Promise<ILottery.RoundStructOutput>;
+
+    getTotalRounds(overrides?: CallOverrides): Promise<BigNumber>;
+
+    getUserRoundEntry(
+      user: PromiseOrValue<string>,
+      roundId: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    getWinnerPrize(
+      user: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
     grantRole(
       role: PromiseOrValue<BytesLike>,
@@ -1117,10 +1256,17 @@ export interface Lottery extends BaseContract {
       overrides?: CallOverrides
     ): Promise<boolean>;
 
+    isMintAvailable(
+      user: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
+
     manuallyGetWinners(
       roundId: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<void>;
+
+    mintMyTicket(overrides?: CallOverrides): Promise<void>;
 
     oracleRequests(
       arg0: PromiseOrValue<BigNumberish>,
@@ -1152,6 +1298,7 @@ export interface Lottery extends BaseContract {
       [
         BigNumber,
         BigNumber,
+        BigNumber,
         boolean,
         boolean,
         boolean,
@@ -1162,6 +1309,7 @@ export interface Lottery extends BaseContract {
         BigNumber,
         BigNumber
       ] & {
+        id: BigNumber;
         startTime: BigNumber;
         duration: BigNumber;
         isClosed: boolean;
@@ -1377,6 +1525,11 @@ export interface Lottery extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    getLastClaimTime(
+      user: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     getLastFinishedRounds(
       length: PromiseOrValue<BigNumberish>,
       offset: PromiseOrValue<BigNumberish>,
@@ -1390,6 +1543,19 @@ export interface Lottery extends BaseContract {
 
     getRound(
       id: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    getTotalRounds(overrides?: CallOverrides): Promise<BigNumber>;
+
+    getUserRoundEntry(
+      user: PromiseOrValue<string>,
+      roundId: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    getWinnerPrize(
+      user: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -1410,8 +1576,17 @@ export interface Lottery extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    isMintAvailable(
+      user: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     manuallyGetWinners(
       roundId: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    mintMyTicket(
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -1570,6 +1745,11 @@ export interface Lottery extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
+    getLastClaimTime(
+      user: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     getLastFinishedRounds(
       length: PromiseOrValue<BigNumberish>,
       offset: PromiseOrValue<BigNumberish>,
@@ -1583,6 +1763,19 @@ export interface Lottery extends BaseContract {
 
     getRound(
       id: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    getTotalRounds(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    getUserRoundEntry(
+      user: PromiseOrValue<string>,
+      roundId: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    getWinnerPrize(
+      user: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
@@ -1603,8 +1796,17 @@ export interface Lottery extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
+    isMintAvailable(
+      user: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     manuallyGetWinners(
       roundId: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    mintMyTicket(
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 

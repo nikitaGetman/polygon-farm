@@ -5,36 +5,22 @@ import "@openzeppelin/contracts/access/AccessControl.sol";
 import "@openzeppelin/contracts/token/ERC20/extensions/ERC20Burnable.sol";
 import "@chainlink/contracts/src/v0.8/interfaces/VRFCoordinatorV2Interface.sol";
 import "@chainlink/contracts/src/v0.8/VRFConsumerBaseV2.sol";
+import "./interfaces/ILottery.sol";
 import "./tokens/Ticket.sol";
 
-contract Lottery is VRFConsumerBaseV2, AccessControl {
-    struct Round {
-        uint256 startTime;
-        uint256 duration;
-        bool isClosed;
-        bool isOracleFulfilled;
-        bool isFinished;
-        uint256 initialPrize;
-        uint256 totalPrize;
-        uint256 maxTicketsFromOneMember;
-        uint256 tokensForOneTicket;
-        uint256[] winnersForLevel;
-        uint256[] prizeForLevel;
-        uint256 totalTickets;
-        address[] members;
-        uint256 randomWord;
-        address[][] winners;
-    }
-
+contract Lottery is ILottery, VRFConsumerBaseV2, AccessControl {
     bytes32 public constant OPERATOR_ROLE = keccak256("OPERATOR_ROLE");
 
     Round[] public rounds;
     mapping(uint256 => mapping(address => uint256)) roundMembers;
+    mapping(uint256 => mapping(address => uint256)) roundMembersHistory;
     mapping(address => uint256[]) claims;
+    mapping(address => uint256) winnersRewards;
+    mapping(address => uint256) lastTicketMint;
 
     uint256 public TICKET_PRICE;
     uint256 public TICKET_ID;
-    uint256 public DAYS_STREAK_FOR_TICKET;
+    uint256 public DAYS_STREAK_FOR_TICKET = 5;
     uint256 public CLAIM_PERIOD = 1 days;
 
     Ticket ticketToken;
@@ -120,6 +106,7 @@ contract Lottery is VRFConsumerBaseV2, AccessControl {
         require(totalPrizePercents == 100, "EC7");
 
         Round memory newRound = Round({
+            id: rounds.length,
             startTime: startTime,
             duration: duration,
             isClosed: false,
@@ -164,6 +151,7 @@ contract Lottery is VRFConsumerBaseV2, AccessControl {
             round.members.push(_msgSender());
         }
         roundMembers[roundId][_msgSender()] = currentTickets + tickets;
+        roundMembersHistory[roundId][_msgSender()] = currentTickets + tickets;
         round.totalTickets += tickets;
     }
 
@@ -245,10 +233,6 @@ contract Lottery is VRFConsumerBaseV2, AccessControl {
         rounds[roundId].isFinished = true;
         emit RoundFinished(roundId);
 
-        if (round.totalTickets == 0) {
-            return;
-        }
-
         uint256 random = round.randomWord;
 
         for (uint256 i = 0; i < round.winners.length; i++) {
@@ -256,6 +240,10 @@ contract Lottery is VRFConsumerBaseV2, AccessControl {
                 round.prizeForLevel[i];
 
             for (uint256 j = 0; j < round.winners[i].length; j++) {
+                if (round.totalTickets == 0) {
+                    return;
+                }
+
                 random = ((random * (i + 1) * (j + 1)) % block.timestamp) + 1;
                 address winner = round.winners[i][j];
 
@@ -282,6 +270,7 @@ contract Lottery is VRFConsumerBaseV2, AccessControl {
 
                 uint256 prizeAmount = totalLevelPrize / round.winners[i].length;
                 rewardToken.transferFrom(rewardPool, winner, prizeAmount);
+                winnersRewards[winner] += prizeAmount;
             }
         }
     }
@@ -306,14 +295,23 @@ contract Lottery is VRFConsumerBaseV2, AccessControl {
 
         for (uint256 i = 0; i < claims[_msgSender()].length; i++) {
             if (claims[_msgSender()][i] == 0) {
-                claims[_msgSender()][i] = block.timestamp;
+                // Cut fractionaal part
+                claims[_msgSender()][i] =
+                    (block.timestamp / CLAIM_PERIOD) *
+                    CLAIM_PERIOD;
                 break;
             }
         }
+    }
 
-        if (streak + 1 == DAYS_STREAK_FOR_TICKET) {
-            _mintTicket(_msgSender(), 1);
-        }
+    function mintMyTicket() public {
+        require(isMintAvailable(_msgSender()), "Ticket mint is not available");
+
+        _mintTicket(_msgSender(), 1);
+        // Cut fractionaal part
+        lastTicketMint[_msgSender()] =
+            (block.timestamp / CLAIM_PERIOD + 1) *
+            CLAIM_PERIOD;
     }
 
     function _mintTicket(address user, uint256 amount) internal {
@@ -322,8 +320,24 @@ contract Lottery is VRFConsumerBaseV2, AccessControl {
     }
 
     // --------- Helper functions ---------
+    function getTotalRounds() public view returns (uint256) {
+        return rounds.length;
+    }
+
+    function getWinnerPrize(address user) public view returns (uint256) {
+        return winnersRewards[user];
+    }
+
     function getRound(uint256 id) public view returns (Round memory) {
         return rounds[id];
+    }
+
+    function getUserRoundEntry(address user, uint256 roundId)
+        public
+        view
+        returns (uint256)
+    {
+        return roundMembersHistory[roundId][user];
     }
 
     function getActiveRounds() public view returns (Round[] memory) {
@@ -366,12 +380,13 @@ contract Lottery is VRFConsumerBaseV2, AccessControl {
                 } else {
                     remainingRounds -= 1;
                     finishedRounds[remainingRounds] = rounds[i - 1];
+                    if (remainingRounds == 0) {
+                        // return if find required amount of rounds
+                        return finishedRounds;
+                    }
                 }
             }
         }
-
-        // return if find required amount of rounds
-        if (remainingRounds == 0) return finishedRounds;
 
         // else cut empty round items
         uint256 roundsFound = length - remainingRounds;
@@ -385,19 +400,27 @@ contract Lottery is VRFConsumerBaseV2, AccessControl {
     }
 
     function isClaimedToday(address user) public view returns (bool) {
+        uint256 today = block.timestamp / CLAIM_PERIOD;
+        return getLastClaimTime(user) / CLAIM_PERIOD == today;
+    }
+
+    function getLastClaimTime(address user) public view returns (uint256) {
         uint256[] storage userClaims = claims[user];
 
-        if (userClaims.length == 0) return false;
-
-        uint256 today = block.timestamp / CLAIM_PERIOD;
+        if (userClaims.length == 0) return 0;
 
         for (uint256 i = userClaims.length; i > 0; i--) {
             if (userClaims[i - 1] > 0) {
-                return userClaims[i - 1] / CLAIM_PERIOD == today;
+                return userClaims[i - 1];
             }
         }
 
-        return false;
+        return 0;
+    }
+
+    function isMintAvailable(address user) public view returns (bool) {
+        uint256 streak = getClaimStreak(user);
+        return streak == DAYS_STREAK_FOR_TICKET;
     }
 
     function getClaimStreak(address user) public view returns (uint256) {
@@ -422,6 +445,15 @@ contract Lottery is VRFConsumerBaseV2, AccessControl {
 
         // reset streak if current time more than claim period from the last claim
         if (block.timestamp / CLAIM_PERIOD > lastClaim + 1) {
+            return 0;
+        }
+
+        // reset streak if ticket minted today
+        uint256 lastMint = lastTicketMint[user] / CLAIM_PERIOD;
+        if (
+            lastMint >= block.timestamp / CLAIM_PERIOD &&
+            streak == DAYS_STREAK_FOR_TICKET
+        ) {
             return 0;
         }
 

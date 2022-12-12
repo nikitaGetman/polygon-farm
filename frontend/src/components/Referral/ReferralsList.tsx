@@ -1,4 +1,5 @@
 import React, { useCallback, useMemo, useState } from 'react';
+import { DownloadIcon } from '@chakra-ui/icons';
 import {
   Box,
   Button,
@@ -11,13 +12,13 @@ import {
   Stack,
   Text,
 } from '@chakra-ui/react';
-import { ReferralsTable } from '../Referral/ReferralsTable';
-import { useHelperReferralsFullInfoByLevel } from '@/hooks/useHelper';
 import { useAccount } from 'wagmi';
-import { useReferralManager } from '@/hooks/useReferralManager';
-import { DownloadIcon } from '@chakra-ui/icons';
+
 import { ReactComponent as ChevronDownIcon } from '@/assets/images/icons/chevron-down.svg';
-import { TableSearch } from '../ui/Table/TableSearch';
+import { ReferralsTable } from '@/components/Referral/ReferralsTable';
+import { SearchWallet } from '@/components/ui/SearchWallet/SearchWallet';
+import { useHelperReferralsFullInfoByLevel } from '@/hooks/useHelper';
+import { useReferralManager } from '@/hooks/useReferralManager';
 
 const TOTAL_LEVELS = 10;
 
@@ -45,7 +46,7 @@ export const ReferralsList = () => {
     },
     [setLevels]
   );
-  const refCount = useMemo(() => userReferralInfo.data?.refCount || [], [userReferralInfo]);
+  const refCount = useMemo(() => userReferralInfo.data?.refCount || [], [userReferralInfo.data]);
 
   const levelsTitle = useMemo(() => calculateTitle(levels), [levels]);
   const totalReferrals = useMemo(
@@ -116,7 +117,7 @@ export const ReferralsList = () => {
 
         <Flex alignItems="center">
           <Box mr="10px">
-            <TableSearch buttonText="Search wallet" onChange={setSearch} />
+            <SearchWallet buttonText="Search wallet" onChange={setSearch} />
           </Box>
           <Button variant="link" display="none">
             Export

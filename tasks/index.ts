@@ -10,4 +10,7 @@ import "./snapshot";
 import "./roles";
 import "./addStakingPlan";
 import "./addSquadPlan";
-import "./finishLotteryRound";
+import "./lottery/createLotteryRound";
+import "./lottery/finishLotteryRound";
+import "./lottery/createFinishedLotteryRound";
+import "./lottery/createLotteryRoundsFromMock";

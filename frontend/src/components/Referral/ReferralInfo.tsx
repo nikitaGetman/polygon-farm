@@ -1,4 +1,5 @@
 import React, { FC, useCallback, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { WarningTwoIcon } from '@chakra-ui/icons';
 import {
   Box,
@@ -15,21 +16,22 @@ import {
   useClipboard,
   useDisclosure,
 } from '@chakra-ui/react';
-import { Link } from 'react-router-dom';
+import { BigNumber } from 'ethers';
 import { useAccount } from 'wagmi';
+
+import { ReactComponent as CopyIcon } from '@/assets/images/icons/copy.svg';
+import { ReactComponent as QRIcon } from '@/assets/images/icons/qr.svg';
 import { ConnectWalletButton } from '@/components/ui/ConnectWalletButton/ConnectWalletButton';
 import { StatBlock } from '@/components/ui/StatBlock/StatBlock';
-import { ReactComponent as QRIcon } from '@/assets/images/icons/qr.svg';
-import { ReactComponent as CopyIcon } from '@/assets/images/icons/copy.svg';
-import { useNotification } from '@/hooks/useNotification';
-import { trimAddress } from '@/utils/address';
-import { useReferralManager } from '@/hooks/useReferralManager';
-import { BigNumber } from 'ethers';
-import { getReadableAmount } from '@/utils/number';
-import { ReferralSubscriptionModal } from './ReferralSubscriptionModal';
 import { useLocalReferrer } from '@/hooks/useLocalReferrer';
-import { ReferralUpdateModal } from './ReferralUpdateModal';
+import { useNotification } from '@/hooks/useNotification';
+import { useReferralManager } from '@/hooks/useReferralManager';
+import { trimAddress } from '@/utils/address';
+import { getReadableAmount } from '@/utils/number';
+
 import { ReferralLinkQRModal } from './ReferralLinkQRModal';
+import { ReferralSubscriptionModal } from './ReferralSubscriptionModal';
+import { ReferralUpdateModal } from './ReferralUpdateModal';
 
 type ReferralInfoProps = {
   isPageView?: boolean;
@@ -66,7 +68,9 @@ export const ReferralInfo: FC<ReferralInfoProps> = ({ isPageView }) => {
   } = useReferralManager();
 
   const isRefSubscribeLoading =
-    userReferralInfo.isLoading || fullSubscriptionCost.isLoading || levelSubscriptionCost.isLoading;
+    userReferralInfo.isFetching ||
+    fullSubscriptionCost.isFetching ||
+    levelSubscriptionCost.isFetching;
 
   const { success } = useNotification();
   const { onCopy, hasCopied, setValue } = useClipboard('');
@@ -218,19 +222,18 @@ export const ReferralInfo: FC<ReferralInfoProps> = ({ isPageView }) => {
         </Flex>
       </Flex>
 
-      {isRefSubscribeOpen ? (
-        <ReferralSubscriptionModal
-          fullSubscriptionCost={fullSubscriptionCost.data || 0}
-          levelSubscriptionCost={levelSubscriptionCost.data || 0}
-          subscriptionDuration={subscriptionDuration}
-          fullSubscriptionTill={fullSubscription}
-          levelsSubscriptionTill={levelsSubscription}
-          isLoading={isRefSubscribeLoading}
-          onClose={onRefSubscribeClose}
-          onFullSubscribe={subscribeToAllLevels.mutateAsync}
-          onLevelSubscribe={subscribeToLevel.mutateAsync}
-        />
-      ) : null}
+      <ReferralSubscriptionModal
+        isOpen={isRefSubscribeOpen}
+        fullSubscriptionCost={fullSubscriptionCost.data || 0}
+        levelSubscriptionCost={levelSubscriptionCost.data || 0}
+        subscriptionDuration={subscriptionDuration}
+        fullSubscriptionTill={fullSubscription}
+        levelsSubscriptionTill={levelsSubscription}
+        isLoading={isRefSubscribeLoading}
+        onClose={onRefSubscribeClose}
+        onFullSubscribe={subscribeToAllLevels.mutateAsync}
+        onLevelSubscribe={subscribeToLevel.mutateAsync}
+      />
 
       {isLeaderUpdateOpen ? (
         <ReferralUpdateModal

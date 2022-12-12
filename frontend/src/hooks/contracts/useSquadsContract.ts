@@ -1,5 +1,8 @@
-import { Squads } from '@/types';
 import { useContract, useProvider, useSigner } from 'wagmi';
+
+import { Squads } from '@/types';
+import { waitForTransaction } from '@/utils/waitForTransaction';
+
 import { ContractsEnum, useContractAbi } from './useContractAbi';
 
 export const useSquadsContract = () => {
@@ -22,8 +25,7 @@ export const useSquadsContract = () => {
 
   const subscribe = async (planId: number) => {
     const tx = await contract.subscribe(planId);
-    await tx.wait();
-    return tx.hash;
+    return waitForTransaction(tx);
   };
 
   return {

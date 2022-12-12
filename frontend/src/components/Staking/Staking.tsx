@@ -1,30 +1,32 @@
 import React, { FC, useCallback, useMemo, useState } from 'react';
+import { Link } from 'react-router-dom';
+import { WarningTwoIcon } from '@chakra-ui/icons';
 import {
-  Container,
   Box,
-  Text,
-  Heading,
+  Button,
+  Container,
   Flex,
   Grid,
   GridItem,
-  Spacer,
-  Button,
-  useDisclosure,
+  Heading,
   Skeleton,
+  Spacer,
+  Text,
+  useDisclosure,
 } from '@chakra-ui/react';
-import { WarningTwoIcon } from '@chakra-ui/icons';
-import { ConnectWalletButton } from '@/components/ui/ConnectWalletButton/ConnectWalletButton';
-import { useAccount } from 'wagmi';
-import { useStaking } from '@/hooks/useStaking';
-import { getReadableAmount, getYearlyAPR, makeBigNumber } from '@/utils/number';
-import { StakingPlan } from './StakingPlan';
-import { useConnectWallet } from '@/hooks/useConnectWallet';
-import { StakingModal } from './StakingModal';
-import { TOKENS } from '@/hooks/useTokens';
-import { Link } from 'react-router-dom';
-import { StatBlock } from '@/components/ui/StatBlock/StatBlock';
 import { BigNumber } from 'ethers';
+import { useAccount } from 'wagmi';
+
+import { ConnectWalletButton } from '@/components/ui/ConnectWalletButton/ConnectWalletButton';
+import { StatBlock } from '@/components/ui/StatBlock/StatBlock';
+import { useConnectWallet } from '@/hooks/useConnectWallet';
 import { useLocalReferrer } from '@/hooks/useLocalReferrer';
+import { useStaking } from '@/hooks/useStaking';
+import { TOKENS } from '@/hooks/useTokens';
+import { getReadableAmount, getYearlyAPR, makeBigNumber } from '@/utils/number';
+
+import { StakingModal } from './StakingModal';
+import { StakingPlan } from './StakingPlan';
 
 type StakingProps = {
   isPageView?: boolean;

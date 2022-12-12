@@ -11,6 +11,7 @@ import {
   Text,
 } from '@chakra-ui/react';
 import { useAccount, useConnect } from 'wagmi';
+
 import { ReactComponent as MetamaskIcon } from '@/assets/images/icons/metamask.svg';
 import { ReactComponent as WalletConnectIcon } from '@/assets/images/icons/walletconnect.svg';
 import { metamaskConnector, walletConnector } from '@/modules/wagmi';

@@ -28,6 +28,18 @@ import type {
 } from "../common";
 
 export declare namespace Helper {
+  export type LotteryWinnersWithTicketsStruct = {
+    level: PromiseOrValue<BigNumberish>;
+    winnerAddress: PromiseOrValue<string>;
+    enteredTickets: PromiseOrValue<BigNumberish>;
+  };
+
+  export type LotteryWinnersWithTicketsStructOutput = [
+    BigNumber,
+    string,
+    BigNumber
+  ] & { level: BigNumber; winnerAddress: string; enteredTickets: BigNumber };
+
   export type ReferralFullInfoStruct = {
     referralAddress: PromiseOrValue<string>;
     level: PromiseOrValue<BigNumberish>;
@@ -118,9 +130,11 @@ export declare namespace ISquads {
 
 export interface HelperInterface extends utils.Interface {
   functions: {
+    "getLotteryRoundWinnersWithTickets(uint256)": FunctionFragment;
     "getUserReferralsFullInfoByLevel(address,uint256)": FunctionFragment;
     "getUserSquadInfo(uint256,address)": FunctionFragment;
     "getUserSquadsInfo(address)": FunctionFragment;
+    "lottery()": FunctionFragment;
     "owner()": FunctionFragment;
     "referralManager()": FunctionFragment;
     "renounceOwnership()": FunctionFragment;
@@ -129,6 +143,7 @@ export interface HelperInterface extends utils.Interface {
     "token1()": FunctionFragment;
     "token2()": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
+    "updateLottery(address)": FunctionFragment;
     "updateReferralManager(address)": FunctionFragment;
     "updateSquads(address)": FunctionFragment;
     "updateStaking(address)": FunctionFragment;
@@ -138,9 +153,11 @@ export interface HelperInterface extends utils.Interface {
 
   getFunction(
     nameOrSignatureOrTopic:
+      | "getLotteryRoundWinnersWithTickets"
       | "getUserReferralsFullInfoByLevel"
       | "getUserSquadInfo"
       | "getUserSquadsInfo"
+      | "lottery"
       | "owner"
       | "referralManager"
       | "renounceOwnership"
@@ -149,6 +166,7 @@ export interface HelperInterface extends utils.Interface {
       | "token1"
       | "token2"
       | "transferOwnership"
+      | "updateLottery"
       | "updateReferralManager"
       | "updateSquads"
       | "updateStaking"
@@ -156,6 +174,10 @@ export interface HelperInterface extends utils.Interface {
       | "updateToken2"
   ): FunctionFragment;
 
+  encodeFunctionData(
+    functionFragment: "getLotteryRoundWinnersWithTickets",
+    values: [PromiseOrValue<BigNumberish>]
+  ): string;
   encodeFunctionData(
     functionFragment: "getUserReferralsFullInfoByLevel",
     values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]
@@ -168,6 +190,7 @@ export interface HelperInterface extends utils.Interface {
     functionFragment: "getUserSquadsInfo",
     values: [PromiseOrValue<string>]
   ): string;
+  encodeFunctionData(functionFragment: "lottery", values?: undefined): string;
   encodeFunctionData(functionFragment: "owner", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "referralManager",
@@ -183,6 +206,10 @@ export interface HelperInterface extends utils.Interface {
   encodeFunctionData(functionFragment: "token2", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "transferOwnership",
+    values: [PromiseOrValue<string>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "updateLottery",
     values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
@@ -207,6 +234,10 @@ export interface HelperInterface extends utils.Interface {
   ): string;
 
   decodeFunctionResult(
+    functionFragment: "getLotteryRoundWinnersWithTickets",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "getUserReferralsFullInfoByLevel",
     data: BytesLike
   ): Result;
@@ -218,6 +249,7 @@ export interface HelperInterface extends utils.Interface {
     functionFragment: "getUserSquadsInfo",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "lottery", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "referralManager",
@@ -233,6 +265,10 @@ export interface HelperInterface extends utils.Interface {
   decodeFunctionResult(functionFragment: "token2", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "transferOwnership",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "updateLottery",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -302,6 +338,11 @@ export interface Helper extends BaseContract {
   removeListener: OnEvent<this>;
 
   functions: {
+    getLotteryRoundWinnersWithTickets(
+      roundId: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<[Helper.LotteryWinnersWithTicketsStructOutput[]]>;
+
     getUserReferralsFullInfoByLevel(
       user: PromiseOrValue<string>,
       level: PromiseOrValue<BigNumberish>,
@@ -318,6 +359,8 @@ export interface Helper extends BaseContract {
       user: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<[Helper.UserSquadInfoStructOutput[]]>;
+
+    lottery(overrides?: CallOverrides): Promise<[string]>;
 
     owner(overrides?: CallOverrides): Promise<[string]>;
 
@@ -337,6 +380,11 @@ export interface Helper extends BaseContract {
 
     transferOwnership(
       newOwner: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    updateLottery(
+      _lottery: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -366,6 +414,11 @@ export interface Helper extends BaseContract {
     ): Promise<ContractTransaction>;
   };
 
+  getLotteryRoundWinnersWithTickets(
+    roundId: PromiseOrValue<BigNumberish>,
+    overrides?: CallOverrides
+  ): Promise<Helper.LotteryWinnersWithTicketsStructOutput[]>;
+
   getUserReferralsFullInfoByLevel(
     user: PromiseOrValue<string>,
     level: PromiseOrValue<BigNumberish>,
@@ -382,6 +435,8 @@ export interface Helper extends BaseContract {
     user: PromiseOrValue<string>,
     overrides?: CallOverrides
   ): Promise<Helper.UserSquadInfoStructOutput[]>;
+
+  lottery(overrides?: CallOverrides): Promise<string>;
 
   owner(overrides?: CallOverrides): Promise<string>;
 
@@ -401,6 +456,11 @@ export interface Helper extends BaseContract {
 
   transferOwnership(
     newOwner: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  updateLottery(
+    _lottery: PromiseOrValue<string>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -430,6 +490,11 @@ export interface Helper extends BaseContract {
   ): Promise<ContractTransaction>;
 
   callStatic: {
+    getLotteryRoundWinnersWithTickets(
+      roundId: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<Helper.LotteryWinnersWithTicketsStructOutput[]>;
+
     getUserReferralsFullInfoByLevel(
       user: PromiseOrValue<string>,
       level: PromiseOrValue<BigNumberish>,
@@ -447,6 +512,8 @@ export interface Helper extends BaseContract {
       overrides?: CallOverrides
     ): Promise<Helper.UserSquadInfoStructOutput[]>;
 
+    lottery(overrides?: CallOverrides): Promise<string>;
+
     owner(overrides?: CallOverrides): Promise<string>;
 
     referralManager(overrides?: CallOverrides): Promise<string>;
@@ -463,6 +530,11 @@ export interface Helper extends BaseContract {
 
     transferOwnership(
       newOwner: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    updateLottery(
+      _lottery: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -504,6 +576,11 @@ export interface Helper extends BaseContract {
   };
 
   estimateGas: {
+    getLotteryRoundWinnersWithTickets(
+      roundId: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     getUserReferralsFullInfoByLevel(
       user: PromiseOrValue<string>,
       level: PromiseOrValue<BigNumberish>,
@@ -520,6 +597,8 @@ export interface Helper extends BaseContract {
       user: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
+
+    lottery(overrides?: CallOverrides): Promise<BigNumber>;
 
     owner(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -539,6 +618,11 @@ export interface Helper extends BaseContract {
 
     transferOwnership(
       newOwner: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    updateLottery(
+      _lottery: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -569,6 +653,11 @@ export interface Helper extends BaseContract {
   };
 
   populateTransaction: {
+    getLotteryRoundWinnersWithTickets(
+      roundId: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     getUserReferralsFullInfoByLevel(
       user: PromiseOrValue<string>,
       level: PromiseOrValue<BigNumberish>,
@@ -585,6 +674,8 @@ export interface Helper extends BaseContract {
       user: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
+
+    lottery(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     owner(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
@@ -604,6 +695,11 @@ export interface Helper extends BaseContract {
 
     transferOwnership(
       newOwner: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    updateLottery(
+      _lottery: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 

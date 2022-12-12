@@ -1,5 +1,5 @@
 import React, { FC, useMemo, useState } from 'react';
-import { ETHER_ADDRESS_REGEX } from '@/utils/address';
+import { WarningTwoIcon } from '@chakra-ui/icons';
 import {
   Button,
   CloseButton,
@@ -13,7 +13,8 @@ import {
   ModalOverlay,
   Text,
 } from '@chakra-ui/react';
-import { WarningTwoIcon } from '@chakra-ui/icons';
+
+import { ETHER_ADDRESS_REGEX } from '@/utils/address';
 
 type ReferralUpdateModalProps = {
   leader?: string;
