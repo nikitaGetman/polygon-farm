@@ -58,7 +58,7 @@ export const LotteryList = () => {
     return (
       (liveRounds.length > 0 && LotteryStatusEnum.current) ||
       (upcomingRounds.length > 0 && LotteryStatusEnum.upcoming) ||
-      (finishedRounds && finishedRounds.length > 0 && LotteryStatusEnum.past)
+      LotteryStatusEnum.past
     );
   }, [stateFilter, liveRounds, upcomingRounds, finishedRounds]);
 

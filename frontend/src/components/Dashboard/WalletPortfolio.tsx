@@ -64,22 +64,36 @@ export const WalletPortfolio = () => {
             </Box>
             <Flex mt="17px" justifyContent="space-between">
               <Flex flexWrap="wrap" maxW="200px">
-                <Flex alignItems="baseline" color="green.400">
-                  <Text mr="2" textStyle="textMedium">
+                <Flex alignItems="baseline" color="green.400" textStyle="textSansBold" width="100%">
+                  <Text
+                    mr="1"
+                    textStyle="textMedium"
+                    minWidth="0"
+                    whiteSpace="nowrap"
+                    textOverflow="ellipsis"
+                    overflow="hidden"
+                  >
                     {savBalance ? bigNumberToString(savBalance) : '---'}
                   </Text>
-                  <Text textStyle="textSansBold">SAV</Text>
+                  SAV
                 </Flex>
                 <Button mt="18px" rightIcon={<PlusIcon />} onClick={addSAV}>
                   Add to wallet
                 </Button>
               </Flex>
               <Flex flexWrap="wrap" maxW="200px">
-                <Flex alignItems="baseline" color="blue">
-                  <Text mr="2" textStyle="textMedium">
+                <Flex alignItems="baseline" color="blue" textStyle="textSansBold" width="100%">
+                  <Text
+                    mr="1"
+                    textStyle="textMedium"
+                    minWidth="0"
+                    whiteSpace="nowrap"
+                    textOverflow="ellipsis"
+                    overflow="hidden"
+                  >
                     {savrBalance ? bigNumberToString(savrBalance) : '---'}
                   </Text>
-                  <Text textStyle="textSansBold">SAVR</Text>
+                  SAVR
                 </Flex>
                 <Button mt="18px" rightIcon={<PlusIcon />} onClick={addSAVR}>
                   Add to wallet

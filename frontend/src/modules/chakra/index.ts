@@ -105,6 +105,7 @@ const textStyles = {
     fontSize: ['26px'],
     fontWeight: '500',
     lineHeight: '130%',
+    fontFamily: 'Montserrat',
   },
   textExtraBoldUpper: {
     fontSize: ['26px'],

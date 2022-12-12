@@ -13,10 +13,6 @@ import {
 import { useAccount } from 'wagmi';
 
 import { ReactComponent as CheckIcon } from '@/assets/images/icons/check_ticket.svg';
-import { ReactComponent as TicketFirst } from '@/assets/images/ticket.svg';
-import { ReactComponent as TicketLast } from '@/assets/images/ticket-last.svg';
-import { ReactComponent as TicketMiddle } from '@/assets/images/ticket-middle.svg';
-import { ReactComponent as TicketDouble } from '@/assets/images/ticket-two-circles.svg';
 import { ConnectWalletButton } from '@/components/ui/ConnectWalletButton/ConnectWalletButton';
 import { useCountdown } from '@/hooks/useCountdown';
 import { useLottery } from '@/hooks/useLottery';
@@ -24,6 +20,11 @@ import { bigNumberToString } from '@/utils/number';
 
 import { BuyLotteryTicketsModal } from '../Lottery/BuyLotteryTicketsModal';
 import { CenteredSpinner } from '../ui/CenteredSpinner/CenteredSpinner';
+
+import { ReactComponent as TicketFirst } from './assets/ticket.svg';
+import { ReactComponent as TicketLast } from './assets/ticket-last.svg';
+import { ReactComponent as TicketMiddle } from './assets/ticket-middle.svg';
+import { ReactComponent as TicketDouble } from './assets/ticket-two-circles.svg';
 
 import './TicketClaim.scss';
 
@@ -67,11 +68,17 @@ export const TicketClaim = () => {
     return Array.from({ length: claimStreakForTicket }).map((_, index) => {
       const isClaimed = Boolean(claimStreak.data && index < claimStreak.data);
       const isClaimAvailable = Boolean(!isClaimedToday.data && claimStreak.data === index);
+      const isPrevClaimAvailable =
+        index > 0 && Boolean(!isClaimedToday.data && claimStreak.data === index - 1);
 
       let timestamp = 0;
-
-      if (!isClaimed && !isClaimAvailable && claimPeriod.data) {
-        const streak = claimStreak.data || 0;
+      const streak = claimStreak.data || 0;
+      if (
+        !isClaimed &&
+        !isClaimAvailable &&
+        claimPeriod.data &&
+        (index === streak || (isPrevClaimAvailable && index - 1 === streak))
+      ) {
         const lastClaimTime =
           (!streak && !isClaimedToday.data) || !lastClaim.data
             ? Math.floor(currentTime / claimPeriod.data) * claimPeriod.data
@@ -276,16 +283,16 @@ const Ticket: FC<TicketProps> = ({
         ) : (
           <Text
             width="125px"
-            textStyle={isConnected ? 'text1' : 'textMedium'}
+            textStyle={isConnected && timestamp ? 'text1' : 'textMedium'}
             color="whiteAlpha.500"
             position="absolute"
             left={isFirst ? '45%' : isMiddle ? '51%' : '58%'}
             top="46%"
             whiteSpace="nowrap"
             transform="translate(-50%, -50%)"
-            textAlign={isConnected ? 'left' : 'center'}
+            textAlign={isConnected && timestamp ? 'left' : 'center'}
           >
-            {isConnected
+            {isConnected && timestamp
               ? `${hoursString}h ${stampStrings.minsString}m ${stampStrings.secString}s`
               : `Day ${index + 1}`}
           </Text>
