@@ -290,6 +290,10 @@ contract Lottery is ILottery, VRFConsumerBaseV2, AccessControl {
 
     function claimDay() public {
         require(!isClaimedToday(_msgSender()), "Already claimed today");
+        require(
+            !isMintAvailable(_msgSender()),
+            "Mint ticket before next claim"
+        );
 
         uint256 streak = getClaimStreak(_msgSender());
 
@@ -313,10 +317,9 @@ contract Lottery is ILottery, VRFConsumerBaseV2, AccessControl {
         require(isMintAvailable(_msgSender()), "Ticket mint is not available");
 
         _mintTicket(_msgSender(), 1);
-        // Cut fractionaal part
-        lastTicketMint[_msgSender()] =
-            (block.timestamp / CLAIM_PERIOD + 1) *
-            CLAIM_PERIOD;
+
+        lastTicketMint[_msgSender()] = getLastClaimTime(_msgSender());
+        claims[_msgSender()] = new uint256[](DAYS_STREAK_FOR_TICKET);
     }
 
     function _mintTicket(address user, uint256 amount) internal {
@@ -420,7 +423,7 @@ contract Lottery is ILottery, VRFConsumerBaseV2, AccessControl {
             }
         }
 
-        return 0;
+        return lastTicketMint[user];
     }
 
     function isMintAvailable(address user) public view returns (bool) {
@@ -449,15 +452,9 @@ contract Lottery is ILottery, VRFConsumerBaseV2, AccessControl {
         }
 
         // reset streak if current time more than claim period from the last claim
-        if (block.timestamp / CLAIM_PERIOD > lastClaim + 1) {
-            return 0;
-        }
-
-        // reset streak if ticket minted today
-        uint256 lastMint = lastTicketMint[user] / CLAIM_PERIOD;
         if (
-            lastMint >= block.timestamp / CLAIM_PERIOD &&
-            streak == DAYS_STREAK_FOR_TICKET
+            streak != DAYS_STREAK_FOR_TICKET &&
+            block.timestamp / CLAIM_PERIOD > lastClaim + 1
         ) {
             return 0;
         }

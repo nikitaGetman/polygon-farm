@@ -45,10 +45,12 @@ export const getReadableAmount = (
     decimals = 18,
     precision = 2,
     shortify = false,
+    beautify = false,
   }: {
     decimals?: number;
     precision?: number;
     shortify?: boolean;
+    beautify?: boolean;
   } = {}
 ) => {
   const realAmount = parseFloat(ethers.utils.formatUnits(amount, decimals));
@@ -56,6 +58,19 @@ export const getReadableAmount = (
 
   if (shortAmount < 1000) return `${realAmount.toFixed(precision)}`;
   if (shortAmount < 1000000) return `${(realAmount / 1000).toFixed(precision)}k`;
+
+  if (beautify) {
+    const amount = realAmount / 1000000;
+    const stringAmount = new Intl.NumberFormat('en-IN', {
+      maximumSignificantDigits: 3,
+      maximumFractionDigits: precision,
+    })
+      .format(amount)
+      .replaceAll(',', ' ');
+
+    return `${stringAmount} M`;
+  }
+
   return `${(realAmount / 1000000).toFixed(precision)}M`;
 };
 

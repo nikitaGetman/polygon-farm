@@ -1,7 +1,6 @@
 import React from 'react';
 import { Box } from '@chakra-ui/react';
 
-import { Footer } from '@/components/Footer/Footer';
 import { About } from '@/components/Landing/About';
 import { Banner } from '@/components/Landing/Banner';
 import { Benefits } from '@/components/Landing/Benefits';
@@ -28,7 +27,6 @@ export const Landing = () => {
       <Box className="main-container">
         <Lottery />
       </Box>
-      <Footer />
     </>
   );
 };

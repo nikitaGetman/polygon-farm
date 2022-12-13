@@ -96,6 +96,11 @@ const textStyles = {
     fontWeight: '500',
     lineHeight: '130%',
   },
+  text2: {
+    fontSize: ['16px'],
+    fontWeight: '500',
+    lineHeight: '130%',
+  },
   textRegular: {
     fontSize: ['18px'],
     fontWeight: '400',

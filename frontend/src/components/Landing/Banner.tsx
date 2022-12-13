@@ -1,5 +1,5 @@
 import React from 'react';
-import { Box, Button, Flex, Text } from '@chakra-ui/react';
+import { Box, Button, Flex } from '@chakra-ui/react';
 
 import Logo from '@/assets/images/logo.svg';
 
@@ -15,7 +15,7 @@ export const Banner = () => {
         <h4 className="banner__heading">No registration, no KYC, no hassle</h4>
         <h5 className="banner__subheading">Just by connecting your wallet</h5>
         <Flex justifyContent="center">
-          <Button variant="filledRed" className="banner__btn">
+          <Button as="a" href="https://app.isaver.io" variant="filledRed" className="banner__btn">
             Get started
           </Button>
         </Flex>

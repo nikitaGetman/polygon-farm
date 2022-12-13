@@ -1,16 +1,19 @@
 .mint-ticket {
   p {
     transition: all 0.2s;
+    opacity: 0.3;
   }
   svg {
     transition: all 0.2s;
     color: #264737;
   }
 
-  &--disabled:hover {
+  &--disabled {
     cursor: not-allowed;
   }
   &--enabled {
+    cursor: pointer;
+
     svg {
       fill-opacity: 0.3;
       color: #1adce2;
@@ -18,8 +21,8 @@
 
     &:hover,
     &:focus {
-      cursor: pointer;
       p {
+        opacity: 1;
         color: #ffffff;
       }
 

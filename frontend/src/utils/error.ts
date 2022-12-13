@@ -29,6 +29,10 @@ export function tryToGetErrorData(error: any):
     return { title: 'Failed', description: 'Rejected by user' };
   }
 
+  if (message.includes('transaction underpriced')) {
+    return { title: 'Failed', description: 'Transaction underpriced. Please try again' };
+  }
+
   if (message.includes('amount exceeds balance')) {
     return { title: 'Failed', description: 'Not enough funds in your wallet' };
   }

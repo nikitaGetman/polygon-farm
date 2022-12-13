@@ -21,10 +21,10 @@ import { bigNumberToString } from '@/utils/number';
 import { BuyLotteryTicketsModal } from '../Lottery/BuyLotteryTicketsModal';
 import { CenteredSpinner } from '../ui/CenteredSpinner/CenteredSpinner';
 
-import { ReactComponent as TicketFirst } from './assets/ticket.svg';
-import { ReactComponent as TicketLast } from './assets/ticket-last.svg';
-import { ReactComponent as TicketMiddle } from './assets/ticket-middle.svg';
-import { ReactComponent as TicketDouble } from './assets/ticket-two-circles.svg';
+import { TicketFirst } from './TicketFirst';
+import { TicketLast } from './TicketLast';
+import { TicketMiddle } from './TicketMiddle';
+import { TicketMint } from './TicketMint';
 
 import './TicketClaim.scss';
 
@@ -68,26 +68,16 @@ export const TicketClaim = () => {
     return Array.from({ length: claimStreakForTicket }).map((_, index) => {
       const isClaimed = Boolean(claimStreak.data && index < claimStreak.data);
       const isClaimAvailable = Boolean(!isClaimedToday.data && claimStreak.data === index);
-      const isPrevClaimAvailable =
-        index > 0 && Boolean(!isClaimedToday.data && claimStreak.data === index - 1);
 
       let timestamp = 0;
       const streak = claimStreak.data || 0;
-      if (
-        !isClaimed &&
-        !isClaimAvailable &&
-        claimPeriod.data &&
-        (index === streak || (isPrevClaimAvailable && index - 1 === streak))
-      ) {
+      if (!isClaimed && claimPeriod.data && (isClaimAvailable || index === streak)) {
         const lastClaimTime =
           (!streak && !isClaimedToday.data) || !lastClaim.data
             ? Math.floor(currentTime / claimPeriod.data) * claimPeriod.data
             : lastClaim.data;
 
-        const timeOffset =
-          streak || isClaimedToday.data
-            ? claimPeriod.data * (index - streak + 1)
-            : claimPeriod.data * index;
+        const timeOffset = streak > 0 && isClaimAvailable ? claimPeriod.data * 2 : claimPeriod.data;
         timestamp = (lastClaimTime + timeOffset) * 1000;
       }
 
@@ -153,36 +143,28 @@ export const TicketClaim = () => {
         {/* Mint ticket */}
         <Flex>
           <Box
-            color="bgGreen.400"
             filter="drop-shadow(0px 6px 11px rgba(0, 0, 0, 0.25))"
             position="relative"
             onClick={isMintAvailable.data && !isLoading ? handleMint : undefined}
+            className={`mint-ticket mint-ticket--${isMintAvailable.data ? 'enabled' : 'disabled'}`}
           >
-            <div
-              tabIndex={0}
-              className={[
-                'mint-ticket',
-                `mint-ticket--${isMintAvailable.data ? 'enabled' : 'disabled'}`,
-              ].join(' ')}
-            >
-              <TicketDouble />
+            <TicketMint isActive={Boolean(isMintAvailable.data)} />
 
-              {isLoading ? (
-                <CenteredSpinner background="transparent" color="white" />
-              ) : (
-                <Text
-                  textStyle="textExtraBoldUpper"
-                  color="whiteAlpha.500"
-                  textAlign="center"
-                  position="absolute"
-                  left="50%"
-                  top="46%"
-                  transform="translate(-50%, -50%)"
-                >
-                  Mint my <br /> Ticket
-                </Text>
-              )}
-            </div>
+            {isLoading ? (
+              <CenteredSpinner background="transparent" color="white" />
+            ) : (
+              <Text
+                pointerEvents="none"
+                textStyle="textExtraBoldUpper"
+                textAlign="center"
+                position="absolute"
+                left="50%"
+                top="50%"
+                transform="translate(-50%, -50%)"
+              >
+                Mint my <br /> Ticket
+              </Text>
+            )}
           </Box>
         </Flex>
       </Flex>
@@ -224,10 +206,10 @@ const Ticket: FC<TicketProps> = ({
   const isLast = index === 4;
   const isMiddle = !isFirst && !isLast;
 
-  const ticket = useMemo(() => {
-    if (isFirst) return <TicketFirst />;
-    if (isLast) return <TicketLast />;
-    return <TicketMiddle />;
+  const Ticket = useMemo(() => {
+    if (isFirst) return TicketFirst;
+    if (isLast) return TicketLast;
+    return TicketMiddle;
   }, [isFirst, isLast]);
 
   const handleClaim = () => {
@@ -244,21 +226,19 @@ const Ticket: FC<TicketProps> = ({
         filter="drop-shadow(0px 6px 11px rgba(0, 0, 0, 0.25))"
         position="relative"
         transition="all .2s ease"
-        mr={!isLast ? '-54px' : undefined}
-        // zIndex={5 - index}
-        _hover={isAvailable ? { color: 'green.400', cursor: 'pointer' } : undefined}
+        mr={!isLast ? '-32px' : undefined}
+        _hover={isAvailable ? { cursor: 'pointer' } : undefined}
         onClick={isAvailable && !isLoading ? handleClaim : undefined}
       >
-        <Box stroke={isAvailable ? 'green.400' : undefined}>{ticket}</Box>
+        <Ticket isClaimed={isClaimed} isActive={isAvailable} />
         {isClaimed || isAvailable ? (
           <Center
+            pointerEvents="none"
             flexDirection="column"
-            textStyle="textMedium"
             textAlign="center"
-            textTransform="uppercase"
             color="white"
             position="absolute"
-            left={isLast ? '55%' : '50%'}
+            left="50%"
             top="48%"
             whiteSpace="nowrap"
             transform={
@@ -271,10 +251,17 @@ const Ticket: FC<TicketProps> = ({
           >
             {!isLoading ? (
               <>
-                <Box mb="10px">
+                <Box mt="10px" mb="10px">
                   <CheckIcon />
                 </Box>
-                Claim
+                <Text textStyle="textMedium" fontSize="22px">
+                  CLAIM
+                </Text>
+                {isAvailable && timestamp ? (
+                  <Text textStyle="text2" whiteSpace="nowrap" width="125px" mt="10px" opacity="0.5">
+                    {`${hoursString}h ${stampStrings.minsString}m ${stampStrings.secString}s`}
+                  </Text>
+                ) : undefined}
               </>
             ) : (
               <Spinner />
@@ -282,12 +269,14 @@ const Ticket: FC<TicketProps> = ({
           </Center>
         ) : (
           <Text
+            pointerEvents="none"
             width="125px"
             textStyle={isConnected && timestamp ? 'text1' : 'textMedium'}
+            fontWeight={isConnected && timestamp ? undefined : '600'}
             color="whiteAlpha.500"
             position="absolute"
-            left={isFirst ? '45%' : isMiddle ? '51%' : '58%'}
-            top="46%"
+            left={isFirst ? '45%' : isMiddle ? '50%' : '55%'}
+            top="50%"
             whiteSpace="nowrap"
             transform="translate(-50%, -50%)"
             textAlign={isConnected && timestamp ? 'left' : 'center'}

@@ -99,7 +99,12 @@ export const Menu = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => void
             icon={<WalletIcon />}
             onClick={() => handleNavigate('/exchange')}
           />
-          <NavMenuItem text="Whitepaper" icon={<TabletIcon />} />
+
+          <NavMenuItem
+            onClick={() => window.open('https://isaver.gitbook.io/isaver', '_blank')}
+            text="Whitepaper"
+            icon={<TabletIcon />}
+          />
         </DrawerBody>
       </DrawerContent>
     </Drawer>

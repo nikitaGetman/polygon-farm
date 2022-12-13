@@ -32,8 +32,16 @@ export const Main = () => {
           </>
         )}
         <Flex className="main-btns">
-          <Button variant="secondary">Whitepaper</Button>
-          <Button variant="filledRed">Get started</Button>
+          <Box>
+            <Button as="a" href="https://isaver.gitbook.io/isaver" variant="secondary">
+              Whitepaper
+            </Button>
+          </Box>
+          <Box>
+            <Button as="a" href="https://app.isaver.io" variant="filledRed">
+              Get started
+            </Button>
+          </Box>
         </Flex>
       </Flex>
       <Flex
