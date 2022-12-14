@@ -84,7 +84,7 @@ export const ExchangePage = () => {
   }, [isTokenSell, amount, getTokenSellEquivalent]);
 
   return (
-    <Container variant="dashboard" pt="60px">
+    <Container variant="dashboard" mt="60px" mb="200px">
       <Link onClick={handleClose} textStyle="button" alignSelf="flex-start" mb="40px">
         <ArrowBackIcon w="24px" h="24px" mr="10px" />
         Back

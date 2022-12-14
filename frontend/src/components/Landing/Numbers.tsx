@@ -8,11 +8,11 @@ import { bigNumberToString, getReadableAmount } from '@/utils/number';
 
 import './Landing.scss';
 
+const maxSupply = BigNumber.from(10).pow(18).mul(1_000_000_000);
 export const Numbers = () => {
   const { tvl } = useStaking();
   const savBurned = useSavTokenBurn();
 
-  const maxSupply = BigNumber.from(10).pow(18).mul(1_000_000_000);
   const circulatingSupply = savBurned.data ? maxSupply.sub(savBurned.data) : maxSupply;
 
   return (
@@ -60,7 +60,7 @@ export const Numbers = () => {
         <Flex className="number-item">
           <Text className="number-item__heading">Holders:</Text>
           <Text className="number-item__text" color="green.400">
-            2 309
+            {'> 1 K'}
           </Text>
         </Flex>
         <Flex className="number-item">

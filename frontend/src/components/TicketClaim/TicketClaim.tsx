@@ -126,7 +126,13 @@ export const TicketClaim = () => {
           Tickets.
         </Text>
       </Box>
-      <Flex w="100%" p="10" pb="8" mt="12" justifyContent="space-between" className="box-gradient">
+      <Flex
+        w="100%"
+        padding="40px 40px 48px 32px"
+        mt="12"
+        justifyContent="space-between"
+        className="box-gradient"
+      >
         <Flex key={fetchIndex}>
           {ticketData.map(({ isClaimed, isClaimAvailable, timestamp }, index) => (
             <Ticket
@@ -143,7 +149,6 @@ export const TicketClaim = () => {
         {/* Mint ticket */}
         <Flex>
           <Box
-            filter="drop-shadow(0px 6px 11px rgba(0, 0, 0, 0.25))"
             position="relative"
             onClick={isMintAvailable.data && !isLoading ? handleMint : undefined}
             className={`mint-ticket mint-ticket--${isMintAvailable.data ? 'enabled' : 'disabled'}`}
@@ -219,11 +224,12 @@ const Ticket: FC<TicketProps> = ({
     });
   };
 
+  const showTimer = isConnected && timestamp;
+
   return (
     <>
       <Box
         color={isClaimed || isLoading ? 'green.400' : 'bgGreen.400'}
-        filter="drop-shadow(0px 6px 11px rgba(0, 0, 0, 0.25))"
         position="relative"
         transition="all .2s ease"
         mr={!isLast ? '-32px' : undefined}
@@ -238,16 +244,11 @@ const Ticket: FC<TicketProps> = ({
             textAlign="center"
             color="white"
             position="absolute"
-            left="50%"
-            top="48%"
+            left="0"
+            top="0"
+            width="100%"
+            height="100%"
             whiteSpace="nowrap"
-            transform={
-              isFirst
-                ? 'translate(-65%, -50%)'
-                : isMiddle
-                ? 'translate(-62%, -50%)'
-                : 'translate(-50%, -50%)'
-            }
           >
             {!isLoading ? (
               <>
@@ -267,23 +268,36 @@ const Ticket: FC<TicketProps> = ({
               <Spinner />
             )}
           </Center>
-        ) : (
+        ) : showTimer ? (
           <Text
             pointerEvents="none"
             width="125px"
-            textStyle={isConnected && timestamp ? 'text1' : 'textMedium'}
-            fontWeight={isConnected && timestamp ? undefined : '600'}
+            textStyle="text1"
             color="whiteAlpha.500"
             position="absolute"
-            left={isFirst ? '45%' : isMiddle ? '50%' : '55%'}
-            top="50%"
+            left={isFirst ? '50%' : isMiddle ? '56%' : '55%'}
+            top="52%"
             whiteSpace="nowrap"
             transform="translate(-50%, -50%)"
-            textAlign={isConnected && timestamp ? 'left' : 'center'}
+            textAlign="left"
           >
-            {isConnected && timestamp
-              ? `${hoursString}h ${stampStrings.minsString}m ${stampStrings.secString}s`
-              : `Day ${index + 1}`}
+            {`${hoursString}h ${stampStrings.minsString}m ${stampStrings.secString}s`}
+          </Text>
+        ) : (
+          <Text
+            pointerEvents="none"
+            width="100px"
+            textStyle="textMedium"
+            fontWeight="600"
+            color="whiteAlpha.500"
+            position="absolute"
+            left={isFirst ? '50%' : isMiddle ? '54%' : '56%'}
+            top="51%"
+            whiteSpace="nowrap"
+            transform="translate(-50%, -50%)"
+            textAlign="center"
+          >
+            Day {index + 1}
           </Text>
         )}
       </Box>

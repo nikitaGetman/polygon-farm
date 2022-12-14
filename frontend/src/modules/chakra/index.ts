@@ -16,6 +16,8 @@ const breakpoints = {
 };
 
 const colors = {
+  sav: '#A5ED5D',
+  savr: '#1ADCE2',
   yellow: {
     200: '#d6d873',
   },
