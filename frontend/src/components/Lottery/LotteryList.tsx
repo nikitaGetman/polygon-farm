@@ -110,27 +110,14 @@ export const LotteryList = () => {
         </ButtonGroup>
 
         <Flex>
-          <StatBlock width="260px">
-            <Box textStyle="text1" mb="10px">
-              Your Tickets
-            </Box>
-            <Box textStyle="text1">
-              <Box as="span" textStyle="textSansBold" fontSize="26px" mr="6px">
-                {ticketBalance || '0'}
-              </Box>
-            </Box>
-          </StatBlock>
-          <StatBlock width="260px">
-            <Box textStyle="text1" mb="10px">
-              Total Raffles Reward
-            </Box>
-            <Box textStyle="text1">
-              <Box as="span" textStyle="textSansBold" fontSize="26px" mr="6px">
-                {getReadableAmount(userTotalPrize || 0)}
-              </Box>
-              SAVR
-            </Box>
-          </StatBlock>
+          <StatBlock width="260px" title="Your Tickets" value={ticketBalance || '0'} />
+
+          <StatBlock
+            width="260px"
+            title="Total Raffles Reward"
+            value={getReadableAmount(userTotalPrize || 0)}
+            currency="SAVR"
+          />
         </Flex>
       </Flex>
 

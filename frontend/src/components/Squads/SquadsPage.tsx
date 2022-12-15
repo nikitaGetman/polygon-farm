@@ -3,7 +3,7 @@ import { useMemo } from 'react';
 import { useCallback } from 'react';
 import { Link as RouterLink } from 'react-router-dom';
 import { ArrowBackIcon } from '@chakra-ui/icons';
-import { Box, Button, Container, Flex, Heading, Link, Spinner } from '@chakra-ui/react';
+import { Box, Button, Container, Flex, Link, Spinner, Text } from '@chakra-ui/react';
 import { BigNumber } from 'ethers';
 
 import { useDocumentTitle } from '@/hooks/useDocumentTitle';
@@ -39,13 +39,19 @@ export const SquadsPage = () => {
   const isClaimDisabled = useMemo(() => availableRewards.eq(0), [availableRewards]);
 
   return (
-    <Container variant="dashboard" pt="60px">
-      <Link as={RouterLink} to="/" textStyle="button" alignSelf="flex-start" mb="40px">
+    <Container variant="dashboard" pt={{ sm: '30px', '2xl': '60px' }}>
+      <Link
+        as={RouterLink}
+        to="/"
+        textStyle="button"
+        alignSelf="flex-start"
+        mb={{ sm: '30px', '2xl': '40px' }}
+      >
         <ArrowBackIcon w="24px" h="24px" mr="10px" />
         Back
       </Link>
 
-      <Box mb="35px">
+      <Box mb={{ sm: '55px', xl: '40px' }}>
         <ReferralInfo isPageView />
       </Box>
 
@@ -53,32 +59,28 @@ export const SquadsPage = () => {
         <ReferralsList />
       </Box>
 
-      <Heading textStyle="h3" fontSize="26px" textTransform="uppercase" mb="30px">
+      <Text textStyle="h3" textTransform="uppercase" mb={{ sm: '20px', lg: '30px' }}>
         Your teams
-      </Heading>
+      </Text>
 
       <Box mb="100px">
         <SquadsList />
       </Box>
 
-      <Box mb="50px">
+      <Box mb={{ sm: '35px', lg: '50px' }}>
         <Flex justifyContent="flex-end">
-          <StatBlock width="320px">
-            <Box textStyle="text1" mb="10px">
-              Available Referral Rewards
-            </Box>
-            <Box textStyle="text1">
-              <Box as="span" textStyle="textSansBold" fontSize="26px" mr="6px">
-                {getReadableAmount(availableRewards)}
-              </Box>
-              SAVR
-            </Box>
-          </StatBlock>
+          <StatBlock
+            width="320px"
+            title="Available Referral Rewards"
+            value={getReadableAmount(availableRewards)}
+            currency="SAVR"
+          />
+
           <Button
             display="block"
             width="170px"
             height="unset"
-            padding="30px"
+            padding={{ sm: '20px 10px', md: '30px' }}
             bgColor="blue"
             boxShadow="0px 9px 19px rgba(26, 220, 226, 0.3)"
             borderRadius="sm"

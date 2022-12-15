@@ -1,5 +1,5 @@
 import React, { FC, useMemo } from 'react';
-import { Button, Center, Tbody, Td, Th, Thead, Tr, useDisclosure } from '@chakra-ui/react';
+import { Box, Button, Center, Tbody, Td, Th, Thead, Tr, useDisclosure } from '@chakra-ui/react';
 import { BigNumber } from 'ethers';
 
 import { Table } from '@/components/ui/Table/Table';
@@ -40,7 +40,7 @@ export const ReferralRewardsTable: FC<RewardsTableProps> = ({ rewards }) => {
   const emptyRows = Math.max(0, COLLAPSED_LIMIT - visibleItems.length);
 
   return (
-    <>
+    <Box className="table-responsive-wrapper">
       <Table>
         <Thead>
           <Tr>
@@ -100,7 +100,7 @@ export const ReferralRewardsTable: FC<RewardsTableProps> = ({ rewards }) => {
           </Button>
         </Center>
       ) : null}
-    </>
+    </Box>
   );
 };
 

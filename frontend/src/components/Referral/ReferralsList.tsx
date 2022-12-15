@@ -1,7 +1,6 @@
 import React, { useCallback, useMemo, useState } from 'react';
 import { DownloadIcon } from '@chakra-ui/icons';
 import {
-  Box,
   Button,
   Checkbox,
   CheckboxGroup,
@@ -65,16 +64,16 @@ export const ReferralsList = () => {
 
   return (
     <>
-      <Flex justifyContent="space-between" alignItems="center" mb="16px">
+      <Flex justifyContent="space-between" alignItems="center" mb={{ xl: '18px' }}>
         <Menu variant="dark-transparent">
           <MenuButton
             as={Button}
             variant="transparent"
             rightIcon={<ChevronDownIcon />}
             padding={0}
-            fontWeight="700"
             textTransform="uppercase"
-            fontSize="26px"
+            fontWeight={{ sm: '600', xl: '700' }}
+            fontSize={{ sm: '18px', xl: '26px' }}
           >
             Your levels {levelsTitle}
             <Text as="span" opacity="0.5" ml="8px">
@@ -116,9 +115,9 @@ export const ReferralsList = () => {
         </Menu>
 
         <Flex alignItems="center">
-          <Box mr="10px">
-            <SearchWallet buttonText="Search wallet" onChange={setSearch} />
-          </Box>
+          {/* <Box mr="10px"> */}
+          <SearchWallet buttonText="Search wallet" onChange={setSearch} />
+          {/* </Box> */}
           <Button variant="link" display="none">
             Export
             <DownloadIcon ml="12px" />

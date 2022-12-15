@@ -7,6 +7,7 @@ body {
 
 .main-container {
   max-width: 1360px;
+  padding: 0 20px;
   margin: auto;
 }
 
@@ -30,6 +31,7 @@ body {
   color: #ffffff;
   text-shadow: 0 4px 4px rgba(0, 0, 0, 0.25);
   position: relative;
+  text-align: center;
 
   &::before,
   &::after {
@@ -102,10 +104,6 @@ body {
 }
 
 .main-btns div {
-  &:first-child {
-    margin-right: 34px;
-  }
-
   &:last-child a {
     display: flex;
     align-items: center;
@@ -326,9 +324,6 @@ body {
 }
 
 @media screen and (max-width: $xl2) {
-}
-
-@media screen and (max-width: $xl) {
   .heading::before {
     right: -40px;
   }
@@ -359,8 +354,9 @@ body {
   }
   .coins-text__img {
     svg {
-      width: 307px;
-      height: 346px;
+      max-width: 307px;
+      max-height: 346px;
+      margin: 0 auto;
     }
   }
   .coins-text__primary {
@@ -488,7 +484,7 @@ body {
   }
 }
 
-@media screen and (max-width: $lg) {
+@media screen and (max-width: $xl) {
   .main-container {
     padding: 0 20px;
   }
@@ -636,7 +632,7 @@ body {
   }
 }
 
-@media screen and (max-width: $md) {
+@media screen and (max-width: $lg) {
   .main-container {
     padding: 0 10px;
   }
@@ -656,6 +652,7 @@ body {
   .main-btns {
     width: 100%;
     margin-top: 30px;
+    justify-content: center;
   }
   .main-banner {
     text-align: center;

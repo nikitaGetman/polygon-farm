@@ -68,7 +68,13 @@ export const Header: FC<HeaderProps> = ({ isLandingView }) => {
 
         <Flex>
           {isLandingView ? (
-            <Button as="a" mr="20px" variant="secondary" href="https://app.isaver.io">
+            <Button
+              as="a"
+              mr="20px"
+              variant="secondary"
+              href="https://app.isaver.io"
+              size={{ sm: 'md', '2xl': 'lg' }}
+            >
               Dashboard
             </Button>
           ) : null}

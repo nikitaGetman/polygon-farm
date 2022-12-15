@@ -95,10 +95,14 @@ function Layout() {
           in
           appear
         >
-          {(state) => <Box ref={nodeRef as any}>{currentOutlet}</Box>}
+          {(state) => (
+            <Box ref={nodeRef as any}>
+              {currentOutlet}
+              <Footer />
+            </Box>
+          )}
         </CSSTransition>
       </SwitchTransition>
-      <Footer />
     </>
   );
 }

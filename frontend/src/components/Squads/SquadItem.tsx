@@ -2,16 +2,17 @@ import React, { FC, useCallback, useMemo, useState } from 'react';
 import { Box, Button, Flex, Text } from '@chakra-ui/react';
 import { BigNumber, BigNumberish } from 'ethers';
 
-import { ReactComponent as SquadSectionIcon } from '@/assets/images/icons/squad-section.svg';
-import { ReactComponent as SquadSectionFilledIcon } from '@/assets/images/icons/squad-section-filled.svg';
 import { bigNumberToString } from '@/utils/number';
 import { getLocalDateString, getReadableDuration } from '@/utils/time';
 
+import { ReactComponent as SquadSectionIcon } from './icons/squad-section.svg';
+import { ReactComponent as SquadSectionFilledIcon } from './icons/squad-section-filled.svg';
+
 type SquadItemProps = {
+  isSmallSize: boolean;
   subscription?: BigNumber;
   squadsFilled?: BigNumber;
   subscriptionCost: BigNumber;
-  subscriptionDuration: BigNumberish;
   isSubscriptionEnding: boolean;
   stakingDuration: BigNumberish;
   reward: BigNumberish;
@@ -21,10 +22,10 @@ type SquadItemProps = {
   onSubscribe: () => Promise<void>;
 };
 export const SquadItem: FC<SquadItemProps> = ({
+  isSmallSize,
   subscription,
   squadsFilled,
   subscriptionCost,
-  subscriptionDuration,
   isSubscriptionEnding,
   stakingDuration,
   reward,
@@ -57,22 +58,37 @@ export const SquadItem: FC<SquadItemProps> = ({
 
   return (
     <Box
-      flex="1 0 420px"
+      margin="0 auto"
+      width={isSmallSize ? '300px' : '420px'}
       background="rgba(38, 71, 55, 0.5)"
       boxShadow="0px 6px 11px rgba(0, 0, 0, 0.25)"
       borderRadius="md"
-      padding="40px 40px 52px"
+      padding={isSmallSize ? '30px 20px 40px' : '40px 40px 52px'}
       position="relative"
     >
-      <Flex alignItems="center" justifyContent="space-between" height="50px" mb="50px">
+      <Flex
+        alignItems="center"
+        justifyContent="space-between"
+        height="50px"
+        mb={isSmallSize ? '30px' : '50px'}
+      >
         <Box>
           {!isSubscribed ? (
-            <Button isLoading={isLoading} onClick={handleSubscribe} padding="15px 20px">
+            <Button
+              isLoading={isLoading}
+              onClick={handleSubscribe}
+              size={isSmallSize ? 'md' : 'lg'}
+            >
               Activate
             </Button>
           ) : null}
           {isSubscriptionEnding ? (
-            <Button variant="outlinedWhite" isLoading={isLoading} onClick={handleSubscribe}>
+            <Button
+              variant="outlinedWhite"
+              isLoading={isLoading}
+              onClick={handleSubscribe}
+              size={isSmallSize ? 'md' : 'lg'}
+            >
               Prolong
             </Button>
           ) : null}
@@ -82,7 +98,7 @@ export const SquadItem: FC<SquadItemProps> = ({
             </Text>
           ) : null}
         </Box>
-        <Box>
+        <Box whiteSpace="nowrap">
           {isSubscribed ? (
             <Text textStyle="textSansBold">
               <>until {getLocalDateString(BigNumber.from(subscription).toNumber())}</>
@@ -95,7 +111,11 @@ export const SquadItem: FC<SquadItemProps> = ({
         </Box>
       </Flex>
 
-      <Box position="relative" height="300px" px="20px">
+      <Box
+        position="relative"
+        height={isSmallSize ? '200px' : '300px'}
+        px={isSmallSize ? '30px' : '20px'}
+      >
         <Box
           position="absolute"
           top="50%"
@@ -103,14 +123,19 @@ export const SquadItem: FC<SquadItemProps> = ({
           transform="translate(-50%, -50%)"
           textAlign="center"
         >
-          <Text textStyle="text1" fontSize="44px" lineHeight="40px" whiteSpace="nowrap">
+          <Text
+            textStyle="text1"
+            fontSize={isSmallSize ? '26px' : '44px'}
+            lineHeight="40px"
+            whiteSpace="nowrap"
+          >
             {bigNumberToString(reward, { precision: 0 })}
-            <Text as="span" fontSize="24px" ml="5px">
+            <Text as="span" fontSize="26px" ml="5px">
               SAV
             </Text>
           </Text>
 
-          <Text textStyle="text1" fontSize="44px" textTransform="uppercase" whiteSpace="nowrap">
+          <Text textStyle="text1" fontSize={isSmallSize ? '26px' : '44px'} whiteSpace="nowrap">
             {getReadableDuration(stakingDuration)}
           </Text>
 
@@ -128,16 +153,23 @@ export const SquadItem: FC<SquadItemProps> = ({
           <Box
             key={index}
             position="absolute"
-            transformOrigin="150px 125px"
-            transform={`translate(0, 25px) rotate(${60 * index}deg) `}
+            transformOrigin={isSmallSize ? '100px 83px' : '150px 125px'}
+            transform={`translate(0, ${isSmallSize ? '18px' : '25px'}) rotate(${60 * index}deg) `}
             color={member ? 'green.400' : 'turquoise.200'}
+            width={isSmallSize ? (member ? '55px' : '50px') : member ? '82px' : '75px'}
           >
             {member ? <SquadSectionFilledIcon /> : <SquadSectionIcon />}
           </Box>
         ))}
       </Box>
 
-      <Text position="absolute" bottom="40px" right="60px" textAlign="center" opacity="0.3">
+      <Text
+        position="absolute"
+        bottom={isSmallSize ? '30px' : '40px'}
+        right={isSmallSize ? '40px' : '60px'}
+        textAlign="center"
+        opacity="0.3"
+      >
         {squadsFilled?.toNumber() || 0} fills
       </Text>
     </Box>

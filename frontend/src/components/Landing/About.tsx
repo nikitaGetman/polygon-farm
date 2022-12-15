@@ -2,28 +2,20 @@ import React from 'react';
 import { Box, Flex, Text, useBreakpoint } from '@chakra-ui/react';
 
 import { ReactComponent as BlueboxIcon } from './images/bluebox.svg';
-import { ReactComponent as BlueboxIconSm } from './images/bluebox_sm.svg';
 import { ReactComponent as GreenboxIcon } from './images/greenbox.svg';
-import { ReactComponent as GreenboxIconSm } from './images/greenbox_sm.svg';
 
 import './Landing.scss';
 
 export const About = () => {
+  const bp = useBreakpoint();
+  const isXl = bp === 'xl';
+
   return (
     <Flex className="about-container">
       <Box className="main-container">
         <Flex alignItems="center">
           <Box className="about-container__img" data-atrr={useBreakpoint()}>
-            {useBreakpoint() === 'lg' && (
-              <>
-                <BlueboxIconSm />
-              </>
-            )}
-            {useBreakpoint() !== 'lg' && (
-              <>
-                <BlueboxIcon />
-              </>
-            )}
+            <BlueboxIcon height={isXl ? '304px' : '594px'} />
           </Box>
           <Flex className="heading-container" flexWrap="wrap" justifyContent="center" maxW="620px">
             <h4 className="heading">About Isaver</h4>
@@ -40,16 +32,7 @@ export const About = () => {
             </Text>
           </Flex>
           <Box className="about-container__img">
-            {useBreakpoint() === 'lg' && (
-              <>
-                <GreenboxIconSm />
-              </>
-            )}
-            {useBreakpoint() !== 'lg' && (
-              <>
-                <GreenboxIcon />
-              </>
-            )}
+            <GreenboxIcon height={isXl ? '304px' : '605px'} />
           </Box>
         </Flex>
       </Box>

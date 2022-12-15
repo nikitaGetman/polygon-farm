@@ -1,44 +1,36 @@
-@import '@/assets/styles/vars.scss';
+@import '~@/assets/styles/vars.scss';
 
-.app-footer {
-  background: linear-gradient(96.85deg, #1F3E2C -8.44%, #1A3435 102.66%);
+.footer {
+  background: linear-gradient(96.85deg, #1f3e2c -8.44%, #1a3435 102.66%);
   box-shadow: 0px 6px 20px rgba(0, 0, 0, 0.25);
   backdrop-filter: blur(22.5px);
   padding-top: 45px;
-}
-
-.footer {
   padding-bottom: 63px;
 
   &-top {
     max-width: 1220px;
     margin: auto;
-    padding-bottom: 44px;
-
-    &__left {
-    }
+    padding: 0 40px 44px;
 
     &__right {
       .mail-list {
-        margin-right: 70px;
+        margin-right: 60px;
       }
     }
   }
 
   &-bottom {
     border-top: 1px solid rgba(255, 255, 255, 0.5);
-    padding-top: 30px;
+    padding: 30px 0 0;
 
     &__container {
       max-width: 1220px;
       margin: auto;
+      padding: 0 40px;
     }
 
     &__left {
-      max-width: 390px;
-    }
-
-    &__right {
+      max-width: 360px;
     }
   }
 
@@ -46,7 +38,7 @@
     font-weight: 500;
     font-size: 18px;
     line-height: 130%;
-    color: #FFFFFF;
+    color: #ffffff;
     margin-bottom: 15px;
   }
 
@@ -54,7 +46,7 @@
     font-weight: 400;
     font-size: 12px;
     line-height: 130%;
-    color: #FFFFFF;
+    color: #ffffff;
   }
 }
 
@@ -64,7 +56,7 @@
     font-size: 26px;
     line-height: 32px;
     text-transform: uppercase;
-    color: #FFFFFF;
+    color: #ffffff;
     margin-bottom: 10px;
   }
 
@@ -84,7 +76,7 @@
     font-weight: 500;
     font-size: 18px;
     line-height: 130%;
-    color: #FFFFFF;
+    color: #ffffff;
   }
 }
 
@@ -94,7 +86,7 @@
     font-size: 26px;
     line-height: 32px;
     text-transform: uppercase;
-    color: #FFFFFF;
+    color: #ffffff;
     margin-bottom: 5px;
   }
 
@@ -102,7 +94,7 @@
     font-weight: 400;
     font-size: 12px;
     line-height: 130%;
-    color: #FFFFFF;
+    color: #ffffff;
     margin-bottom: 10px;
   }
 }
@@ -116,7 +108,7 @@
     font-size: 26px;
     line-height: 32px;
     text-transform: uppercase;
-    color: #FFFFFF;
+    color: #ffffff;
     display: inline-flex;
     align-items: center;
     min-height: 44px;
@@ -124,10 +116,23 @@
 }
 
 @media screen and (max-width: $xl) {
-  .footer-top, .footer-bottom {
+  .footer-top,
+  .footer-bottom {
     padding-right: 40px;
     padding-left: 40px;
   }
+
+  .footer-bottom__container {
+    padding: 0;
+  }
+
+  .sav-container {
+    p {
+      font-size: 16px;
+      line-height: 20px;
+    }
+  }
+
   .footer-top {
     flex-wrap: wrap;
 
@@ -154,13 +159,12 @@
 }
 
 @media screen and (max-width: $lg) {
-  .app-footer {
-    padding-top: 40px;
-  }
   .footer {
+    padding-top: 40px;
     padding-bottom: 46px;
   }
-  .footer-top, .footer-bottom {
+  .footer-top,
+  .footer-bottom {
     padding-right: 20px;
     padding-left: 20px;
   }
@@ -177,16 +181,37 @@
       margin-bottom: 10px;
     }
   }
+  .footer-bottom {
+    &__left {
+      display: flex;
+      flex-direction: column;
+      order: 2;
+      width: 100%;
+      max-width: initial;
+    }
+
+    &__right {
+      justify-content: center;
+      align-items: center;
+      padding-top: 0;
+      order: 1;
+      width: 100%;
+      margin-bottom: 45px;
+
+      .contact-heading {
+        display: none;
+      }
+    }
+  }
 }
 
 @media screen and (max-width: $md) {
-  .app-footer {
-    padding-top: 35px;
-  }
   .footer {
+    padding-top: 35px;
     padding-bottom: 37px;
   }
-  .footer-top, .footer-bottom {
+  .footer-top,
+  .footer-bottom {
     padding-right: 10px;
     padding-left: 10px;
   }
@@ -216,35 +241,11 @@
       }
     }
   }
-  .footer-bottom {
-    &__left {
-      display: flex;
-      flex-direction: column;
-      order: 2;
-      width: 100%;
-      max-width: initial;
-    }
-
-    &__right {
-      justify-content: center;
-      align-items: center;
-      padding-top: 0;
-      order: 1;
-      width: 100%;
-      margin-bottom: 45px;
-
-      .contact-heading {
-        display: none;
-      }
-    }
-  }
 }
 
 @media screen and (min-width: $sm) and (max-width: $md) {
-  .app-footer {
-    padding-top: 30px;
-  }
   .footer-top__left {
+    padding-top: 30px;
     margin-bottom: 50px;
 
     img {

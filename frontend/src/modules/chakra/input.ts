@@ -43,7 +43,7 @@ const mailing = {
 
 const primary = {
   field: {
-    background: 'rgba(38, 71, 55, 0.5)',
+    background: 'rgb(38, 71, 55)',
     boxShadow: '0px 6px 11px rgba(0, 0, 0, 0.25)',
     borderRadius: 'md',
 

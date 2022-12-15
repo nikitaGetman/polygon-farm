@@ -1,6 +1,5 @@
 import React, { FC, useCallback, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { WarningTwoIcon } from '@chakra-ui/icons';
 import {
   Box,
   Button,
@@ -22,6 +21,8 @@ import { useLocalReferrer } from '@/hooks/useLocalReferrer';
 import { useStaking } from '@/hooks/useStaking';
 import { TOKENS } from '@/hooks/useTokens';
 import { getReadableAmount, getYearlyAPR, makeBigNumber } from '@/utils/number';
+
+import { WarningTip } from '../ui/WarningTip/WarningTip';
 
 import { StakingModal } from './StakingModal';
 import { StakingPlan } from './StakingPlan';
@@ -109,20 +110,7 @@ export const Staking: FC<StakingProps> = ({ isPageView }) => {
           alignItems={{ sm: 'flex-start', xl: 'center' }}
           direction={{ sm: 'column', xl: 'row' }}
         >
-          {hasEndingSubscription ? (
-            <Text
-              textStyle="textBold"
-              color="error"
-              display="flex"
-              alignItems="center"
-              whiteSpace="nowrap"
-            >
-              <>
-                <WarningTwoIcon mr="10px" />
-                Check your subscription!
-              </>
-            </Text>
-          ) : null}
+          {hasEndingSubscription ? <WarningTip>Check your subscription!</WarningTip> : null}
 
           {!isPageView ? (
             isConnected ? (
@@ -138,38 +126,19 @@ export const Staking: FC<StakingProps> = ({ isPageView }) => {
 
       {isPageView ? (
         <Flex justifyContent={{ lg: 'flex-start', xl: 'flex-end' }} mt="30px">
-          <StatBlock width="260px">
-            <Box textStyle="text1" mb="10px">
-              Total in Staking
-            </Box>
-            <Box textStyle="text1">
-              <Box
-                as="span"
-                textStyle="textSansBold"
-                fontSize={{ sm: '18px', md: '26px' }}
-                mr="6px"
-              >
-                {getReadableAmount(totalStakeSav)}
-              </Box>
-              SAV
-            </Box>
-          </StatBlock>
-          <StatBlock width="260px">
-            <Box textStyle="text1" mb="10px">
-              Total in Staking
-            </Box>
-            <Box textStyle="text1">
-              <Box
-                as="span"
-                textStyle="textSansBold"
-                fontSize={{ sm: '18px', md: '26px' }}
-                mr="6px"
-              >
-                {getReadableAmount(totalStakeSavR)}
-              </Box>
-              SAVR
-            </Box>
-          </StatBlock>
+          <StatBlock
+            width="260px"
+            title="Total in Staking"
+            value={getReadableAmount(totalStakeSav)}
+            currency="SAV"
+          />
+
+          <StatBlock
+            width="260px"
+            title="Total in Staking"
+            value={getReadableAmount(totalStakeSavR)}
+            currency="SAVR"
+          />
         </Flex>
       ) : null}
 
