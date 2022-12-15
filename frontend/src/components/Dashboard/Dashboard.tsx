@@ -15,11 +15,11 @@ export const Dashboard = () => {
 
   return (
     <Container variant="dashboard">
-      <Box mt="50px">
+      <Box mt={{ sm: '30px', '2xl': '50px' }}>
         <WalletPortfolio />
       </Box>
 
-      <Box mt="150px">
+      <Box mt={{ sm: '100px', xl: '150px' }}>
         <Staking />
       </Box>
 

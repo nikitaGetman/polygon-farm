@@ -8,6 +8,7 @@ import {
   InputLeftElement,
   InputRightElement,
   Text,
+  useBreakpoint,
 } from '@chakra-ui/react';
 
 type InputAmountProps = {
@@ -43,13 +44,19 @@ export const InputAmount: FC<InputAmountProps> = ({
     [setLocalValue, onChange]
   );
 
-  const inputPaddingRight = tokenTicker ? '150px' : undefined;
+  const bp = useBreakpoint();
+  const isSm = bp === 'sm';
+  const inputPaddingRight = tokenTicker ? (isSm ? '105px' : '150px') : undefined;
+  const hasMax = Boolean(total);
 
   return (
     <Box>
       <InputGroup variant="secondary">
         {tokenTicker ? (
-          <InputLeftElement width="130px" padding="0 0 0 20px">
+          <InputLeftElement
+            width={{ sm: '95px', md: '130px' }}
+            padding={{ sm: '0 0 0 10px', md: '0 0 0 20px' }}
+          >
             <Flex
               alignItems="center"
               justifyContent="flex-start"
@@ -67,13 +74,13 @@ export const InputAmount: FC<InputAmountProps> = ({
           placeholder={placeholder}
           value={localValue}
           paddingLeft={inputPaddingRight}
-          paddingRight="64px"
+          paddingRight={hasMax ? '64px' : undefined}
           textOverflow="ellipsis"
           onChange={(e) => handleChange(e.target.value)}
         />
 
-        <InputRightElement mr="12px">
-          {!!total && (
+        {!!total && (
+          <InputRightElement mr="12px">
             <Button
               variant="transparent"
               color="white"
@@ -82,11 +89,11 @@ export const InputAmount: FC<InputAmountProps> = ({
             >
               MAX
             </Button>
-          )}
-        </InputRightElement>
+          </InputRightElement>
+        )}
       </InputGroup>
       <Text textStyle="textSansSmall" textAlign="right" mt="8px" height="16px">
-        {total ? <>You have: {total}</> : null}
+        {hasMax ? <>You have: {total}</> : null}
       </Text>
     </Box>
   );

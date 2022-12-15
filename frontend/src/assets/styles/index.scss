@@ -72,3 +72,10 @@ body {
   box-shadow: 0 6px 11px rgba(0, 0, 0, 0.25);
   border-radius: 10px;
 }
+
+@media screen and (max-width: $xl) {
+  .table-responsive-wrapper {
+    margin-left: calc(50% - 50vw);
+    margin-right: calc(50% - 50vw);
+  }
+}

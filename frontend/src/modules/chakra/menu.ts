@@ -14,6 +14,7 @@ const baseStyle = definePartsStyle({
 
 const darkTransparent = {
   item: {
+    bgColor: 'transparent',
     fontSize: '18px',
     _hover: { bgColor: 'bgGreen.600' },
     _focus: { bgColor: 'bgGreen.600' },

@@ -50,12 +50,24 @@ export const useVendorSell = () => {
   });
 
   const getTokenSellEquivalent = useCallback(
-    (_tokenAmount: BigNumberish) => {
+    (_tokenAmount: string) => {
       if (sellCommission !== null && swapRate !== null) {
-        const tokenAmount = BigNumber.from(_tokenAmount).toNumber();
+        const tokenAmount = parseFloat(_tokenAmount);
         const amountWithFee = tokenAmount * swapRate;
         const fee = tokenAmount * sellCommission;
         return amountWithFee - fee;
+      }
+      return undefined;
+    },
+    [sellCommission, swapRate]
+  );
+  const getTokenBuyEquivalent = useCallback(
+    (_tokenAmount: string) => {
+      if (sellCommission !== null && swapRate !== null) {
+        const tokenAmountWithoutFee = parseFloat(_tokenAmount);
+        const amountWithFee = tokenAmountWithoutFee / (1 - sellCommission);
+        const amount = amountWithFee / swapRate;
+        return amount;
       }
       return undefined;
     },
@@ -130,6 +142,7 @@ export const useVendorSell = () => {
     isSellAvailableRequest,
     isSellAvailable,
     getTokenSellEquivalent,
+    getTokenBuyEquivalent,
     buyTokens,
     sellTokens,
   };

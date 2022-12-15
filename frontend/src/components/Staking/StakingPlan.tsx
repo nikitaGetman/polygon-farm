@@ -1,5 +1,5 @@
 import React, { FC, useCallback, useState } from 'react';
-import { Box, Button, Flex, Text } from '@chakra-ui/react';
+import { Box, Button, Flex, Text, useBreakpoint } from '@chakra-ui/react';
 import { BigNumber, BigNumberish } from 'ethers';
 
 import { bigNumberToString, getReadableAmount } from '@/utils/number';
@@ -57,27 +57,33 @@ export const StakingPlan: FC<StakingPlanProps> = ({
     });
   }, [setIsClaimLoading, onClaim]);
 
+  const bp = useBreakpoint();
+  const isSm = bp === 'sm';
+
   return (
     <Box borderRadius="md" overflow="hidden" boxShadow="0px 6px 11px rgba(0, 0, 0, 0.25)">
       <Flex
         bgColor={isSubscribed ? 'green.10050' : 'gray.200'}
         p="10px 20px"
         justifyContent="flex-end"
-        height="60px"
+        height={{ md: '60px' }}
         alignItems="center"
+        whiteSpace="nowrap"
       >
-        {isSubscriptionEnding ? (
-          <Text textStyle="textSansBold" mr={5}>
-            <>Until {getLocalDateString(BigNumber.from(subscribedTill).toNumber())}</>
-          </Text>
-        ) : null}
+        <Flex direction={{ sm: 'column', md: 'row' }} alignItems="center">
+          {isSubscriptionEnding ? (
+            <Text textStyle="textSansBold" mr={{ md: 5 }}>
+              <>Until {getLocalDateString(BigNumber.from(subscribedTill).toNumber())}</>
+            </Text>
+          ) : null}
 
-        {!isSubscribed || isSubscriptionEnding ? (
-          <Text textStyle="textSansBold">
-            {bigNumberToString(subscriptionCost, { precision: 0 })} SAV /{' '}
-            {getReadableDuration(subscriptionDuration)}
-          </Text>
-        ) : null}
+          {!isSubscribed || isSubscriptionEnding ? (
+            <Text textStyle="textSansBold">
+              {bigNumberToString(subscriptionCost, { precision: 0 })} SAV /{' '}
+              {getReadableDuration(subscriptionDuration)}
+            </Text>
+          ) : null}
+        </Flex>
 
         {isSubscriptionEnding ? (
           <Button
@@ -106,37 +112,58 @@ export const StakingPlan: FC<StakingPlanProps> = ({
       </Flex>
 
       <Box bgColor="rgba(38, 71, 55, 0.5)" boxShadow="0px 6px 11px rgba(0, 0, 0, 0.25)" p="20px">
-        <Flex alignItems="center" gap={5}>
-          <Box flexGrow={1}>
-            <Flex justifyContent="space-between" gap={2} mb={7}>
-              <StakingParameter title="Locking period">
-                {getReadableDuration(stakingDuration)}
-              </StakingParameter>
+        <Flex
+          alignItems="center"
+          gap={5}
+          direction={{ sm: 'column', lg: 'row', xl: 'column', '2xl': 'row' }}
+        >
+          <Box width="100%">
+            <Flex
+              justifyContent="space-between"
+              gap={2}
+              mb={{ sm: '16px', md: '24px' }}
+              direction={{ sm: 'column', md: 'row' }}
+            >
+              <Flex justifyContent="space-between" mb={{ sm: '16px', md: 'unset' }}>
+                <StakingParameter title="Locking period">
+                  {getReadableDuration(stakingDuration)}
+                </StakingParameter>
+
+                {isSm ? <StakingParameter title="APR">{apr}%</StakingParameter> : null}
+              </Flex>
               <StakingParameter title="Pool size">{getReadableAmount(poolSize)}</StakingParameter>
-              <StakingParameter title="APR">{apr}%</StakingParameter>
+              {isSm ? null : <StakingParameter title="APR">{apr}%</StakingParameter>}
             </Flex>
-            <Flex justifyContent="space-between">
-              <StakingParameter title="Your Stake">
-                <Flex flexWrap="wrap">
-                  <Box as="span" ml={2} mr={2}>
-                    {getReadableAmount(userStakeSav, { shortify: true })} SAV
-                  </Box>
-                  <Box as="span" mr={2} ml={2}>
-                    {getReadableAmount(userStakeSavR, { shortify: true })} SAVR
-                  </Box>
-                </Flex>
-              </StakingParameter>
+            <Flex justifyContent="space-between" direction={{ sm: 'column', md: 'row' }}>
+              <Box mb={{ sm: '16px', md: 'unset' }}>
+                <StakingParameter title="Your Stake">
+                  <Flex flexWrap="wrap">
+                    <Box as="span" ml={2} mr={2}>
+                      {getReadableAmount(userStakeSav, { shortify: true })} SAV
+                    </Box>
+                    <Box as="span" mr={2} ml={2}>
+                      {getReadableAmount(userStakeSavR, { shortify: true })} SAVR
+                    </Box>
+                  </Flex>
+                </StakingParameter>
+              </Box>
               <StakingParameter title="Your rewards">
                 {getReadableAmount(userTotalReward || 0)} SAV
               </StakingParameter>
             </Flex>
           </Box>
 
-          <Flex direction="column" flex="0 0 140px" gap={4}>
-            <Button onClick={onDeposit} variant="outlined" disabled={!isSubscribed}>
+          <Flex
+            direction={{ sm: 'row', lg: 'column', xl: 'row', '2xl': 'column' }}
+            width={{ sm: '100%', lg: 'unset', xl: '100%', '2xl': 'unset' }}
+            flex={{ '2xl': '0 0 140px' }}
+            gap={4}
+          >
+            <Button onClick={onDeposit} variant="outlined" disabled={!isSubscribed} width="100%">
               Deposit
             </Button>
             <Button
+              width="100%"
               onClick={handleClaim}
               variant="outlined"
               disabled={!isClaimAvailable || isClaimLoading}

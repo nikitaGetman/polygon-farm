@@ -1,10 +1,14 @@
 import React from 'react';
-import { Button } from '@chakra-ui/react';
+import { Button, ButtonProps } from '@chakra-ui/react';
 
 import { useConnectWallet } from '@/hooks/useConnectWallet';
 
-export const ConnectWalletButton = () => {
+export const ConnectWalletButton = (props: ButtonProps) => {
   const { connect } = useConnectWallet();
 
-  return <Button onClick={() => connect()}>Connect wallet</Button>;
+  return (
+    <Button {...props} onClick={() => connect()}>
+      Connect wallet
+    </Button>
+  );
 };

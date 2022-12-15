@@ -41,10 +41,17 @@ export const ExchangePage = () => {
 
   const [isTokenSell, setIsTokenSell] = useState(false);
   const [amount, setAmount] = useState<string>();
+  const [sellAmount, setSellAmount] = useState<string>();
 
   const navigate = useNavigate();
-  const { buyTokens, sellTokens, isSellAvailable, getTokenSellEquivalent, sellCommission } =
-    useVendorSell();
+  const {
+    buyTokens,
+    sellTokens,
+    isSellAvailable,
+    getTokenSellEquivalent,
+    getTokenBuyEquivalent,
+    sellCommission,
+  } = useVendorSell();
   const usdtBalance = useUsdtBalance();
   const savBalance = useSavBalance();
 
@@ -52,20 +59,25 @@ export const ExchangePage = () => {
     navigate('/');
   }, [navigate]);
 
+  const resetState = useCallback(() => {
+    setAmount('');
+    setSellAmount('');
+  }, [setAmount, setSellAmount]);
+
   const handleSwap = useCallback(() => {
     if (!amount) return;
 
     if (isTokenSell) {
-      sellTokens.mutateAsync(makeBigNumber(amount)).then(() => setAmount(''));
+      sellTokens.mutateAsync(makeBigNumber(amount)).then(resetState);
     } else {
-      buyTokens.mutateAsync(makeBigNumber(amount, 6)).then(() => setAmount(''));
+      buyTokens.mutateAsync(makeBigNumber(amount, 6)).then(resetState);
     }
-  }, [isTokenSell, amount, sellTokens, buyTokens]);
+  }, [isTokenSell, amount, sellTokens, buyTokens, resetState]);
 
   const toggleSell = useCallback(() => {
     setIsTokenSell((val) => !val);
-    setAmount('');
-  }, [setIsTokenSell, setAmount]);
+    resetState();
+  }, [setIsTokenSell, resetState]);
 
   const isLoading = buyTokens.isLoading || sellTokens.isLoading;
   const isSwapDisabled = !amount || parseFloat(amount) === 0 || (isTokenSell && !isSellAvailable);
@@ -75,17 +87,40 @@ export const ExchangePage = () => {
     [isTokenSell]
   );
 
-  const sellAmount = useMemo(() => {
-    if (isTokenSell && amount) {
-      return getTokenSellEquivalent(amount);
-    } else {
-      return amount;
-    }
-  }, [isTokenSell, amount, getTokenSellEquivalent]);
+  const handleAmountChange = useCallback(
+    (amount?: string) => {
+      if (isTokenSell && amount) {
+        const res = getTokenSellEquivalent(amount);
+        setSellAmount(res ? res.toString() : undefined);
+      } else {
+        setSellAmount(amount);
+      }
+      setAmount(amount);
+    },
+    [getTokenSellEquivalent, isTokenSell]
+  );
+
+  const handleSellAmountChange = useCallback(
+    (amount?: string) => {
+      if (isTokenSell && amount) {
+        const res = getTokenBuyEquivalent(amount);
+        setAmount(res ? res.toString() : undefined);
+      } else {
+        setAmount(amount);
+      }
+      setSellAmount(amount);
+    },
+    [getTokenBuyEquivalent, isTokenSell]
+  );
 
   return (
-    <Container variant="dashboard" mt="60px" mb="200px">
-      <Link onClick={handleClose} textStyle="button" alignSelf="flex-start" mb="40px">
+    <Container variant="dashboard" mt={{ sm: '30px', xl: '60px' }} mb="200px">
+      <Link
+        onClick={handleClose}
+        textStyle="button"
+        alignSelf="flex-start"
+        mb={{ sm: '30px', xl: '40px' }}
+      >
         <ArrowBackIcon w="24px" h="24px" mr="10px" />
         Back
       </Link>
@@ -95,7 +130,7 @@ export const ExchangePage = () => {
         borderRadius="md"
         padding="30px"
         margin="0 auto"
-        width="450px"
+        maxWidth="450px"
         boxShadow="0px 6px 11px rgba(0, 0, 0, 0.25)"
       >
         <Flex justifyContent="space-between" alignItems="center" mb="15px">
@@ -116,7 +151,7 @@ export const ExchangePage = () => {
           <InputAmount
             tokenIcon={tokens[0].icon}
             tokenTicker={tokens[0].ticker}
-            onChange={setAmount}
+            onChange={handleAmountChange}
             placeholder="0"
             value={amount}
             total={
@@ -147,7 +182,7 @@ export const ExchangePage = () => {
             tokenIcon={tokens[1].icon}
             tokenTicker={tokens[1].ticker}
             value={sellAmount}
-            onChange={setAmount}
+            onChange={handleSellAmountChange}
           />
         </Box>
 

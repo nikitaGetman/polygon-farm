@@ -85,7 +85,7 @@ export const StakingTable = ({
   );
 
   return (
-    <>
+    <Box className="table-responsive-wrapper">
       <Table>
         <Thead>
           <Tr>
@@ -165,6 +165,6 @@ export const StakingTable = ({
           </Button>
         </Center>
       ) : null}
-    </>
+    </Box>
   );
 };

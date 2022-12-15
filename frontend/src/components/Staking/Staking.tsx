@@ -8,9 +8,7 @@ import {
   Flex,
   Grid,
   GridItem,
-  Heading,
   Skeleton,
-  Spacer,
   Text,
   useDisclosure,
 } from '@chakra-ui/react';
@@ -92,53 +90,65 @@ export const Staking: FC<StakingProps> = ({ isPageView }) => {
 
   return (
     <Container variant="dashboard">
-      <Flex alignItems="center" gap="2">
-        <Heading textStyle="h1">Earn by staking</Heading>
-        <Spacer />
-        <Box>
-          {isConnected ? (
-            <Box display="flex" alignItems="center">
-              {hasEndingSubscription ? (
-                <Text
-                  textStyle="textBold"
-                  color="error"
-                  mr="30px"
-                  display="flex"
-                  alignItems="center"
-                >
-                  <>
-                    <WarningTwoIcon mr="10px" />
-                    Check your subscription!
-                  </>
-                </Text>
-              ) : null}
-              {!isPageView ? (
-                <Button as={Link} to="/staking">
-                  My stake
-                </Button>
-              ) : null}
-            </Box>
-          ) : !isPageView ? (
-            <ConnectWalletButton />
-          ) : null}
+      <Flex direction={{ sm: 'column', xl: 'row' }} justifyContent="space-between" gap={5}>
+        <Box width={{ sm: '100%', xl: '55%' }}>
+          <Text textStyle="sectionHeading" mb="20px">
+            Earn by staking
+          </Text>
+
+          <Text textStyle={{ xl: 'text2', '2xl': 'text1' }}>
+            Stake your SAV or SAVR holdings to earn more SAV. The longer you stake, the more you
+            yield. Accumulate more SAV, so you can increase your governance in the future iSaver
+            DAO.
+          </Text>
         </Box>
+
+        <Flex
+          gap={5}
+          alignSelf={{ sm: 'stretch', xl: 'flex-start' }}
+          alignItems={{ sm: 'flex-start', xl: 'center' }}
+          direction={{ sm: 'column', xl: 'row' }}
+        >
+          {hasEndingSubscription ? (
+            <Text
+              textStyle="textBold"
+              color="error"
+              display="flex"
+              alignItems="center"
+              whiteSpace="nowrap"
+            >
+              <>
+                <WarningTwoIcon mr="10px" />
+                Check your subscription!
+              </>
+            </Text>
+          ) : null}
+
+          {!isPageView ? (
+            isConnected ? (
+              <Button as={Link} to="/staking" width={{ sm: '100%', lg: '50%', xl: 'unset' }}>
+                My stake
+              </Button>
+            ) : (
+              <ConnectWalletButton />
+            )
+          ) : null}
+        </Flex>
       </Flex>
 
-      <Box maxWidth="640px" mt={5}>
-        <Text textStyle="text1">
-          Stake your SAV or SAVR holdings to earn more SAV. The longer you stake, the more you
-          yield. Accumulate more SAV, so you can increase your governance in the future iSaver DAO.
-        </Text>
-      </Box>
-
       {isPageView ? (
-        <Flex justifyContent="flex-end" mt="30px">
+        <Flex justifyContent={{ lg: 'flex-start', xl: 'flex-end' }} mt="30px">
           <StatBlock width="260px">
             <Box textStyle="text1" mb="10px">
               Total in Staking
             </Box>
             <Box textStyle="text1">
-              <Box as="span" textStyle="textSansBold" fontSize="26px" mr="6px">
+              <Box
+                as="span"
+                textStyle="textSansBold"
+                fontSize={{ sm: '18px', md: '26px' }}
+                mr="6px"
+              >
                 {getReadableAmount(totalStakeSav)}
               </Box>
               SAV
@@ -149,7 +159,12 @@ export const Staking: FC<StakingProps> = ({ isPageView }) => {
               Total in Staking
             </Box>
             <Box textStyle="text1">
-              <Box as="span" textStyle="textSansBold" fontSize="26px" mr="6px">
+              <Box
+                as="span"
+                textStyle="textSansBold"
+                fontSize={{ sm: '18px', md: '26px' }}
+                mr="6px"
+              >
                 {getReadableAmount(totalStakeSavR)}
               </Box>
               SAVR
@@ -159,10 +174,10 @@ export const Staking: FC<StakingProps> = ({ isPageView }) => {
       ) : null}
 
       <Grid
-        mt={isPageView ? '30px' : '40px'}
+        mt={isPageView ? '50px' : '40px'}
         gap={5}
         templateRows="repeat(2, 1fr)"
-        templateColumns="repeat(2, 1fr)"
+        templateColumns={{ lg: 'repeat(1, 1fr)', xl: 'repeat(2, 1fr)' }}
       >
         {!activeStakingPlans.length
           ? Array.from({ length: 4 }).map((_, index) => (
@@ -176,7 +191,7 @@ export const Staking: FC<StakingProps> = ({ isPageView }) => {
             ))
           : null}
         {activeStakingPlans.map((planData) => (
-          <GridItem colSpan={1} rowSpan={1} key={planData.planId}>
+          <GridItem colSpan={1} rowSpan={1} key={planData.planId} width="100%">
             <StakingPlan
               isSubscribed={planData.isSubscribed}
               isSubscriptionEnding={planData.isSubscriptionEnding}

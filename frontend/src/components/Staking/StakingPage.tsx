@@ -37,8 +37,14 @@ export const StakingPage = () => {
   );
 
   return (
-    <Container variant="dashboard" pt="60px">
-      <Link as={RouterLink} to="/" textStyle="button" alignSelf="flex-start" mb="40px">
+    <Container variant="dashboard" pt={{ sm: '30px', '2xl': '60px' }}>
+      <Link
+        as={RouterLink}
+        to="/"
+        textStyle="button"
+        alignSelf="flex-start"
+        mb={{ sm: '30px', '2xl': '40px' }}
+      >
         <ArrowBackIcon w="24px" h="24px" mr="10px" />
         Back
       </Link>
