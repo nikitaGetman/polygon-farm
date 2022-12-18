@@ -122,12 +122,6 @@ const textStyles = {
     lineHeight: '130%',
     fontFamily: 'Montserrat',
   },
-  textExtraBoldUpper: {
-    fontSize: ['26px'],
-    fontWeight: '700',
-    lineHeight: '130%',
-    textTransform: 'uppercase',
-  },
   textBold: {
     fontSize: { sm: '16px', '2xl': '18px' },
     fontWeight: '700',
