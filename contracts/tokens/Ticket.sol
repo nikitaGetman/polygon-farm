@@ -6,24 +6,37 @@ import "@openzeppelin/contracts/access/AccessControl.sol";
 import "@openzeppelin/contracts/security/Pausable.sol";
 import "@openzeppelin/contracts/token/ERC1155/extensions/ERC1155Burnable.sol";
 import "@openzeppelin/contracts/token/ERC1155/extensions/ERC1155Supply.sol";
+import "@openzeppelin/contracts/interfaces/IERC2981.sol";
+import "@openzeppelin/contracts/utils/Strings.sol";
+import "../extensions/ContextMixin.sol";
 
 contract Ticket is
     ERC1155,
+    ERC1155Burnable,
+    ERC1155Supply,
+    IERC2981,
     AccessControl,
     Pausable,
-    ERC1155Burnable,
-    ERC1155Supply
+    ContextMixin
 {
+    using Strings for uint256;
+    string public name;
+    string public symbol;
+    address private _recipient;
+
     bytes32 public constant URI_SETTER_ROLE = keccak256("URI_SETTER_ROLE");
     bytes32 public constant PAUSER_ROLE = keccak256("PAUSER_ROLE");
     bytes32 public constant MINTER_ROLE = keccak256("MINTER_ROLE");
 
     constructor() ERC1155("") {
-        // TODO: add uri
         _grantRole(DEFAULT_ADMIN_ROLE, msg.sender);
         _grantRole(URI_SETTER_ROLE, msg.sender);
         _grantRole(PAUSER_ROLE, msg.sender);
         _grantRole(MINTER_ROLE, msg.sender);
+
+        name = "iSaver Raffle Ticket";
+        symbol = "SAVRT";
+        _recipient = msg.sender;
     }
 
     function setURI(string memory newuri) public onlyRole(URI_SETTER_ROLE) {
@@ -67,13 +80,71 @@ contract Ticket is
         super._beforeTokenTransfer(operator, from, to, ids, amounts, data);
     }
 
-    // The following functions are overrides required by Solidity.
+    /** @dev URI override for OpenSea traits compatibility. */
+
+    function uri(uint256 tokenId) public view override returns (string memory) {
+        // Tokens minted above the supply cap will not have associated metadata.
+        require(
+            tokenId >= 1,
+            "ERC1155Metadata: URI query for nonexistent token"
+        );
+        return
+            string(
+                abi.encodePacked(this.uri(), Strings.toString(tokenId), ".json")
+            );
+    }
+
+    /** @dev EIP2981 royalties implementation. */
+
+    // Maintain flexibility to modify royalties recipient (could also add basis points).
+    function _setRoyalties(address newRecipient) internal {
+        require(
+            newRecipient != address(0),
+            "Royalties: new recipient is the zero address"
+        );
+        _recipient = newRecipient;
+    }
+
+    function setRoyalties(address newRecipient)
+        external
+        onlyRole(DEFAULT_ADMIN_ROLE)
+    {
+        _setRoyalties(newRecipient);
+    }
+
+    // EIP2981 standard royalties return.
+    function royaltyInfo(uint256 _tokenId, uint256 _salePrice)
+        external
+        view
+        override
+        returns (address receiver, uint256 royaltyAmount)
+    {
+        return (_recipient, (_salePrice * 1000) / 10000);
+    }
+
+    // EIP2981 standard Interface return. Adds to ERC1155 and ERC165 Interface returns.
     function supportsInterface(bytes4 interfaceId)
         public
         view
-        override(ERC1155, AccessControl)
+        virtual
+        override(ERC1155, IERC165, AccessControl)
         returns (bool)
     {
-        return super.supportsInterface(interfaceId);
+        return (interfaceId == type(IERC2981).interfaceId ||
+            super.supportsInterface(interfaceId));
+    }
+
+    /** @dev Meta-transactions override for OpenSea. */
+
+    function _msgSender() internal view override returns (address) {
+        return ContextMixin.msgSender();
+    }
+
+    /** @dev Contract-level metadata for OpenSea. */
+
+    // Update for collection-specific metadata.
+    function contractURI() public pure returns (string memory) {
+        return
+            "ipfs://bafkreigpykz4r3z37nw7bfqh7wvly4ann7woll3eg5256d2i5huc5wrrdq"; // Contract-level metadata for ParkPics
     }
 }
