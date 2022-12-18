@@ -15,27 +15,27 @@ export const Dashboard = () => {
 
   return (
     <Container variant="dashboard">
-      <Box mt="50px">
+      <Box mt={{ sm: '30px', '2xl': '50px' }}>
         <WalletPortfolio />
       </Box>
 
-      <Box mt="150px">
+      <Box mt={{ sm: '100px', xl: '150px' }}>
         <Staking />
       </Box>
 
-      <Box mt="150px" mb="30px">
+      <Box mt={{ sm: '100px', xl: '150px' }}>
         <ReferralInfo />
+
+        <Box mt="30px">
+          <SquadsList />
+        </Box>
       </Box>
 
-      <Box mb="210px">
-        <SquadsList />
-      </Box>
-
-      <Box mb="150px">
+      <Box mt={{ sm: '100px', xl: '150px' }} id="claim-ticket">
         <TicketClaim />
       </Box>
 
-      <Box mb="300px">
+      <Box mt={{ sm: '100px', xl: '150px' }} mb={{ sm: '100px', xl: '150px' }} id="raffles">
         <LotteryList />
       </Box>
     </Container>

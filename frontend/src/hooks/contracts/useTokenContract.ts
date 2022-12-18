@@ -54,6 +54,10 @@ export const useTokenContract = (token: ContractsEnum.SAV | ContractsEnum.SAVR) 
     return contract.allowance(owner, spender);
   };
 
+  const totalBurned = async () => {
+    return contract.totalBurn();
+  };
+
   const approve = async (spender: string, amount: BigNumber): Promise<string> => {
     const tx = await contract.approve(spender, amount);
     return waitForTransaction(tx);
@@ -67,5 +71,6 @@ export const useTokenContract = (token: ContractsEnum.SAV | ContractsEnum.SAVR) 
     decimals,
     allowance,
     approve,
+    totalBurned,
   };
 };

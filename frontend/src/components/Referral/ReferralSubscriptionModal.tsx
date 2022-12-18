@@ -1,4 +1,4 @@
-import React, { FC, useCallback, useEffect, useState } from 'react';
+import React, { FC, useCallback, useState } from 'react';
 import {
   Box,
   Button,
@@ -20,6 +20,11 @@ import { getReadableAmount } from '@/utils/number';
 import { getLocalDateString, getReadableDuration } from '@/utils/time';
 
 import { CenteredSpinner } from '../ui/CenteredSpinner/CenteredSpinner';
+
+const hasActivePrevSubscription = (subscriptions: number[], index: number) => {
+  if (index === 0) return true;
+  return subscriptions[index - 1] > Date.now() / 1000;
+};
 
 type ReferralSubscriptionModalProps = {
   isOpen: boolean;
@@ -83,7 +88,7 @@ export const ReferralSubscriptionModal: FC<ReferralSubscriptionModalProps> = ({
 
           <Box mt="6px">
             <SubscriptionLevel
-              title="All levels"
+              title="All Levels"
               price={fullSubscriptionCost}
               duration={subscriptionDuration}
               subscriptionTill={fullSubscriptionTill}
@@ -103,7 +108,11 @@ export const ReferralSubscriptionModal: FC<ReferralSubscriptionModalProps> = ({
                     price={levelSubscriptionCost}
                     duration={subscriptionDuration}
                     subscriptionTill={subTill}
-                    disabled={isFullLoading || isLevelLoading}
+                    disabled={
+                      isFullLoading ||
+                      isLevelLoading ||
+                      !hasActivePrevSubscription(levelsSubscriptionTill, index)
+                    }
                     isLoading={levelLoading === index + 1}
                     onSubscribe={() => handleSubscribeToLevel(index + 1)}
                   />

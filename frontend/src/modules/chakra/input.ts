@@ -43,7 +43,7 @@ const mailing = {
 
 const primary = {
   field: {
-    background: 'rgba(38, 71, 55, 0.5)',
+    background: 'rgb(38, 71, 55)',
     boxShadow: '0px 6px 11px rgba(0, 0, 0, 0.25)',
     borderRadius: 'md',
 
@@ -59,6 +59,15 @@ const secondary = {
     background: 'bgGreen.800',
     boxShadow: '0px 6px 11px rgba(0, 0, 0, 0.25)',
     borderRadius: 'md',
+  },
+};
+
+const transparent = {
+  field: {
+    background: 'transparent',
+    boxShadow: 'none',
+    border: 'none',
+    padding: '0',
   },
 };
 
@@ -79,7 +88,7 @@ const sizes = {
 };
 
 export const inputTheme = defineMultiStyleConfig({
-  variants: { main, primary, mailing, secondary },
+  variants: { main, primary, mailing, secondary, transparent },
   sizes,
   defaultProps: {
     variant: 'main',

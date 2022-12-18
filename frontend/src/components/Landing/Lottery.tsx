@@ -1,6 +1,8 @@
 import React from 'react';
-import { Box, Button, Flex, Text } from '@chakra-ui/react';
+import { Box, Flex, Text } from '@chakra-ui/react';
+
 import LotteryImg from './images/lottery_img.png';
+
 import './Landing.scss';
 
 export const Lottery = () => {

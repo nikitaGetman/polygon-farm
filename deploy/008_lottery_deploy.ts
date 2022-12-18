@@ -1,6 +1,6 @@
 import { HardhatRuntimeEnvironment } from "hardhat/types";
 import { DeployFunction } from "hardhat-deploy/types";
-import { Ticket, Token1, Token2 } from "typechain-types";
+import { Lottery, Ticket, Token1, Token2 } from "typechain-types";
 import {
   DAYS_STREAK_FOR_TICKET,
   KEY_HASH,
@@ -66,6 +66,12 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   const MinterRole = await ticketToken.MINTER_ROLE();
   tx = await ticketToken.grantRole(MinterRole, lottery.address);
   await tx.wait();
+
+  if (!network.live) {
+    const lotteryContract = await ethers.getContract<Lottery>("Lottery", admin);
+    tx = await lotteryContract.updateClaimPeriod(180);
+    await tx.wait();
+  }
 
   // IMPORTANT: Manually add lottery contract to coordinator
 };

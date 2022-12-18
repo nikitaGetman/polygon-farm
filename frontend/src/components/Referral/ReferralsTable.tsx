@@ -59,7 +59,7 @@ export const ReferralsTable: FC<ReferralsTableProps> = ({ referrals, userLevels 
   );
 
   return (
-    <>
+    <Box className="table-responsive-wrapper">
       <Table>
         <Thead>
           <Tr>
@@ -129,6 +129,6 @@ export const ReferralsTable: FC<ReferralsTableProps> = ({ referrals, userLevels 
           </Button>
         </Center>
       ) : null}
-    </>
+    </Box>
   );
 };

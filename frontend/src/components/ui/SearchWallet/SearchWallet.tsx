@@ -12,7 +12,7 @@ import {
 
 type SearchWalletProps = {
   variant?: string;
-  minWidth?: string;
+  minWidth?: any;
   buttonText: string;
   placeholder?: string;
   onChange: (search: string) => void;
@@ -20,7 +20,7 @@ type SearchWalletProps = {
 export const SearchWallet: FC<SearchWalletProps> = ({
   buttonText,
   onChange,
-  minWidth = '340px',
+  minWidth = { sm: '260px', lg: '340px' },
   variant = 'primary',
   placeholder = '0x...',
 }) => {
@@ -43,9 +43,17 @@ export const SearchWallet: FC<SearchWalletProps> = ({
   }, [search, onChange]);
 
   return (
-    <Box>
+    <Box position="relative" height="40px">
       {isOpen || search ? (
-        <InputGroup variant={variant} size="md" minWidth={minWidth}>
+        <InputGroup
+          variant={variant}
+          size="md"
+          minWidth={minWidth}
+          position="absolute"
+          right="0"
+          top="0"
+          bottom="0"
+        >
           <Input
             placeholder={placeholder}
             value={search}
@@ -67,8 +75,10 @@ export const SearchWallet: FC<SearchWalletProps> = ({
           </InputRightElement>
         </InputGroup>
       ) : (
-        <Button variant="link" onClick={handleOpenSearch} height="40px">
-          {buttonText}
+        <Button variant="link" onClick={handleOpenSearch} height="100%">
+          <Box as="span" display={{ sm: 'none', xl: 'unset' }}>
+            {buttonText}
+          </Box>
           <SearchIcon ml="12px" />
         </Button>
       )}

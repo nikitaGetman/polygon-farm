@@ -64,6 +64,11 @@ export const StakingModal: FC<StakingModalProps> = ({
   const { data: savBalance } = useSavBalance();
   const { data: savrBalance } = useSavRBalance();
 
+  const handleTokenChange = (token: TOKENS) => {
+    setToken(token);
+    setAmount('');
+  };
+
   const handleStake = useCallback(() => {
     if (amount && parseFloat(amount) >= MIN_STAKE_LIMIT) {
       onStake(token, parseFloat(amount));
@@ -97,13 +102,13 @@ export const StakingModal: FC<StakingModalProps> = ({
               </Flex>
             </MenuButton>
             <MenuList>
-              <MenuItem onClick={() => setToken(TOKENS.SAV)}>
+              <MenuItem onClick={() => handleTokenChange(TOKENS.SAV)}>
                 <Box mr="4px">
                   <SavIcon width="24px" />
                 </Box>
                 <span>Stake SAV</span>
               </MenuItem>
-              <MenuItem onClick={() => setToken(TOKENS.SAVR)}>
+              <MenuItem onClick={() => handleTokenChange(TOKENS.SAVR)}>
                 <Box mr="4px">
                   <SavrIcon width="24px" />
                 </Box>

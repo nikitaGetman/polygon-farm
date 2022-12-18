@@ -84,8 +84,10 @@ task("create-finished-lottery", "Create new round and finish it").setAction(
       ]);
       await setRandomTx.wait();
     }
-
-    const tx = await lottery.finishLotteryRound(newRoundId, []);
+    const tx = await lottery.finishLotteryRound(newRoundId, [
+      // [signers[0].address],
+      // [signers[1].address],
+    ]);
     await tx.wait();
 
     if (!network.live) {

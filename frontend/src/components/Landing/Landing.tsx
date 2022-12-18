@@ -1,13 +1,14 @@
 import React from 'react';
 import { Box } from '@chakra-ui/react';
-import { Main } from '@/components/Landing/Main';
+
 import { About } from '@/components/Landing/About';
+import { Banner } from '@/components/Landing/Banner';
 import { Benefits } from '@/components/Landing/Benefits';
+import { Lottery } from '@/components/Landing/Lottery';
+import { Main } from '@/components/Landing/Main';
 import { Numbers } from '@/components/Landing/Numbers';
 import { Plans } from '@/components/Landing/Plans';
-import { Banner } from '@/components/Landing/Banner';
-import { Lottery } from '@/components/Landing/Lottery';
-import { Footer } from '@/components/Footer/Footer';
+
 import './Landing.scss';
 
 export const Landing = () => {
@@ -26,7 +27,6 @@ export const Landing = () => {
       <Box className="main-container">
         <Lottery />
       </Box>
-      <Footer />
     </>
   );
 };

@@ -31,10 +31,15 @@ task("create-lottery", "Create lottery round (returns lottery id)")
       startTime:
         parseInt(taskArgs.startTime) ||
         Math.floor(Date.now() / 1000 + getRandom(30, 1800)),
-      duration: parseInt(taskArgs.duration) || getRandom(300, 1800),
-      initialPrize: parseInt(taskArgs.initialPrize) || getRandom(30, 5000),
-      tokensForOneTicket:
-        parseInt(taskArgs.tokensForOneTicket) || getRandom(0, 10),
+      duration: taskArgs.duration
+        ? parseInt(taskArgs.duration)
+        : getRandom(300, 1800),
+      initialPrize: taskArgs.initialPrize
+        ? parseInt(taskArgs.initialPrize)
+        : getRandom(30, 5000),
+      tokensForOneTicket: taskArgs.tokensForOneTicket
+        ? parseInt(taskArgs.tokensForOneTicket)
+        : getRandom(0, 10),
       maxTicketsFromOneMember:
         parseInt(taskArgs.maxTicketsFromOneMember) || getRandom(1, 10),
       winnersForLevel: getWinners(taskArgs.winnersForLevel),

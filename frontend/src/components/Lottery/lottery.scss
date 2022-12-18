@@ -1,3 +1,5 @@
+@import '~@/assets/styles/vars.scss';
+
 .lottery-description {
   &__table {
     &,
@@ -6,12 +8,19 @@
     th {
       border: 1px solid rgba(255, 255, 255, 0.5);
     }
+    th {
+      text-transform: uppercase;
+      font-weight: 700;
+    }
+    td {
+      font-weight: 500;
+    }
 
     td,
     th {
-      font-weight: 500;
-      text-align: left;
-      padding: 15px 20px;
+      font-size: 18px;
+      text-align: center;
+      padding: 13px 20px;
     }
   }
 }
@@ -61,6 +70,68 @@
     &--prize {
       width: 140px;
       text-align: right;
+    }
+  }
+}
+
+@media screen and (max-width: $xl2) {
+  .lottery-description {
+    &__table {
+      td,
+      th {
+        font-size: 16px;
+        padding: 13px 16px;
+      }
+    }
+  }
+
+  .lottery-summary {
+    &__table {
+      th {
+        padding: 15px 0;
+        font-size: 12px;
+      }
+      td {
+        padding: 10px 0;
+        font-size: 12px;
+        font-weight: 400;
+      }
+    }
+
+    &__cell {
+      &--level {
+        width: 30px;
+      }
+      &--tickets {
+        width: 70px;
+      }
+      &--prize {
+        width: 120px;
+      }
+    }
+  }
+}
+@media screen and (max-width: $xl) {
+  .lottery-description {
+    &__table {
+      td,
+      th {
+        font-size: 12px;
+        padding: 12px 2px;
+      }
+    }
+  }
+}
+@media screen and (max-width: $lg) {
+}
+@media screen and (max-width: $md) {
+  .lottery-description {
+    &__table {
+      td,
+      th {
+        font-size: 12px;
+        padding: 12px 4px;
+      }
     }
   }
 }

@@ -23,6 +23,7 @@ const header = defineStyle({
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'space-between',
+  padding: 0,
 });
 
 export const containerTheme = defineStyleConfig({

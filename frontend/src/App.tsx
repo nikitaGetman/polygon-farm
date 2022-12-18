@@ -15,7 +15,9 @@ import { WagmiConfig } from 'wagmi';
 
 import { Dashboard } from '@/components/Dashboard/Dashboard';
 import { ExchangePage } from '@/components/Exchange/ExchangePage';
+import { Footer } from '@/components/Footer/Footer';
 import { Header } from '@/components/Header/Header';
+import { Landing } from '@/components/Landing/Landing';
 import { Modals } from '@/components/Modals';
 import { StakingPage } from '@/components/Staking/StakingPage';
 import { AppStateProvider } from '@/contexts/AppContext';
@@ -28,15 +30,15 @@ import { SquadsPage } from './components/Squads/SquadsPage';
 import { REFERRER_SEARCH_PARAMS_KEY, useLocalReferrer } from './hooks/useLocalReferrer';
 
 import '@/assets/styles/index.scss';
-import { Landing } from '@/components/Landing/Landing';
 
+const LANDING_PATH = '/landing';
 const routes = [
+  { path: LANDING_PATH, name: 'Landing', element: <Landing />, nodeRef: createRef() },
   { path: '/', name: 'Dashboard', element: <Dashboard />, nodeRef: createRef() },
   { path: '/staking', name: 'Staking', element: <StakingPage />, nodeRef: createRef() },
   { path: '/team', name: 'Squads', element: <SquadsPage />, nodeRef: createRef() },
   { path: '/exchange', name: 'Exchange', element: <ExchangePage />, nodeRef: createRef() },
-  { path: '/landing', name: 'Landing', element: <Landing />, nodeRef: createRef() },
-  { path: '/lottery/:id', name: 'Lottery', element: <LotteryPage />, nodeRef: createRef() },
+  { path: '/raffle/:id', name: 'Raffle', element: <LotteryPage />, nodeRef: createRef() },
 ];
 
 const router = createBrowserRouter([
@@ -60,7 +62,7 @@ function Layout() {
   const currentOutlet = useOutlet();
   const { nodeRef } =
     routes.find((route) =>
-      // TODO: Hack for '/lottery/:id' route
+      // TODO: Hack for '/raffle/:id' route
       route.path.includes(location.pathname.split('/')[1])
     ) ?? {};
 
@@ -77,9 +79,11 @@ function Layout() {
     }
   }, [queryRef, localReferrer, setLocalReferrer]);
 
+  const isLanding = location.pathname === LANDING_PATH;
+
   return (
     <>
-      {/*<Header />*/}
+      <Header isLandingView={isLanding} />
       <SwitchTransition>
         <CSSTransition
           key={location.pathname}
@@ -91,7 +95,12 @@ function Layout() {
           in
           appear
         >
-          {(state) => <Box ref={nodeRef as any}>{currentOutlet}</Box>}
+          {(state) => (
+            <Box ref={nodeRef as any}>
+              {currentOutlet}
+              <Footer />
+            </Box>
+          )}
         </CSSTransition>
       </SwitchTransition>
     </>

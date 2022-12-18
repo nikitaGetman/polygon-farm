@@ -6,6 +6,7 @@ import {
   MenuItem,
   MenuList,
   Portal,
+  useBreakpoint,
   useClipboard,
 } from '@chakra-ui/react';
 
@@ -31,6 +32,7 @@ const menuItemStyle = {
   textAlign: 'right' as const,
   display: 'block',
   borderRadius: 'sm',
+  bgColor: 'transparent',
   _hover: focusStyle,
   _focus: focusStyle,
   _active: focusStyle,
@@ -51,10 +53,19 @@ export const WalletMenu: FC<Props> = ({ connector, disconnect, address }) => {
     setValue(address || '');
   }, [setValue, address]);
 
+  const bp = useBreakpoint({ ssr: false });
+  const isFullView = bp === '2xl' || bp === 'xl';
+
   return (
     <Menu placement="bottom-end">
-      <MenuButton as={Button} leftIcon={connectorIcon} rightIcon={<ChevronDownIcon />}>
-        {trimAddress(address)}
+      <MenuButton
+        as={Button}
+        leftIcon={isFullView ? connectorIcon : undefined}
+        rightIcon={isFullView ? <ChevronDownIcon /> : undefined}
+        size={{ sm: 'md', '2xl': 'lg' }}
+        padding={{ sm: '10px', xl: '20px' }}
+      >
+        {isFullView ? trimAddress(address) : connectorIcon}
       </MenuButton>
       <Portal>
         <MenuList bgColor="green.100" minWidth="150px" p="6px 8px" zIndex="60">

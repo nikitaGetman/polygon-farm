@@ -13,6 +13,7 @@ contract Lottery is ILottery, VRFConsumerBaseV2, AccessControl {
 
     Round[] public rounds;
     mapping(uint256 => mapping(address => uint256)) roundMembers;
+    mapping(uint256 => uint256) roundRestTickets;
     mapping(uint256 => mapping(address => uint256)) roundMembersHistory;
     mapping(address => uint256[]) claims;
     mapping(address => uint256) winnersRewards;
@@ -175,6 +176,7 @@ contract Lottery is ILottery, VRFConsumerBaseV2, AccessControl {
             round.initialPrize +
             round.totalTickets *
             round.tokensForOneTicket;
+        roundRestTickets[roundId] = round.totalTickets;
 
         _provide(roundId, pk);
     }
@@ -240,7 +242,7 @@ contract Lottery is ILottery, VRFConsumerBaseV2, AccessControl {
                 round.prizeForLevel[i];
 
             for (uint256 j = 0; j < round.winners[i].length; j++) {
-                if (round.totalTickets == 0) {
+                if (roundRestTickets[roundId] == 0) {
                     return;
                 }
 
@@ -248,8 +250,9 @@ contract Lottery is ILottery, VRFConsumerBaseV2, AccessControl {
                 address winner = round.winners[i][j];
 
                 if (round.winners[i][j] == address(0)) {
-                    // winner ticket is from 1 to round.totalTickets
-                    uint256 winnerTicket = (random % round.totalTickets) + 1;
+                    // winner ticket is from 1 to tickets.length
+                    uint256 winnerTicket = (random %
+                        roundRestTickets[roundId]) + 1;
 
                     for (uint256 k = 0; k < round.members.length; k++) {
                         address member = round.members[k];
@@ -257,7 +260,9 @@ contract Lottery is ILottery, VRFConsumerBaseV2, AccessControl {
 
                         if (winnerTicket <= memberTickets) {
                             winner = member;
-                            round.totalTickets -= roundMembers[roundId][member];
+                            roundRestTickets[roundId] -= roundMembers[roundId][
+                                member
+                            ];
                             roundMembers[roundId][member] = 0;
                             break;
                         }
@@ -285,6 +290,10 @@ contract Lottery is ILottery, VRFConsumerBaseV2, AccessControl {
 
     function claimDay() public {
         require(!isClaimedToday(_msgSender()), "Already claimed today");
+        require(
+            !isMintAvailable(_msgSender()),
+            "Mint ticket before next claim"
+        );
 
         uint256 streak = getClaimStreak(_msgSender());
 
@@ -308,10 +317,9 @@ contract Lottery is ILottery, VRFConsumerBaseV2, AccessControl {
         require(isMintAvailable(_msgSender()), "Ticket mint is not available");
 
         _mintTicket(_msgSender(), 1);
-        // Cut fractionaal part
-        lastTicketMint[_msgSender()] =
-            (block.timestamp / CLAIM_PERIOD + 1) *
-            CLAIM_PERIOD;
+
+        lastTicketMint[_msgSender()] = getLastClaimTime(_msgSender());
+        claims[_msgSender()] = new uint256[](DAYS_STREAK_FOR_TICKET);
     }
 
     function _mintTicket(address user, uint256 amount) internal {
@@ -415,7 +423,7 @@ contract Lottery is ILottery, VRFConsumerBaseV2, AccessControl {
             }
         }
 
-        return 0;
+        return lastTicketMint[user];
     }
 
     function isMintAvailable(address user) public view returns (bool) {
@@ -444,15 +452,9 @@ contract Lottery is ILottery, VRFConsumerBaseV2, AccessControl {
         }
 
         // reset streak if current time more than claim period from the last claim
-        if (block.timestamp / CLAIM_PERIOD > lastClaim + 1) {
-            return 0;
-        }
-
-        // reset streak if ticket minted today
-        uint256 lastMint = lastTicketMint[user] / CLAIM_PERIOD;
         if (
-            lastMint >= block.timestamp / CLAIM_PERIOD &&
-            streak == DAYS_STREAK_FOR_TICKET
+            streak != DAYS_STREAK_FOR_TICKET &&
+            block.timestamp / CLAIM_PERIOD > lastClaim + 1
         ) {
             return 0;
         }
@@ -555,7 +557,7 @@ contract Lottery is ILottery, VRFConsumerBaseV2, AccessControl {
         for (uint256 i = 0; i < pk.length; i++) {
             for (uint256 j = 0; j < pk[i].length; j++) {
                 round.winners[i][j] = pk[i][j];
-                round.totalTickets -= roundMembers[roundId][pk[i][j]];
+                roundRestTickets[roundId] -= roundMembers[roundId][pk[i][j]];
                 roundMembers[roundId][pk[i][j]] = 0;
             }
         }

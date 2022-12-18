@@ -1,6 +1,15 @@
 import React, { FC, useEffect, useMemo, useState } from 'react';
 import { ChevronLeftIcon, ChevronRightIcon } from '@chakra-ui/icons';
-import { Box, Divider, Flex, Heading, IconButton, Text } from '@chakra-ui/react';
+import {
+  Box,
+  Button,
+  Divider,
+  Flex,
+  Heading,
+  IconButton,
+  Text,
+  useDisclosure,
+} from '@chakra-ui/react';
 import { BigNumberish } from 'ethers';
 
 import { SearchWallet } from '@/components/ui/SearchWallet/SearchWallet';
@@ -18,6 +27,7 @@ type LotterySummaryProps = {
 export const LotterySummary: FC<LotterySummaryProps> = ({ userPrize, winners }) => {
   const [search, setSearch] = useState<string>('');
   const [page, setPage] = useState<number>(0);
+  const { isOpen, onToggle, onOpen } = useDisclosure();
 
   const sortedWinners = useMemo(() => winners.sort((a, b) => a.level - b.level), [winners]);
 
@@ -31,7 +41,10 @@ export const LotterySummary: FC<LotterySummaryProps> = ({ userPrize, winners }) 
 
   useEffect(() => {
     setPage(0);
-  }, [search]);
+    if (search) {
+      onOpen();
+    }
+  }, [search, onOpen]);
 
   const fromItem = useMemo(
     () => Math.min(page * PAGE_LIMIT + 1, filteredWinners.length),
@@ -55,11 +68,14 @@ export const LotterySummary: FC<LotterySummaryProps> = ({ userPrize, winners }) 
       bgColor="bgGreen.50"
       boxShadow="0px 6px 11px rgba(0, 0, 0, 0.25)"
       borderRadius="md"
-      padding="30px 40px 40px"
+      padding={{ sm: '20px 10px 30px', '2xl': '30px 40px 40px' }}
+      px={{ md: '20px', lg: '10px', xl: '20px' }}
     >
-      <Box textStyle="textSemiBold" textTransform="uppercase" mb="32px">
-        <Flex justifyContent="space-between" alignItems="center" mb="12px">
-          <Heading fontSize="41px">Summary</Heading>
+      <Box textStyle="textSemiBold" textTransform="uppercase">
+        <Flex justifyContent="space-between" alignItems="center" mb={{ sm: '10px', '2xl': '20px' }}>
+          <Text textStyle="textBold" fontSize={{ sm: '26px', '2xl': '38px' }}>
+            Summary
+          </Text>
 
           <SearchWallet
             buttonText="Search wallet"
@@ -68,80 +84,99 @@ export const LotterySummary: FC<LotterySummaryProps> = ({ userPrize, winners }) 
             variant="secondary"
           />
         </Flex>
-        <Flex justifyContent="space-between" alignItems="center" fontSize="16px">
-          <Text>Text Text Text</Text>
-          <Text color="blue">{bigNumberToString(userPrize || 0)} SAVR</Text>
+
+        <Text mb={{ sm: '25px', '2xl': '10px' }} fontSize={{ sm: '12px', '2xl': '16px' }}>
+          Congratulations to the raffle winners
+        </Text>
+
+        <Flex
+          justifyContent="space-between"
+          alignItems="center"
+          fontSize={{ sm: '12px', '2xl': '16px' }}
+        >
+          <Button p={0} variant="link" color="red" onClick={onToggle} fontSize="inherit">
+            See all winners
+          </Button>
+          <Text color="savr">{bigNumberToString(userPrize || 0)} SAVR</Text>
         </Flex>
       </Box>
 
-      <Divider borderColor="white" opacity={0.5} />
+      {isOpen ? (
+        <>
+          <Divider mt={{ sm: '20px', '2xl': '32px' }} borderColor="white" opacity={0.5} />
 
-      <Box mb="40px">
-        <table className="lottery-summary__table">
-          <thead>
-            <tr>
-              <th className="lottery-summary__cell lottery-summary__cell--heading lottery-summary__cell--level">
-                Level
-              </th>
-              <th className="lottery-summary__cell lottery-summary__cell--heading lottery-summary__cell--wallet">
-                Wallet
-              </th>
-              <th className="lottery-summary__cell lottery-summary__cell--heading lottery-summary__cell--tickets">
-                Entered with
-              </th>
-              <th className="lottery-summary__cell lottery-summary__cell--heading lottery-summary__cell--prize">
-                Won
-                <br />
-                SAVR
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            {paginatedWinners.map((winner, index) => (
-              <tr key={index}>
-                <td className="lottery-summary__cell lottery-summary__cell--level">
-                  {winner.level + 1}
-                </td>
-                <td className="lottery-summary__cell lottery-summary__cell--wallet">
-                  {trimAddress(winner.address, 8)}
-                </td>
-                <td className="lottery-summary__cell lottery-summary__cell--tickets">
-                  {winner.tickets}
-                </td>
-                <td className="lottery-summary__cell lottery-summary__cell--prize">
-                  {getReadableAmount(winner.prize)}
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </Box>
+          <Box mb={{ sm: '20px', '2xl': '40px' }}>
+            <table className="lottery-summary__table">
+              <thead>
+                <tr>
+                  <th className="lottery-summary__cell lottery-summary__cell--heading lottery-summary__cell--level">
+                    Lvl
+                  </th>
+                  <th className="lottery-summary__cell lottery-summary__cell--heading lottery-summary__cell--wallet">
+                    Wallet
+                  </th>
+                  <th className="lottery-summary__cell lottery-summary__cell--heading lottery-summary__cell--tickets">
+                    Entered with
+                  </th>
+                  <th className="lottery-summary__cell lottery-summary__cell--heading lottery-summary__cell--prize">
+                    Won
+                    <br />
+                    SAVR
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                {paginatedWinners.map((winner, index) => (
+                  <tr key={index}>
+                    <td className="lottery-summary__cell lottery-summary__cell--level">
+                      {winner.level + 1}
+                    </td>
+                    <td className="lottery-summary__cell lottery-summary__cell--wallet">
+                      {trimAddress(winner.address, 8)}
+                    </td>
+                    <td className="lottery-summary__cell lottery-summary__cell--tickets">
+                      {winner.tickets}
+                    </td>
+                    <td className="lottery-summary__cell lottery-summary__cell--prize">
+                      {getReadableAmount(winner.prize)}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </Box>
 
-      <Flex justifyContent="space-between" alignItems="center">
-        <Text textStyle="text1">
-          {fromItem}-{toItem} of {filteredWinners.length}
-        </Text>
+          <Flex justifyContent="space-between" alignItems="center">
+            <Text
+              textStyle="text1"
+              fontSize={{ sm: '12px', '2xl': '18px' }}
+              fontWeight={{ sm: '400', '2xl': '500' }}
+            >
+              {fromItem}-{toItem} of {filteredWinners.length}
+            </Text>
 
-        <Box>
-          <IconButton
-            mr="30px"
-            aria-label="prev page"
-            disabled={!hasPrevPage}
-            size="md"
-            variant="transparent"
-            icon={<ChevronLeftIcon boxSize="2em" />}
-            onClick={() => setPage(page - 1)}
-          />
-          <IconButton
-            aria-label="next page"
-            disabled={!hasNextPage}
-            size="md"
-            variant="transparent"
-            icon={<ChevronRightIcon boxSize="2em" />}
-            onClick={() => setPage(page + 1)}
-          />
-        </Box>
-      </Flex>
+            <Box>
+              <IconButton
+                mr="30px"
+                aria-label="prev page"
+                disabled={!hasPrevPage}
+                size="md"
+                variant="transparent"
+                icon={<ChevronLeftIcon boxSize="2em" />}
+                onClick={() => setPage(page - 1)}
+              />
+              <IconButton
+                aria-label="next page"
+                disabled={!hasNextPage}
+                size="md"
+                variant="transparent"
+                icon={<ChevronRightIcon boxSize="2em" />}
+                onClick={() => setPage(page + 1)}
+              />
+            </Box>
+          </Flex>
+        </>
+      ) : null}
     </Box>
   );
 };

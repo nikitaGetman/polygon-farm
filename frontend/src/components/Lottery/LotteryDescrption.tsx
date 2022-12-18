@@ -25,39 +25,59 @@ export const LotteryDescription: FC<LotteryDescriptionProps> = ({
 
   return (
     <Box bgColor="bgGreen.50" boxShadow="0px 6px 11px rgba(0, 0, 0, 0.25)" borderRadius="md">
-      <Box padding="70px 56px 56px" bgImage={prizeBackground} bgPosition="top left" bgSize="cover">
+      <Box
+        padding={{
+          sm: '48px 10px 40px',
+          md: '60px 10px 45px',
+          lg: '42px 10px 34px',
+          xl: '65px 10px 45px',
+          '2xl': '70px 56px 56px',
+        }}
+        bgImage={prizeBackground}
+        bgPosition="top left"
+        bgSize="cover"
+      >
         <Flex flexDirection="column">
           <Text
-            mb="32px"
+            mb={{ sm: '14px', md: '20px', lg: '14px', xl: '20px', '2xl': '32px' }}
             textStyle="heading1"
-            fontSize="72px"
+            fontSize={{ sm: '29px', md: '49px', lg: '29px', xl: '49px', '2xl': '72px' }}
+            lineHeight={{ sm: '22px', md: '42px', lg: '22px', xl: '42px', '2xl': '65px' }}
             textAlign="center"
             fontWeight="900"
             color="white"
             textShadow="0px 4px 10px rgba(0, 0, 0, 0.71)"
             textTransform="uppercase"
-            lineHeight="65px"
           >
             Prize pot
           </Text>
 
           <Text
-            fontSize="80px"
             textAlign="center"
             fontWeight="900"
             color="blue"
             textShadow="0px 4px 10px rgba(0, 0, 0, 0.71)"
-            lineHeight="65px"
+            fontSize={{ sm: '33px', md: '55px', lg: '33px', xl: '55px', '2xl': '80px' }}
+            lineHeight={{ sm: '22px', md: '42px', lg: '22px', xl: '42px', '2xl': '65px' }}
           >
             {bigNumberToString(prize, { precision: 0 })}
-            <Text as="span" ml="15px" fontSize="46px">
+            <Text
+              as="span"
+              ml="15px"
+              fontSize={{ sm: '25px', md: '37px', lg: '25px', xl: '37px', '2xl': '46px' }}
+            >
               SAVR
             </Text>
           </Text>
         </Flex>
       </Box>
-      <Flex flexDirection="column" padding="40px">
-        <Text mb="26px" textStyle="textMedium" textTransform="uppercase">
+      <Flex flexDirection="column" padding={{ sm: '30px 20px', '2xl': '40px 20px' }}>
+        <Text
+          mb={{ sm: '18px', '2xl': '26px' }}
+          fontSize={{ sm: '18px', '2xl': '26px' }}
+          textStyle="textMedium"
+          textTransform="uppercase"
+        >
           <>Total winners: {totalWinners}</>
         </Text>
 

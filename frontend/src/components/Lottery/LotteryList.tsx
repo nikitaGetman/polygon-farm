@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   Box,
@@ -9,9 +9,7 @@ import {
   Flex,
   Grid,
   GridItem,
-  Heading,
   Skeleton,
-  Spacer,
   Text,
 } from '@chakra-ui/react';
 import { useAccount } from 'wagmi';
@@ -35,13 +33,6 @@ export const LotteryList = () => {
   const { upcomingRounds, liveRounds, finishedRounds, activeRoundsRequest, finishedRoundsRequest } =
     useLotteryRounds();
 
-  const lotteries =
-    stateFilter === LotteryStatusEnum.current
-      ? liveRounds
-      : stateFilter === LotteryStatusEnum.upcoming
-      ? upcomingRounds
-      : finishedRounds;
-
   const updateLotteriesState = useCallback(() => {
     if ([LotteryStatusEnum.upcoming, LotteryStatusEnum.current].includes(stateFilter)) {
       activeRoundsRequest.refetch();
@@ -55,82 +46,105 @@ export const LotteryList = () => {
       ? finishedRoundsRequest.isLoading
       : activeRoundsRequest.isLoading;
 
-  useEffect(() => {
-    if (!liveRounds.length && stateFilter === LotteryStatusEnum.current) {
-      setStateFilter(LotteryStatusEnum.upcoming);
+  const loadedStateFilter = useMemo(() => {
+    if (stateFilter === LotteryStatusEnum.current && liveRounds.length > 0) return stateFilter;
+    if (stateFilter === LotteryStatusEnum.upcoming && upcomingRounds.length > 0) return stateFilter;
+    if (stateFilter === LotteryStatusEnum.past) {
+      return stateFilter;
     }
-  }, [liveRounds, stateFilter, setStateFilter]);
+
+    return (
+      (liveRounds.length > 0 && LotteryStatusEnum.current) ||
+      (upcomingRounds.length > 0 && LotteryStatusEnum.upcoming) ||
+      LotteryStatusEnum.past
+    );
+  }, [stateFilter, liveRounds, upcomingRounds]);
+
+  const lotteries =
+    loadedStateFilter === LotteryStatusEnum.current
+      ? liveRounds
+      : loadedStateFilter === LotteryStatusEnum.upcoming
+      ? upcomingRounds
+      : finishedRounds;
 
   return (
     <Container variant="dashboard">
-      <Flex alignItems="center" gap="2">
-        <Heading textStyle="h1">Win big prizes</Heading>
-        <Spacer />
-        <Box>{!isConnected ? <ConnectWalletButton /> : null}</Box>
-      </Flex>
-      <Box maxWidth="505px" mt={5}>
-        <Text textStyle="text1">
-          Join iSaver Raffles gives you a chance to win big prizes! It's easy if you have a ticket.
-        </Text>
-      </Box>
+      <Flex direction={{ sm: 'column', xl: 'row' }} justifyContent="space-between" gap={5}>
+        <Box>
+          <Text textStyle="sectionHeading" mb="20px">
+            Win big prizes
+          </Text>
 
-      <Flex justifyContent="space-between" my="30px" alignItems="flex-end">
-        <ButtonGroup isAttached>
+          <Text textStyle="text1">
+            Join iSaver Raffles gives you a chance to win big prizes!
+            <br />
+            It's easy if you have a Ticket.
+          </Text>
+        </Box>
+
+        <Box width={{ sm: '100%', lg: '50%', xl: 'unset' }}>
+          {!isConnected ? <ConnectWalletButton /> : null}
+        </Box>
+      </Flex>
+
+      <Flex
+        mt="50px"
+        mb="30px"
+        direction={{ sm: 'column-reverse', xl: 'row' }}
+        justifyContent="space-between"
+        alignItems={{ sm: 'flex-start', xl: 'flex-end' }}
+      >
+        <ButtonGroup isAttached size={{ sm: 'md', md: 'lg' }}>
           <Button
             borderRadius="sm"
             disabled={!liveRounds.length}
-            variant={stateFilter === LotteryStatusEnum.current ? 'active' : 'inactive'}
+            variant={loadedStateFilter === LotteryStatusEnum.current ? 'active' : 'inactive'}
             onClick={() => setStateFilter(LotteryStatusEnum.current)}
           >
             Live
           </Button>
           <Button
             borderRadius="sm"
-            variant={stateFilter === LotteryStatusEnum.upcoming ? 'active' : 'inactive'}
+            disabled={!upcomingRounds.length}
+            variant={loadedStateFilter === LotteryStatusEnum.upcoming ? 'active' : 'inactive'}
             onClick={() => setStateFilter(LotteryStatusEnum.upcoming)}
           >
             Upcoming
           </Button>
           <Button
             borderRadius="sm"
-            variant={stateFilter === LotteryStatusEnum.past ? 'active' : 'inactive'}
+            variant={loadedStateFilter === LotteryStatusEnum.past ? 'active' : 'inactive'}
             onClick={() => setStateFilter(LotteryStatusEnum.past)}
           >
             Past
           </Button>
         </ButtonGroup>
 
-        <Flex>
-          <StatBlock width="260px">
-            <Box textStyle="text1" mb="10px">
-              Your tickets
-            </Box>
-            <Box textStyle="text1">
-              <Box as="span" textStyle="textSansBold" fontSize="26px" mr="6px">
-                {ticketBalance || '0'}
-              </Box>
-            </Box>
-          </StatBlock>
-          <StatBlock width="260px">
-            <Box textStyle="text1" mb="10px">
-              Total Raffles Reward
-            </Box>
-            <Box textStyle="text1">
-              <Box as="span" textStyle="textSansBold" fontSize="26px" mr="6px">
-                {getReadableAmount(userTotalPrize || 0)}
-              </Box>
-              SAVR
-            </Box>
-          </StatBlock>
+        <Flex mb={{ sm: '50px', xl: 'unset' }}>
+          <StatBlock
+            width={{ sm: '50%', lg: '260px' }}
+            title="Your Tickets"
+            value={ticketBalance || '0'}
+          />
+
+          <StatBlock
+            width={{ sm: '50%', md: '260px' }}
+            title="Total Raffles Reward"
+            value={getReadableAmount(userTotalPrize || 0)}
+            currency="SAVR"
+          />
         </Flex>
       </Flex>
 
-      <Grid templateColumns="repeat(3, 1fr)" gap="20px">
+      <Grid
+        templateColumns={{ sm: 'repeat(1, 1fr)', lg: 'repeat(2, 1fr)', xl: 'repeat(3, 1fr)' }}
+        gap={{ base: '20px', lg: '10px' }}
+      >
         {isLoading
           ? Array.from({ length: 3 }).map((_, index) => (
               <GridItem w="100%" key={index}>
                 <Skeleton
-                  height="287px"
+                  height={{ sm: '240px', '2xl': '287px' }}
                   borderRadius="md"
                   startColor="gray.200"
                   endColor="bgGreen.200"
@@ -145,7 +159,7 @@ export const LotteryList = () => {
               title={getLotteryTitle(id + 1)}
               status={status}
               timestamp={getNextLotteryTimestamp({ startTime, duration, status }) * 1000}
-              onDetails={() => navigate(`/lottery/${id + 1}`)}
+              onDetails={() => navigate(`/raffle/${id + 1}`)}
               onExpire={updateLotteriesState}
             />
           </GridItem>
@@ -155,12 +169,12 @@ export const LotteryList = () => {
       {!isLoading && !lotteries?.length ? (
         <Center mt="60px">
           <Text textStyle="textMedium" opacity={0.3}>
-            No raffle rounds yet
+            No Raffle rounds yet
           </Text>
         </Center>
       ) : null}
 
-      {stateFilter === LotteryStatusEnum.past && finishedRoundsRequest.hasNextPage ? (
+      {loadedStateFilter === LotteryStatusEnum.past && finishedRoundsRequest.hasNextPage ? (
         <Center mt="10px">
           <Button variant="link" onClick={() => finishedRoundsRequest.fetchNextPage()}>
             Load more

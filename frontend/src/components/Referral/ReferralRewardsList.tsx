@@ -22,15 +22,21 @@ export const ReferralRewardsList = () => {
 
   return (
     <>
-      <Flex justifyContent="space-between" alignItems="center" mb={5}>
-        <Text textStyle="h3" textTransform="uppercase" id="ref-rewards-list">
+      <Flex justifyContent="space-between" alignItems="center" mb={{ sm: '4px', xl: '18px' }}>
+        <Text
+          textStyle="h3"
+          id="ref-rewards-list"
+          textTransform="uppercase"
+          fontWeight={{ sm: '600', xl: '700' }}
+          fontSize={{ sm: '18px', xl: '26px' }}
+        >
           Your referral rewards
         </Text>
 
         <Flex alignItems="center">
-          <Box mr="10px">
-            <SearchWallet buttonText="Search wallet" onChange={setSearch} />
-          </Box>
+          {/* <Box mr="10px"> */}
+          <SearchWallet buttonText="Search wallet" onChange={setSearch} />
+          {/* </Box> */}
           <Button variant="link" display="none">
             Export
             <DownloadIcon ml="12px" />

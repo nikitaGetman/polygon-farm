@@ -2,30 +2,28 @@ import React, { FC, useMemo, useState } from 'react';
 import {
   Box,
   Button,
-  Center,
   Flex,
-  Heading,
-  Spacer,
+  Grid,
+  GridItem,
   Spinner,
   Text,
+  useBreakpoint,
   useDisclosure,
 } from '@chakra-ui/react';
 import { useAccount } from 'wagmi';
 
 import { ReactComponent as CheckIcon } from '@/assets/images/icons/check_ticket.svg';
-import { ReactComponent as TicketFirst } from '@/assets/images/ticket.svg';
-import { ReactComponent as TicketLast } from '@/assets/images/ticket-last.svg';
-import { ReactComponent as TicketMiddle } from '@/assets/images/ticket-middle.svg';
-import { ReactComponent as TicketDouble } from '@/assets/images/ticket-two-circles.svg';
 import { ConnectWalletButton } from '@/components/ui/ConnectWalletButton/ConnectWalletButton';
 import { useCountdown } from '@/hooks/useCountdown';
 import { useLottery } from '@/hooks/useLottery';
 import { bigNumberToString } from '@/utils/number';
 
 import { BuyLotteryTicketsModal } from '../Lottery/BuyLotteryTicketsModal';
-import { CenteredSpinner } from '../ui/CenteredSpinner/CenteredSpinner';
 
-import './TicketClaim.scss';
+import { TicketFirst } from './TicketFirst';
+import { TicketLast } from './TicketLast';
+import { TicketMiddle } from './TicketMiddle';
+import { TicketMint } from './TicketMint';
 
 type TicketData = {
   isClaimed: boolean;
@@ -69,18 +67,14 @@ export const TicketClaim = () => {
       const isClaimAvailable = Boolean(!isClaimedToday.data && claimStreak.data === index);
 
       let timestamp = 0;
-
-      if (!isClaimed && !isClaimAvailable && claimPeriod.data) {
-        const streak = claimStreak.data || 0;
+      const streak = claimStreak.data || 0;
+      if (!isClaimed && claimPeriod.data && (isClaimAvailable || index === streak)) {
         const lastClaimTime =
           (!streak && !isClaimedToday.data) || !lastClaim.data
             ? Math.floor(currentTime / claimPeriod.data) * claimPeriod.data
             : lastClaim.data;
 
-        const timeOffset =
-          streak || isClaimedToday.data
-            ? claimPeriod.data * (index - streak + 1)
-            : claimPeriod.data * index;
+        const timeOffset = streak > 0 && isClaimAvailable ? claimPeriod.data * 2 : claimPeriod.data;
         timestamp = (lastClaimTime + timeOffset) * 1000;
       }
 
@@ -109,75 +103,112 @@ export const TicketClaim = () => {
 
   return (
     <Box>
-      <Flex alignItems="center" gap="2">
-        <Heading textStyle="h1">Play Everyday</Heading>
-        <Spacer />
-        <Flex alignItems="center">
-          <Text textStyle="textBaldPtSans" mr="7">
-            Or you can buy Raffle Tickets
-          </Text>
-          <Text textStyle="textBaldPtSans" mr="7">
-            1 Ticket / {bigNumberToString(ticketPrice, { precision: 0 })} SAV
-          </Text>
-          {!isConnected ? <ConnectWalletButton /> : <Button onClick={onOpen}>Buy tickets</Button>}
-        </Flex>
-      </Flex>
-      <Box maxWidth="530px" mt={5}>
-        <Text textStyle="text1">
-          Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has
-          been the industry's standard dummy ...
+      <Flex
+        direction={{ sm: 'column', xl: 'row' }}
+        justifyContent="space-between"
+        gap={5}
+        flexWrap="wrap"
+      >
+        <Text textStyle="sectionHeading" width={{ sm: '100%', xl: '35%' }}>
+          Play Everyday
         </Text>
-      </Box>
-      <Flex w="100%" p="10" pb="8" mt="12" justifyContent="space-between" className="box-gradient">
-        <Flex key={fetchIndex}>
-          {ticketData.map(({ isClaimed, isClaimAvailable, timestamp }, index) => (
-            <Ticket
-              key={index}
-              index={index}
-              isClaimed={isClaimed}
-              isAvailable={isClaimAvailable}
-              timestamp={timestamp}
-              onClaim={claimDay.mutateAsync}
-              onExpire={refetchData}
-            />
-          ))}
-        </Flex>
-        {/* Mint ticket */}
-        <Flex>
-          <Box
-            color="bgGreen.400"
-            filter="drop-shadow(0px 6px 11px rgba(0, 0, 0, 0.25))"
-            position="relative"
-            onClick={isMintAvailable.data && !isLoading ? handleMint : undefined}
-          >
-            <div
-              tabIndex={0}
-              className={[
-                'mint-ticket',
-                `mint-ticket--${isMintAvailable.data ? 'enabled' : 'disabled'}`,
-              ].join(' ')}
-            >
-              <TicketDouble />
 
+        <Flex
+          order={{ sm: 3, xl: 2 }}
+          gap={{ sm: 1, xl: 5 }}
+          alignSelf={{ sm: 'stretch', xl: 'flex-start' }}
+          alignItems={{ sm: 'flex-start', xl: 'center' }}
+          direction={{ sm: 'column', xl: 'row' }}
+          whiteSpace="nowrap"
+        >
+          <Text textStyle="textBaldPtSans">Or you can buy Raffle Tickets</Text>
+
+          <Text textStyle="textBaldPtSans" mb={{ sm: '16px', xl: '0' }}>
+            {bigNumberToString(ticketPrice, { precision: 0 })} SAV / 1 Ticket
+          </Text>
+
+          {!isConnected ? (
+            <ConnectWalletButton />
+          ) : (
+            <Button onClick={onOpen} width={{ sm: '100%', lg: '50%', xl: 'unset' }}>
+              Buy Tickets
+            </Button>
+          )}
+        </Flex>
+
+        <Text
+          order={{ sm: 2, xl: 3 }}
+          textStyle="text1"
+          flexGrow="0"
+          flexShrink="0"
+          flexBasis={{ sm: '100%', xl: '60%', '2xl': '50%' }}
+        >
+          Claim puzzle every day to get a free ticket to iSaver Raffles.
+          <br /> Just five days and you can mint a Ticket. Also, everyone can buy any number of
+          Tickets.
+        </Text>
+      </Flex>
+
+      <Box
+        m={{ sm: '50px 0 0', lg: '50px -15px 0', xl: '50px 0 0' }}
+        padding={{ sm: '24px 0', lg: '30px 15px 24px', '2xl': '40px 40px 48px 32px' }}
+        background="rgba(38, 71, 55, 0.5)"
+        boxShadow="0 6px 11px rgba(0, 0, 0, 0.25)"
+        borderRadius="md"
+      >
+        <Grid
+          key={fetchIndex}
+          templateRows={{
+            sm: '102px 112px 112px 112px 140px 160px',
+            lg: 'repeat(2, 143px)',
+            xl: '1fr',
+          }}
+          templateColumns={{
+            sm: '1fr',
+            lg: 'repeat(3, 193px)',
+            xl: '144px 144px 144px 144px 174px 180px',
+            '2xl': '193px 193px 193px 193px 216px 240px',
+          }}
+        >
+          {ticketData.map(({ isClaimed, isClaimAvailable, timestamp }, index) => (
+            <GridItem key={index}>
+              <Ticket
+                index={index}
+                isClaimed={isClaimed}
+                isAvailable={isClaimAvailable}
+                timestamp={timestamp}
+                onClaim={claimDay.mutateAsync}
+                onExpire={refetchData}
+              />
+            </GridItem>
+          ))}
+          {/* Mint ticket */}
+          <GridItem textAlign={{ sm: 'center', lg: 'unset' }}>
+            <TicketMint
+              isActive={Boolean(isMintAvailable.data)}
+              onClick={isMintAvailable.data && !isLoading ? handleMint : undefined}
+            >
               {isLoading ? (
-                <CenteredSpinner background="transparent" color="white" />
+                <Spinner color="white" />
               ) : (
                 <Text
-                  textStyle="textExtraBoldUpper"
-                  color="whiteAlpha.500"
+                  textStyle="textBold"
+                  color={Boolean(isMintAvailable.data) ? 'white' : 'whiteAlpha.500'}
+                  fontSize={{ sm: '16px', '2xl': '26px' }}
+                  fontWeight={{ sm: '600', '2xl': '700' }}
                   textAlign="center"
-                  position="absolute"
-                  left="50%"
-                  top="46%"
-                  transform="translate(-50%, -50%)"
+                  whiteSpace="nowrap"
+                  textTransform="uppercase"
                 >
-                  Mint my <br /> ticket
+                  Mint my
+                  <br />
+                  Ticket
                 </Text>
               )}
-            </div>
-          </Box>
-        </Flex>
-      </Flex>
+            </TicketMint>
+          </GridItem>
+        </Grid>
+      </Box>
 
       {isOpen ? (
         <BuyLotteryTicketsModal
@@ -209,18 +240,25 @@ const Ticket: FC<TicketProps> = ({
   const { isConnected } = useAccount();
   const { stamps, stampStrings } = useCountdown(timestamp, onExpire);
   const [isLoading, setIsLoading] = useState(false);
+  const bp = useBreakpoint({ ssr: false });
 
   const hoursString = (stamps.days * 24 + stamps.hours).toString().padStart(2, '0');
 
   const isFirst = index === 0;
   const isLast = index === 4;
-  const isMiddle = !isFirst && !isLast;
 
-  const ticket = useMemo(() => {
-    if (isFirst) return <TicketFirst />;
-    if (isLast) return <TicketLast />;
-    return <TicketMiddle />;
-  }, [isFirst, isLast]);
+  const showTimer = Boolean(isConnected && timestamp);
+  const isSmIcon = ['sm', 'md', 'xl'].includes(bp);
+
+  const TicketIcon = useMemo(() => {
+    if (bp === 'lg') {
+      if (index === 2) return TicketLast;
+      if (index === 3) return TicketFirst;
+    }
+    if (isFirst) return TicketFirst;
+    if (isLast) return TicketLast;
+    return TicketMiddle;
+  }, [isFirst, isLast, bp, index]);
 
   const handleClaim = () => {
     setIsLoading(true);
@@ -230,66 +268,79 @@ const Ticket: FC<TicketProps> = ({
   };
 
   return (
-    <>
-      <Box
-        color={isClaimed || isLoading ? 'green.400' : 'bgGreen.400'}
-        filter="drop-shadow(0px 6px 11px rgba(0, 0, 0, 0.25))"
-        position="relative"
-        transition="all .2s ease"
-        mr={!isLast ? '-54px' : undefined}
-        // zIndex={5 - index}
-        _hover={isAvailable ? { color: 'green.400', cursor: 'pointer' } : undefined}
+    <Box textAlign={{ sm: 'center', lg: 'unset' }}>
+      <TicketIcon
+        isClaimed={isClaimed}
+        isActive={isAvailable}
+        hasTimer={showTimer}
         onClick={isAvailable && !isLoading ? handleClaim : undefined}
       >
-        <Box stroke={isAvailable ? 'green.400' : undefined}>{ticket}</Box>
         {isClaimed || isAvailable ? (
-          <Center
-            flexDirection="column"
-            textStyle="textMedium"
+          <Flex
+            direction="column"
             textAlign="center"
-            textTransform="uppercase"
+            justifyContent="center"
+            alignItems="center"
             color="white"
-            position="absolute"
-            left={isLast ? '55%' : '50%'}
-            top="48%"
+            width="100%"
+            height="100%"
             whiteSpace="nowrap"
-            transform={
-              isFirst
-                ? 'translate(-65%, -50%)'
-                : isMiddle
-                ? 'translate(-62%, -50%)'
-                : 'translate(-50%, -50%)'
-            }
           >
             {!isLoading ? (
               <>
-                <Box mb="10px">
-                  <CheckIcon />
-                </Box>
-                Claim
+                <CheckIcon width={isSmIcon ? '21px' : '28px'} />
+                <Text
+                  mt={{ sm: '2px', lg: '10px' }}
+                  textStyle="textMedium"
+                  fontSize={{ sm: '18px', lg: '22px' }}
+                  fontWeight={{ sm: '400', lg: '500' }}
+                >
+                  CLAIM
+                </Text>
+                {isAvailable && timestamp ? (
+                  <Text
+                    width="125px"
+                    mt={{ sm: '2px', lg: '10px', xl: '5px', '2xl': '10px' }}
+                    color="whiteAlpha.500"
+                    textStyle="text1"
+                    whiteSpace="nowrap"
+                    fontSize={{ sm: '12px', lg: '16px', xl: '12px', '2xl': '16px' }}
+                    fontWeight={{ sm: '400', lg: '500', xl: '400', '2xl': '500' }}
+                  >
+                    {`${hoursString}h ${stampStrings.minsString}m ${stampStrings.secString}s`}
+                  </Text>
+                ) : undefined}
               </>
             ) : (
               <Spinner />
             )}
-          </Center>
-        ) : (
+          </Flex>
+        ) : showTimer ? (
           <Text
             width="125px"
-            textStyle={isConnected ? 'text1' : 'textMedium'}
             color="whiteAlpha.500"
-            position="absolute"
-            left={isFirst ? '45%' : isMiddle ? '51%' : '58%'}
-            top="46%"
+            textAlign="left"
+            textStyle="text1"
             whiteSpace="nowrap"
-            transform="translate(-50%, -50%)"
-            textAlign={isConnected ? 'left' : 'center'}
+            fontSize={{ sm: '18px', xl: '14px', '2xl': '18px' }}
+            fontWeight={{ sm: '500', xl: '400', '2xl': '500' }}
           >
-            {isConnected
-              ? `${hoursString}h ${stampStrings.minsString}m ${stampStrings.secString}s`
-              : `Day ${index + 1}`}
+            {`${hoursString}h ${stampStrings.minsString}m ${stampStrings.secString}s`}
+          </Text>
+        ) : (
+          <Text
+            width="100px"
+            color="whiteAlpha.500"
+            whiteSpace="nowrap"
+            textAlign="center"
+            textStyle="textMedium"
+            fontSize={{ sm: '22px', '2xl': '26px' }}
+            fontWeight={{ sm: '500', '2xl': '600' }}
+          >
+            Day {index + 1}
           </Text>
         )}
-      </Box>
-    </>
+      </TicketIcon>
+    </Box>
   );
 };

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Flex, Skeleton } from '@chakra-ui/react';
+import { Flex, Skeleton, useBreakpoint } from '@chakra-ui/react';
 import { useAccount } from 'wagmi';
 
 import { useHelperUserSquadsFullInfo } from '@/hooks/useHelper';
@@ -9,17 +9,24 @@ import { SquadItem } from './SquadItem';
 
 export const SquadsList = () => {
   const { address } = useAccount();
-  const { subscriptionPeriodDays, subscribe } = useSquads();
+  const { subscribe } = useSquads();
   const { userSquadsInfo } = useHelperUserSquadsFullInfo(address);
 
+  const bp = useBreakpoint({ ssr: false });
+  const isSm = ['sm', 'lg', 'xl'].includes(bp);
+
   return (
-    <Flex gap="20px">
+    <Flex
+      gap={{ sm: '20px', md: '30px', lg: '10px', xl: '20px' }}
+      flexWrap="wrap"
+      marginX={{ lg: '-5px', base: 'unset' }}
+    >
       {!userSquadsInfo.length
         ? Array.from({ length: 3 }).map((_, index) => (
             <Skeleton
               key={index}
-              height="490px"
-              flexBasis="32%"
+              height={isSm ? '350px' : '490px'}
+              width={isSm ? '300px' : '420px'}
               borderRadius="md"
               startColor="gray.200"
               endColor="bgGreen.200"
@@ -41,11 +48,11 @@ export const SquadsList = () => {
         ) => (
           <SquadItem
             key={index}
+            isSmallSize={isSm}
             subscription={squadStatus.subscription}
             squadsFilled={squadStatus.squadsFilled}
             subscriptionCost={plan.subscriptionCost}
             squadSize={plan.squadSize}
-            subscriptionDuration={subscriptionPeriodDays}
             isSubscriptionEnding={isSubscriptionEnding}
             stakingDuration={stakingPlan?.stakingDuration || 0}
             userHasStake={userHasSufficientStaking}

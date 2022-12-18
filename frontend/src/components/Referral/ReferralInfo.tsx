@@ -1,17 +1,14 @@
 import React, { FC, useCallback, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { WarningTwoIcon } from '@chakra-ui/icons';
 import {
   Box,
   Button,
   Container,
   Flex,
-  Heading,
   IconButton,
   Input,
   InputGroup,
   InputRightElement,
-  Spacer,
   Text,
   useClipboard,
   useDisclosure,
@@ -28,6 +25,8 @@ import { useNotification } from '@/hooks/useNotification';
 import { useReferralManager } from '@/hooks/useReferralManager';
 import { trimAddress } from '@/utils/address';
 import { getReadableAmount } from '@/utils/number';
+
+import { WarningTip } from '../ui/WarningTip/WarningTip';
 
 import { ReferralLinkQRModal } from './ReferralLinkQRModal';
 import { ReferralSubscriptionModal } from './ReferralSubscriptionModal';
@@ -91,70 +90,70 @@ export const ReferralInfo: FC<ReferralInfoProps> = ({ isPageView }) => {
 
   return (
     <Container variant="dashboard">
-      <Flex alignItems="center" gap="2">
-        <Heading textStyle="h1">Build a team</Heading>
-        <Spacer />
-        <Box>
+      <Flex direction={{ sm: 'column', xl: 'row' }} justifyContent="space-between" gap={5}>
+        <Box width={{ sm: '100%', xl: '60%' }}>
+          <Text textStyle="sectionHeading" mb="20px">
+            Build a team
+          </Text>
+
+          <Text textStyle="text1">
+            Invite your friends and maximize your iSaver Referral Rewards. Earn up to 100% in SAVR
+            from your partners' earnings. And additional Rewards when six partners fulfill the
+            specified conditions.
+          </Text>
+        </Box>
+
+        <Flex
+          gap={5}
+          alignSelf={{ sm: 'stretch', xl: 'flex-start' }}
+          alignItems={{ sm: 'flex-start', xl: 'center' }}
+          direction={{ sm: 'column', xl: 'row' }}
+        >
+          {!hasEndingReferralSubscription ? (
+            <WarningTip>Check your subscription!</WarningTip>
+          ) : null}
+
           {isConnected ? (
-            <Box display="flex" alignItems="center">
-              {hasEndingReferralSubscription ? (
-                <Text
-                  textStyle="textBold"
-                  color="error"
-                  mr="30px"
-                  display="flex"
-                  alignItems="center"
-                >
-                  <>
-                    <WarningTwoIcon mr="10px" />
-                    Check your levels!
-                  </>
-                </Text>
-              ) : null}
-              {isPageView ? (
-                <Button onClick={onRefSubscribeOpen}>Activation status</Button>
-              ) : (
-                <Button as={Link} to="/team">
-                  My team
-                </Button>
-              )}
-            </Box>
+            isPageView ? (
+              <Button onClick={onRefSubscribeOpen} width={{ sm: '100%', lg: '50%', xl: 'unset' }}>
+                Activation status
+              </Button>
+            ) : (
+              <Button as={Link} to="/team" width={{ sm: '100%', lg: '50%', xl: 'unset' }}>
+                My team
+              </Button>
+            )
           ) : (
             <ConnectWalletButton />
           )}
-        </Box>
+        </Flex>
       </Flex>
-
-      <Box maxWidth="640px" mt={5}>
-        <Text textStyle="text1">
-          Invite your friends and maximize your rewards. Earn up to 100% in SAVR from your partners'
-          earnings. And additional rewards when six partners fulfill the specified conditions.
-        </Text>
-      </Box>
 
       <Flex
         justifyContent="space-between"
         alignItems="flex-start"
-        mt={isPageView ? '80px' : '50px'}
+        mt={{ sm: '50px', lg: '40px', xl: '50px', '2xl': '100px' }}
+        direction={{ sm: 'column-reverse', xl: 'row' }}
       >
-        <Box alignSelf={isPageView ? 'flex-start' : 'flex-end'}>
+        <Box
+          mt={{ sm: '50px', xl: 'unset' }}
+          width={{ sm: '100%', xl: 'unset' }}
+          alignSelf={isPageView ? 'flex-start' : 'flex-end'}
+        >
           {isPageView && isConnected ? (
             <>
               {!referrer ? (
-                <Button mb="15px" onClick={onLeaderUpdateOpen}>
-                  Add leader
+                <Button
+                  mb={{ sm: '30px', xl: '15px' }}
+                  width={{ sm: '100%', lg: '50%', xl: 'unset' }}
+                  onClick={onLeaderUpdateOpen}
+                >
+                  Add Leader
                 </Button>
               ) : null}
 
               {referrer || (localReferrer && localReferrer !== address) ? (
-                <Flex alignItems="center" mb="15px">
-                  <Text textStyle="button" mr="15px" color={referrer ? 'green.400' : 'gray.200'}>
-                    Your leader:
-                  </Text>
-                  <Text textStyle="button" color={referrer ? 'white' : 'gray.200'}>
-                    {trimAddress(referrer || localReferrer)}
-                  </Text>
-                </Flex>
+                <YourLeaderText referrer={referrer} localReferrer={localReferrer} />
               ) : null}
             </>
           ) : null}
@@ -162,63 +161,33 @@ export const ReferralInfo: FC<ReferralInfoProps> = ({ isPageView }) => {
           <Text textStyle="button" color={referralLink ? 'green.400' : 'gray.200'} mb="10px">
             Your referral link:
           </Text>
-          <Flex>
-            <InputGroup variant="primary" size="md" minWidth="320px" mr="10px">
-              <Input
-                value={referralLink || ''}
-                placeholder="https://**************"
-                readOnly
-                pr="40px"
-              />
-              <InputRightElement>
-                <IconButton
-                  variant="inputTransparent"
-                  aria-label="copy"
-                  size="md"
-                  disabled={!referralLink}
-                  onClick={onCopy}
-                >
-                  <CopyIcon width="24px" height="24px" />
-                </IconButton>
-              </InputRightElement>
-            </InputGroup>
-            <IconButton
-              variant="primaryShadowed"
-              size="md"
-              icon={<QRIcon height="24px" />}
-              aria-label="qr-code"
-              disabled={!referralLink}
-              onClick={onQRCodeOpen}
-            />
-          </Flex>
+          <ReferralLink link={referralLink} onCopy={onCopy} onOpenQR={onQRCodeOpen} />
 
           {isConnected && !referralLink ? (
-            <Text color="error" textStyle="textBold" fontSize="14" mt="8px">
+            <Text
+              color="error"
+              textStyle="textBold"
+              fontSize="14"
+              mt="12px"
+              whiteSpace={{ xl: 'nowrap' }}
+            >
               You will get your ref link after subscribing at the 1st team level
             </Text>
           ) : null}
         </Box>
 
-        <Flex justifyContent="flex-end">
-          <StatBlock width="260px">
-            <Box textStyle="text1" mb="10px">
-              Your partners
-            </Box>
-            <Box textStyle="textSansBold" fontSize="26px" mr="6px">
-              {BigNumber.from(userReferralInfo.data?.totalReferrals || 0).toNumber()}
-            </Box>
-          </StatBlock>
-          <StatBlock width="260px">
-            <Box textStyle="text1" mb="10px">
-              Total Referral Reward
-            </Box>
-            <Box textStyle="text1">
-              <Box as="span" textStyle="textSansBold" fontSize="26px" mr="6px">
-                {getReadableAmount(userReferralInfo.data?.totalDividends || 0)}
-              </Box>
-              SAVR
-            </Box>
-          </StatBlock>
+        <Flex justifyContent="flex-end" width="100%">
+          <StatBlock
+            width={{ sm: '50%', xl: '230px', '2xl': '260px' }}
+            title="Your Partners"
+            value={BigNumber.from(userReferralInfo.data?.totalReferrals || 0).toNumber()}
+          />
+          <StatBlock
+            width={{ sm: '50%', xl: '230px', '2xl': '260px' }}
+            title="Total Referral Reward"
+            value={getReadableAmount(userReferralInfo.data?.totalDividends || 0)}
+            currency="SAVR"
+          />
         </Flex>
       </Flex>
 
@@ -248,5 +217,61 @@ export const ReferralInfo: FC<ReferralInfoProps> = ({ isPageView }) => {
         <ReferralLinkQRModal onClose={onQRCodeClose} link={referralLink} />
       ) : null}
     </Container>
+  );
+};
+
+const YourLeaderText = ({
+  referrer,
+  localReferrer,
+}: {
+  referrer?: string;
+  localReferrer?: string;
+}) => {
+  return (
+    <Flex alignItems="center" mb="15px">
+      <Text textStyle="button" mr="15px" color={referrer ? 'green.400' : 'gray.200'}>
+        Your leader:
+      </Text>
+      <Text textStyle="button" color={referrer ? 'white' : 'gray.200'}>
+        {trimAddress(referrer || localReferrer)}
+      </Text>
+    </Flex>
+  );
+};
+
+const ReferralLink = ({
+  link = '',
+  onCopy,
+  onOpenQR,
+}: {
+  link?: string;
+  onCopy: () => void;
+  onOpenQR: () => void;
+}) => {
+  return (
+    <Flex maxWidth={{ sm: '100%', lg: '460px' }}>
+      <InputGroup variant="primary" size="md" minWidth={{ lg: '320px' }} mr="10px">
+        <Input value={link} placeholder="https://**************" readOnly pr="40px" />
+        <InputRightElement>
+          <IconButton
+            variant="inputTransparent"
+            aria-label="copy"
+            size="md"
+            disabled={!link}
+            onClick={onCopy}
+          >
+            <CopyIcon width="24px" height="24px" />
+          </IconButton>
+        </InputRightElement>
+      </InputGroup>
+      <IconButton
+        variant="primaryShadowed"
+        size="md"
+        icon={<QRIcon height="24px" />}
+        aria-label="qr-code"
+        disabled={!link}
+        onClick={onOpenQR}
+      />
+    </Flex>
   );
 };

@@ -83,7 +83,7 @@ const inputTransparentWhite = {
 
 const secondary = defineStyle({
   ...commonProps,
-  bgColor: 'bgGreen.200',
+  bgColor: 'transparent',
   border: '2px solid',
   borderColor: 'green.100',
 

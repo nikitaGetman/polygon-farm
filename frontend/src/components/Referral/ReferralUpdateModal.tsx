@@ -38,7 +38,7 @@ export const ReferralUpdateModal: FC<ReferralUpdateModalProps> = ({
       <ModalContent p="40px 40px 32px">
         <ModalHeader textStyle="textSansBold" fontSize={26}>
           <Text textStyle="textSansBold" fontSize="26px">
-            Add leader
+            Add Leader
           </Text>
           <CloseButton onClick={onClose} size="lg" />
         </ModalHeader>
@@ -64,7 +64,7 @@ export const ReferralUpdateModal: FC<ReferralUpdateModalProps> = ({
             disabled={!isLeaderValid}
             isLoading={isLoading}
           >
-            Add leader
+            Add Leader
           </Button>
 
           <Flex mt="20px" alignItems="center" width="100%">

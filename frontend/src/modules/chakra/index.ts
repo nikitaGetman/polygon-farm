@@ -16,6 +16,8 @@ const breakpoints = {
 };
 
 const colors = {
+  sav: '#A5ED5D',
+  savr: '#1ADCE2',
   yellow: {
     200: '#d6d873',
   },
@@ -57,7 +59,7 @@ const semanticTokens = {
     'container-sm': '320px',
     'container-md': '460px',
     'container-lg': '600px',
-    'container-xl': '944px',
+    'container-xl': '964px',
     'container-2xl': '1300px',
   },
   fonts: {
@@ -70,6 +72,14 @@ const semanticTokens = {
 // можно задать значения для всех разрешений через массив
 // @see: https://chakra-ui.com/docs/styled-system/text-and-layer-styles#text-styles
 const textStyles = {
+  sectionHeading: {
+    fontSize: { base: '26px', xl: '38px', '2xl': '52px' },
+    fontWeight: 'bold',
+    lineHeight: '130%',
+    textTransform: 'uppercase',
+    whiteSpace: 'nowrap',
+  },
+
   h1: {
     fontSize: ['52px'],
     fontWeight: 'bold',
@@ -77,7 +87,7 @@ const textStyles = {
     textTransform: 'uppercase',
   },
   h2: {
-    fontSize: ['38px'],
+    fontSize: { lg: '26px', xl: '38px' },
     fontWeight: 'bold',
     lineHeight: '130%',
   },
@@ -92,12 +102,17 @@ const textStyles = {
     lineHeight: '130%',
   },
   text1: {
-    fontSize: ['18px'],
+    fontSize: { sm: '16px', '2xl': '18px' },
+    fontWeight: '500',
+    lineHeight: '130%',
+  },
+  text2: {
+    fontSize: ['16px'],
     fontWeight: '500',
     lineHeight: '130%',
   },
   textRegular: {
-    fontSize: ['18px'],
+    fontSize: { sm: '16px', '2xl': '18px' },
     fontWeight: '400',
     lineHeight: '130%',
   },
@@ -105,37 +120,32 @@ const textStyles = {
     fontSize: ['26px'],
     fontWeight: '500',
     lineHeight: '130%',
-  },
-  textExtraBoldUpper: {
-    fontSize: ['26px'],
-    fontWeight: '700',
-    lineHeight: '130%',
-    textTransform: 'uppercase',
+    fontFamily: 'Montserrat',
   },
   textBold: {
-    fontSize: ['18px'],
+    fontSize: { sm: '16px', '2xl': '18px' },
     fontWeight: '700',
     lineHeight: '130%',
   },
   textSemiBold: {
-    fontSize: ['18px'],
+    fontSize: { sm: '16px', '2xl': '18px' },
     fontWeight: '600',
     lineHeight: '130%',
   },
   textBaldPtSans: {
     fontFamily: 'PT Sans',
-    fontSize: ['18px'],
+    fontSize: { sm: '16px', '2xl': '18px' },
     fontWeight: '700',
     lineHeight: '130%',
   },
   textSansBold: {
-    fontSize: ['18px'],
+    fontSize: { sm: '16px', '2xl': '18px' },
     fontWeight: '700',
     lineHeight: '130%',
     fontFamily: 'PT Sans',
   },
   textSansSmall: {
-    fontSize: ['12px'],
+    fontSize: '12px',
     lineHeight: '130%',
     fontFamily: 'PT Sans',
   },

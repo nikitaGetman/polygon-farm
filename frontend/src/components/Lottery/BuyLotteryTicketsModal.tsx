@@ -53,10 +53,15 @@ export const BuyLotteryTicketsModal: FC<BuyLotteryTicketsModalProps> = ({
   const handleBuy = useCallback(() => {
     if (!amount) return;
     setIsLoading(true);
-    onBuy(amount).finally(() => {
-      setIsLoading(false);
-    });
-  }, [amount, setIsLoading, onBuy]);
+    onBuy(amount)
+      .then(() => {
+        setAmount(undefined);
+        onClose();
+      })
+      .finally(() => {
+        setIsLoading(false);
+      });
+  }, [amount, onBuy, onClose]);
 
   return (
     <Modal isCentered isOpen={true} onClose={onClose}>
@@ -64,19 +69,19 @@ export const BuyLotteryTicketsModal: FC<BuyLotteryTicketsModalProps> = ({
       <ModalContent>
         <ModalHeader>
           <Text textStyle="textSansBold" fontSize="26px">
-            Buy lottery tickets
+            Buy Raffle Tickets
           </Text>
           <CloseButton onClick={onClose} size="lg" />
         </ModalHeader>
 
         <ModalBody>
           <Text mt="26px" mb="10px" textStyle="textSansBold">
-            Enter the number of tickets
+            Enter the number of Tickets
           </Text>
           <InputAmount placeholder="0" value={amount} onChange={handleUpdate} />
 
-          <Text mt="30px" mb="10px" textStyle="textSansBold">
-            Price per ticket
+          <Text mt="6px" mb="10px" textStyle="textSansBold">
+            Price per Ticket
           </Text>
           <Box {...boxCommonStyles} mb="30px">
             {bigNumberToString(ticketPrice)}

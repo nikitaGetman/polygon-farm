@@ -36,7 +36,7 @@ export const useLotteryRounds = () => {
   });
 
   const { upcomingRounds, liveRounds } = useMemo(() => {
-    return (activeRoundsRequest.data || []).reduce(
+    const rounds = (activeRoundsRequest.data || []).reduce(
       (acc, round) => {
         if (round.status === LotteryStatusEnum.upcoming) {
           acc.upcomingRounds.push(round);
@@ -47,6 +47,13 @@ export const useLotteryRounds = () => {
       },
       { liveRounds: [] as LotteryRoundType[], upcomingRounds: [] as LotteryRoundType[] }
     );
+
+    const sortedLiveRounds = rounds.liveRounds.sort(
+      (a, b) => a.startTime + a.duration - (b.startTime + b.duration)
+    );
+    const sortedUpcomingRounds = rounds.upcomingRounds.sort((a, b) => a.startTime - b.startTime);
+
+    return { upcomingRounds: sortedUpcomingRounds, liveRounds: sortedLiveRounds };
   }, [activeRoundsRequest.data]);
 
   const finishedRounds = useMemo(() => {

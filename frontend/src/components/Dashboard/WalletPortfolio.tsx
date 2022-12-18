@@ -14,6 +14,14 @@ import { bigNumberToString, getReadableAmount } from '@/utils/number';
 
 import { BalanceHistoryChart } from './BalanceChart';
 
+const buttonProps = {
+  mt: { sm: '20px', md: '10px', lg: '15px', xl: '10px', '2xl': '20px' },
+  rightIcon: <PlusIcon />,
+  size: { sm: 'xl', xl: 'md', '2xl': 'xl' },
+  fontSize: { xl: '12px', '2xl': 'unset' },
+  width: { sm: '100%', md: '200px', xl: '160px', '2xl': '200px' },
+};
+
 export const WalletPortfolio = () => {
   const navigate = useNavigate();
   const { isConnected } = useAccount();
@@ -27,33 +35,53 @@ export const WalletPortfolio = () => {
   const { tvl, totalClaimed } = useStaking();
 
   return (
-    <Flex alignItems="center">
-      <Box flex="1 1 600px">
-        <Text textStyle="h1" as="h1" fontSize="90px" lineHeight="99px">
+    <Flex alignItems={{ sm: 'stretch', xl: 'center' }} direction={{ sm: 'column', xl: 'row' }}>
+      <Box flexGrow="1" mb={{ sm: '45px', xl: 'unset' }}>
+        <Text textStyle="h1" as="h1" fontSize={{ sm: '38px', xl: '52px', '2xl': '90px' }}>
           DASHBOARD
         </Text>
-        <Text textStyle="textMedium" fontSize="32px" mt={2}>
+        <Text textStyle="textMedium" fontSize={{ sm: '16px', xl: '18px', '2xl': '32px' }} mt="10px">
           All information about your assets
         </Text>
-        <Flex alignItems="center" mt="80px">
-          <Text textStyle="textMedium" mr="40px">
-            SAV = 1 USDT
-          </Text>
-          <Text textStyle="textMedium">SAVR = 1 USDT</Text>
+        <Flex
+          alignItems="center"
+          textStyle="textMedium"
+          mt={{ sm: '30px', xl: '50px', '2xl': '80px' }}
+          fontSize={{ sm: '16px', md: '18px', '2xl': '26px' }}
+          fontWeight={{ sm: '600', md: '700', xl: '500' }}
+        >
+          <Text mr="40px">SAV = 1 USDT</Text>
+          <Text>SAVR = 1 USDT</Text>
         </Flex>
-        <Button mt="30px" rightIcon={<BoxIcon />} onClick={() => navigate('/exchange')}>
+        <Button
+          mt="30px"
+          width={{ sm: '100%', xl: 'unset' }}
+          rightIcon={<BoxIcon />}
+          onClick={() => navigate('/exchange')}
+        >
           Buy SAV
         </Button>
       </Box>
 
-      <Box background="rgba(0, 0, 0, 0.2)" borderRadius="md" p="30px" maxW="510px" flexGrow="1">
-        <Text textStyle="textMedium" mb="5" textTransform="uppercase">
+      <Box
+        background="rgba(0, 0, 0, 0.2)"
+        borderRadius="md"
+        padding={{ sm: '30px 10px', md: '24px 10px', lg: '30px 20px', xl: '20px', '2xl': '30px' }}
+        flexGrow="1"
+        maxW={{ sm: '100%', xl: '380px', '2xl': '510px' }}
+      >
+        <Text
+          fontSize={{ sm: '18px', xl: '22px', '2xl': '26px' }}
+          fontWeight={{ sm: '400', xl: '500' }}
+          mb="20px"
+          textTransform="uppercase"
+        >
           Wallet portfolio
         </Text>
 
         {isConnected ? (
           <>
-            <Box h="220px">
+            <Box h="220px" overflow="hidden">
               {balanceHistory.length ? (
                 <BalanceHistoryChart data={balanceHistory} />
               ) : (
@@ -62,26 +90,44 @@ export const WalletPortfolio = () => {
                 </Box>
               )}
             </Box>
-            <Flex mt="17px" justifyContent="space-between">
-              <Flex flexWrap="wrap" maxW="200px">
-                <Flex alignItems="baseline" color="green.400">
-                  <Text mr="2" textStyle="textMedium">
+            <Flex mt="15px" justifyContent="space-between" direction={{ sm: 'column', md: 'row' }}>
+              <Flex flexWrap="wrap" width={{ sm: '100%', md: '50%' }}>
+                <Flex alignItems="baseline" color="green.400" textStyle="textSansBold" width="100%">
+                  <Text
+                    mr="1"
+                    textStyle="textMedium"
+                    minWidth="0"
+                    whiteSpace="nowrap"
+                    textOverflow="ellipsis"
+                    overflow="hidden"
+                  >
                     {savBalance ? bigNumberToString(savBalance) : '---'}
                   </Text>
-                  <Text textStyle="textSansBold">SAV</Text>
+                  SAV
                 </Flex>
-                <Button mt="18px" rightIcon={<PlusIcon />} onClick={addSAV}>
+                <Button {...buttonProps} onClick={addSAV}>
                   Add to wallet
                 </Button>
               </Flex>
-              <Flex flexWrap="wrap" maxW="200px">
-                <Flex alignItems="baseline" color="blue">
-                  <Text mr="2" textStyle="textMedium">
+              <Flex
+                flexWrap="wrap"
+                width={{ sm: '100%', md: '50%' }}
+                mt={{ sm: '30px', md: 'unset' }}
+              >
+                <Flex alignItems="baseline" color="blue" textStyle="textSansBold" width="100%">
+                  <Text
+                    mr="1"
+                    textStyle="textMedium"
+                    minWidth="0"
+                    whiteSpace="nowrap"
+                    textOverflow="ellipsis"
+                    overflow="hidden"
+                  >
                     {savrBalance ? bigNumberToString(savrBalance) : '---'}
                   </Text>
-                  <Text textStyle="textSansBold">SAVR</Text>
+                  SAVR
                 </Flex>
-                <Button mt="18px" rightIcon={<PlusIcon />} onClick={addSAVR}>
+                <Button {...buttonProps} onClick={addSAVR}>
                   Add to wallet
                 </Button>
               </Flex>
@@ -92,23 +138,31 @@ export const WalletPortfolio = () => {
             <Box color="bgGreen.600" transition="all .3s ease" _hover={{ color: 'green.500' }}>
               <PuzzlesIcon />
             </Box>
-            <Flex mt="23px" mb="22px" justifyContent="space-between">
-              <Flex>
-                <Text mr="2" textStyle="textSansBold">
-                  Total Value Locked
+            <Flex
+              gap={2}
+              direction={{ sm: 'column', md: 'row' }}
+              margin={{ sm: '12px 0 20px', md: '15px 0', '2xl': '20px 0' }}
+              textStyle={{ sm: 'textSansSmall', '2xl': 'textSansBold' }}
+            >
+              <Flex alignItems="baseline" width="50%" whiteSpace="nowrap">
+                <Text mr="8px">Total Value Locked</Text>
+                <Text fontSize="18px" fontWeight="500">
+                  {getReadableAmount(tvl || 0, { precision: 3 })}
                 </Text>
-                <Text textStyle="text1">{getReadableAmount(tvl || 0, { precision: 3 })}</Text>
               </Flex>
-              <Flex>
-                <Text mr="2" textStyle="textSansBold">
-                  Total Claimed
-                </Text>
-                <Text textStyle="text1">
+              <Flex
+                alignItems="baseline"
+                width="50%"
+                justifyContent={{ sm: 'flex-start', xl: 'flex-end' }}
+              >
+                <Text mr="8px">Total Claimed</Text>
+                <Text fontSize="18px" fontWeight="500">
                   {getReadableAmount(totalClaimed || 0, { precision: 3 })}
                 </Text>
               </Flex>
             </Flex>
-            <ConnectWalletButton />
+
+            <ConnectWalletButton width={{ sm: '100%', xl: 'unset' }} size="lg" />
           </>
         )}
       </Box>
