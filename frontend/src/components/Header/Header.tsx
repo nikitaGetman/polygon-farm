@@ -41,7 +41,7 @@ export const Header: FC<HeaderProps> = ({ isLandingView }) => {
   const { hasEndingSubscription } = useStaking();
   const { hasEndingReferralSubscription } = useReferralManager();
   const { hasEndingSquadsSubscription } = useSquads();
-  const bp = useBreakpoint();
+  const bp = useBreakpoint({ ssr: false });
 
   const isSm = ['sm', 'md', 'lg'].includes(bp);
 

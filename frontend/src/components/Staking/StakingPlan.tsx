@@ -57,7 +57,7 @@ export const StakingPlan: FC<StakingPlanProps> = ({
     });
   }, [setIsClaimLoading, onClaim]);
 
-  const bp = useBreakpoint();
+  const bp = useBreakpoint({ ssr: false });
   const isSm = bp === 'sm';
 
   return (

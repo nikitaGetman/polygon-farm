@@ -1,5 +1,5 @@
 import React, { FC, useMemo } from 'react';
-import { Box, Button, Divider, Text } from '@chakra-ui/react';
+import { Box, Button, Divider, Text, useBreakpoint } from '@chakra-ui/react';
 
 import { useCountdown } from '@/hooks/useCountdown';
 import { LotteryStatusEnum } from '@/lib/lottery';
@@ -27,6 +27,9 @@ export const LotteryItem: FC<LotteryItemProps> = ({
     return `${daysString}d-${hoursString}h-${minsString}m-${secString}s`;
   }, [stampStrings]);
 
+  const bp = useBreakpoint({ ssr: false });
+  const isSm = ['sm', 'lg', 'xl'].includes(bp);
+
   return (
     <Box
       padding="20px"
@@ -34,20 +37,33 @@ export const LotteryItem: FC<LotteryItemProps> = ({
       borderRadius="md"
       boxShadow="0px 6px 11px rgba(0, 0, 0, 0.25)"
     >
-      <LotteryStatus status={status} />
+      <LotteryStatus status={status} isSmall={isSm} />
 
-      <Text mt="26px" mb="10px" textStyle="textMedium" textTransform="uppercase">
+      <Text
+        mt={isSm ? '20px' : '26px'}
+        mb="10px"
+        textStyle="text"
+        fontSize={isSm ? '18px' : '26px'}
+        fontWeight={isSm ? '700' : '500'}
+        textTransform="uppercase"
+      >
         {title}
       </Text>
 
-      <Text mb="35px" textStyle="textRegular">
-        Countdown:{' '}
-        <Box as="span" ml="23px">
+      <Text
+        mb={isSm ? '20px' : '35px'}
+        textStyle="textRegular"
+        textTransform="uppercase"
+        fontSize={isSm ? '12px' : '18px'}
+        fontWeight={isSm ? '600' : '400'}
+      >
+        Countdown:
+        <Box as="span" ml="24px">
           {elapsedTimeString}
         </Box>
       </Text>
 
-      <Divider mb="24px" bgColor="white" opacity="1" borderColor="white" />
+      <Divider mb={isSm ? '20px' : '24px'} bgColor="white" opacity="1" borderColor="white" />
 
       <Button width="100%" onClick={onDetails}>
         See details

@@ -44,7 +44,7 @@ export const InputAmount: FC<InputAmountProps> = ({
     [setLocalValue, onChange]
   );
 
-  const bp = useBreakpoint();
+  const bp = useBreakpoint({ ssr: false });
   const isSm = bp === 'sm';
   const inputPaddingRight = tokenTicker ? (isSm ? '105px' : '150px') : undefined;
   const hasMax = Boolean(total);

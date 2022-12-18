@@ -91,8 +91,8 @@ export const ReferralInfo: FC<ReferralInfoProps> = ({ isPageView }) => {
   return (
     <Container variant="dashboard">
       <Flex direction={{ sm: 'column', xl: 'row' }} justifyContent="space-between" gap={5}>
-        <Box width={{ sm: '100%', xl: '50%' }}>
-          <Text textStyle="sectionHeading" mb={{ sm: '20px', lg: '30px', xl: '40px' }}>
+        <Box width={{ sm: '100%', xl: '60%' }}>
+          <Text textStyle="sectionHeading" mb="20px">
             Build a team
           </Text>
 
@@ -164,7 +164,13 @@ export const ReferralInfo: FC<ReferralInfoProps> = ({ isPageView }) => {
           <ReferralLink link={referralLink} onCopy={onCopy} onOpenQR={onQRCodeOpen} />
 
           {isConnected && !referralLink ? (
-            <Text color="error" textStyle="textBold" fontSize="14" mt="12px">
+            <Text
+              color="error"
+              textStyle="textBold"
+              fontSize="14"
+              mt="12px"
+              whiteSpace={{ xl: 'nowrap' }}
+            >
               You will get your ref link after subscribing at the 1st team level
             </Text>
           ) : null}

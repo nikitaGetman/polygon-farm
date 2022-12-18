@@ -12,7 +12,7 @@ export const SquadsList = () => {
   const { subscribe } = useSquads();
   const { userSquadsInfo } = useHelperUserSquadsFullInfo(address);
 
-  const bp = useBreakpoint();
+  const bp = useBreakpoint({ ssr: false });
   const isSm = ['sm', 'lg', 'xl'].includes(bp);
 
   return (

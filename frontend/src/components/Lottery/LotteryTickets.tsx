@@ -29,9 +29,11 @@ export const LotteryTickets: FC<LotteryTicketsProps> = ({
         <Box
           bgColor={isClosedEmpty ? 'gray.200' : '#1b5b52'}
           textAlign="center"
-          padding="23px"
-          textStyle="h3"
+          textStyle="text1"
           textTransform="uppercase"
+          padding={{ sm: '18px', md: '15px', lg: '18px', xl: '15px', '2xl': '23px' }}
+          fontSize={{ sm: '12px', md: '16px', lg: '12px', xl: '16px', '2xl': '26px' }}
+          fontWeight={{ sm: '600', '2xl': '700' }}
         >
           {isClosedEmpty ? (
             'Tickets not placed'
@@ -47,13 +49,39 @@ export const LotteryTickets: FC<LotteryTicketsProps> = ({
         </Box>
       ) : null}
 
-      <Box padding="36px 40px" bgImage={puzzlePattern} bgSize="cover">
-        <Flex alignItems="center">
-          <Text textStyle="h3">Your Tickets:</Text>
-          <Text ml="20px" lineHeight="50px" textStyle="textRegular" fontSize="55px">
-            {tickets}
-          </Text>
-          <Button ml="auto" onClick={onBuyClick}>
+      <Box
+        padding={{ sm: '13px 10px 20px', '2xl': '36px 40px' }}
+        bgImage={puzzlePattern}
+        bgSize="cover"
+      >
+        <Flex
+          alignItems="center"
+          justifyContent="space-between"
+          direction={{ sm: 'column', '2xl': 'row' }}
+        >
+          <Flex alignItems="center">
+            <Text
+              textStyle="text1"
+              fontSize={{ sm: '16px', '2xl': '26px' }}
+              fontWeight={{ sm: '500', '2xl': '600' }}
+            >
+              Your Tickets:
+            </Text>
+            <Text
+              textStyle="text1"
+              ml={{ sm: '15px', '2xl': '20px' }}
+              lineHeight={{ sm: '20px', '2xl': '50px' }}
+              fontSize={{ sm: '26px', '2xl': '55px' }}
+              fontWeight={{ sm: '500', '2xl': '400' }}
+            >
+              {tickets}
+            </Text>
+          </Flex>
+          <Button
+            width={{ sm: '100%', '2xl': 'unset' }}
+            mt={{ sm: '15px', '2xl': 'unset' }}
+            onClick={onBuyClick}
+          >
             Buy Tickets
           </Button>
         </Flex>

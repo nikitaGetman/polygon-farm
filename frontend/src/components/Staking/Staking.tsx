@@ -97,7 +97,7 @@ export const Staking: FC<StakingProps> = ({ isPageView }) => {
             Earn by staking
           </Text>
 
-          <Text textStyle={{ xl: 'text2', '2xl': 'text1' }}>
+          <Text textStyle="text1">
             Stake your SAV or SAVR holdings to earn more SAV. The longer you stake, the more you
             yield. Accumulate more SAV, so you can increase your governance in the future iSaver
             DAO.

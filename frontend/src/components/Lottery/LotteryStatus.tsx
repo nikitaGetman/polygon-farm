@@ -3,7 +3,13 @@ import { Box } from '@chakra-ui/react';
 
 import { LotteryStatusEnum } from '@/lib/lottery';
 
-export const LotteryStatus = ({ status }: { status: LotteryStatusEnum }) => {
+export const LotteryStatus = ({
+  status,
+  isSmall,
+}: {
+  status: LotteryStatusEnum;
+  isSmall?: boolean;
+}) => {
   const statusColor = useMemo(() => {
     if (status === LotteryStatusEnum.upcoming) return 'yellow.200';
     if (status === LotteryStatusEnum.current) return 'green.400';
@@ -14,11 +20,12 @@ export const LotteryStatus = ({ status }: { status: LotteryStatusEnum }) => {
   return (
     <Box
       display="inline-block"
-      padding="10px 30px"
+      padding={isSmall ? '6px 30px' : '10px 30px'}
       border="2px solid"
       borderColor={statusColor}
       borderRadius="md"
       textStyle="button"
+      fontSize={isSmall ? '12px' : undefined}
       color={statusColor}
     >
       {status}

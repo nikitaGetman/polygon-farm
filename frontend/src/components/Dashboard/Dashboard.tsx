@@ -23,19 +23,19 @@ export const Dashboard = () => {
         <Staking />
       </Box>
 
-      <Box mt="150px" mb="30px">
+      <Box mt={{ sm: '100px', xl: '150px' }}>
         <ReferralInfo />
+
+        <Box mt="30px">
+          <SquadsList />
+        </Box>
       </Box>
 
-      <Box mb="210px">
-        <SquadsList />
-      </Box>
-
-      <Box mb="150px" id="claim-ticket">
+      <Box mt={{ sm: '100px', xl: '150px' }} id="claim-ticket">
         <TicketClaim />
       </Box>
 
-      <Box mb="300px" id="raffles">
+      <Box mt={{ sm: '100px', xl: '150px' }} mb={{ sm: '100px', xl: '150px' }} id="raffles">
         <LotteryList />
       </Box>
     </Container>

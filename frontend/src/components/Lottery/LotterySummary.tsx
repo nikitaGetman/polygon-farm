@@ -68,11 +68,14 @@ export const LotterySummary: FC<LotterySummaryProps> = ({ userPrize, winners }) 
       bgColor="bgGreen.50"
       boxShadow="0px 6px 11px rgba(0, 0, 0, 0.25)"
       borderRadius="md"
-      padding="30px 40px 40px"
+      padding={{ sm: '20px 10px 30px', '2xl': '30px 40px 40px' }}
+      px={{ md: '20px', lg: '10px', xl: '20px' }}
     >
       <Box textStyle="textSemiBold" textTransform="uppercase">
-        <Flex justifyContent="space-between" alignItems="center" mb="20px">
-          <Heading fontSize="41px">Summary</Heading>
+        <Flex justifyContent="space-between" alignItems="center" mb={{ sm: '10px', '2xl': '20px' }}>
+          <Text textStyle="textBold" fontSize={{ sm: '26px', '2xl': '38px' }}>
+            Summary
+          </Text>
 
           <SearchWallet
             buttonText="Search wallet"
@@ -82,26 +85,32 @@ export const LotterySummary: FC<LotterySummaryProps> = ({ userPrize, winners }) 
           />
         </Flex>
 
-        <Text mb="10px">Congratulations to the raffle winners</Text>
+        <Text mb={{ sm: '25px', '2xl': '10px' }} fontSize={{ sm: '12px', '2xl': '16px' }}>
+          Congratulations to the raffle winners
+        </Text>
 
-        <Flex justifyContent="space-between" alignItems="center" fontSize="16px">
-          <Button p={0} variant="link" color="red" onClick={onToggle}>
+        <Flex
+          justifyContent="space-between"
+          alignItems="center"
+          fontSize={{ sm: '12px', '2xl': '16px' }}
+        >
+          <Button p={0} variant="link" color="red" onClick={onToggle} fontSize="inherit">
             See all winners
           </Button>
-          <Text color="blue">{bigNumberToString(userPrize || 0)} SAVR</Text>
+          <Text color="savr">{bigNumberToString(userPrize || 0)} SAVR</Text>
         </Flex>
       </Box>
 
       {isOpen ? (
         <>
-          <Divider mt="32px" borderColor="white" opacity={0.5} />
+          <Divider mt={{ sm: '20px', '2xl': '32px' }} borderColor="white" opacity={0.5} />
 
-          <Box mb="40px">
+          <Box mb={{ sm: '20px', '2xl': '40px' }}>
             <table className="lottery-summary__table">
               <thead>
                 <tr>
                   <th className="lottery-summary__cell lottery-summary__cell--heading lottery-summary__cell--level">
-                    Level
+                    Lvl
                   </th>
                   <th className="lottery-summary__cell lottery-summary__cell--heading lottery-summary__cell--wallet">
                     Wallet
@@ -138,7 +147,11 @@ export const LotterySummary: FC<LotterySummaryProps> = ({ userPrize, winners }) 
           </Box>
 
           <Flex justifyContent="space-between" alignItems="center">
-            <Text textStyle="text1">
+            <Text
+              textStyle="text1"
+              fontSize={{ sm: '12px', '2xl': '18px' }}
+              fontWeight={{ sm: '400', '2xl': '500' }}
+            >
               {fromItem}-{toItem} of {filteredWinners.length}
             </Text>
 

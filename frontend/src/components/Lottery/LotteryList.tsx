@@ -9,9 +9,7 @@ import {
   Flex,
   Grid,
   GridItem,
-  Heading,
   Skeleton,
-  Spacer,
   Text,
 } from '@chakra-ui/react';
 import { useAccount } from 'wagmi';
@@ -51,7 +49,7 @@ export const LotteryList = () => {
   const loadedStateFilter = useMemo(() => {
     if (stateFilter === LotteryStatusEnum.current && liveRounds.length > 0) return stateFilter;
     if (stateFilter === LotteryStatusEnum.upcoming && upcomingRounds.length > 0) return stateFilter;
-    if (stateFilter === LotteryStatusEnum.past && finishedRounds && finishedRounds.length > 0) {
+    if (stateFilter === LotteryStatusEnum.past) {
       return stateFilter;
     }
 
@@ -60,7 +58,7 @@ export const LotteryList = () => {
       (upcomingRounds.length > 0 && LotteryStatusEnum.upcoming) ||
       LotteryStatusEnum.past
     );
-  }, [stateFilter, liveRounds, upcomingRounds, finishedRounds]);
+  }, [stateFilter, liveRounds, upcomingRounds]);
 
   const lotteries =
     loadedStateFilter === LotteryStatusEnum.current
@@ -71,19 +69,32 @@ export const LotteryList = () => {
 
   return (
     <Container variant="dashboard">
-      <Flex alignItems="center" gap="2">
-        <Heading textStyle="h1">Win big prizes</Heading>
-        <Spacer />
-        <Box>{!isConnected ? <ConnectWalletButton /> : null}</Box>
-      </Flex>
-      <Box maxWidth="505px" mt={5}>
-        <Text textStyle="text1">
-          Join iSaver Raffles gives you a chance to win big prizes! It's easy if you have a Ticket.
-        </Text>
-      </Box>
+      <Flex direction={{ sm: 'column', xl: 'row' }} justifyContent="space-between" gap={5}>
+        <Box>
+          <Text textStyle="sectionHeading" mb="20px">
+            Win big prizes
+          </Text>
 
-      <Flex justifyContent="space-between" my="30px" alignItems="flex-end">
-        <ButtonGroup isAttached>
+          <Text textStyle="text1">
+            Join iSaver Raffles gives you a chance to win big prizes!
+            <br />
+            It's easy if you have a Ticket.
+          </Text>
+        </Box>
+
+        <Box width={{ sm: '100%', lg: '50%', xl: 'unset' }}>
+          {!isConnected ? <ConnectWalletButton /> : null}
+        </Box>
+      </Flex>
+
+      <Flex
+        mt="50px"
+        mb="30px"
+        direction={{ sm: 'column-reverse', xl: 'row' }}
+        justifyContent="space-between"
+        alignItems={{ sm: 'flex-start', xl: 'flex-end' }}
+      >
+        <ButtonGroup isAttached size={{ sm: 'md', md: 'lg' }}>
           <Button
             borderRadius="sm"
             disabled={!liveRounds.length}
@@ -109,11 +120,15 @@ export const LotteryList = () => {
           </Button>
         </ButtonGroup>
 
-        <Flex>
-          <StatBlock width="260px" title="Your Tickets" value={ticketBalance || '0'} />
+        <Flex mb={{ sm: '50px', xl: 'unset' }}>
+          <StatBlock
+            width={{ sm: '50%', lg: '260px' }}
+            title="Your Tickets"
+            value={ticketBalance || '0'}
+          />
 
           <StatBlock
-            width="260px"
+            width={{ sm: '50%', md: '260px' }}
             title="Total Raffles Reward"
             value={getReadableAmount(userTotalPrize || 0)}
             currency="SAVR"
@@ -121,12 +136,15 @@ export const LotteryList = () => {
         </Flex>
       </Flex>
 
-      <Grid templateColumns="repeat(3, 1fr)" gap="20px">
+      <Grid
+        templateColumns={{ sm: 'repeat(1, 1fr)', lg: 'repeat(2, 1fr)', xl: 'repeat(3, 1fr)' }}
+        gap={{ base: '20px', lg: '10px' }}
+      >
         {isLoading
           ? Array.from({ length: 3 }).map((_, index) => (
               <GridItem w="100%" key={index}>
                 <Skeleton
-                  height="287px"
+                  height={{ sm: '240px', '2xl': '287px' }}
                   borderRadius="md"
                   startColor="gray.200"
                   endColor="bgGreen.200"

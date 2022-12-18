@@ -6,7 +6,7 @@ import { CoinImage } from '@/components/Landing/CoinImage';
 import './Landing.scss';
 
 export const Main = () => {
-  const bp = useBreakpoint();
+  const bp = useBreakpoint({ ssr: false });
   const isSm = bp === 'sm' || bp === 'md';
 
   return (

@@ -7,7 +7,7 @@ import { ReactComponent as GreenboxIcon } from './images/greenbox.svg';
 import './Landing.scss';
 
 export const About = () => {
-  const bp = useBreakpoint();
+  const bp = useBreakpoint({ ssr: false });
   const isXl = bp === 'xl';
 
   return (

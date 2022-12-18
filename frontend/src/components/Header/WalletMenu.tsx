@@ -53,7 +53,7 @@ export const WalletMenu: FC<Props> = ({ connector, disconnect, address }) => {
     setValue(address || '');
   }, [setValue, address]);
 
-  const bp = useBreakpoint();
+  const bp = useBreakpoint({ ssr: false });
   const isFullView = bp === '2xl' || bp === 'xl';
 
   return (

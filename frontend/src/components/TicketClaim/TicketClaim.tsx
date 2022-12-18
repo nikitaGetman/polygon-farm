@@ -1,15 +1,5 @@
 import React, { FC, useMemo, useState } from 'react';
-import {
-  Box,
-  Button,
-  Center,
-  Flex,
-  Heading,
-  Spacer,
-  Spinner,
-  Text,
-  useDisclosure,
-} from '@chakra-ui/react';
+import { Box, Button, Center, Flex, Spinner, Text, useDisclosure } from '@chakra-ui/react';
 import { useAccount } from 'wagmi';
 
 import { ReactComponent as CheckIcon } from '@/assets/images/icons/check_ticket.svg';
@@ -106,30 +96,56 @@ export const TicketClaim = () => {
 
   return (
     <Box>
-      <Flex alignItems="center" gap="2">
-        <Heading textStyle="h1">Play Everyday</Heading>
-        <Spacer />
-        <Flex alignItems="center">
-          <Text textStyle="textBaldPtSans" mr="7">
-            Or you can buy Raffle Tickets
-          </Text>
-          <Text textStyle="textBaldPtSans" mr="7">
+      <Flex
+        direction={{ sm: 'column', xl: 'row' }}
+        justifyContent="space-between"
+        gap={5}
+        flexWrap="wrap"
+      >
+        <Text textStyle="sectionHeading" width={{ sm: '100%', xl: '40%' }}>
+          Play Everyday
+        </Text>
+
+        <Flex
+          order={{ sm: 3, xl: 2 }}
+          gap={{ sm: 1, xl: 5 }}
+          alignSelf={{ sm: 'stretch', xl: 'flex-start' }}
+          alignItems={{ sm: 'flex-start', xl: 'center' }}
+          direction={{ sm: 'column', xl: 'row' }}
+          whiteSpace="nowrap"
+        >
+          <Text textStyle="textBaldPtSans">Or you can buy Raffle Tickets</Text>
+
+          <Text textStyle="textBaldPtSans" mb={{ sm: '16px', xl: '0' }}>
             {bigNumberToString(ticketPrice, { precision: 0 })} SAV / 1 Ticket
           </Text>
-          {!isConnected ? <ConnectWalletButton /> : <Button onClick={onOpen}>Buy Tickets</Button>}
+
+          {!isConnected ? (
+            <ConnectWalletButton />
+          ) : (
+            <Button onClick={onOpen} width={{ sm: '100%', lg: '50%', xl: 'unset' }}>
+              Buy Tickets
+            </Button>
+          )}
         </Flex>
-      </Flex>
-      <Box maxWidth="640px" mt={5}>
-        <Text textStyle="text1">
+
+        <Text
+          order={{ sm: 2, xl: 3 }}
+          textStyle="text1"
+          flexGrow="0"
+          flexShrink="0"
+          flexBasis={{ sm: '100%', xl: '60%', '2xl': '50%' }}
+        >
           Claim puzzle every day to get a free ticket to iSaver Raffles.
           <br /> Just five days and you can mint a Ticket. Also, everyone can buy any number of
           Tickets.
         </Text>
-      </Box>
+      </Flex>
+
       <Flex
         w="100%"
+        mt="50px"
         padding="40px 40px 48px 32px"
-        mt="12"
         justifyContent="space-between"
         className="box-gradient"
       >

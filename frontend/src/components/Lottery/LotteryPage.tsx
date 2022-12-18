@@ -1,7 +1,15 @@
 import React, { useCallback, useEffect, useMemo } from 'react';
 import { Link as RouterLink, useNavigate, useParams } from 'react-router-dom';
 import { ArrowBackIcon } from '@chakra-ui/icons';
-import { Box, Container, Grid, GridItem, Link, useDisclosure } from '@chakra-ui/react';
+import {
+  Box,
+  Container,
+  Grid,
+  GridItem,
+  Link,
+  useBreakpoint,
+  useDisclosure,
+} from '@chakra-ui/react';
 import { BigNumber } from 'ethers';
 import { useAccount } from 'wagmi';
 
@@ -39,6 +47,8 @@ export const LotteryPage = () => {
     userRoundEntryRequest: { data: userEnteredTickets },
   } = useLotteryRoundById(roundId);
   const { ticketPrice, buyTickets } = useLottery();
+  const bp = useBreakpoint({ ssr: false });
+  const isSm = ['sm', 'md'].includes(bp);
 
   // Redirect to dashboard if round not found
   useEffect(() => {
@@ -81,14 +91,24 @@ export const LotteryPage = () => {
   );
 
   return (
-    <Container variant="dashboard" pt="40px">
-      <Link as={RouterLink} to="/" textStyle="button" alignSelf="flex-start" mb="30px">
+    <Container variant="dashboard">
+      <Link
+        as={RouterLink}
+        to="/"
+        textStyle="button"
+        alignSelf="flex-start"
+        my={{ sm: '20px', xl: '30px' }}
+      >
         <ArrowBackIcon w="24px" h="24px" mr="10px" />
         All Raffles
       </Link>
 
       {round ? (
-        <Grid gridTemplateColumns="1fr 1fr" gap="20px" mb="80px">
+        <Grid
+          gridTemplateColumns={{ sm: '1fr', lg: '1fr 1fr' }}
+          gap={{ sm: '10px', xl: '20px' }}
+          mb="100px"
+        >
           <GridItem colSpan={2}>
             <LotteryHeading
               status={round.status}
@@ -97,9 +117,9 @@ export const LotteryPage = () => {
             />
           </GridItem>
 
-          <GridItem colSpan={1}>
+          <GridItem colSpan={{ sm: 2, lg: 1 }} order={{ sm: 2, lg: 1 }}>
             {!isPast ? (
-              <Box mb="20px">
+              <Box mb={{ sm: '10px', xl: '20px' }}>
                 <LotteryCountdown
                   startTime={round.startTime}
                   duration={round.duration}
@@ -108,7 +128,7 @@ export const LotteryPage = () => {
               </Box>
             ) : null}
 
-            <Box mb="60px">
+            <Box>
               <LotteryDescription
                 prize={totalPrize}
                 winnersForLevel={round.winnersForLevel}
@@ -117,8 +137,8 @@ export const LotteryPage = () => {
             </Box>
           </GridItem>
 
-          <GridItem colSpan={1}>
-            <Box mb="20px">
+          <GridItem colSpan={{ sm: 2, lg: 1 }} order={{ sm: 1, lg: 2 }}>
+            <Box>
               <LotteryTickets
                 tickets={ticketBalance || 0}
                 showEntered={!isUpcoming && isConnected}
@@ -129,7 +149,7 @@ export const LotteryPage = () => {
             </Box>
 
             {isUpcoming || isActive ? (
-              <Box mb="60px">
+              <Box mt={{ sm: '10px', xl: '20px' }}>
                 <LotteryEnter
                   maximumAvailableTickets={round.maxTicketsFromOneMember}
                   userTickets={ticketBalance}
@@ -140,10 +160,18 @@ export const LotteryPage = () => {
               </Box>
             ) : null}
 
-            {isPast ? (
-              <LotterySummary userPrize={userPrize} winners={roundWinners.data || []} />
+            {isPast && !isSm ? (
+              <Box mt={{ sm: '10px', xl: '20px' }}>
+                <LotterySummary userPrize={userPrize} winners={roundWinners.data || []} />
+              </Box>
             ) : null}
           </GridItem>
+
+          {isPast && isSm ? (
+            <GridItem order={3} colSpan={2}>
+              <LotterySummary userPrize={userPrize} winners={roundWinners.data || []} />
+            </GridItem>
+          ) : null}
         </Grid>
       ) : (
         <Box height="500px" position="relative">
