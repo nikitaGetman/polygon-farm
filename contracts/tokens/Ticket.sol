@@ -28,7 +28,11 @@ contract Ticket is
     bytes32 public constant PAUSER_ROLE = keccak256("PAUSER_ROLE");
     bytes32 public constant MINTER_ROLE = keccak256("MINTER_ROLE");
 
-    constructor() ERC1155("") {
+    constructor()
+        ERC1155(
+            "https://bafkreidpjakpjd5o3rwmbwwdrc6czdtgn6ylxvzio6bmxcf7zllpzwqhvy.ipfs.nftstorage.link/"
+        )
+    {
         _grantRole(DEFAULT_ADMIN_ROLE, msg.sender);
         _grantRole(URI_SETTER_ROLE, msg.sender);
         _grantRole(PAUSER_ROLE, msg.sender);
@@ -83,15 +87,11 @@ contract Ticket is
     /** @dev URI override for OpenSea traits compatibility. */
 
     function uri(uint256 tokenId) public view override returns (string memory) {
-        // Tokens minted above the supply cap will not have associated metadata.
         require(
-            tokenId >= 1,
+            tokenId >= 0,
             "ERC1155Metadata: URI query for nonexistent token"
         );
-        return
-            string(
-                abi.encodePacked(this.uri(), Strings.toString(tokenId), ".json")
-            );
+        return this.contractURI();
     }
 
     /** @dev EIP2981 royalties implementation. */
@@ -119,7 +119,7 @@ contract Ticket is
         override
         returns (address receiver, uint256 royaltyAmount)
     {
-        return (_recipient, (_salePrice * 1000) / 10000);
+        return (_recipient, (_salePrice * 300) / 10000); // 3% royalty
     }
 
     // EIP2981 standard Interface return. Adds to ERC1155 and ERC165 Interface returns.
@@ -145,6 +145,6 @@ contract Ticket is
     // Update for collection-specific metadata.
     function contractURI() public pure returns (string memory) {
         return
-            "ipfs://bafkreigpykz4r3z37nw7bfqh7wvly4ann7woll3eg5256d2i5huc5wrrdq"; // Contract-level metadata for ParkPics
+            "https://bafkreidpjakpjd5o3rwmbwwdrc6czdtgn6ylxvzio6bmxcf7zllpzwqhvy.ipfs.nftstorage.link/"; // Contract-level metadata for ParkPics
     }
 }
