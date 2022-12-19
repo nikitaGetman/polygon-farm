@@ -1,6 +1,7 @@
+// bafkreidpjakpjd5o3rwmbwwdrc6czdtgn6ylxvzio6bmxcf7zllpzwqhvy
 {
   "name": "iSaver Raffle Ticket",
   "description": "The Ticket allows you to participate in the iSaver Raffle",
-  "image": "",
+  "image": "https://raw.githubusercontent.com/nikitaGetman/polygon-farm/master/config/metadata/NFT_Ticket.jpg",
   "external_url": "https://isaver.io"
 }

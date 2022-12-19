@@ -23,12 +23,17 @@ contract Ticket is
     string public name;
     string public symbol;
     address private _recipient;
+    uint256 private _royalty;
 
     bytes32 public constant URI_SETTER_ROLE = keccak256("URI_SETTER_ROLE");
     bytes32 public constant PAUSER_ROLE = keccak256("PAUSER_ROLE");
     bytes32 public constant MINTER_ROLE = keccak256("MINTER_ROLE");
 
-    constructor() ERC1155("") {
+    constructor()
+        ERC1155(
+            "https://bafkreidpjakpjd5o3rwmbwwdrc6czdtgn6ylxvzio6bmxcf7zllpzwqhvy.ipfs.nftstorage.link/"
+        )
+    {
         _grantRole(DEFAULT_ADMIN_ROLE, msg.sender);
         _grantRole(URI_SETTER_ROLE, msg.sender);
         _grantRole(PAUSER_ROLE, msg.sender);
@@ -37,6 +42,7 @@ contract Ticket is
         name = "iSaver Raffle Ticket";
         symbol = "SAVRT";
         _recipient = msg.sender;
+        _royalty = 100;
     }
 
     function setURI(string memory newuri) public onlyRole(URI_SETTER_ROLE) {
@@ -80,24 +86,13 @@ contract Ticket is
         super._beforeTokenTransfer(operator, from, to, ids, amounts, data);
     }
 
-    /** @dev URI override for OpenSea traits compatibility. */
-
-    function uri(uint256 tokenId) public view override returns (string memory) {
-        // Tokens minted above the supply cap will not have associated metadata.
-        require(
-            tokenId >= 1,
-            "ERC1155Metadata: URI query for nonexistent token"
-        );
-        return
-            string(
-                abi.encodePacked(this.uri(), Strings.toString(tokenId), ".json")
-            );
-    }
-
     /** @dev EIP2981 royalties implementation. */
 
     // Maintain flexibility to modify royalties recipient (could also add basis points).
-    function _setRoyalties(address newRecipient) internal {
+    function _setRoyalties(address newRecipient)
+        public
+        onlyRole(DEFAULT_ADMIN_ROLE)
+    {
         require(
             newRecipient != address(0),
             "Royalties: new recipient is the zero address"
@@ -105,11 +100,11 @@ contract Ticket is
         _recipient = newRecipient;
     }
 
-    function setRoyalties(address newRecipient)
-        external
+    function setRoyaltyPercent(uint256 percentBasePoints)
+        public
         onlyRole(DEFAULT_ADMIN_ROLE)
     {
-        _setRoyalties(newRecipient);
+        _royalty = percentBasePoints;
     }
 
     // EIP2981 standard royalties return.
@@ -119,7 +114,7 @@ contract Ticket is
         override
         returns (address receiver, uint256 royaltyAmount)
     {
-        return (_recipient, (_salePrice * 1000) / 10000);
+        return (_recipient, (_salePrice * _royalty) / 10000);
     }
 
     // EIP2981 standard Interface return. Adds to ERC1155 and ERC165 Interface returns.
@@ -145,6 +140,6 @@ contract Ticket is
     // Update for collection-specific metadata.
     function contractURI() public pure returns (string memory) {
         return
-            "ipfs://bafkreigpykz4r3z37nw7bfqh7wvly4ann7woll3eg5256d2i5huc5wrrdq"; // Contract-level metadata for ParkPics
+            "https://bafkreidpjakpjd5o3rwmbwwdrc6czdtgn6ylxvzio6bmxcf7zllpzwqhvy.ipfs.nftstorage.link/"; // Contract-level metadata for ParkPics
     }
 }
