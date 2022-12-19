@@ -17,7 +17,6 @@ import { Dashboard } from '@/components/Dashboard/Dashboard';
 import { ExchangePage } from '@/components/Exchange/ExchangePage';
 import { Footer } from '@/components/Footer/Footer';
 import { Header } from '@/components/Header/Header';
-import { Landing } from '@/components/Landing/Landing';
 import { Modals } from '@/components/Modals';
 import { StakingPage } from '@/components/Staking/StakingPage';
 import { AppStateProvider } from '@/contexts/AppContext';
@@ -31,15 +30,25 @@ import { REFERRER_SEARCH_PARAMS_KEY, useLocalReferrer } from './hooks/useLocalRe
 
 import '@/assets/styles/index.scss';
 
-const LANDING_PATH = '/landing';
-const routes = [
-  { path: LANDING_PATH, name: 'Landing', element: <Landing />, nodeRef: createRef() },
+const isLanding = process.env.REACT_APP_IS_LANDING;
+const Landing = React.lazy(() => import('@/components/Landing/Landing'));
+
+const LANDING_PATH = '/';
+const landingRoute = {
+  path: LANDING_PATH,
+  name: 'Landing',
+  element: <Landing />,
+  nodeRef: createRef(),
+};
+const appRoutes = [
   { path: '/', name: 'Dashboard', element: <Dashboard />, nodeRef: createRef() },
   { path: '/staking', name: 'Staking', element: <StakingPage />, nodeRef: createRef() },
   { path: '/team', name: 'Squads', element: <SquadsPage />, nodeRef: createRef() },
   { path: '/exchange', name: 'Exchange', element: <ExchangePage />, nodeRef: createRef() },
   { path: '/raffle/:id', name: 'Raffle', element: <LotteryPage />, nodeRef: createRef() },
 ];
+
+const routes = isLanding ? [landingRoute] : appRoutes;
 
 const router = createBrowserRouter([
   {
@@ -79,11 +88,11 @@ function Layout() {
     }
   }, [queryRef, localReferrer, setLocalReferrer]);
 
-  const isLanding = location.pathname === LANDING_PATH;
+  const isLandingPath = location.pathname === LANDING_PATH;
 
   return (
     <>
-      <Header isLandingView={isLanding} />
+      <Header isLandingView={isLandingPath} />
       <SwitchTransition>
         <CSSTransition
           key={location.pathname}
