@@ -88,7 +88,7 @@ function Layout() {
     }
   }, [queryRef, localReferrer, setLocalReferrer]);
 
-  const isLandingPath = location.pathname === LANDING_PATH;
+  const isLandingPath = Boolean(isLanding && location.pathname === LANDING_PATH);
 
   return (
     <>
