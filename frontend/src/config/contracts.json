@@ -5594,6 +5594,19 @@
               "inputs": [
                 {
                   "internalType": "address",
+                  "name": "newRecipient",
+                  "type": "address"
+                }
+              ],
+              "name": "_setRoyalties",
+              "outputs": [],
+              "stateMutability": "nonpayable",
+              "type": "function"
+            },
+            {
+              "inputs": [
+                {
+                  "internalType": "address",
                   "name": "account",
                   "type": "address"
                 },
@@ -5682,6 +5695,19 @@
               "name": "burnBatch",
               "outputs": [],
               "stateMutability": "nonpayable",
+              "type": "function"
+            },
+            {
+              "inputs": [],
+              "name": "contractURI",
+              "outputs": [
+                {
+                  "internalType": "string",
+                  "name": "",
+                  "type": "string"
+                }
+              ],
+              "stateMutability": "pure",
               "type": "function"
             },
             {
@@ -5846,6 +5872,19 @@
             },
             {
               "inputs": [],
+              "name": "name",
+              "outputs": [
+                {
+                  "internalType": "string",
+                  "name": "",
+                  "type": "string"
+                }
+              ],
+              "stateMutability": "view",
+              "type": "function"
+            },
+            {
+              "inputs": [],
               "name": "pause",
               "outputs": [],
               "stateMutability": "nonpayable",
@@ -5898,6 +5937,35 @@
               "name": "revokeRole",
               "outputs": [],
               "stateMutability": "nonpayable",
+              "type": "function"
+            },
+            {
+              "inputs": [
+                {
+                  "internalType": "uint256",
+                  "name": "_tokenId",
+                  "type": "uint256"
+                },
+                {
+                  "internalType": "uint256",
+                  "name": "_salePrice",
+                  "type": "uint256"
+                }
+              ],
+              "name": "royaltyInfo",
+              "outputs": [
+                {
+                  "internalType": "address",
+                  "name": "receiver",
+                  "type": "address"
+                },
+                {
+                  "internalType": "uint256",
+                  "name": "royaltyAmount",
+                  "type": "uint256"
+                }
+              ],
+              "stateMutability": "view",
               "type": "function"
             },
             {
@@ -5987,6 +6055,19 @@
             {
               "inputs": [
                 {
+                  "internalType": "uint256",
+                  "name": "percentBasePoints",
+                  "type": "uint256"
+                }
+              ],
+              "name": "setRoyaltyPercent",
+              "outputs": [],
+              "stateMutability": "nonpayable",
+              "type": "function"
+            },
+            {
+              "inputs": [
+                {
                   "internalType": "string",
                   "name": "newuri",
                   "type": "string"
@@ -6011,6 +6092,19 @@
                   "internalType": "bool",
                   "name": "",
                   "type": "bool"
+                }
+              ],
+              "stateMutability": "view",
+              "type": "function"
+            },
+            {
+              "inputs": [],
+              "name": "symbol",
+              "outputs": [
+                {
+                  "internalType": "string",
+                  "name": "",
+                  "type": "string"
                 }
               ],
               "stateMutability": "view",
@@ -18724,7 +18818,7 @@
           ]
         },
         "Helper": {
-          "address": "0x9405CA1f42792558BE01756762295Aa8388C5B29",
+          "address": "0xb0cE0881884C6E8D903130949b4871Eef6CEDC30",
           "abi": [
             {
               "inputs": [
@@ -19250,7 +19344,7 @@
           ]
         },
         "Lottery": {
-          "address": "0x9E2c27A47E841aD57dD3acEcCA0c7882BFC22BFa",
+          "address": "0xf97F0a9ACbD8a32924F4b3334F81C04538959388",
           "abi": [
             {
               "inputs": [
@@ -23704,7 +23798,7 @@
           ]
         },
         "Ticket": {
-          "address": "0x6C9390091A92e09e08F612aEcF4E2BA697D69CEF",
+          "address": "0xb055ed62C7fD0241c9e586De9CBfc1b6fe7A53FB",
           "abi": [
             {
               "inputs": [],
@@ -23986,6 +24080,19 @@
               "inputs": [
                 {
                   "internalType": "address",
+                  "name": "newRecipient",
+                  "type": "address"
+                }
+              ],
+              "name": "_setRoyalties",
+              "outputs": [],
+              "stateMutability": "nonpayable",
+              "type": "function"
+            },
+            {
+              "inputs": [
+                {
+                  "internalType": "address",
                   "name": "account",
                   "type": "address"
                 },
@@ -24074,6 +24181,19 @@
               "name": "burnBatch",
               "outputs": [],
               "stateMutability": "nonpayable",
+              "type": "function"
+            },
+            {
+              "inputs": [],
+              "name": "contractURI",
+              "outputs": [
+                {
+                  "internalType": "string",
+                  "name": "",
+                  "type": "string"
+                }
+              ],
+              "stateMutability": "pure",
               "type": "function"
             },
             {
@@ -24238,6 +24358,19 @@
             },
             {
               "inputs": [],
+              "name": "name",
+              "outputs": [
+                {
+                  "internalType": "string",
+                  "name": "",
+                  "type": "string"
+                }
+              ],
+              "stateMutability": "view",
+              "type": "function"
+            },
+            {
+              "inputs": [],
               "name": "pause",
               "outputs": [],
               "stateMutability": "nonpayable",
@@ -24290,6 +24423,35 @@
               "name": "revokeRole",
               "outputs": [],
               "stateMutability": "nonpayable",
+              "type": "function"
+            },
+            {
+              "inputs": [
+                {
+                  "internalType": "uint256",
+                  "name": "_tokenId",
+                  "type": "uint256"
+                },
+                {
+                  "internalType": "uint256",
+                  "name": "_salePrice",
+                  "type": "uint256"
+                }
+              ],
+              "name": "royaltyInfo",
+              "outputs": [
+                {
+                  "internalType": "address",
+                  "name": "receiver",
+                  "type": "address"
+                },
+                {
+                  "internalType": "uint256",
+                  "name": "royaltyAmount",
+                  "type": "uint256"
+                }
+              ],
+              "stateMutability": "view",
               "type": "function"
             },
             {
@@ -24379,6 +24541,19 @@
             {
               "inputs": [
                 {
+                  "internalType": "uint256",
+                  "name": "percentBasePoints",
+                  "type": "uint256"
+                }
+              ],
+              "name": "setRoyaltyPercent",
+              "outputs": [],
+              "stateMutability": "nonpayable",
+              "type": "function"
+            },
+            {
+              "inputs": [
+                {
                   "internalType": "string",
                   "name": "newuri",
                   "type": "string"
@@ -24403,6 +24578,19 @@
                   "internalType": "bool",
                   "name": "",
                   "type": "bool"
+                }
+              ],
+              "stateMutability": "view",
+              "type": "function"
+            },
+            {
+              "inputs": [],
+              "name": "symbol",
+              "outputs": [
+                {
+                  "internalType": "string",
+                  "name": "",
+                  "type": "string"
                 }
               ],
               "stateMutability": "view",

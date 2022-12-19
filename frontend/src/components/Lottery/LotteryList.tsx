@@ -175,7 +175,7 @@ export const LotteryList = () => {
       ) : null}
 
       {loadedStateFilter === LotteryStatusEnum.past && finishedRoundsRequest.hasNextPage ? (
-        <Center mt="10px">
+        <Center mt="30px">
           <Button variant="link" onClick={() => finishedRoundsRequest.fetchNextPage()}>
             Load more
           </Button>

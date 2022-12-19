@@ -15,11 +15,11 @@ import { bigNumberToString, getReadableAmount } from '@/utils/number';
 import { BalanceHistoryChart } from './BalanceChart';
 
 const buttonProps = {
-  mt: { sm: '20px', md: '10px', lg: '15px', xl: '10px', '2xl': '20px' },
+  mt: { sm: '20px', md: '10px', lg: '15px', xl: '10px', '2xl': '12px' },
   rightIcon: <PlusIcon />,
   size: { sm: 'xl', xl: 'md', '2xl': 'xl' },
   fontSize: { xl: '12px', '2xl': 'unset' },
-  width: { sm: '100%', md: '200px', xl: '160px', '2xl': '200px' },
+  width: { sm: '100%', lg: '200px', xl: '100%' },
 };
 
 export const WalletPortfolio = () => {
@@ -85,13 +85,13 @@ export const WalletPortfolio = () => {
               {balanceHistory.length ? (
                 <BalanceHistoryChart data={balanceHistory} />
               ) : (
-                <Box color="bgGreen.600">
-                  <PuzzlesIcon />
+                <Box color="bgGreen.600" height="100%">
+                  <PuzzlesIcon height="100%" />
                 </Box>
               )}
             </Box>
             <Flex mt="15px" justifyContent="space-between" direction={{ sm: 'column', md: 'row' }}>
-              <Flex flexWrap="wrap" width={{ sm: '100%', md: '50%' }}>
+              <Flex flexWrap="wrap" width={{ sm: '100%', md: '48%' }}>
                 <Flex alignItems="baseline" color="green.400" textStyle="textSansBold" width="100%">
                   <Text
                     mr="1"
@@ -111,7 +111,7 @@ export const WalletPortfolio = () => {
               </Flex>
               <Flex
                 flexWrap="wrap"
-                width={{ sm: '100%', md: '50%' }}
+                width={{ sm: '100%', md: '48%' }}
                 mt={{ sm: '30px', md: 'unset' }}
               >
                 <Flex alignItems="baseline" color="blue" textStyle="textSansBold" width="100%">

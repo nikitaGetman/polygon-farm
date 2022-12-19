@@ -18,6 +18,8 @@ export type { IAccessControl } from "./@openzeppelin/contracts/access/IAccessCon
 export { IAccessControl__factory } from "./factories/@openzeppelin/contracts/access/IAccessControl__factory";
 export type { Ownable } from "./@openzeppelin/contracts/access/Ownable";
 export { Ownable__factory } from "./factories/@openzeppelin/contracts/access/Ownable__factory";
+export type { IERC2981 } from "./@openzeppelin/contracts/interfaces/IERC2981";
+export { IERC2981__factory } from "./factories/@openzeppelin/contracts/interfaces/IERC2981__factory";
 export type { Pausable } from "./@openzeppelin/contracts/security/Pausable";
 export { Pausable__factory } from "./factories/@openzeppelin/contracts/security/Pausable__factory";
 export type { ERC1155 } from "./@openzeppelin/contracts/token/ERC1155/ERC1155";

@@ -33,10 +33,12 @@ export interface TicketInterface extends utils.Interface {
     "MINTER_ROLE()": FunctionFragment;
     "PAUSER_ROLE()": FunctionFragment;
     "URI_SETTER_ROLE()": FunctionFragment;
+    "_setRoyalties(address)": FunctionFragment;
     "balanceOf(address,uint256)": FunctionFragment;
     "balanceOfBatch(address[],uint256[])": FunctionFragment;
     "burn(address,uint256,uint256)": FunctionFragment;
     "burnBatch(address,uint256[],uint256[])": FunctionFragment;
+    "contractURI()": FunctionFragment;
     "exists(uint256)": FunctionFragment;
     "getRoleAdmin(bytes32)": FunctionFragment;
     "grantRole(bytes32,address)": FunctionFragment;
@@ -44,15 +46,19 @@ export interface TicketInterface extends utils.Interface {
     "isApprovedForAll(address,address)": FunctionFragment;
     "mint(address,uint256,uint256,bytes)": FunctionFragment;
     "mintBatch(address,uint256[],uint256[],bytes)": FunctionFragment;
+    "name()": FunctionFragment;
     "pause()": FunctionFragment;
     "paused()": FunctionFragment;
     "renounceRole(bytes32,address)": FunctionFragment;
     "revokeRole(bytes32,address)": FunctionFragment;
+    "royaltyInfo(uint256,uint256)": FunctionFragment;
     "safeBatchTransferFrom(address,address,uint256[],uint256[],bytes)": FunctionFragment;
     "safeTransferFrom(address,address,uint256,uint256,bytes)": FunctionFragment;
     "setApprovalForAll(address,bool)": FunctionFragment;
+    "setRoyaltyPercent(uint256)": FunctionFragment;
     "setURI(string)": FunctionFragment;
     "supportsInterface(bytes4)": FunctionFragment;
+    "symbol()": FunctionFragment;
     "totalSupply(uint256)": FunctionFragment;
     "unpause()": FunctionFragment;
     "uri(uint256)": FunctionFragment;
@@ -64,10 +70,12 @@ export interface TicketInterface extends utils.Interface {
       | "MINTER_ROLE"
       | "PAUSER_ROLE"
       | "URI_SETTER_ROLE"
+      | "_setRoyalties"
       | "balanceOf"
       | "balanceOfBatch"
       | "burn"
       | "burnBatch"
+      | "contractURI"
       | "exists"
       | "getRoleAdmin"
       | "grantRole"
@@ -75,15 +83,19 @@ export interface TicketInterface extends utils.Interface {
       | "isApprovedForAll"
       | "mint"
       | "mintBatch"
+      | "name"
       | "pause"
       | "paused"
       | "renounceRole"
       | "revokeRole"
+      | "royaltyInfo"
       | "safeBatchTransferFrom"
       | "safeTransferFrom"
       | "setApprovalForAll"
+      | "setRoyaltyPercent"
       | "setURI"
       | "supportsInterface"
+      | "symbol"
       | "totalSupply"
       | "unpause"
       | "uri"
@@ -104,6 +116,10 @@ export interface TicketInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "URI_SETTER_ROLE",
     values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "_setRoyalties",
+    values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
     functionFragment: "balanceOf",
@@ -128,6 +144,10 @@ export interface TicketInterface extends utils.Interface {
       PromiseOrValue<BigNumberish>[],
       PromiseOrValue<BigNumberish>[]
     ]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "contractURI",
+    values?: undefined
   ): string;
   encodeFunctionData(
     functionFragment: "exists",
@@ -167,6 +187,7 @@ export interface TicketInterface extends utils.Interface {
       PromiseOrValue<BytesLike>
     ]
   ): string;
+  encodeFunctionData(functionFragment: "name", values?: undefined): string;
   encodeFunctionData(functionFragment: "pause", values?: undefined): string;
   encodeFunctionData(functionFragment: "paused", values?: undefined): string;
   encodeFunctionData(
@@ -176,6 +197,10 @@ export interface TicketInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "revokeRole",
     values: [PromiseOrValue<BytesLike>, PromiseOrValue<string>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "royaltyInfo",
+    values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
     functionFragment: "safeBatchTransferFrom",
@@ -202,6 +227,10 @@ export interface TicketInterface extends utils.Interface {
     values: [PromiseOrValue<string>, PromiseOrValue<boolean>]
   ): string;
   encodeFunctionData(
+    functionFragment: "setRoyaltyPercent",
+    values: [PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
     functionFragment: "setURI",
     values: [PromiseOrValue<string>]
   ): string;
@@ -209,6 +238,7 @@ export interface TicketInterface extends utils.Interface {
     functionFragment: "supportsInterface",
     values: [PromiseOrValue<BytesLike>]
   ): string;
+  encodeFunctionData(functionFragment: "symbol", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "totalSupply",
     values: [PromiseOrValue<BigNumberish>]
@@ -235,6 +265,10 @@ export interface TicketInterface extends utils.Interface {
     functionFragment: "URI_SETTER_ROLE",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(
+    functionFragment: "_setRoyalties",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "balanceOf", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "balanceOfBatch",
@@ -242,6 +276,10 @@ export interface TicketInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(functionFragment: "burn", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "burnBatch", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "contractURI",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "exists", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "getRoleAdmin",
@@ -255,6 +293,7 @@ export interface TicketInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(functionFragment: "mint", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "mintBatch", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "name", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "pause", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "paused", data: BytesLike): Result;
   decodeFunctionResult(
@@ -262,6 +301,10 @@ export interface TicketInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "revokeRole", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "royaltyInfo",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "safeBatchTransferFrom",
     data: BytesLike
@@ -274,11 +317,16 @@ export interface TicketInterface extends utils.Interface {
     functionFragment: "setApprovalForAll",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(
+    functionFragment: "setRoyaltyPercent",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "setURI", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "supportsInterface",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "symbol", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "totalSupply",
     data: BytesLike
@@ -443,6 +491,11 @@ export interface Ticket extends BaseContract {
 
     URI_SETTER_ROLE(overrides?: CallOverrides): Promise<[string]>;
 
+    _setRoyalties(
+      newRecipient: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
     balanceOf(
       account: PromiseOrValue<string>,
       id: PromiseOrValue<BigNumberish>,
@@ -468,6 +521,8 @@ export interface Ticket extends BaseContract {
       values: PromiseOrValue<BigNumberish>[],
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
+
+    contractURI(overrides?: CallOverrides): Promise<[string]>;
 
     exists(
       id: PromiseOrValue<BigNumberish>,
@@ -513,6 +568,8 @@ export interface Ticket extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
+    name(overrides?: CallOverrides): Promise<[string]>;
+
     pause(
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
@@ -530,6 +587,14 @@ export interface Ticket extends BaseContract {
       account: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
+
+    royaltyInfo(
+      _tokenId: PromiseOrValue<BigNumberish>,
+      _salePrice: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<
+      [string, BigNumber] & { receiver: string; royaltyAmount: BigNumber }
+    >;
 
     safeBatchTransferFrom(
       from: PromiseOrValue<string>,
@@ -555,6 +620,11 @@ export interface Ticket extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
+    setRoyaltyPercent(
+      percentBasePoints: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
     setURI(
       newuri: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -564,6 +634,8 @@ export interface Ticket extends BaseContract {
       interfaceId: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<[boolean]>;
+
+    symbol(overrides?: CallOverrides): Promise<[string]>;
 
     totalSupply(
       id: PromiseOrValue<BigNumberish>,
@@ -587,6 +659,11 @@ export interface Ticket extends BaseContract {
   PAUSER_ROLE(overrides?: CallOverrides): Promise<string>;
 
   URI_SETTER_ROLE(overrides?: CallOverrides): Promise<string>;
+
+  _setRoyalties(
+    newRecipient: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
 
   balanceOf(
     account: PromiseOrValue<string>,
@@ -613,6 +690,8 @@ export interface Ticket extends BaseContract {
     values: PromiseOrValue<BigNumberish>[],
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
+
+  contractURI(overrides?: CallOverrides): Promise<string>;
 
   exists(
     id: PromiseOrValue<BigNumberish>,
@@ -658,6 +737,8 @@ export interface Ticket extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
+  name(overrides?: CallOverrides): Promise<string>;
+
   pause(
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
@@ -675,6 +756,14 @@ export interface Ticket extends BaseContract {
     account: PromiseOrValue<string>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
+
+  royaltyInfo(
+    _tokenId: PromiseOrValue<BigNumberish>,
+    _salePrice: PromiseOrValue<BigNumberish>,
+    overrides?: CallOverrides
+  ): Promise<
+    [string, BigNumber] & { receiver: string; royaltyAmount: BigNumber }
+  >;
 
   safeBatchTransferFrom(
     from: PromiseOrValue<string>,
@@ -700,6 +789,11 @@ export interface Ticket extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
+  setRoyaltyPercent(
+    percentBasePoints: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
   setURI(
     newuri: PromiseOrValue<string>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -709,6 +803,8 @@ export interface Ticket extends BaseContract {
     interfaceId: PromiseOrValue<BytesLike>,
     overrides?: CallOverrides
   ): Promise<boolean>;
+
+  symbol(overrides?: CallOverrides): Promise<string>;
 
   totalSupply(
     id: PromiseOrValue<BigNumberish>,
@@ -732,6 +828,11 @@ export interface Ticket extends BaseContract {
     PAUSER_ROLE(overrides?: CallOverrides): Promise<string>;
 
     URI_SETTER_ROLE(overrides?: CallOverrides): Promise<string>;
+
+    _setRoyalties(
+      newRecipient: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<void>;
 
     balanceOf(
       account: PromiseOrValue<string>,
@@ -758,6 +859,8 @@ export interface Ticket extends BaseContract {
       values: PromiseOrValue<BigNumberish>[],
       overrides?: CallOverrides
     ): Promise<void>;
+
+    contractURI(overrides?: CallOverrides): Promise<string>;
 
     exists(
       id: PromiseOrValue<BigNumberish>,
@@ -803,6 +906,8 @@ export interface Ticket extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
+    name(overrides?: CallOverrides): Promise<string>;
+
     pause(overrides?: CallOverrides): Promise<void>;
 
     paused(overrides?: CallOverrides): Promise<boolean>;
@@ -818,6 +923,14 @@ export interface Ticket extends BaseContract {
       account: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<void>;
+
+    royaltyInfo(
+      _tokenId: PromiseOrValue<BigNumberish>,
+      _salePrice: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<
+      [string, BigNumber] & { receiver: string; royaltyAmount: BigNumber }
+    >;
 
     safeBatchTransferFrom(
       from: PromiseOrValue<string>,
@@ -843,6 +956,11 @@ export interface Ticket extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
+    setRoyaltyPercent(
+      percentBasePoints: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
     setURI(
       newuri: PromiseOrValue<string>,
       overrides?: CallOverrides
@@ -852,6 +970,8 @@ export interface Ticket extends BaseContract {
       interfaceId: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<boolean>;
+
+    symbol(overrides?: CallOverrides): Promise<string>;
 
     totalSupply(
       id: PromiseOrValue<BigNumberish>,
@@ -963,6 +1083,11 @@ export interface Ticket extends BaseContract {
 
     URI_SETTER_ROLE(overrides?: CallOverrides): Promise<BigNumber>;
 
+    _setRoyalties(
+      newRecipient: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
     balanceOf(
       account: PromiseOrValue<string>,
       id: PromiseOrValue<BigNumberish>,
@@ -988,6 +1113,8 @@ export interface Ticket extends BaseContract {
       values: PromiseOrValue<BigNumberish>[],
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
+
+    contractURI(overrides?: CallOverrides): Promise<BigNumber>;
 
     exists(
       id: PromiseOrValue<BigNumberish>,
@@ -1033,6 +1160,8 @@ export interface Ticket extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
+    name(overrides?: CallOverrides): Promise<BigNumber>;
+
     pause(
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
@@ -1049,6 +1178,12 @@ export interface Ticket extends BaseContract {
       role: PromiseOrValue<BytesLike>,
       account: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    royaltyInfo(
+      _tokenId: PromiseOrValue<BigNumberish>,
+      _salePrice: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     safeBatchTransferFrom(
@@ -1075,6 +1210,11 @@ export interface Ticket extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
+    setRoyaltyPercent(
+      percentBasePoints: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
     setURI(
       newuri: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -1084,6 +1224,8 @@ export interface Ticket extends BaseContract {
       interfaceId: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
+
+    symbol(overrides?: CallOverrides): Promise<BigNumber>;
 
     totalSupply(
       id: PromiseOrValue<BigNumberish>,
@@ -1111,6 +1253,11 @@ export interface Ticket extends BaseContract {
 
     URI_SETTER_ROLE(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
+    _setRoyalties(
+      newRecipient: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
     balanceOf(
       account: PromiseOrValue<string>,
       id: PromiseOrValue<BigNumberish>,
@@ -1136,6 +1283,8 @@ export interface Ticket extends BaseContract {
       values: PromiseOrValue<BigNumberish>[],
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
+
+    contractURI(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     exists(
       id: PromiseOrValue<BigNumberish>,
@@ -1181,6 +1330,8 @@ export interface Ticket extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
+    name(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
     pause(
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
@@ -1197,6 +1348,12 @@ export interface Ticket extends BaseContract {
       role: PromiseOrValue<BytesLike>,
       account: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    royaltyInfo(
+      _tokenId: PromiseOrValue<BigNumberish>,
+      _salePrice: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     safeBatchTransferFrom(
@@ -1223,6 +1380,11 @@ export interface Ticket extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
+    setRoyaltyPercent(
+      percentBasePoints: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
     setURI(
       newuri: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -1232,6 +1394,8 @@ export interface Ticket extends BaseContract {
       interfaceId: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
+
+    symbol(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     totalSupply(
       id: PromiseOrValue<BigNumberish>,
