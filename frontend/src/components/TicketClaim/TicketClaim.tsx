@@ -68,7 +68,12 @@ export const TicketClaim = () => {
 
       let timestamp = 0;
       const streak = claimStreak.data || 0;
-      if (!isClaimed && claimPeriod.data && (isClaimAvailable || index === streak)) {
+      if (
+        !isClaimed &&
+        claimPeriod.data &&
+        (isClaimAvailable || index === streak) &&
+        (index > 0 || !isClaimAvailable)
+      ) {
         const lastClaimTime =
           (!streak && !isClaimedToday.data) || !lastClaim.data
             ? Math.floor(currentTime / claimPeriod.data) * claimPeriod.data
