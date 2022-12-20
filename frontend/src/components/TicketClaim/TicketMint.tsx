@@ -379,27 +379,25 @@ const getIcon2Xl = (isActive: boolean, isHover: boolean) => {
           fill="none"
           xmlns="http://www.w3.org/2000/svg"
         >
-          <g filter="url(#filter0_d_2379_385)">
-            <g filter="url(#filter1_d_2379_385)">
-              <path
-                fillRule="evenodd"
-                clipRule="evenodd"
-                d="M15 16C15 13.2386 17.2386 11 20 11H240C242.761 11 245 13.2386 245 16V57.3555C245 58.2736 244.236 59 243.318 59V59C230.44 59 220 69.0736 220 81.5C220 93.9264 230.44 104 243.318 104V104C244.233 104 245 104.719 245 105.634V146C245 148.761 242.761 151 240 151H20C17.2386 151 15 148.761 15 146V104.672C15 104.299 15.308 104 15.6816 104V104C28.56 104 39 93.9264 39 81.5C39 69.0736 28.56 59 15.6816 59V59C15.3074 59 15 58.6998 15 58.3255V16Z"
-                fill="#1ADCE2"
-              />
-            </g>
+          <g filter="url(#filter0_d_2420_445)">
+            <path
+              fill-rule="evenodd"
+              clip-rule="evenodd"
+              d="M15 16C15 13.2386 17.2386 11 20 11H240C242.761 11 245 13.2386 245 16V57.3555C245 58.2736 244.236 59 243.318 59V59C230.44 59 220 69.0736 220 81.5C220 93.9264 230.44 104 243.318 104V104C244.233 104 245 104.719 245 105.634V146C245 148.761 242.761 151 240 151H20C17.2386 151 15 148.761 15 146V104.672C15 104.299 15.308 104 15.6816 104V104C28.56 104 39 93.9264 39 81.5C39 69.0736 28.56 59 15.6816 59V59C15.3074 59 15 58.6998 15 58.3255V16Z"
+              fill="#1ADCE2"
+            />
           </g>
           <defs>
             <filter
-              id="filter0_d_2379_385"
+              id="filter0_d_2420_445"
               x="0"
               y="0"
               width="260"
               height="170"
               filterUnits="userSpaceOnUse"
-              colorInterpolationFilters="sRGB"
+              color-interpolation-filters="sRGB"
             >
-              <feFlood floodOpacity="0" result="BackgroundImageFix" />
+              <feFlood flood-opacity="0" result="BackgroundImageFix" />
               <feColorMatrix
                 in="SourceAlpha"
                 type="matrix"
@@ -411,49 +409,17 @@ const getIcon2Xl = (isActive: boolean, isHover: boolean) => {
               <feComposite in2="hardAlpha" operator="out" />
               <feColorMatrix
                 type="matrix"
-                values="0 0 0 0 0.101961 0 0 0 0 0.862745 0 0 0 0 0.886275 0 0 0 0.4 0"
+                values="0 0 0 0 0.101961 0 0 0 0 0.862745 0 0 0 0 0.886275 0 0 0 0.25 0"
               />
               <feBlend
                 mode="normal"
                 in2="BackgroundImageFix"
-                result="effect1_dropShadow_2379_385"
+                result="effect1_dropShadow_2420_445"
               />
               <feBlend
                 mode="normal"
                 in="SourceGraphic"
-                in2="effect1_dropShadow_2379_385"
-                result="shape"
-              />
-            </filter>
-            <filter
-              id="filter1_d_2379_385"
-              x="0"
-              y="0"
-              width="260"
-              height="170"
-              filterUnits="userSpaceOnUse"
-              colorInterpolationFilters="sRGB"
-            >
-              <feFlood floodOpacity="0" result="BackgroundImageFix" />
-              <feColorMatrix
-                in="SourceAlpha"
-                type="matrix"
-                values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0"
-                result="hardAlpha"
-              />
-              <feOffset dy="4" />
-              <feGaussianBlur stdDeviation="7.5" />
-              <feComposite in2="hardAlpha" operator="out" />
-              <feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.25 0" />
-              <feBlend
-                mode="normal"
-                in2="BackgroundImageFix"
-                result="effect1_dropShadow_2379_385"
-              />
-              <feBlend
-                mode="normal"
-                in="SourceGraphic"
-                in2="effect1_dropShadow_2379_385"
+                in2="effect1_dropShadow_2420_445"
                 result="shape"
               />
             </filter>
