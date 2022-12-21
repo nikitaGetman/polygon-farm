@@ -23,9 +23,9 @@ function App() {
           <AppStateProvider>
             <div className="background" />
 
-            <Box position="relative">
+            <Flex position="relative" minHeight="100vh" direction="column">
               <RouterProvider router={router} />
-            </Box>
+            </Flex>
 
             <Modals />
           </AppStateProvider>

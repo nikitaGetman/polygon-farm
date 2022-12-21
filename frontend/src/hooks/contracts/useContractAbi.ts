@@ -13,6 +13,7 @@ export enum ContractsEnum {
   'VendorSell' = 'VendorSell',
   'Lottery' = 'Lottery',
   'Ticket' = 'Ticket',
+  'TokenVesting' = 'TokenVesting',
 }
 
 type ContractAbi = {
