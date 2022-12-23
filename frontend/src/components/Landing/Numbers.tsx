@@ -7,7 +7,7 @@ import { ContractsEnum } from '@/hooks/contracts/useContractAbi';
 import { useTokenContract } from '@/hooks/contracts/useTokenContract';
 import { useSavTokenBurn } from '@/hooks/useSavTokenBurn';
 import { useStaking } from '@/hooks/useStaking';
-import { bigNumberToString, getReadableAmount } from '@/utils/number';
+import { beautifyAmount, bigNumberToString, getReadableAmount } from '@/utils/number';
 
 import './Landing.scss';
 
@@ -75,13 +75,13 @@ export const Numbers = () => {
         <Flex className="number-item">
           <Text className="number-item__heading">Total Value Locked</Text>
           <Text className="number-item__text" color="green.400">
-            {bigNumberToString(tvl || 0, { precision: 0 })}
+            {beautifyAmount(bigNumberToString(tvl || 0, { precision: 0 }), '', true)}
           </Text>
         </Flex>
         <Flex className="number-item">
           <Text className="number-item__heading">Total Burned</Text>
           <Text className="number-item__text" color="green.400">
-            {bigNumberToString(savBurned.data || 0, { precision: 0 })}
+            {beautifyAmount(bigNumberToString(savBurned.data || 0, { precision: 0 }), '', true)}
           </Text>
         </Flex>
       </Flex>
