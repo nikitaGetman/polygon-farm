@@ -157,17 +157,24 @@ export const StakingPlan: FC<StakingPlanProps> = ({
             direction={{ sm: 'row', lg: 'column', xl: 'row', '2xl': 'column' }}
             width={{ sm: '100%', lg: 'unset', xl: '100%', '2xl': 'unset' }}
             flex={{ '2xl': '0 0 140px' }}
-            gap={4}
+            gap="15px"
           >
-            <Button onClick={onDeposit} variant="outlined" disabled={!isSubscribed} width="100%">
+            <Button
+              size="md"
+              width="100%"
+              variant="outlined"
+              disabled={!isSubscribed}
+              onClick={onDeposit}
+            >
               Deposit
             </Button>
             <Button
+              size="md"
               width="100%"
-              onClick={handleClaim}
               variant="outlined"
-              disabled={!isClaimAvailable || isClaimLoading}
               isLoading={isClaimLoading}
+              disabled={!isClaimAvailable || isClaimLoading}
+              onClick={handleClaim}
             >
               Claim
             </Button>

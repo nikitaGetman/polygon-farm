@@ -68,7 +68,12 @@ export const TicketClaim = () => {
 
       let timestamp = 0;
       const streak = claimStreak.data || 0;
-      if (!isClaimed && claimPeriod.data && (isClaimAvailable || index === streak)) {
+      if (
+        !isClaimed &&
+        claimPeriod.data &&
+        (isClaimAvailable || index === streak) &&
+        (index > 0 || !isClaimAvailable)
+      ) {
         const lastClaimTime =
           (!streak && !isClaimedToday.data) || !lastClaim.data
             ? Math.floor(currentTime / claimPeriod.data) * claimPeriod.data
@@ -121,9 +126,9 @@ export const TicketClaim = () => {
           direction={{ sm: 'column', xl: 'row' }}
           whiteSpace="nowrap"
         >
-          <Text textStyle="textBaldPtSans">Or you can buy Raffle Tickets</Text>
+          <Text textStyle="textBoldPtSans">Or you can buy Raffle Tickets</Text>
 
-          <Text textStyle="textBaldPtSans" mb={{ sm: '16px', xl: '0' }}>
+          <Text textStyle="textBoldPtSans" mb={{ sm: '16px', xl: '0' }}>
             {bigNumberToString(ticketPrice, { precision: 0 })} SAV / 1 Ticket
           </Text>
 

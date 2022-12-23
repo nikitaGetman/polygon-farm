@@ -26,6 +26,7 @@ import { useNavigateByHash } from '@/hooks/useNavigateByHash';
 import { useReferralManager } from '@/hooks/useReferralManager';
 import { useSquads } from '@/hooks/useSquads';
 import { useStaking } from '@/hooks/useStaking';
+import { APP_URL, isLanding, WHITEPAPER_URL } from '@/router';
 
 export const Menu = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) => {
   const { hasEndingSubscription } = useStaking();
@@ -48,7 +49,12 @@ export const Menu = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => void
         boxShadow="0px 6px 20px rgba(0, 0, 0, 0.25)"
         background="linear-gradient(96.85deg, #1a7b58 -8.44%, #1b3339 100%)"
       >
-        <DrawerHeader p="30px 30px" display="flex" justifyContent="space-between">
+        <DrawerHeader
+          p="30px 30px"
+          display="flex"
+          justifyContent="space-between"
+          alignItems="center"
+        >
           <Text textStyle="h2" textTransform="uppercase">
             Menu
           </Text>
@@ -57,12 +63,18 @@ export const Menu = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => void
             aria-label="Close burger menu"
             icon={<CrossIcon />}
             onClick={onClose}
-            padding="6px"
+            padding="0"
+            size="md"
+            _hover={{ bgColor: 'green.100' }}
           />
         </DrawerHeader>
 
         <DrawerBody>
-          <NavMenuItem text="Home" icon={<HouseIcon />} onClick={() => handleNavigate('/')} />
+          <NavMenuItem
+            text="Dashboard"
+            icon={<HouseIcon />}
+            onClick={() => (isLanding ? window.open(APP_URL) : handleNavigate('/#dashboard'))}
+          />
           <NavMenuItem
             text="Staking"
             onClick={() => handleNavigate('/staking')}
@@ -101,7 +113,7 @@ export const Menu = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => void
           />
 
           <NavMenuItem
-            onClick={() => window.open('https://isaver.gitbook.io/isaver', '_blank')}
+            onClick={() => window.open(WHITEPAPER_URL, '_blank')}
             text="Whitepaper"
             icon={<TabletIcon />}
           />

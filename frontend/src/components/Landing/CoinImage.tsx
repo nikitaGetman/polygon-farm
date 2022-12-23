@@ -7,8 +7,12 @@ import './Landing.scss';
 
 export const CoinImage = () => {
   return (
-    <Box width="100%" minWidth="240px" textAlign="center">
-      <Box className="coins-text__img" width="100%" height="100%">
+    <Box width="100%" minWidth={{ lg: '380px', base: '240px' }} textAlign="center">
+      <Box
+        className="coins-text__img"
+        width="100%"
+        height={{ sm: '300px', md: '300px', lg: '300px', xl: '400px', '2xl': '500px' }}
+      >
         <CoinsIcon />
       </Box>
       <Text className="coins-text__primary">500 000 000 SAV</Text>

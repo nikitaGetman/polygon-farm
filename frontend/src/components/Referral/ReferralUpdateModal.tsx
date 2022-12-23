@@ -36,7 +36,7 @@ export const ReferralUpdateModal: FC<ReferralUpdateModalProps> = ({
     <Modal isCentered isOpen={true} onClose={onClose} size="xl">
       <ModalOverlay />
       <ModalContent p="40px 40px 32px">
-        <ModalHeader textStyle="textSansBold" fontSize={26}>
+        <ModalHeader textStyle="textSansBold">
           <Text textStyle="textSansBold" fontSize="26px">
             Add Leader
           </Text>
@@ -53,8 +53,6 @@ export const ReferralUpdateModal: FC<ReferralUpdateModalProps> = ({
             value={localLeader}
             onChange={(e) => setLocalLeader(e.target.value)}
           />
-
-          <Text textStyle="textSansBold"></Text>
         </ModalBody>
         <ModalFooter flexDirection="column">
           <Button

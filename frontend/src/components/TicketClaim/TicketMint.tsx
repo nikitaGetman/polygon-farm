@@ -381,8 +381,8 @@ const getIcon2Xl = (isActive: boolean, isHover: boolean) => {
         >
           <g filter="url(#filter0_d_2420_445)">
             <path
-              fill-rule="evenodd"
-              clip-rule="evenodd"
+              fillRule="evenodd"
+              clipRule="evenodd"
               d="M15 16C15 13.2386 17.2386 11 20 11H240C242.761 11 245 13.2386 245 16V57.3555C245 58.2736 244.236 59 243.318 59V59C230.44 59 220 69.0736 220 81.5C220 93.9264 230.44 104 243.318 104V104C244.233 104 245 104.719 245 105.634V146C245 148.761 242.761 151 240 151H20C17.2386 151 15 148.761 15 146V104.672C15 104.299 15.308 104 15.6816 104V104C28.56 104 39 93.9264 39 81.5C39 69.0736 28.56 59 15.6816 59V59C15.3074 59 15 58.6998 15 58.3255V16Z"
               fill="#1ADCE2"
             />
@@ -395,9 +395,9 @@ const getIcon2Xl = (isActive: boolean, isHover: boolean) => {
               width="260"
               height="170"
               filterUnits="userSpaceOnUse"
-              color-interpolation-filters="sRGB"
+              colorInterpolationFilters="sRGB"
             >
-              <feFlood flood-opacity="0" result="BackgroundImageFix" />
+              <feFlood floodOpacity="0" result="BackgroundImageFix" />
               <feColorMatrix
                 in="SourceAlpha"
                 type="matrix"

@@ -132,7 +132,7 @@ const textStyles = {
     fontWeight: '600',
     lineHeight: '130%',
   },
-  textBaldPtSans: {
+  textBoldPtSans: {
     fontFamily: 'PT Sans',
     fontSize: { sm: '16px', '2xl': '18px' },
     fontWeight: '700',

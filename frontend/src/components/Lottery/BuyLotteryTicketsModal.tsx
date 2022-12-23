@@ -15,6 +15,7 @@ import {
 import { BigNumber } from 'ethers';
 
 import { InputAmount } from '@/components/ui/InputAmount/InputAmount';
+import { useSavBalance } from '@/hooks/useTokenBalance';
 import { bigNumberToString } from '@/utils/number';
 
 const boxCommonStyles = {
@@ -39,6 +40,7 @@ export const BuyLotteryTicketsModal: FC<BuyLotteryTicketsModalProps> = ({
 }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [amount, setAmount] = useState<number>();
+  const { data: savBalance } = useSavBalance();
 
   const handleUpdate = useCallback(
     (val?: string) => {
@@ -92,11 +94,14 @@ export const BuyLotteryTicketsModal: FC<BuyLotteryTicketsModalProps> = ({
           <Text mb="10px" textStyle="textSansBold">
             Total amount
           </Text>
-          <Box {...boxCommonStyles} mb="10px">
+          <Box {...boxCommonStyles}>
             {bigNumberToString(ticketPrice.mul(amount || 0))}
             <Spacer />
             SAV
           </Box>
+          <Text textStyle="textSansSmall" textAlign="right" mt="8px" height="16px" mb="10px">
+            You have: {bigNumberToString(savBalance || 0)} SAV
+          </Text>
         </ModalBody>
 
         <ModalFooter>

@@ -159,7 +159,7 @@ export const LotteryList = () => {
               title={getLotteryTitle(id + 1)}
               status={status}
               timestamp={getNextLotteryTimestamp({ startTime, duration, status }) * 1000}
-              onDetails={() => navigate(`/raffle/${id + 1}`)}
+              onDetails={() => navigate(`/raffles/${id + 1}`)}
               onExpire={updateLotteriesState}
             />
           </GridItem>

@@ -32,11 +32,12 @@ export const bigNumberToNumber = (
 
 const PERCENT_DIVIDER = 1000.0;
 export const getYearlyAPR = (profit: BigNumberish, duration: BigNumberish) => {
-  return (
+  return roundToPrecision(
     (((BigNumber.from(profit).toNumber() / PERCENT_DIVIDER) * 100) /
       BigNumber.from(duration).toNumber()) *
-    365.0
-  ).toFixed(2);
+      365.0,
+    2
+  );
 };
 
 export const getReadableAmount = (
@@ -45,35 +46,39 @@ export const getReadableAmount = (
     decimals = 18,
     precision = 2,
     shortify = false,
-    beautify = false,
+    prettify = false,
   }: {
     decimals?: number;
     precision?: number;
     shortify?: boolean;
-    beautify?: boolean;
+    prettify?: boolean;
   } = {}
 ) => {
   const realAmount = parseFloat(ethers.utils.formatUnits(amount, decimals));
   const shortAmount = shortify ? realAmount * 10 : realAmount;
 
-  if (shortAmount < 1000) return `${realAmount.toFixed(precision)}`;
-  if (shortAmount < 1000000) return `${(realAmount / 1000).toFixed(precision)}k`;
+  if (shortAmount < 1000) return roundToPrecision(realAmount, precision);
+  if (shortAmount < 1000000)
+    return beautifyAmount(roundToPrecision(realAmount / 1000, precision), 'k', prettify);
 
-  if (beautify) {
-    const amount = realAmount / 1000000;
-    const stringAmount = new Intl.NumberFormat('en-IN', {
-      maximumSignificantDigits: 3,
-      maximumFractionDigits: precision,
-    })
-      .format(amount)
-      .replaceAll(',', ' ');
-
-    return `${stringAmount} M`;
-  }
-
-  return `${(realAmount / 1000000).toFixed(precision)}M`;
+  return beautifyAmount(roundToPrecision(realAmount / 1000000, precision), 'M', prettify);
 };
 
 export const makeBigNumber = (value: BigNumberish, decimals: number = 18) => {
   return ethers.utils.parseUnits(value.toString(), decimals);
+};
+
+export const beautifyAmount = (amount: number | string, symbol: string, prettify: boolean) => {
+  const amountNumber = parseFloat(amount.toString());
+
+  const delimiter = prettify ? ' ' : '';
+  if (amount < 1000) return `${amountNumber}${delimiter}${symbol}`;
+  return `${roundToPrecision(amountNumber / 1000, 0)}${delimiter}${(amountNumber % 1000)
+    .toString()
+    .padStart(3, '0')}${delimiter}${symbol}`;
+};
+
+const roundToPrecision = (amount: number, precision: number) => {
+  const mul = 10 ** precision;
+  return Math.floor(amount * mul) / mul;
 };
