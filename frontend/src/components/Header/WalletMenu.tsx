@@ -64,6 +64,7 @@ export const WalletMenu: FC<Props> = ({ connector, disconnect, address }) => {
         rightIcon={isFullView ? <ChevronDownIcon /> : undefined}
         size={{ sm: 'md', '2xl': 'lg' }}
         padding={{ sm: '10px', xl: '20px' }}
+        textTransform="lowercase"
       >
         {isFullView ? trimAddress(address) : connectorIcon}
       </MenuButton>

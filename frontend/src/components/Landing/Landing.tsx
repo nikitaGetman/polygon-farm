@@ -13,8 +13,8 @@ import './Landing.scss';
 
 export const Landing = () => {
   return (
-    <>
-      <Box className="main-container" paddingTop="60px">
+    <Box overflowX="hidden">
+      <Box id="top" className="main-container" paddingTop="60px">
         <Main />
       </Box>
       <About />
@@ -23,11 +23,11 @@ export const Landing = () => {
         <Numbers />
         <Plans />
       </Box>
-      <Banner />
-      <Box className="main-container">
+      <Box className="main-container" overflow="visible">
         <Lottery />
       </Box>
-    </>
+      <Banner />
+    </Box>
   );
 };
 

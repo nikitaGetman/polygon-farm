@@ -140,7 +140,7 @@ export const ExchangePage = () => {
           <CloseButton onClick={handleClose} size="lg" />
         </Flex>
 
-        <Text textStyle="textSansSmall" mb="30px">
+        <Text textStyle="textSansBold" mb="30px" fontSize="16px">
           Please use only Polygon (MATIC) network
         </Text>
 

@@ -1,30 +1,18 @@
 import React, { FC, useCallback } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { ArrowForwardIcon } from '@chakra-ui/icons';
-import {
-  Box,
-  Button,
-  Circle,
-  Container,
-  Flex,
-  IconButton,
-  Image,
-  useBreakpoint,
-  useDisclosure,
-} from '@chakra-ui/react';
+import { Box, Circle, Container, Flex, IconButton, Image, useDisclosure } from '@chakra-ui/react';
 import { useAccount, useDisconnect } from 'wagmi';
 
 import { ReactComponent as BurgerIcon } from '@/assets/images/icons/burger.svg';
 import Logo from '@/assets/images/logo.svg';
-import LogoSmall from '@/assets/images/logo_small.svg';
 import { WalletMenu } from '@/components/Header/WalletMenu';
 import { Menu } from '@/components/Menu/Menu';
 import { ConnectWalletButton } from '@/components/ui/ConnectWalletButton/ConnectWalletButton';
-import { useConnectWallet } from '@/hooks/useConnectWallet';
 import { useLocalReferrer } from '@/hooks/useLocalReferrer';
+import { useNavigateByHash } from '@/hooks/useNavigateByHash';
 import { useReferralManager } from '@/hooks/useReferralManager';
 import { useSquads } from '@/hooks/useSquads';
 import { useStaking } from '@/hooks/useStaking';
+import { LANDING_URL } from '@/router';
 
 import './Header.scss';
 
@@ -35,15 +23,11 @@ export const Header: FC<HeaderProps> = ({ isLandingView }) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const { address, isConnected, connector } = useAccount();
   const { disconnect } = useDisconnect();
-  const { connect } = useConnectWallet();
-  const navigate = useNavigate();
   const { setLocalReferrer } = useLocalReferrer();
   const { hasEndingSubscription } = useStaking();
   const { hasEndingReferralSubscription } = useReferralManager();
   const { hasEndingSquadsSubscription } = useSquads();
-  const bp = useBreakpoint({ ssr: false });
-
-  const isSm = ['sm', 'md', 'lg'].includes(bp);
+  const navigate = useNavigateByHash();
 
   const hasNotification =
     isConnected &&
@@ -56,65 +40,39 @@ export const Header: FC<HeaderProps> = ({ isLandingView }) => {
   }, [setLocalReferrer, disconnect, navigate]);
 
   return (
-    <Box className="app-header" padding={isLandingView ? '18px 0' : '13px 0'}>
+    <Box className="app-header" padding="13px 0">
       <Container variant="header">
-        <Link to="/">
-          <Image
-            src={isLandingView ? LogoSmall : Logo}
-            alt="Logo"
-            height={{ sm: '40px', '2xl': 'unset' }}
-          />
-        </Link>
+        <Box
+          as="a"
+          onClick={() => (isLandingView ? navigate('/#top') : window.open(LANDING_URL, '_self'))}
+        >
+          <Image src={Logo} alt="Logo" height={{ sm: '40px', '2xl': 'unset' }} />
+        </Box>
 
         <Flex>
-          {isLandingView ? (
-            <Button
-              as="a"
-              mr="20px"
-              variant="secondary"
-              href="https://app.isaver.io"
-              size={{ sm: 'md', '2xl': 'lg' }}
-            >
-              Dashboard
-            </Button>
-          ) : null}
-
-          {isConnected ? (
-            <WalletMenu address={address} connector={connector} disconnect={handleDisconnect} />
-          ) : isSm ? (
-            <IconButton
-              aria-label="Connect wallet"
-              icon={<ArrowForwardIcon />}
-              onClick={connect}
-              size="md"
-            />
-          ) : (
-            <ConnectWalletButton size={{ sm: 'md', '2xl': 'lg' }} />
-          )}
-
           {!isLandingView ? (
-            <Box position="relative">
-              <IconButton
-                ml={{ sm: '10px', xl: '20px' }}
-                size={{ sm: 'md', '2xl': 'lg' }}
-                variant="secondary"
-                aria-label="Burger menu"
-                icon={<BurgerIcon width="24px" />}
-                onClick={onOpen}
-                padding={{ sm: '0' }}
-              />
-              {hasNotification ? (
-                <Circle
-                  as="span"
-                  size="10px"
-                  bg="red"
-                  position="absolute"
-                  right="-2px"
-                  top="-2px"
-                />
-              ) : null}
-            </Box>
+            isConnected ? (
+              <WalletMenu address={address} connector={connector} disconnect={handleDisconnect} />
+            ) : (
+              <ConnectWalletButton size={{ sm: 'md', '2xl': 'lg' }} />
+            )
           ) : null}
+
+          <Box position="relative">
+            <IconButton
+              ml={{ sm: '10px', xl: '20px' }}
+              size={{ sm: 'md', '2xl': 'lg' }}
+              variant="secondary"
+              aria-label="Burger menu"
+              icon={<BurgerIcon width="24px" />}
+              onClick={onOpen}
+              padding={{ sm: '0' }}
+              _hover={{ bgColor: 'green.100' }}
+            />
+            {hasNotification ? (
+              <Circle as="span" size="10px" bg="red" position="absolute" right="-2px" top="-2px" />
+            ) : null}
+          </Box>
         </Flex>
       </Container>
 

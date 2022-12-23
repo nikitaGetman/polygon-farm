@@ -353,7 +353,7 @@ contract Lottery is ILottery, VRFConsumerBaseV2, AccessControl {
         uint256 totalActiveRounds = 0;
         bool[] memory activeRoundsFlags = new bool[](rounds.length);
         for (uint256 i = 0; i < rounds.length; i++) {
-            if (rounds[i].startTime + rounds[i].duration > block.timestamp) {
+            if (!rounds[i].isFinished) {
                 activeRoundsFlags[i] = true;
                 totalActiveRounds += 1;
             }

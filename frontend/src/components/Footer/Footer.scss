@@ -8,13 +8,19 @@
   padding-bottom: 63px;
 
   &-top {
-    max-width: 1220px;
+    max-width: 1300px;
     margin: auto;
-    padding: 0 40px 44px;
+    padding-bottom: 44px;
+    justify-content: space-between;
+    align-items: center;
 
     &__right {
       .mail-list {
         margin-right: 60px;
+
+        &__input {
+          color: white;
+        }
       }
     }
   }
@@ -24,13 +30,12 @@
     padding: 30px 0 0;
 
     &__container {
-      max-width: 1220px;
+      max-width: 1300px;
       margin: auto;
-      padding: 0 40px;
     }
 
     &__left {
-      max-width: 360px;
+      max-width: 390px;
     }
   }
 
@@ -115,15 +120,44 @@
   }
 }
 
+@media screen and (max-width: $xl2) {
+  .footer {
+    &-top {
+      flex-direction: column;
+      align-items: flex-start;
+      max-width: 944px;
+
+      &__right {
+        margin-top: 50px;
+        width: 100%;
+        display: flex;
+        justify-content: space-between;
+        flex-direction: row-reverse;
+      }
+      .mail-list {
+        margin-right: 0;
+      }
+    }
+
+    &-bottom {
+      &__container {
+        max-width: 944px;
+      }
+
+      &__left {
+      }
+    }
+  }
+}
 @media screen and (max-width: $xl) {
-  .footer-top,
   .footer-bottom {
-    padding-right: 40px;
-    padding-left: 40px;
+    padding-right: 20px;
+    padding-left: 20px;
   }
 
   .footer-bottom__container {
     padding: 0;
+    max-width: 600px;
   }
 
   .sav-container {
@@ -135,25 +169,25 @@
 
   .footer-top {
     flex-wrap: wrap;
+    max-width: 600px;
+    padding: 0 0 30px;
 
     &__left {
       width: 100%;
-      margin-bottom: 42px;
     }
 
     &__right {
+      margin-top: 40px;
       width: 100%;
       align-items: center;
       justify-content: space-between;
-
-      .mail-list {
-        order: 2;
-        margin-right: 0;
-      }
-
-      .sav-container {
-        order: 1;
-      }
+    }
+  }
+  .mail-list {
+    width: 300px;
+    &__heading {
+      font-size: 16px;
+      font-weight: 600;
     }
   }
 }
@@ -170,15 +204,23 @@
   }
   .sav-container {
     p {
-      font-size: 16px;
-      line-height: 20px;
+      font-size: 26px;
+      line-height: 32px;
     }
   }
+  .footer-top__right {
+    flex-direction: column;
+    align-items: flex-start;
+  }
   .mail-list {
+    width: 100%;
+    text-align: center;
+    margin-bottom: 40px;
+
     &__heading {
-      font-size: 16px;
-      line-height: 20px;
-      margin-bottom: 10px;
+      font-size: 26px;
+      line-height: 32px;
+      margin-bottom: 5px;
     }
   }
   .footer-bottom {
@@ -216,8 +258,6 @@
     padding-left: 10px;
   }
   .footer-top__right {
-    flex-wrap: wrap;
-
     .sav-container {
       width: 100%;
       order: 2;
@@ -232,7 +272,7 @@
       width: 100%;
       order: 1;
       text-align: center;
-      margin-bottom: 40px;
+      margin-bottom: 30px;
 
       &__heading {
         font-size: 26px;
@@ -244,13 +284,15 @@
 }
 
 @media screen and (min-width: $sm) and (max-width: $md) {
+  .footer-top {
+    padding-bottom: 20px;
+  }
+  .footer-bottom {
+    padding-top: 20px;
+  }
   .footer-top__left {
-    padding-top: 30px;
-    margin-bottom: 50px;
-
     img {
       width: 114px;
-      height: 37px;
     }
   }
   .footer-top__right {

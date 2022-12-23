@@ -15,7 +15,7 @@ export const Dashboard = () => {
 
   return (
     <Container variant="dashboard">
-      <Box mt={{ sm: '30px', '2xl': '50px' }}>
+      <Box mt={{ sm: '30px', '2xl': '50px' }} id="dashboard">
         <WalletPortfolio />
       </Box>
 

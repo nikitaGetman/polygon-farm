@@ -76,7 +76,7 @@ export const ReferralSubscriptionModal: FC<ReferralSubscriptionModalProps> = ({
     <Modal isCentered isOpen={isOpen} onClose={onClose} scrollBehavior="inside">
       <ModalOverlay />
       <ModalContent position="relative">
-        <ModalHeader textStyle="textSansBold" fontSize={26}>
+        <ModalHeader textStyle="textSansBold">
           <Text textStyle="textSansBold" fontSize="26px">
             Activation Build A Team
           </Text>

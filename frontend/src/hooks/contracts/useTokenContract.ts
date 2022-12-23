@@ -54,6 +54,10 @@ export const useTokenContract = (token: ContractsEnum.SAV | ContractsEnum.SAVR) 
     return contract.allowance(owner, spender);
   };
 
+  const totalSupply = async () => {
+    return contract.totalSupply();
+  };
+
   const totalBurned = async () => {
     return contract.totalBurn();
   };
@@ -72,5 +76,6 @@ export const useTokenContract = (token: ContractsEnum.SAV | ContractsEnum.SAVR) 
     allowance,
     approve,
     totalBurned,
+    totalSupply,
   };
 };

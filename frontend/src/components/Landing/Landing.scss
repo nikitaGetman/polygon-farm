@@ -114,8 +114,6 @@ body {
 }
 
 .main-banner {
-  margin-bottom: 80px;
-
   &__bottom {
     top: -60px;
   }
@@ -133,6 +131,17 @@ body {
   }
 
   &__img {
+  }
+}
+
+.coins-text__img {
+  position: relative;
+
+  svg {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
   }
 }
 
@@ -190,12 +199,16 @@ body {
   margin-top: 50px;
 
   .icons-card {
-    width: calc(25% - 16px);
+    width: calc(25% - 20px);
+    padding: 50px 20px 20px;
+
+    svg {
+      width: 130px;
+    }
   }
 }
 
-.plans,
-.banner {
+.plans {
   margin-bottom: 180px;
 }
 
@@ -239,11 +252,12 @@ body {
 .plans-item {
   width: calc(25% - 20px);
   padding: 57px 20px 58px 30px;
-  margin-bottom: 33px;
+  margin-bottom: 20px;
   background-image: url(./images/p_texture.svg);
   background-repeat: no-repeat;
   background-size: cover;
   background-position: center;
+  min-height: 300px;
 
   &__heading {
     font-weight: 700;
@@ -262,18 +276,11 @@ body {
 }
 
 .banner {
-  padding-top: 24px;
-  padding-bottom: 60px;
+  padding: 104px 0;
   background-image: url(./images/banner_bg.svg);
   background-repeat: no-repeat;
   background-size: cover;
   background-position: center;
-
-  &__img {
-    &-container {
-      margin-bottom: 38px;
-    }
-  }
 
   &__btn {
     min-width: 220px;
@@ -302,7 +309,17 @@ body {
 
 .lottery {
   .heading {
-    margin-bottom: 10px;
+    margin-bottom: 15px;
+  }
+
+  &__img {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    max-width: unset;
+    width: 1500px;
+    pointer-events: none;
   }
 
   &__text {
@@ -337,6 +354,7 @@ body {
   .main-container {
     max-width: 100%;
     padding: 0 40px;
+    overflow-x: hidden;
   }
   .main-heading {
     font-size: 52px;
@@ -354,8 +372,7 @@ body {
   }
   .coins-text__img {
     svg {
-      max-width: 307px;
-      max-height: 346px;
+      max-height: 600px;
       margin: 0 auto;
     }
   }
@@ -378,7 +395,8 @@ body {
     margin-bottom: 100px;
 
     .text {
-      padding-bottom: 30px;
+      font-weight: 400;
+      padding-bottom: 0px;
     }
 
     &__img {
@@ -389,7 +407,8 @@ body {
     }
 
     .subheading {
-      margin-bottom: 20px;
+      font-weight: 400;
+      margin-bottom: 35px;
     }
   }
   .heading-container {
@@ -410,24 +429,29 @@ body {
   .icons-card {
     padding-top: 40px;
   }
-  .benefit-container .icons-card {
-    svg {
+  .benefit {
+    margin-bottom: 100px;
+  }
+  .benefit-container {
+    .icons-card {
+      width: calc(25% - 20px);
+      svg {
+        width: 100px;
+      }
     }
   }
   .icons-card__heading {
-    margin-top: 22px;
+    margin-top: 20px;
     font-size: 18px;
     line-height: 23px;
-
-    br {
-      //display: none;
-    }
+    font-weight: 700;
   }
   .icons-card__text {
     font-size: 12px;
     line-height: 130%;
   }
   .plans-item {
+    min-height: 220px;
     padding: 53px 24px 37px 30px;
 
     &__heading {
@@ -441,22 +465,14 @@ body {
       line-height: 130%;
     }
   }
-  .plans,
-  .banner {
+  .plans {
     margin-bottom: 100px;
   }
   .banner {
-    &__img {
-      width: 85px;
-      height: 29px;
-
-      &-container {
-        padding-left: 40px;
-        margin-bottom: 19px;
-      }
-    }
+    padding: 55px 0;
 
     &__heading {
+      max-width: 660px;
       font-size: 52px;
       line-height: 130%;
       margin-bottom: 20px;
@@ -467,11 +483,11 @@ body {
       line-height: 130%;
       margin-bottom: 30px;
     }
-
-    &__btn {
-    }
   }
   .lottery {
+    &__img {
+      width: 1300px;
+    }
     &__text {
       font-size: 26px;
       line-height: 32px;
@@ -502,8 +518,7 @@ body {
   }
   .coins-text__img {
     svg {
-      width: 253px;
-      height: 242px;
+      height: 460px;
     }
   }
   .coins-text__primary {
@@ -514,6 +529,7 @@ body {
     font-size: 16px;
   }
   .about-container {
+    padding: 35px 0;
     margin-bottom: 80px;
 
     &__img {
@@ -523,6 +539,10 @@ body {
         width: 200px;
         height: 304px;
       }
+    }
+
+    .subheading {
+      margin-bottom: 30px;
     }
   }
   .main-btns {
@@ -546,6 +566,7 @@ body {
   .icons-card {
     padding-top: 40px;
   }
+
   .benefit {
     margin-bottom: 80px;
   }
@@ -571,27 +592,44 @@ body {
     flex-wrap: wrap;
 
     .icons-card {
+      padding: 40px 35px 20px;
       width: calc(50% - 5px);
       margin-bottom: 10px;
+      min-height: 450px;
+
+      svg {
+        width: 130px;
+      }
+
+      &__heading {
+        margin-top: 50px;
+        font-size: 24px;
+        font-weight: 700;
+        line-height: 31px;
+      }
+      &__text {
+        font-size: 18px;
+        font-weight: 500;
+        line-height: 130%;
+      }
     }
   }
   .icons-card__heading {
-    margin-top: 22px;
-    font-size: 18px;
+    margin-top: 50px;
+    font-size: 24px;
     line-height: 23px;
-
-    br {
-      //display: none;
-    }
+    font-weight: 700;
   }
   .icons-card__text {
-    font-size: 12px;
+    font-size: 18px;
+    font-weight: 500;
     line-height: 130%;
   }
   .plans-item {
     width: calc(50% - 5px);
     padding: 57px 20px 58px 30px;
     margin-bottom: 10px;
+    min-height: 300px;
 
     &__heading {
       font-size: 26px;
@@ -602,24 +640,13 @@ body {
       font-size: 18px;
     }
   }
-  .plans,
-  .banner {
+  .plans {
     margin-bottom: 80px;
   }
-  .banner {
-    padding-bottom: 40px;
-
-    &__img {
-      width: 85px;
-      height: 29px;
-
-      &-container {
-        padding-left: 20px;
-        margin-bottom: 18px;
-      }
-    }
-  }
   .lottery {
+    &__img {
+      width: 840px;
+    }
     &__text {
       font-size: 12px;
       line-height: 15px;
@@ -673,8 +700,7 @@ body {
     margin: auto;
 
     svg {
-      width: 350px;
-      height: 334px;
+      height: 480px;
     }
   }
   .number-item {
@@ -693,19 +719,57 @@ body {
     }
   }
   .plans-item {
+    min-height: 220px;
     padding: 53px 24px 37px 30px;
 
     &__heading {
       font-size: 18px;
+      margin-bottom: 20px;
     }
 
     &__text {
       font-size: 12px;
     }
   }
+  .about-container {
+    padding: 30px 10px;
+  }
+  .lottery {
+    &__img {
+      width: 100vw;
+      transform: unset;
+      position: unset;
+      margin-top: -120px;
+    }
+    &__text {
+      position: absolute;
+      top: 10%;
+      width: 100px;
+      text-align: center;
+      font-size: 12px;
+      font-weight: 600;
+    }
+    &__heading {
+      position: absolute;
+      top: 60%;
+      width: 100px;
+      font-size: 26px;
+      font-weight: 700;
+      line-height: 130%;
+      text-align: center;
+    }
+    &__description {
+      position: relative;
+      width: 100px;
+      margin-left: 50px;
+    }
+  }
   .banner {
+    padding: 70px 0;
+
     &__heading {
       font-size: 38px;
+      max-width: 450px;
     }
 
     &__subheading {
@@ -713,9 +777,39 @@ body {
       margin-bottom: 25px;
     }
   }
+  .benefit-container {
+    .icons-card {
+      padding: 40px 15px 15px;
+      width: calc(50% - 5px);
+      min-height: 300px;
+
+      &__heading {
+        margin-top: 20px;
+        font-weight: 700;
+        font-size: 18px;
+        line-height: 23px;
+      }
+
+      &__text {
+        margin-top: 15px;
+        font-weight: 400;
+        font-size: 12px;
+        line-height: 130%;
+      }
+
+      svg {
+        width: 100px;
+      }
+    }
+  }
 }
 
 @media screen and (min-width: $sm) and (max-width: $md) {
+  .heading {
+    font-size: 26px;
+    font-weight: 700;
+    margin: 0 60px;
+  }
   .main-text {
     position: relative;
     z-index: 2;
@@ -731,18 +825,16 @@ body {
     font-size: 18px;
   }
   .coins-text__img {
-    margin-top: -40px;
-    position: relative;
-    z-index: 1;
-
     svg {
-      width: 271px;
-      height: 259px;
+      height: 400px;
     }
   }
   .banner {
+    padding: 90px 0;
+
     &__heading {
       font-size: 26px;
+      max-width: 280px;
     }
 
     &__subheading {
@@ -752,16 +844,22 @@ body {
   }
   .benefit-container {
     .icons-card {
+      padding: 25px;
       width: 100%;
+      min-height: 190px;
 
       &__heading {
-        font-size: 24px;
-        line-height: 31px;
+        font-size: 16px;
+        line-height: 21px;
+        margin-top: 10px;
       }
 
       &__text {
-        font-size: 18px;
-        line-height: 130%;
+        margin-top: 10px;
+      }
+
+      svg {
+        width: 50px;
       }
     }
   }
@@ -790,6 +888,23 @@ body {
   .about-container {
     .subheading {
       margin-bottom: 30px;
+    }
+  }
+
+  .lottery {
+    &__img {
+      margin-top: -80px;
+    }
+    &__text {
+      position: absolute;
+      top: 10%;
+    }
+    &__heading {
+      top: 60%;
+    }
+    &__description {
+      width: 100px;
+      margin-left: 30px;
     }
   }
 }

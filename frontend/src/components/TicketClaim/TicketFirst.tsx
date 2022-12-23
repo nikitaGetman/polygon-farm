@@ -557,8 +557,8 @@ const getIconXl = ({ isClaimed, isActive, isHover }: IconProps) => {
       >
         <g filter="url(#filter0_d_2455_630)">
           <path
-            fill-rule="evenodd"
-            clip-rule="evenodd"
+            fillRule="evenodd"
+            clipRule="evenodd"
             d="M155 16C155 13.2386 152.761 11 150 11H20C17.2386 11 15 13.2386 15 16V146C15 148.761 17.2386 151 20 151H150C152.761 151 155 148.761 155 146V110.674C155 107.127 158.659 104.67 162.195 104.933C162.791 104.977 163.393 105 164 105C177.255 105 188 94.2548 188 81C188 67.7452 177.255 57 164 57C163.393 57 162.791 57.0225 162.195 57.0668C158.659 57.3297 155 54.8726 155 51.3265V16Z"
             fill="#6BC95B"
           />
@@ -571,9 +571,9 @@ const getIconXl = ({ isClaimed, isActive, isHover }: IconProps) => {
             width="203"
             height="170"
             filterUnits="userSpaceOnUse"
-            color-interpolation-filters="sRGB"
+            colorInterpolationFilters="sRGB"
           >
-            <feFlood flood-opacity="0" result="BackgroundImageFix" />
+            <feFlood floodOpacity="0" result="BackgroundImageFix" />
             <feColorMatrix
               in="SourceAlpha"
               type="matrix"
@@ -609,14 +609,14 @@ const getIconXl = ({ isClaimed, isActive, isHover }: IconProps) => {
           <g filter="url(#filter0_d_2455_619)">
             <mask id="path-1-inside-1_2455_619" fill="white">
               <path
-                fill-rule="evenodd"
-                clip-rule="evenodd"
+                fillRule="evenodd"
+                clipRule="evenodd"
                 d="M155 16C155 13.2386 152.761 11 150 11H20C17.2386 11 15 13.2386 15 16V146C15 148.761 17.2386 151 20 151H150C152.761 151 155 148.761 155 146V110.673C155 107.127 158.659 104.67 162.195 104.933C162.791 104.977 163.393 105 164 105C177.255 105 188 94.2548 188 81C188 67.7452 177.255 57 164 57C163.393 57 162.791 57.0225 162.195 57.0668C158.659 57.3297 155 54.8726 155 51.3265V16Z"
               />
             </mask>
             <path
-              fill-rule="evenodd"
-              clip-rule="evenodd"
+              fillRule="evenodd"
+              clipRule="evenodd"
               d="M155 16C155 13.2386 152.761 11 150 11H20C17.2386 11 15 13.2386 15 16V146C15 148.761 17.2386 151 20 151H150C152.761 151 155 148.761 155 146V110.673C155 107.127 158.659 104.67 162.195 104.933C162.791 104.977 163.393 105 164 105C177.255 105 188 94.2548 188 81C188 67.7452 177.255 57 164 57C163.393 57 162.791 57.0225 162.195 57.0668C158.659 57.3297 155 54.8726 155 51.3265V16Z"
               fill="#1F3E2E"
             />
@@ -634,9 +634,9 @@ const getIconXl = ({ isClaimed, isActive, isHover }: IconProps) => {
               width="203"
               height="170"
               filterUnits="userSpaceOnUse"
-              color-interpolation-filters="sRGB"
+              colorInterpolationFilters="sRGB"
             >
-              <feFlood flood-opacity="0" result="BackgroundImageFix" />
+              <feFlood floodOpacity="0" result="BackgroundImageFix" />
               <feColorMatrix
                 in="SourceAlpha"
                 type="matrix"

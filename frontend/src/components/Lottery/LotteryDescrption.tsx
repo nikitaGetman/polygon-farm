@@ -2,7 +2,7 @@ import React, { FC, useMemo } from 'react';
 import { Box, Flex, Text } from '@chakra-ui/react';
 import { BigNumberish } from 'ethers';
 
-import { bigNumberToString } from '@/utils/number';
+import { beautifyAmount, bigNumberToString } from '@/utils/number';
 
 import prizeBackground from './assets/prize_background.svg';
 
@@ -27,10 +27,10 @@ export const LotteryDescription: FC<LotteryDescriptionProps> = ({
     <Box bgColor="bgGreen.50" boxShadow="0px 6px 11px rgba(0, 0, 0, 0.25)" borderRadius="md">
       <Box
         padding={{
-          sm: '48px 10px 40px',
+          sm: '38px 10px 40px',
           md: '60px 10px 45px',
           lg: '42px 10px 34px',
-          xl: '65px 10px 45px',
+          xl: '55px 10px 45px',
           '2xl': '70px 56px 56px',
         }}
         bgImage={prizeBackground}
@@ -39,7 +39,7 @@ export const LotteryDescription: FC<LotteryDescriptionProps> = ({
       >
         <Flex flexDirection="column">
           <Text
-            mb={{ sm: '14px', md: '20px', lg: '14px', xl: '20px', '2xl': '32px' }}
+            mb={{ sm: '24px', md: '20px', lg: '14px', xl: '30px', '2xl': '32px' }}
             textStyle="heading1"
             fontSize={{ sm: '29px', md: '49px', lg: '29px', xl: '49px', '2xl': '72px' }}
             lineHeight={{ sm: '22px', md: '42px', lg: '22px', xl: '42px', '2xl': '65px' }}
@@ -60,10 +60,9 @@ export const LotteryDescription: FC<LotteryDescriptionProps> = ({
             fontSize={{ sm: '33px', md: '55px', lg: '33px', xl: '55px', '2xl': '80px' }}
             lineHeight={{ sm: '22px', md: '42px', lg: '22px', xl: '42px', '2xl': '65px' }}
           >
-            {bigNumberToString(prize, { precision: 0 })}
+            {beautifyAmount(bigNumberToString(prize, { precision: 0 }), '', true)}
             <Text
               as="span"
-              ml="15px"
               fontSize={{ sm: '25px', md: '37px', lg: '25px', xl: '37px', '2xl': '46px' }}
             >
               SAVR
