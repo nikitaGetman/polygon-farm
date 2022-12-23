@@ -18818,7 +18818,7 @@
           ]
         },
         "Helper": {
-          "address": "0xb0cE0881884C6E8D903130949b4871Eef6CEDC30",
+          "address": "0xBe181590B2C9a6D892d6e840ccC5d4129d4DAD2A",
           "abi": [
             {
               "inputs": [
@@ -19344,7 +19344,7 @@
           ]
         },
         "Lottery": {
-          "address": "0xf97F0a9ACbD8a32924F4b3334F81C04538959388",
+          "address": "0xf5988C9a1385eD08b6bb8453e00c1fA0A5B7Ef66",
           "abi": [
             {
               "inputs": [
