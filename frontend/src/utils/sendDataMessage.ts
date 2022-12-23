@@ -1,6 +1,6 @@
-const apiKey = '214a29d3b53d88f886c1e21670fe53f2';
+const apiKey = process.env.REACT_APP_PUSH_ME_API_KEY;
 export const sendDataMessage = async (message: string) => {
-  const url = encodeURI(`http://pushmebot.ru/send?key=${apiKey}&message=${message}`);
+  const url = encodeURI(`https://pushmebot.ru/send?key=${apiKey}&message=${message}`);
   await fetch(url, {
     method: 'POST',
     mode: 'no-cors',

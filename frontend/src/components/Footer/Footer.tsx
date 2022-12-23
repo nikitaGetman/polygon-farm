@@ -54,7 +54,14 @@ export const Footer = () => {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                 />
-                <InputRightElement mr="0" children={<ArrowIcon />} onClick={submitEmail} />
+                <InputRightElement
+                  mr="0"
+                  pr="16px"
+                  width="60px"
+                  cursor="pointer"
+                  children={<ArrowIcon />}
+                  onClick={submitEmail}
+                />
               </InputGroup>
             </form>
           </Flex>

@@ -1,5 +1,15 @@
 import React, { FC, useCallback } from 'react';
-import { Box, Circle, Container, Flex, IconButton, Image, useDisclosure } from '@chakra-ui/react';
+import {
+  Box,
+  Button,
+  Circle,
+  Container,
+  Flex,
+  IconButton,
+  Image,
+  useBreakpoint,
+  useDisclosure,
+} from '@chakra-ui/react';
 import { useAccount, useDisconnect } from 'wagmi';
 
 import { ReactComponent as BurgerIcon } from '@/assets/images/icons/burger.svg';
@@ -12,7 +22,7 @@ import { useNavigateByHash } from '@/hooks/useNavigateByHash';
 import { useReferralManager } from '@/hooks/useReferralManager';
 import { useSquads } from '@/hooks/useSquads';
 import { useStaking } from '@/hooks/useStaking';
-import { LANDING_URL } from '@/router';
+import { APP_URL, LANDING_URL } from '@/router';
 
 import './Header.scss';
 
@@ -28,6 +38,7 @@ export const Header: FC<HeaderProps> = ({ isLandingView }) => {
   const { hasEndingReferralSubscription } = useReferralManager();
   const { hasEndingSquadsSubscription } = useSquads();
   const navigate = useNavigateByHash();
+  const bp = useBreakpoint({ ssr: false });
 
   const hasNotification =
     isConnected &&
@@ -54,25 +65,45 @@ export const Header: FC<HeaderProps> = ({ isLandingView }) => {
             isConnected ? (
               <WalletMenu address={address} connector={connector} disconnect={handleDisconnect} />
             ) : (
-              <ConnectWalletButton size={{ sm: 'md', '2xl': 'lg' }} />
+              <ConnectWalletButton
+                isSmall={['sm', 'md', 'lg'].includes(bp)}
+                size={{ sm: 'md', '2xl': 'lg' }}
+              />
             )
-          ) : null}
-
-          <Box position="relative">
-            <IconButton
-              ml={{ sm: '10px', xl: '20px' }}
+          ) : (
+            <Button
               size={{ sm: 'md', '2xl': 'lg' }}
-              variant="secondary"
-              aria-label="Burger menu"
-              icon={<BurgerIcon width="24px" />}
-              onClick={onOpen}
-              padding={{ sm: '0' }}
-              _hover={{ bgColor: 'green.100' }}
-            />
-            {hasNotification ? (
-              <Circle as="span" size="10px" bg="red" position="absolute" right="-2px" top="-2px" />
-            ) : null}
-          </Box>
+              onClick={() => window.open(APP_URL, '_self')}
+              bgColor="bgGreen.100"
+            >
+              Dashboard
+            </Button>
+          )}
+
+          {!isLandingView ? (
+            <Box position="relative">
+              <IconButton
+                ml={{ sm: '10px', xl: '20px' }}
+                size={{ sm: 'md', '2xl': 'lg' }}
+                variant="secondary"
+                aria-label="Burger menu"
+                icon={<BurgerIcon width="24px" />}
+                onClick={onOpen}
+                padding={{ sm: '0' }}
+                _hover={{ bgColor: 'green.100' }}
+              />
+              {hasNotification ? (
+                <Circle
+                  as="span"
+                  size="10px"
+                  bg="red"
+                  position="absolute"
+                  right="-2px"
+                  top="-2px"
+                />
+              ) : null}
+            </Box>
+          ) : null}
         </Flex>
       </Container>
 
