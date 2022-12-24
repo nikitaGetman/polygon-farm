@@ -3,7 +3,7 @@ import { Link as RouterLink } from 'react-router-dom';
 import { ArrowBackIcon, DownloadIcon } from '@chakra-ui/icons';
 import { Box, Button, Container, Flex, Link, Text } from '@chakra-ui/react';
 
-import { useDocumentTitle } from '@/hooks/useDocumentTitle';
+import { useDocumentTitle, useMetaDescription } from '@/hooks/useMeta';
 import { useStaking } from '@/hooks/useStaking';
 
 import { Staking } from './Staking';
@@ -11,6 +11,9 @@ import { StakingTable } from './StakingTable';
 
 export const StakingPage = () => {
   useDocumentTitle('iSaver | Earn by staking');
+  useMetaDescription(
+    'Stake your SAV or SAVR holdings to earn more SAV. The longer you stake, the more you yield. Accumulate more SAV, so you can increase your governance in the future iSaver DAO'
+  );
 
   const { userStakesRequest, stakingPlansRequest, withdraw } = useStaking();
 

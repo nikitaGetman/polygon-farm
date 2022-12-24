@@ -148,7 +148,7 @@ export const TicketClaim = () => {
           flexShrink="0"
           flexBasis={{ sm: '100%', xl: '60%', '2xl': '50%' }}
         >
-          Claim puzzle every day to get a free ticket to iSaver Raffles.
+          Claim puzzle every day to get a free Ticket to iSaver Raffles.
           <br /> Just five days and you can mint a Ticket. Also, everyone can buy any number of
           Tickets.
         </Text>

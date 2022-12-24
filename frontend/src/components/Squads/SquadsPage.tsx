@@ -6,7 +6,7 @@ import { ArrowBackIcon } from '@chakra-ui/icons';
 import { Box, Button, Container, Flex, Link, Spinner, Text } from '@chakra-ui/react';
 import { BigNumber } from 'ethers';
 
-import { useDocumentTitle } from '@/hooks/useDocumentTitle';
+import { useDocumentTitle, useMetaDescription } from '@/hooks/useMeta';
 import { useReferralManager } from '@/hooks/useReferralManager';
 import { getReadableAmount } from '@/utils/number';
 
@@ -19,6 +19,9 @@ import { SquadsList } from './SquadsList';
 
 export const SquadsPage = () => {
   useDocumentTitle('iSaver | Build a team');
+  useMetaDescription(
+    'Invite your friends and maximize your iSaver Referral Rewards. Earn up to 100% in SAVR from your partners` earnings and additional Rewards when six partners fulfill the specified conditions.'
+  );
 
   const { userReferralInfo, claimDividends } = useReferralManager();
 

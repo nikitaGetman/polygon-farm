@@ -96,6 +96,17 @@ const secondary = defineStyle({
   },
 });
 
+const secondaryFilled = defineStyle({
+  ...secondary,
+  bgColor: 'bgGreen.100',
+
+  _hover: {
+    ...secondary._hover,
+    bgColor: 'green.100',
+    borderColor: 'green.100',
+  },
+});
+
 const outlined = defineStyle({
   ...commonProps,
   bgColor: 'bgGreen.200',
@@ -190,6 +201,7 @@ export const buttonTheme = defineStyleConfig({
     primary,
     primaryShadowed,
     secondary,
+    secondaryFilled,
     outlined,
     outlinedWhite,
     filledRed,

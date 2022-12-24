@@ -7,10 +7,13 @@ import { useConnectWallet } from '@/hooks/useConnectWallet';
 type ConnectWalletButtonProps = {
   isSmall?: boolean;
 };
-export const ConnectWalletButton = (props: ButtonProps & ConnectWalletButtonProps) => {
+export const ConnectWalletButton = ({
+  isSmall,
+  ...props
+}: ButtonProps & ConnectWalletButtonProps) => {
   const { connect } = useConnectWallet();
 
-  if (props.isSmall) {
+  if (isSmall) {
     return (
       <IconButton
         {...props}

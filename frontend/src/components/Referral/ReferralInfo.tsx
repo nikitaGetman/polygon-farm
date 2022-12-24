@@ -182,7 +182,7 @@ export const ReferralInfo: FC<ReferralInfoProps> = ({ isPageView }) => {
           />
           <StatBlock
             width={{ sm: '50%', xl: '230px', '2xl': '260px' }}
-            title="Total Referral Reward"
+            title="Total Referral Rewards"
             value={getReadableAmount(userReferralInfo.data?.totalDividends || 0)}
             currency="SAVR"
           />

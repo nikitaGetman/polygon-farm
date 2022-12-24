@@ -5,13 +5,16 @@ import { WalletPortfolio } from '@/components/Dashboard/WalletPortfolio';
 import { ReferralInfo } from '@/components/Referral/ReferralInfo';
 import { Staking } from '@/components/Staking/Staking';
 import { TicketClaim } from '@/components/TicketClaim/TicketClaim';
-import { useDocumentTitle } from '@/hooks/useDocumentTitle';
+import { useDocumentTitle, useMetaDescription } from '@/hooks/useMeta';
 
 import { LotteryList } from '../Lottery/LotteryList';
 import { SquadsList } from '../Squads/SquadsList';
 
 export const Dashboard = () => {
   useDocumentTitle('iSaver | Dashboard');
+  useMetaDescription(
+    'All information about your assets is on iSaver. Staking pools, Referral Program, Raffles and our mini free-to-play Crypto Game as a first step. Use the capabilities of our DeFi platform to the maximum!'
+  );
 
   return (
     <Container variant="dashboard">

@@ -1,21 +1,21 @@
 export const LOTTERIES = [
   {
     startTime: Date.now() / 1000 + 1_000,
-    duration: 21_600, // half day
+    duration: 86_400, // half day
     initialPrize: 1_000, // 1000
-    tokensForOneTicket: 5, // 5
+    tokensForOneTicket: 0, // 5
     maxTicketsFromOneMember: 10,
-    winnersForLevel: [1],
+    winnersForLevel: [100],
     prizeForLevel: [100],
   },
   {
     startTime: Date.now() / 1000 + 2_000,
-    duration: 21_600, // half day
-    initialPrize: 500, // 500
+    duration: 86_400, // half day
+    initialPrize: 50_000, // 500
     tokensForOneTicket: 0, // 10
-    maxTicketsFromOneMember: 5,
-    winnersForLevel: [1, 2],
-    prizeForLevel: [60, 40],
+    maxTicketsFromOneMember: 30,
+    winnersForLevel: [10, 20, 30],
+    prizeForLevel: [60, 30, 10],
   },
   {
     startTime: Date.now() / 1000 + 3_000,
@@ -23,8 +23,8 @@ export const LOTTERIES = [
     initialPrize: 5_000, // 5000
     tokensForOneTicket: 10, // 10
     maxTicketsFromOneMember: 5,
-    winnersForLevel: [1, 2, 3],
-    prizeForLevel: [60, 30, 10],
+    winnersForLevel: Array.from({ length: 10 }).map(() => 1),
+    prizeForLevel: Array.from({ length: 10 }).map(() => 10),
   },
   {
     startTime: Date.now() / 1000 + 4_000,
@@ -32,8 +32,8 @@ export const LOTTERIES = [
     initialPrize: 10_000, // 10000
     tokensForOneTicket: 0, // 15
     maxTicketsFromOneMember: 100,
-    winnersForLevel: [1, 1, 1, 1, 1],
-    prizeForLevel: [35, 25, 20, 15, 5],
+    winnersForLevel: Array.from({ length: 100 }).map(() => 1),
+    prizeForLevel: Array.from({ length: 100 }).map(() => 1),
   },
   // {
   //   startTime: Date.now() / 1000 + 5_000,

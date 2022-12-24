@@ -15,7 +15,7 @@ import {
 import { ReactComponent as SwapIcon } from '@/assets/images/icons/swap.svg';
 import { ReactComponent as SavIcon } from '@/assets/images/sav_icon.svg';
 import { ReactComponent as UsdtIcon } from '@/assets/images/usdt_icon.svg';
-import { useDocumentTitle } from '@/hooks/useDocumentTitle';
+import { useDocumentTitle, useMetaDescription } from '@/hooks/useMeta';
 import { useSavBalance, useUsdtBalance } from '@/hooks/useTokenBalance';
 import { useVendorSell } from '@/hooks/useVendorSell';
 import { bigNumberToString, makeBigNumber } from '@/utils/number';
@@ -38,6 +38,9 @@ const tokenPair = [
 ];
 export const ExchangePage = () => {
   useDocumentTitle('iSaver | Buy SAV');
+  useMetaDescription(
+    'Exchange your USDT to SAV and discover all the possibilities of iSaver DeFi platform. The rate of our tokens is tied to the stablecoin. No volatile assets. No risk of losing value of stacked tokens.'
+  );
 
   const [isTokenSell, setIsTokenSell] = useState(false);
   const [amount, setAmount] = useState<string>();

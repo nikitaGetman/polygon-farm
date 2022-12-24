@@ -15,10 +15,10 @@ import { useAccount } from 'wagmi';
 
 import { CenteredSpinner } from '@/components/ui/CenteredSpinner/CenteredSpinner';
 import { useConnectWallet } from '@/hooks/useConnectWallet';
-import { useDocumentTitle } from '@/hooks/useDocumentTitle';
 import { useHelperLotteryRoundWinners } from '@/hooks/useHelper';
 import { useLottery } from '@/hooks/useLottery';
 import { useLotteryRoundById } from '@/hooks/useLotteryRoundById';
+import { useDocumentTitle, useMetaDescription } from '@/hooks/useMeta';
 import { LotteryStatusEnum } from '@/lib/lottery';
 import { getLotteryTitle } from '@/utils/lottery';
 
@@ -31,9 +31,13 @@ import { LotterySummary } from './LotterySummary';
 import { LotteryTickets } from './LotteryTickets';
 
 export const LotteryPage = () => {
-  useDocumentTitle('iSaver | Raffle');
-
   const { id } = useParams();
+
+  useDocumentTitle(id ? `iSaver | Raffles - Ultra Raffle ${id}` : 'iSaver | Raffles');
+  useMetaDescription(
+    'iSaver Raffles joining gives you a chance to win big prizes! It`s easy, if you have a Ticket.'
+  );
+
   const roundId = useMemo(() => (id ? parseInt(id) - 1 : undefined), [id]);
   const { isConnected, address } = useAccount();
   const { connect } = useConnectWallet();

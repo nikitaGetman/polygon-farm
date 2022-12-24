@@ -15,6 +15,7 @@ import { useAccount, useDisconnect } from 'wagmi';
 import { ReactComponent as BurgerIcon } from '@/assets/images/icons/burger.svg';
 import Logo from '@/assets/images/logo.svg';
 import { WalletMenu } from '@/components/Header/WalletMenu';
+import { ReactComponent as ArrowIcon } from '@/components/Landing/images/arrow-right.svg';
 import { Menu } from '@/components/Menu/Menu';
 import { ConnectWalletButton } from '@/components/ui/ConnectWalletButton/ConnectWalletButton';
 import { useLocalReferrer } from '@/hooks/useLocalReferrer';
@@ -50,6 +51,10 @@ export const Header: FC<HeaderProps> = ({ isLandingView }) => {
     navigate('/');
   }, [setLocalReferrer, disconnect, navigate]);
 
+  const navigateToApp = useCallback(() => {
+    window.open(APP_URL, '_self');
+  }, []);
+
   return (
     <Box className="app-header" padding="13px 0">
       <Container variant="header">
@@ -70,12 +75,17 @@ export const Header: FC<HeaderProps> = ({ isLandingView }) => {
                 size={{ sm: 'md', '2xl': 'lg' }}
               />
             )
+          ) : ['sm', 'md', 'lg'].includes(bp) ? (
+            <IconButton
+              size="md"
+              variant="secondaryFilled"
+              aria-label="Open app"
+              icon={<ArrowIcon width="24px" />}
+              onClick={navigateToApp}
+              padding={{ sm: '0' }}
+            />
           ) : (
-            <Button
-              size={{ sm: 'md', '2xl': 'lg' }}
-              onClick={() => window.open(APP_URL, '_self')}
-              bgColor="bgGreen.100"
-            >
+            <Button size={{ sm: 'md', '2xl': 'lg' }} onClick={navigateToApp}>
               Dashboard
             </Button>
           )}
@@ -85,12 +95,11 @@ export const Header: FC<HeaderProps> = ({ isLandingView }) => {
               <IconButton
                 ml={{ sm: '10px', xl: '20px' }}
                 size={{ sm: 'md', '2xl': 'lg' }}
-                variant="secondary"
+                variant="secondaryFilled"
                 aria-label="Burger menu"
                 icon={<BurgerIcon width="24px" />}
                 onClick={onOpen}
                 padding={{ sm: '0' }}
-                _hover={{ bgColor: 'green.100' }}
               />
               {hasNotification ? (
                 <Circle

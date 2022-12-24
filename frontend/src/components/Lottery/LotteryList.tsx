@@ -78,7 +78,7 @@ export const LotteryList = () => {
           <Text textStyle="text1">
             Join iSaver Raffles gives you a chance to win big prizes!
             <br />
-            It's easy if you have a Ticket.
+            It's easy, if you have a Ticket.
           </Text>
         </Box>
 
