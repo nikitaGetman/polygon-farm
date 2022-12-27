@@ -86,7 +86,13 @@ export const Header: FC<HeaderProps> = ({ isLandingView }) => {
               border="none"
             />
           ) : (
-            <Button size={{ sm: 'md', '2xl': 'lg' }} width="220px" onClick={navigateToApp}>
+            <Button
+              variant="secondaryFilled"
+              size={{ sm: 'md', '2xl': 'lg' }}
+              width="220px"
+              border="none"
+              onClick={navigateToApp}
+            >
               Dashboard
             </Button>
           )}
