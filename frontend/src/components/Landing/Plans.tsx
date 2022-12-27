@@ -34,14 +34,14 @@ const PLANS_DATA = [
 
 export const Plans = () => {
   const bp = useBreakpoint({ ssr: false });
-  const isSmall = ['sm', 'md', 'xl'].includes(bp);
+  const isSmall = ['md', 'xl'].includes(bp);
 
   return (
     <Flex justifyContent="center" flexWrap="wrap" className="plans">
       <Flex w="100%" justifyContent="center" mb={{ sm: '30px', xl: '40px', '2xl': '50px' }}>
         <h4 className="heading">Our plans</h4>
       </Flex>
-      <Flex className="plans-container" flexWrap="wrap" justifyContent="space-between">
+      <Flex className="plans-container" flexWrap="wrap" justifyContent="center">
         {PLANS_DATA.map(({ title, description }) => (
           <PlanItem title={title} description={description} size={isSmall ? 'small' : 'medium'} />
         ))}
