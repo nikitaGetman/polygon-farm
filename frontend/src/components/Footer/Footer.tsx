@@ -9,6 +9,7 @@ import { ReactComponent as SavIcon } from '@/components/Landing/images/sav.svg';
 import { ReactComponent as SavrIcon } from '@/components/Landing/images/savr.svg';
 import { ReactComponent as TelegramIcon } from '@/components/Landing/images/tg.svg';
 import { ReactComponent as TwitterIcon } from '@/components/Landing/images/twitter.svg';
+import { useNotification } from '@/hooks/useNotification';
 import { validateEmail } from '@/utils/email';
 import { sendDataMessage } from '@/utils/sendDataMessage';
 
@@ -18,6 +19,7 @@ export const Footer = () => {
   const { address } = useAccount();
   const [email, setEmail] = useState<string>('');
   const inputRef = useRef<HTMLInputElement>(null);
+  const { success, handleError } = useNotification();
 
   const submitEmail = useCallback(
     (e: any) => {
@@ -26,12 +28,18 @@ export const Footer = () => {
         const message = `Пользователь оставил Email: ${email}\nКошелек: ${
           address || '<i>не авторизован</i>'
         }`;
-        sendDataMessage(message);
-        setEmail('');
-        inputRef.current?.blur();
+        sendDataMessage(message)
+          .then(() => {
+            success({ title: 'Email sent' });
+            setEmail('');
+            inputRef.current?.blur();
+          })
+          .catch((e) => {
+            handleError(e);
+          });
       }
     },
-    [email, address, setEmail]
+    [email, address, setEmail, success, handleError]
   );
 
   return (

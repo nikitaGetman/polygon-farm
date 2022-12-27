@@ -2,6 +2,8 @@ import React, { FC, useEffect, useMemo } from 'react';
 import { Box, CloseButton, Flex, Link, Text } from '@chakra-ui/react';
 import { chain, useAccount, useNetwork } from 'wagmi';
 
+import { isLanding } from '@/router';
+
 export type NotificationProps = {
   type: 'success' | 'error' | 'info';
   title: string;
@@ -20,7 +22,7 @@ export const Notification: FC<NotificationProps> = ({
   const { isConnected } = useAccount();
 
   useEffect(() => {
-    if (!isConnected) {
+    if (!isConnected && !isLanding) {
       onClose();
     }
   }, [isConnected, onClose]);

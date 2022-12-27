@@ -43,7 +43,12 @@ export const Plans = () => {
       </Flex>
       <Flex className="plans-container" flexWrap="wrap" justifyContent="center">
         {PLANS_DATA.map(({ title, description }) => (
-          <PlanItem title={title} description={description} size={isSmall ? 'small' : 'medium'} />
+          <PlanItem
+            key={title}
+            title={title}
+            description={description}
+            size={isSmall ? 'small' : 'medium'}
+          />
         ))}
       </Flex>
     </Flex>
