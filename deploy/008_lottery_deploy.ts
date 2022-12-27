@@ -9,6 +9,7 @@ import {
   VRF_COORDINATOR,
 } from "config";
 
+// IMPORTANT: Manually add lottery contract to coordinator
 const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   const { deployments, getNamedAccounts, ethers, network } = hre;
   const { deploy } = deployments;
@@ -33,6 +34,7 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
     vrfCoordinator = vrfCoordinatorMock.address;
   }
 
+  // IMPORTANT: Manually add lottery contract to coordinator
   const lottery = await deploy("Lottery", {
     from: deployer,
     args: [
@@ -52,27 +54,33 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
     gasPrice: ethers.BigNumber.from(10).pow(10),
   });
 
-  let tx = await token2.approve(lottery.address, ethers.constants.MaxUint256);
-  await tx.wait();
-
-  const isWhitelisted = await token2.isAddressInWhiteList(referralRewardPool);
-  if (!isWhitelisted) {
-    const adminSigner = await ethers.getSigner(admin);
-    tx = await token2.connect(adminSigner).addToWhitelist([referralRewardPool]);
+  if (lottery.newlyDeployed) {
+    let tx = await token2.approve(lottery.address, ethers.constants.MaxUint256);
     await tx.wait();
-  }
 
-  const ticketToken = await ethers.getContract<Ticket>("Ticket", admin);
-  const MinterRole = await ticketToken.MINTER_ROLE();
-  tx = await ticketToken.grantRole(MinterRole, lottery.address);
-  await tx.wait();
+    const isWhitelisted = await token2.isAddressInWhiteList(referralRewardPool);
+    if (!isWhitelisted) {
+      const adminSigner = await ethers.getSigner(admin);
+      tx = await token2
+        .connect(adminSigner)
+        .addToWhitelist([referralRewardPool]);
+      await tx.wait();
+    }
 
-  if (!network.live) {
-    const lotteryContract = await ethers.getContract<Lottery>("Lottery", admin);
-    tx = await lotteryContract.updateClaimPeriod(180);
+    const ticketToken = await ethers.getContract<Ticket>("Ticket", admin);
+    const MinterRole = await ticketToken.MINTER_ROLE();
+    tx = await ticketToken.grantRole(MinterRole, lottery.address);
     await tx.wait();
-  }
 
+    if (!network.live) {
+      const lotteryContract = await ethers.getContract<Lottery>(
+        "Lottery",
+        admin
+      );
+      tx = await lotteryContract.updateClaimPeriod(180);
+      await tx.wait();
+    }
+  }
   // IMPORTANT: Manually add lottery contract to coordinator
 };
 func.tags = ["Lottery"];

@@ -103,17 +103,23 @@ body {
   margin-bottom: 40px;
 }
 
-.main-btns div {
-  &:last-child a {
-    display: flex;
-    align-items: center;
-    justify-content: center;
+.main-btns {
+  margin-bottom: 100px;
+  div {
+    &:last-child a {
+      display: flex;
+      align-items: center;
+      justify-content: center;
 
-    min-width: 220px;
+      min-width: 220px;
+    }
   }
 }
 
 .main-banner {
+  &__top {
+    margin-top: 10px;
+  }
   &__bottom {
     top: -60px;
   }
@@ -123,14 +129,14 @@ body {
   background: rgba(28, 74, 64, 0.3);
   backdrop-filter: blur(22.5px);
   border-radius: 5px;
-  margin-bottom: 180px;
-  padding-top: 20px;
+  margin-bottom: 100px;
 
   .text {
     padding-bottom: 25px;
   }
 
   &__img {
+    padding-top: 20px;
   }
 }
 
@@ -138,6 +144,7 @@ body {
   position: relative;
 
   svg {
+    pointer-events: none;
     position: absolute;
     top: 50%;
     left: 50%;
@@ -188,7 +195,7 @@ body {
 }
 
 .benefit {
-  margin-bottom: 180px;
+  margin-bottom: 100px;
 }
 
 .number {
@@ -209,7 +216,7 @@ body {
 }
 
 .plans {
-  margin-bottom: 180px;
+  margin-bottom: 150px;
 }
 
 .card--shadow {
@@ -249,27 +256,54 @@ body {
   }
 }
 
+.plans-container {
+  gap: 30px;
+}
 .plans-item {
-  width: calc(25% - 20px);
-  padding: 57px 20px 58px 30px;
-  margin-bottom: 20px;
+  $this: &;
   background-image: url(./images/p_texture.svg);
   background-repeat: no-repeat;
   background-size: cover;
   background-position: center;
-  min-height: 300px;
+
+  &--size {
+    &-medium {
+      width: 300px;
+      height: 300px;
+      padding: 30px;
+
+      #{$this}__heading {
+        font-size: 26px;
+        margin-bottom: 25px;
+      }
+      #{$this}__text {
+        font-size: 16px;
+        font-weight: 500;
+      }
+    }
+    &-small {
+      width: 220px;
+      height: 220px;
+      padding: 30px;
+
+      #{$this}__heading {
+        font-size: 18px;
+        margin-bottom: 20px;
+      }
+      #{$this}__text {
+        font-size: 12px;
+        font-weight: 400;
+      }
+    }
+  }
 
   &__heading {
     font-weight: 700;
-    font-size: 26px;
     line-height: 130%;
     text-transform: uppercase;
-    margin-bottom: 25px;
   }
 
   &__text {
-    font-weight: 500;
-    font-size: 16px;
     line-height: 130%;
     color: #ffffff;
   }
@@ -363,16 +397,16 @@ body {
   .main-subheading {
     font-size: 18px;
     line-height: 130%;
-    margin-bottom: 65px;
+    margin-bottom: 60px;
   }
   .main-text {
     font-size: 26px;
     line-height: 130%;
-    margin-bottom: 15px;
+    margin-bottom: 20px;
   }
   .coins-text__img {
     svg {
-      max-height: 600px;
+      max-height: 420px;
       margin: 0 auto;
     }
   }
@@ -385,8 +419,6 @@ body {
     line-height: 130%;
   }
   .main-banner {
-    margin-bottom: 80px;
-
     &__bottom {
       top: -35px;
     }
@@ -433,12 +465,20 @@ body {
     margin-bottom: 100px;
   }
   .benefit-container {
+    margin-top: 40px;
+
     .icons-card {
       width: calc(25% - 20px);
       svg {
         width: 100px;
       }
     }
+  }
+  .number {
+    margin-top: 40px;
+  }
+  .number-item {
+    margin-bottom: 60px;
   }
   .icons-card__heading {
     margin-top: 20px;
@@ -450,23 +490,11 @@ body {
     font-size: 12px;
     line-height: 130%;
   }
-  .plans-item {
-    min-height: 220px;
-    padding: 53px 24px 37px 30px;
-
-    &__heading {
-      font-size: 18px;
-      line-height: 130%;
-      margin-bottom: 20px;
-    }
-
-    &__text {
-      font-size: 12px;
-      line-height: 130%;
-    }
-  }
   .plans {
     margin-bottom: 100px;
+  }
+  .plans-container {
+    gap: 20px;
   }
   .banner {
     padding: 55px 0;
@@ -494,7 +522,7 @@ body {
     }
 
     &__heading {
-      font-size: 26px;
+      font-size: 40px;
       line-height: 130%;
     }
   }
@@ -502,11 +530,16 @@ body {
 
 @media screen and (max-width: $xl) {
   .main-container {
-    padding: 0 20px;
+    padding: 0 15px;
   }
   .main-heading {
     font-size: 26px;
     margin-bottom: 10px;
+  }
+  .main-banner {
+    &__top {
+      margin-top: 0;
+    }
   }
   .main-subheading {
     font-size: 12px;
@@ -518,7 +551,7 @@ body {
   }
   .coins-text__img {
     svg {
-      height: 460px;
+      height: 360px;
     }
   }
   .coins-text__primary {
@@ -546,6 +579,8 @@ body {
     }
   }
   .main-btns {
+    margin-bottom: 80px;
+
     button:first-child {
       margin-right: 15px;
     }
@@ -558,7 +593,7 @@ body {
     }
   }
   .heading-container {
-    padding: 0 27px;
+    padding: 0 90px;
   }
   .heading {
     font-size: 16px;
@@ -625,23 +660,11 @@ body {
     font-weight: 500;
     line-height: 130%;
   }
-  .plans-item {
-    width: calc(50% - 5px);
-    padding: 57px 20px 58px 30px;
-    margin-bottom: 10px;
-    min-height: 300px;
-
-    &__heading {
-      font-size: 26px;
-      margin-bottom: 25px;
-    }
-
-    &__text {
-      font-size: 18px;
-    }
-  }
   .plans {
     margin-bottom: 80px;
+  }
+  .plans-container {
+    gap: 10px;
   }
   .lottery {
     &__img {
@@ -653,8 +676,8 @@ body {
     }
 
     &__heading {
-      font-size: 16px;
-      line-height: 20px;
+      font-size: 26px;
+      line-height: 26px;
     }
   }
 }
@@ -718,22 +741,18 @@ body {
       margin-bottom: 0;
     }
   }
-  .plans-item {
-    min-height: 220px;
-    padding: 53px 24px 37px 30px;
-
-    &__heading {
-      font-size: 18px;
-      margin-bottom: 20px;
-    }
-
-    &__text {
-      font-size: 12px;
-    }
-  }
   .about-container {
-    padding: 30px 10px;
+    padding: 30px 10px 40px;
   }
+  .heading-container {
+    padding: 0;
+  }
+
+  .plans-container {
+    justify-content: center;
+    gap: 10px 20px;
+  }
+
   .lottery {
     &__img {
       width: 100vw;
@@ -808,7 +827,7 @@ body {
   .heading {
     font-size: 26px;
     font-weight: 700;
-    margin: 0 60px;
+    margin: 0 40px;
   }
   .main-text {
     position: relative;
@@ -823,6 +842,15 @@ body {
   }
   .main-text {
     font-size: 18px;
+  }
+  .main-btns {
+    margin-top: 20px;
+  }
+  .about-container {
+    padding: 30px 10px;
+    .subheading {
+      margin-bottom: 25px;
+    }
   }
   .coins-text__img {
     svg {
@@ -863,32 +891,16 @@ body {
       }
     }
   }
-  .plans-item {
-    width: 100%;
-    justify-content: center;
-    min-height: 300px;
-    max-height: 300px;
-
-    &__heading {
-      font-size: 26px;
-      line-height: 130%;
-    }
-
-    &__text {
-      font-size: 18px;
-      line-height: 130%;
-    }
-  }
   .number-item {
     &__heading {
       font-size: 12px;
       line-height: 16px;
     }
   }
-  .about-container {
-    .subheading {
-      margin-bottom: 30px;
-    }
+
+  .plans-container {
+    flex-direction: column;
+    align-items: center;
   }
 
   .lottery {
@@ -898,6 +910,14 @@ body {
     &__text {
       position: absolute;
       top: 10%;
+    }
+    .heading {
+      &::before {
+        right: -50px;
+      }
+      &::after {
+        left: -50px;
+      }
     }
     &__heading {
       top: 60%;

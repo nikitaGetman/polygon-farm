@@ -41,30 +41,32 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
     autoMine: true,
   });
 
-  const vendorPoolSigner = await ethers.getSigner(vendorPool);
-  const vendorChangePoolSigner = await ethers.getSigner(vendorChangePool);
+  if (vendorSell.newlyDeployed) {
+    const vendorPoolSigner = await ethers.getSigner(vendorPool);
+    const vendorChangePoolSigner = await ethers.getSigner(vendorChangePool);
 
-  let tx = await token1
-    .connect(vendorPoolSigner)
-    .approve(vendorSell.address, ethers.constants.MaxUint256);
-  await tx.wait();
-
-  tx = await changeToken
-    .connect(vendorChangePoolSigner)
-    .approve(vendorSell.address, ethers.constants.MaxUint256);
-  await tx.wait();
-
-  if (!network.live) {
-    const vendorSellContract = await ethers.getContract<VendorSell>(
-      "VendorSell",
-      deployer
-    );
-    tx = await vendorSellContract.enableSell();
+    let tx = await token1
+      .connect(vendorPoolSigner)
+      .approve(vendorSell.address, ethers.constants.MaxUint256);
     await tx.wait();
 
-    console.log("VendorSell: Token sell enabled");
-  } else {
-    console.log("VendorSell: Token sell disabled");
+    tx = await changeToken
+      .connect(vendorChangePoolSigner)
+      .approve(vendorSell.address, ethers.constants.MaxUint256);
+    await tx.wait();
+
+    if (!network.live) {
+      const vendorSellContract = await ethers.getContract<VendorSell>(
+        "VendorSell",
+        deployer
+      );
+      tx = await vendorSellContract.enableSell();
+      await tx.wait();
+
+      console.log("VendorSell: Token sell enabled");
+    } else {
+      console.log("VendorSell: Token sell disabled");
+    }
   }
 };
 func.tags = ["VendorSell"];

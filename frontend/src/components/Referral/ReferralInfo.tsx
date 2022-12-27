@@ -174,19 +174,16 @@ export const ReferralInfo: FC<ReferralInfoProps> = ({ isPageView }) => {
           ) : null}
         </Box>
 
-        <Flex justifyContent="flex-end" width="100%">
-          <StatBlock
-            width={{ sm: '50%', xl: '230px', '2xl': '260px' }}
-            title="Your Partners"
-            value={BigNumber.from(userReferralInfo.data?.totalReferrals || 0).toNumber()}
-          />
-          <StatBlock
-            width={{ sm: '50%', xl: '230px', '2xl': '260px' }}
-            title="Total Referral Rewards"
-            value={getReadableAmount(userReferralInfo.data?.totalDividends || 0)}
-            currency="SAVR"
-          />
-        </Flex>
+        <StatBlock
+          containerWidth={{ sm: '100%', lg: '530px', xl: 'unset' }}
+          leftWidth={{ sm: '50%', xl: '230px', '2xl': '260px' }}
+          leftTitle="Your Partners"
+          leftValue={BigNumber.from(userReferralInfo.data?.totalReferrals || 0).toNumber()}
+          rightWidth={{ sm: '50%', xl: '230px', '2xl': '260px' }}
+          rightTitle="Total Referral Rewards"
+          rightValue={getReadableAmount(userReferralInfo.data?.totalDividends || 0)}
+          rightCurrency="SAVR"
+        />
       </Flex>
 
       <ReferralSubscriptionModal

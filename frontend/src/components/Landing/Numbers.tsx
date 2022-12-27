@@ -25,7 +25,7 @@ export const Numbers = () => {
   const circulatingSupply = savBurned.data ? maxSupply.sub(savBurned.data) : maxSupply;
 
   return (
-    <Flex mb={{ sm: '80px', xl: '100px', '2xl': '190px' }} justifyContent="center" flexWrap="wrap">
+    <Flex mb={{ sm: '80px', xl: '100px', '2xl': '100px' }} justifyContent="center" flexWrap="wrap">
       <Flex w="100%" justifyContent="center">
         <h4 className="heading">Our numbers</h4>
       </Flex>

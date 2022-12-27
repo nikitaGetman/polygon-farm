@@ -92,7 +92,7 @@ export const useLottery = () => {
     [CLAIM_DAY_MUTATION],
     async () => {
       const txHash = await lotteryContract.claimDay();
-      success({ title: 'Success', description: 'You claimed today', txHash });
+      success({ title: 'Success', description: 'You have claimed for today', txHash });
     },
     {
       onSuccess: () => {
@@ -109,7 +109,7 @@ export const useLottery = () => {
     [MINT_TICKET_MUTATION],
     async () => {
       const txHash = await lotteryContract.mintMyTicket();
-      success({ title: 'Success', description: 'You minted 1 raffle ticket', txHash });
+      success({ title: 'Success', description: 'You have minted Raffle Ticket', txHash });
     },
     {
       onSuccess: () => {
@@ -133,7 +133,7 @@ export const useLottery = () => {
       });
 
       const txHash = await lotteryContract.buyTickets(amount);
-      success({ title: 'Success', description: `You bought ${amount} raffle tickets`, txHash });
+      success({ title: 'Success', description: `You bought ${amount} Raffle Tickets`, txHash });
     },
     {
       onSuccess: () => {

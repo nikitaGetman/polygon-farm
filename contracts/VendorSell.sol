@@ -57,7 +57,7 @@ contract VendorSell is Context, AccessControl, Pausable {
         require(_amountToken > 0, "Insufficient amount");
         require(
             token.balanceOf(_tokenPool) >= _amountToken,
-            "Not enough tokens in pool"
+            "Not enough tokens in exchange pool"
         );
 
         changeToken.transferFrom(
@@ -84,7 +84,7 @@ contract VendorSell is Context, AccessControl, Pausable {
         require(_amountChangeToken > 0, "Insufficient amount");
         require(
             changeToken.balanceOf(_changeTokenPool) >= _amountChangeToken,
-            "Not enough tokens in pool"
+            "Not enough tokens in exchange pool"
         );
 
         token.transferFrom(_msgSender(), _tokenPool, _amountToken);

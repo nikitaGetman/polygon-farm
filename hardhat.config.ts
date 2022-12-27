@@ -64,20 +64,30 @@ const config: HardhatUserConfig = {
     },
   },
   namedAccounts: {
-    deployer: {
-      default: 0,
-      mumbai: 0,
-      mainnet: 0,
-    },
+    deployer: 0,
     admin: 0,
-    token1Holder: 1,
-    token2Holder: 1,
-    // TODO: the same on development
-    stakingPool: 2,
-    vestingPool: 2,
-    vendorPool: 2,
-    vendorChangePool: 2,
-    referralRewardPool: 2,
+    token1Holder: 0,
+    token2Holder: 0,
+    stakingPool: {
+      default: 1,
+      mainnet: 1,
+    },
+    vestingPool: {
+      default: 1,
+      mainnet: 2,
+    },
+    vendorPool: {
+      default: 1,
+      mainnet: 3,
+    },
+    vendorChangePool: {
+      default: 1,
+      mainnet: 4,
+    },
+    referralRewardPool: {
+      default: 1,
+      mainnet: 5,
+    },
   },
   etherscan: {
     apiKey: {

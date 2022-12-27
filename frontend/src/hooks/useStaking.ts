@@ -23,6 +23,15 @@ const STAKING_CLAIM_ALL_MUTATION = 'staking-claim-all';
 const STAKING_SUBSCRIPTION_ENDING_NOTIFICATION = 15 * 24 * 60 * 60; // 15 days in seconds
 const REFETCH_REWARD_INTERVAL = 30000; // 30 secs
 
+const getWithdrawMessage = (deposit?: BigNumberish, rewards?: BigNumberish) => {
+  let message = '';
+  if (deposit && BigNumber.from(deposit).gt(0)) {
+    message = `${bigNumberToString(deposit)} SAV Deposit and `;
+  }
+  message += `${bigNumberToString(rewards || 0)} SAV Rewards have been claimed`;
+  return message;
+};
+
 export const useStaking = () => {
   const { address: account } = useAccount();
 
@@ -72,12 +81,25 @@ export const useStaking = () => {
 
             const stakes = userStakesRequest.data?.[index];
 
-            const totalReward = stakes
+            const { totalReward, totalDeposit } = stakes
               ? stakes.reduce(
-                  (sum, stake) => (stake.isClaimed ? sum : sum.add(stake.profit)),
-                  BigNumber.from(0)
+                  (acc, stake) => {
+                    if (stake.isClaimed) {
+                      return acc;
+                    }
+                    if (!stake.isToken2) {
+                      acc.totalDeposit = acc.totalDeposit.add(stake.amount);
+                    }
+                    acc.totalReward = acc.totalReward.add(stake.profit);
+
+                    return acc;
+                  },
+                  {
+                    totalReward: BigNumber.from(0),
+                    totalDeposit: BigNumber.from(0),
+                  }
                 )
-              : undefined;
+              : { totalReward: undefined, totalDeposit: undefined };
 
             const hasReadyStakes = stakes?.some(
               (stake) => stake.timeEnd.toNumber() <= currentTime && !stake.isClaimed
@@ -89,6 +111,7 @@ export const useStaking = () => {
               isSubscriptionEnding,
               planId: index,
               totalReward,
+              totalDeposit,
               stakes: userStakesRequest.data?.[index],
               hasReadyStakes,
             };
@@ -108,6 +131,7 @@ export const useStaking = () => {
       BigNumber.from(0)
     );
   }, [stakingPlansRequest.data]);
+
   const totalClaimed = useMemo(() => {
     return stakingPlansRequest.data?.reduce(
       (acc, plan) => acc.add(plan.totalClaimed),
@@ -130,7 +154,7 @@ export const useStaking = () => {
         title: 'Success',
         description: `${getReadableDuration(
           stakingPlan.stakingDuration
-        )} subscription has been activated for one year`,
+        )} Staking subscription has been activated for one year`,
         txHash,
       });
     },
@@ -171,7 +195,7 @@ export const useStaking = () => {
         title: 'Success',
         description: `You have deposited ${bigNumberToString(amount)} ${
           isToken2 ? 'SAVR' : 'SAV'
-        } tokens in ${getReadableDuration(stakingPlan.stakingDuration)} staking plan`,
+        } in ${getReadableDuration(stakingPlan.stakingDuration)} Staking pool`,
         txHash,
       });
     },
@@ -193,8 +217,13 @@ export const useStaking = () => {
   const withdraw = useMutation(
     [STAKING_CLAIM_MUTATION],
     async ({ planId, stakeId }: { planId: number; stakeId: number }) => {
+      const stake = activeStakingPlans?.[planId]?.stakes?.[stakeId] || null;
       const txHash = await stakingContract.withdraw(planId, stakeId);
-      success({ title: 'Success', description: 'Rewards claimed', txHash });
+      success({
+        title: 'Success',
+        description: getWithdrawMessage(stake?.isToken2 ? 0 : stake?.amount, stake?.profit),
+        txHash,
+      });
     },
     {
       onSuccess: () => {
@@ -213,7 +242,12 @@ export const useStaking = () => {
     [STAKING_CLAIM_ALL_MUTATION],
     async (planId: number) => {
       const txHash = await stakingContract.withdrawAll(planId);
-      success({ title: 'Success', description: 'All available rewards claimed', txHash });
+      const stakePlan = activeStakingPlans?.[planId] || null;
+      success({
+        title: 'Success',
+        description: getWithdrawMessage(stakePlan?.totalDeposit, stakePlan?.totalReward),
+        txHash,
+      });
     },
     {
       onSuccess: () => {

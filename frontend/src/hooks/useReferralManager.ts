@@ -121,7 +121,7 @@ export const useReferralManager = () => {
       const txHash = await referralContract.subscribeToLevel(level);
       success({
         title: 'Success',
-        description: `Referral ${level} Level subscription has been activated for one year`,
+        description: `Level ${level} of Referral subscription has been activated for one year`,
         txHash,
       });
     },
@@ -148,7 +148,7 @@ export const useReferralManager = () => {
       const txHash = await referralContract.subscribeToAllLevels();
       success({
         title: 'Success',
-        description: 'Referral All Levels subscription has been activated for one year',
+        description: 'All Levels of Referral subscription have been activated for one year',
         txHash,
       });
     },
@@ -171,7 +171,7 @@ export const useReferralManager = () => {
         return;
       }
       const txHash = await referralContract.setMyReferrer(referrer);
-      success({ title: 'Success', description: `Your referrer is ${referrer}`, txHash });
+      success({ title: 'Success', description: `Your leader is ${referrer}`, txHash });
     },
     {
       onSuccess: () => {
@@ -195,7 +195,7 @@ export const useReferralManager = () => {
       const txHash = await referralContract.claimRewards(rewards);
       success({
         title: 'Success',
-        description: `${bigNumberToString(rewards)} SAVR Referral Rewards claimed`,
+        description: `${bigNumberToString(rewards)} SAVR Referral Rewards have been claimed`,
         txHash,
       });
     },

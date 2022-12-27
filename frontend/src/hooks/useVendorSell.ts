@@ -3,6 +3,8 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { BigNumber, BigNumberish, ethers } from 'ethers';
 import { useAccount } from 'wagmi';
 
+import { bigNumberToString } from '@/utils/number';
+
 import { useUsdtTokenContract } from './contracts/useUsdtTokenContract';
 import { useVendorSellContract } from './contracts/useVendorSellContract';
 import { useConnectWallet } from './useConnectWallet';
@@ -96,8 +98,16 @@ export const useVendorSell = () => {
         success({ title: 'Approved', txHash });
       }
 
+      const spendAmountString = bigNumberToString(spendAmount, {
+        decimals: 6,
+      });
+
       const txHash = await vendorSellContract.buyTokens(spendAmount);
-      success({ title: 'Tokens purchased', txHash });
+      success({
+        title: 'Success',
+        description: `You exchanged ${spendAmountString} USDT to ${spendAmountString} SAV`,
+        txHash,
+      });
     },
     {
       onSuccess: () => {
@@ -120,7 +130,12 @@ export const useVendorSell = () => {
       });
 
       const txHash = await vendorSellContract.sellTokens(sellAmount);
-      success({ title: 'Tokens sold', txHash });
+      const usdtAmount = getTokenSellEquivalent(bigNumberToString(sellAmount)) || 0;
+      success({
+        title: 'Success',
+        description: `You exchanged ${bigNumberToString(sellAmount)} SAV to ${usdtAmount} USDT`,
+        txHash,
+      });
     },
     {
       onSuccess: () => {

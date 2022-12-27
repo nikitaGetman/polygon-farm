@@ -19,7 +19,11 @@ export const Lottery = () => {
     >
       <Box maxW="1068px" m="auto">
         <Flex flexDirection="column" alignItems="center" mb={{ sm: '30px', lg: '65px' }}>
-          <h4 className="heading">Our mini free-to-play</h4>
+          <h4 className="heading">
+            Our mini
+            {bp === 'sm' ? <br /> : null}
+            free-to-play
+          </h4>
           <h5 className="subheading">As a first step</h5>
         </Flex>
 

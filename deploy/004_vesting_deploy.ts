@@ -16,12 +16,14 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
     autoMine: true,
   });
 
-  const vestingPoolSigner = await ethers.getSigner(vestingPool);
+  if (tokenVesting.newlyDeployed) {
+    const vestingPoolSigner = await ethers.getSigner(vestingPool);
 
-  const tx = await token1
-    .connect(vestingPoolSigner)
-    .approve(tokenVesting.address, ethers.constants.MaxUint256);
-  await tx.wait();
+    const tx = await token1
+      .connect(vestingPoolSigner)
+      .approve(tokenVesting.address, ethers.constants.MaxUint256);
+    await tx.wait();
+  }
 };
 func.tags = ["TokenVesting"];
 func.dependencies = ["Token1"];

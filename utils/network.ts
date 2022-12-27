@@ -43,9 +43,57 @@ export function getMnemonic(networkName?: string): string {
 
 export function accounts(networkName?: string) {
   if (networkName === "mumbai") {
-    const { MUMBAI_PK_1, MUMBAI_PK_2, MUMBAI_PK_3 } = process.env;
-    if (MUMBAI_PK_1 && MUMBAI_PK_2 && MUMBAI_PK_3) {
-      return [MUMBAI_PK_1, MUMBAI_PK_2, MUMBAI_PK_3];
+    const {
+      MUMBAI_PK_1,
+      MUMBAI_PK_2,
+      MUMBAI_PK_3,
+      MUMBAI_PK_4,
+      MUMBAI_PK_5,
+      MUMBAI_PK_6,
+    } = process.env;
+    if (
+      MUMBAI_PK_1 &&
+      MUMBAI_PK_2 &&
+      MUMBAI_PK_3 &&
+      MUMBAI_PK_4 &&
+      MUMBAI_PK_5 &&
+      MUMBAI_PK_6
+    ) {
+      return [
+        MUMBAI_PK_1,
+        MUMBAI_PK_2,
+        MUMBAI_PK_3,
+        MUMBAI_PK_4,
+        MUMBAI_PK_5,
+        MUMBAI_PK_6,
+      ];
+    }
+  }
+  if (networkName === "mainnet") {
+    const {
+      POLYGON_PK_1,
+      POLYGON_PK_2,
+      POLYGON_PK_3,
+      POLYGON_PK_4,
+      POLYGON_PK_5,
+      POLYGON_PK_6,
+    } = process.env;
+    if (
+      POLYGON_PK_1 &&
+      POLYGON_PK_2 &&
+      POLYGON_PK_3 &&
+      POLYGON_PK_4 &&
+      POLYGON_PK_5 &&
+      POLYGON_PK_6
+    ) {
+      return [
+        POLYGON_PK_1,
+        POLYGON_PK_2,
+        POLYGON_PK_3,
+        POLYGON_PK_4,
+        POLYGON_PK_5,
+        POLYGON_PK_6,
+      ];
     }
   }
   return { mnemonic: getMnemonic(networkName) };

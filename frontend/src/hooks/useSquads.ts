@@ -63,7 +63,7 @@ export const useSquads = () => {
           precision: 0,
         })}/${getReadableDuration(
           stakingPlan.stakingDuration
-        )} team subscription has been activated for one year`,
+        )} Team subscription has been activated for one year`,
         txHash,
       });
     },

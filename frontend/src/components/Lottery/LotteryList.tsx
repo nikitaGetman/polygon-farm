@@ -94,7 +94,7 @@ export const LotteryList = () => {
         justifyContent="space-between"
         alignItems={{ sm: 'flex-start', xl: 'flex-end' }}
       >
-        <ButtonGroup isAttached size={{ sm: 'md', md: 'lg' }}>
+        <ButtonGroup isAttached size={{ sm: 'md', md: 'lg' }} mt={{ sm: '50px', xl: 'unset' }}>
           <Button
             borderRadius="sm"
             disabled={!liveRounds.length}
@@ -119,21 +119,16 @@ export const LotteryList = () => {
             Past
           </Button>
         </ButtonGroup>
-
-        <Flex mb={{ sm: '50px', xl: 'unset' }}>
-          <StatBlock
-            width={{ sm: '50%', lg: '260px' }}
-            title="Your Tickets"
-            value={ticketBalance || '0'}
-          />
-
-          <StatBlock
-            width={{ sm: '50%', md: '260px' }}
-            title="Total Raffles Reward"
-            value={getReadableAmount(userTotalPrize || 0)}
-            currency="SAVR"
-          />
-        </Flex>
+        <StatBlock
+          containerWidth={{ sm: '100%', lg: '510px', xl: 'unset' }}
+          leftWidth={{ sm: '50%', lg: '260px' }}
+          leftTitle="Your Tickets"
+          leftValue={ticketBalance || '0'}
+          rightWidth={{ sm: '50%', md: '260px' }}
+          rightTitle="Total Raffles Rewards"
+          rightValue={getReadableAmount(userTotalPrize || 0)}
+          rightCurrency="SAVR"
+        />
       </Flex>
 
       <Grid

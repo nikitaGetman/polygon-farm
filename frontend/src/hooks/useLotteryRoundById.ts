@@ -42,7 +42,7 @@ export const useLotteryRoundById = (id?: BigNumberish) => {
 
   const entryLottery = useMutation(
     [ENTRY_LOTTERY_MUTATION],
-    async ({ roundId, tickets }: { roundId: BigNumberish; tickets: BigNumberish }) => {
+    async ({ roundId, tickets }: { roundId: number; tickets: BigNumberish }) => {
       if (!address) {
         connect();
         return;
@@ -54,7 +54,11 @@ export const useLotteryRoundById = (id?: BigNumberish) => {
       }
 
       const txHash = await lotteryContract.entryLottery(roundId, tickets);
-      success({ title: 'Success', description: `You entered with ${tickets} tickets`, txHash });
+      success({
+        title: 'Success',
+        description: `You have entered ${tickets} Tickets in Ultra Raffle ${roundId + 1}`,
+        txHash,
+      });
     },
     {
       onSuccess: () => {

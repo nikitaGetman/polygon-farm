@@ -70,36 +70,36 @@ export const SquadsPage = () => {
         <SquadsList />
       </Box>
 
-      <Box mb={{ sm: '35px', lg: '50px' }}>
-        <Flex justifyContent="flex-end">
-          <StatBlock
-            width="320px"
-            title="Available Referral Rewards"
-            value={getReadableAmount(availableRewards)}
-            currency="SAVR"
-          />
+      <Flex justifyContent={{ xl: 'flex-end' }} mb={{ sm: '35px', lg: '50px' }}>
+        <StatBlock
+          containerWidth={{ sm: '200px', md: '320px' }}
+          leftWidth="320px"
+          leftTitle="Available Referral Rewards"
+          leftValue={getReadableAmount(availableRewards)}
+          leftCurrency="SAVR"
+        />
 
-          <Button
-            display="block"
-            width="170px"
-            height="unset"
-            padding={{ sm: '20px 10px', md: '30px' }}
-            bgColor="blue"
-            boxShadow="0px 9px 19px rgba(26, 220, 226, 0.3)"
-            borderRadius="sm"
-            textStyle="button"
-            _hover={{
-              boxShadow: '0px 12px 22px rgba(26, 220, 226, 0.5)',
-              _disabled: { boxShadow: 'none' },
-            }}
-            transition="all 0.2s"
-            disabled={isClaimDisabled}
-            onClick={claimRewards}
-          >
-            {claimDividends.isLoading ? <Spinner color="white" thickness="4px" /> : 'Claim'}
-          </Button>
-        </Flex>
-      </Box>
+        <Button
+          display="block"
+          width="150px"
+          height="unset"
+          ml="10px"
+          padding={{ sm: '20px 10px', md: '30px' }}
+          bgColor="blue"
+          boxShadow="0px 9px 19px rgba(26, 220, 226, 0.3)"
+          borderRadius="sm"
+          textStyle="button"
+          _hover={{
+            boxShadow: '0px 12px 22px rgba(26, 220, 226, 0.5)',
+            _disabled: { boxShadow: 'none' },
+          }}
+          transition="all 0.2s"
+          disabled={isClaimDisabled}
+          onClick={claimRewards}
+        >
+          {claimDividends.isLoading ? <Spinner color="white" thickness="4px" /> : 'Claim'}
+        </Button>
+      </Flex>
 
       <Box mb="120px">
         <ReferralRewardsList />

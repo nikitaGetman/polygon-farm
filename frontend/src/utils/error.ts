@@ -47,10 +47,16 @@ export function tryToGetErrorData(error: any):
       description: 'There are not enough funds in the pool',
     };
   }
+  if (message.includes('Not enough tokens in exchange pool')) {
+    return {
+      title: 'Failed',
+      description: 'There are not enough funds in the pool for exchange',
+    };
+  }
   if (message.includes('Not enough tokens for reward')) {
     return {
       title: 'Failed',
-      description: 'There are not enough funds in the pool to pay the reward',
+      description: 'There are not enough funds in the pool to pay the rewards',
     };
   }
   if (message.includes('underlying network changed')) {

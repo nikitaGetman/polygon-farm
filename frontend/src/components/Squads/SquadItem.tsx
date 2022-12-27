@@ -136,7 +136,10 @@ export const SquadItem: FC<SquadItemProps> = ({
           </Text>
 
           <Text textStyle="text1" fontSize={isSmallSize ? '26px' : '44px'} whiteSpace="nowrap">
-            {getReadableDuration(stakingDuration)}
+            {stakingDuration.toString()}
+            <Text as="span" fontSize="26px" ml="5px">
+              days
+            </Text>
           </Text>
 
           <Text

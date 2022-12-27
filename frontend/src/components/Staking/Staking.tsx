@@ -127,17 +127,14 @@ export const Staking: FC<StakingProps> = ({ isPageView }) => {
       {isPageView ? (
         <Flex justifyContent={{ lg: 'flex-start', xl: 'flex-end' }} mt="30px">
           <StatBlock
-            width="260px"
-            title="Total in Staking"
-            value={getReadableAmount(totalStakeSav)}
-            currency="SAV"
-          />
-
-          <StatBlock
-            width="260px"
-            title="Total in Staking"
-            value={getReadableAmount(totalStakeSavR)}
-            currency="SAVR"
+            leftWidth="260px"
+            leftTitle="Total in Staking"
+            leftValue={getReadableAmount(totalStakeSav)}
+            leftCurrency="SAV"
+            rightWidth="260px"
+            rightTitle="Total in Staking"
+            rightValue={getReadableAmount(totalStakeSavR)}
+            rightCurrency="SAVR"
           />
         </Flex>
       ) : null}

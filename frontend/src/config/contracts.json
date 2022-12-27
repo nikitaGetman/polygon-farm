@@ -332,7 +332,7 @@
           ]
         },
         "Helper": {
-          "address": "0x7a2088a1bFc9d81c55368AE168C2C02570cB814F",
+          "address": "0xc5a5C42992dECbae36851359345FE25997F5C42d",
           "abi": [
             {
               "inputs": [
@@ -858,7 +858,7 @@
           ]
         },
         "Lottery": {
-          "address": "0x322813Fd9A801c5507c9de605d63CEA4f2CE6c44",
+          "address": "0x4A679253410272dd5232B3Ff7cF5dbB88f295319",
           "abi": [
             {
               "inputs": [
@@ -3053,7 +3053,7 @@
           ]
         },
         "Squads": {
-          "address": "0x0B306BF915C4d645ff596e518fAf3F9669b97016",
+          "address": "0x9A9f2CCfdE556A7E9Ff0848998Aa4a0CFD8863AE",
           "abi": [
             {
               "inputs": [
@@ -4017,7 +4017,7 @@
           ]
         },
         "Staking": {
-          "address": "0x2279B7A0a67DB372996a5FaB50D91eAA73d2eBe6",
+          "address": "0x8A791620dd6260079BF849Dc5567aDC3F2FdC318",
           "abi": [
             {
               "inputs": [
@@ -5312,7 +5312,7 @@
           ]
         },
         "Ticket": {
-          "address": "0x59b670e9fA9D0A427751Af201D676719a970857b",
+          "address": "0x322813Fd9A801c5507c9de605d63CEA4f2CE6c44",
           "abi": [
             {
               "inputs": [],
@@ -8666,7 +8666,7 @@
           ]
         },
         "VRFCoordinatorMock": {
-          "address": "0x4ed7c70F96B99c776995fB64377f0d4aB3B0e1C1",
+          "address": "0xa85233C63b9Ee964Add6F2cffe00Fd84eb32338f",
           "abi": [
             {
               "inputs": [],
@@ -18491,7 +18491,7 @@
       "chainId": "80001",
       "contracts": {
         "ERC20BurnableMock": {
-          "address": "0x616fcd8FB7c2A556eCB1fE414324dDDCEE6d8b4E",
+          "address": "0xEb08CD8D21DF95BD972C247DD8dB78ae1970CcC5",
           "abi": [
             {
               "inputs": [
@@ -18818,7 +18818,7 @@
           ]
         },
         "Helper": {
-          "address": "0xBe181590B2C9a6D892d6e840ccC5d4129d4DAD2A",
+          "address": "0xDECaBBF113c3f48bb09b15f5Be3228fBB22e5eBe",
           "abi": [
             {
               "inputs": [
@@ -19344,7 +19344,7 @@
           ]
         },
         "Lottery": {
-          "address": "0xf5988C9a1385eD08b6bb8453e00c1fA0A5B7Ef66",
+          "address": "0xAaa267A1EEb37414074B21496398811311F049d6",
           "abi": [
             {
               "inputs": [
@@ -20612,7 +20612,7 @@
           ]
         },
         "ReferralManager": {
-          "address": "0x43030c0eD974D15290C4b72fB45a9378f80c8253",
+          "address": "0x0B9159F99426FC64934E1c089E886EDB78d38C00",
           "abi": [
             {
               "inputs": [
@@ -21539,7 +21539,7 @@
           ]
         },
         "Squads": {
-          "address": "0xd9ed43765EAc579E52d4F33f0F44fD30ba487100",
+          "address": "0x85187D1999377cD16CD4F0e92F9B4162b1BBba73",
           "abi": [
             {
               "inputs": [
@@ -22503,7 +22503,7 @@
           ]
         },
         "Staking": {
-          "address": "0x52765C08857A9CD5478C8d1422a4019e4fe7a551",
+          "address": "0x8dc5eD607Ac23d78a0EE911B1218f6AD835B6897",
           "abi": [
             {
               "inputs": [
@@ -23798,7 +23798,7 @@
           ]
         },
         "Ticket": {
-          "address": "0xb055ed62C7fD0241c9e586De9CBfc1b6fe7A53FB",
+          "address": "0x7619c391BAF13A39490F20232C398B0C06f368a0",
           "abi": [
             {
               "inputs": [],
@@ -24644,7 +24644,7 @@
           ]
         },
         "Token1": {
-          "address": "0x663cA197fdC464D131737a37bE850c4A038400BA",
+          "address": "0x6a5bFC3aBCf684a27653811030Daeb70CAaC4e56",
           "abi": [
             {
               "inputs": [
@@ -25570,7 +25570,7 @@
           ]
         },
         "Token2": {
-          "address": "0xc3b31F44d8a9A501C46EE551b9F7D3e50e9F3E52",
+          "address": "0xA11c12affdcAc6e44a3E190390E25cb61930A237",
           "abi": [
             {
               "inputs": [
@@ -26438,7 +26438,7 @@
           ]
         },
         "TokenVesting": {
-          "address": "0x61C51A28907444f784Fc130d048c7d0c7cC235ad",
+          "address": "0xf2e08D8172F4B2dE313f397C9f4Ea6A36D7A316a",
           "abi": [
             {
               "inputs": [
@@ -27152,7 +27152,7 @@
           ]
         },
         "VendorSell": {
-          "address": "0x88948bdd936305C4fA24B758e1569509d35A0232",
+          "address": "0x1BcAE5F3D078f373B66dd8E6aF3617E7874c3B9F",
           "abi": [
             {
               "inputs": [

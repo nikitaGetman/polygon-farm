@@ -11,8 +11,7 @@ export const bigNumberToString = (
   } = {}
 ) => {
   const parts = ethers.utils.formatUnits(value, decimals).split('.');
-  let fractional = parts[1].slice(0, precision);
-  if (fractional === '0') fractional = '00';
+  let fractional = parts[1].slice(0, precision).padEnd(precision, '0');
   return fractional ? `${parts[0]}.${fractional}` : `${parts[0]}`;
 };
 

@@ -14,7 +14,6 @@ export const Main = () => {
     <Flex
       justifyContent="center"
       mx="auto"
-      alignItems="center"
       className="main-banner"
       maxWidth={{ lg: '800px', xl: '980px', '2xl': 'unset' }}
     >
