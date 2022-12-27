@@ -26,11 +26,9 @@ const main = {
 const mailing = {
   field: {
     border: 'none',
-    boxShadow: '0px 6px 11px rgba(0, 0, 0, 0.25)',
-    bgColor: 'rgba(38, 71, 55, 0.5)',
-    borderRadius: '10px',
+    bgColor: 'transparent',
     fontWeight: '400',
-    fontSize: '12px',
+    fontSize: '14px',
     color: 'rgba(255, 255, 255, 0.5)',
 
     _placeholder: {

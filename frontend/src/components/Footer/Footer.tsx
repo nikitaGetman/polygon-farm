@@ -30,7 +30,7 @@ export const Footer = () => {
         }`;
         sendDataMessage(message)
           .then(() => {
-            success({ title: 'Email sent' });
+            success({ title: 'Email address has been sent' });
             setEmail('');
             inputRef.current?.blur();
           })
@@ -53,12 +53,20 @@ export const Footer = () => {
             <Text className="mail-list__heading">Join our mailing list</Text>
             <Text className="mail-list__subheading">Subscribe for updates and new features</Text>
             <form onSubmit={submitEmail}>
-              <InputGroup>
+              <InputGroup
+                border="none"
+                boxShadow="0px 6px 11px rgba(0, 0, 0, 0.25)"
+                bgColor="rgba(38, 71, 55, 0.5)"
+                borderRadius="10px"
+              >
                 <Input
+                  type="email"
                   ref={inputRef}
                   className="mail-list__input"
                   placeholder="Your email"
                   variant="mailing"
+                  pr="0"
+                  mr="50px"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                 />

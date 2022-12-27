@@ -1,8 +1,6 @@
-import React, { FC, useEffect, useMemo } from 'react';
+import React, { FC, useEffect, useMemo, useState } from 'react';
 import { Box, CloseButton, Flex, Link, Text } from '@chakra-ui/react';
 import { chain, useAccount, useNetwork } from 'wagmi';
-
-import { isLanding } from '@/router';
 
 export type NotificationProps = {
   type: 'success' | 'error' | 'info';
@@ -20,12 +18,14 @@ export const Notification: FC<NotificationProps> = ({
 }) => {
   const { chain: currentChain } = useNetwork();
   const { isConnected } = useAccount();
+  const [isAuth, setIsAuth] = useState(false);
 
   useEffect(() => {
-    if (!isConnected && !isLanding) {
+    if (!isConnected && isAuth) {
       onClose();
     }
-  }, [isConnected, onClose]);
+    setIsAuth(isConnected);
+  }, [isConnected, onClose, isAuth]);
 
   const textColor = useMemo(() => {
     if (type === 'error') return 'error';
