@@ -59,7 +59,7 @@ export const Footer = () => {
                   pr="16px"
                   width="60px"
                   cursor="pointer"
-                  children={<ArrowIcon />}
+                  children={<ArrowIcon width="100%" />}
                   onClick={submitEmail}
                 />
               </InputGroup>
