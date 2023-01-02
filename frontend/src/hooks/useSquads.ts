@@ -6,11 +6,12 @@ import { bigNumberToString } from '@/utils/number';
 import { getReadableDuration } from '@/utils/time';
 
 import { useSquadsContract } from './contracts/useSquadsContract';
+import { TOKENS } from './contracts/useTokenContract';
 import { HELPER_USER_SQUADS_INFO_REQUEST, useHelperUserSquadsFullInfo } from './useHelper';
 import { useNotification } from './useNotification';
 import { useStaking } from './useStaking';
 import { SAV_BALANCE_REQUEST } from './useTokenBalance';
-import { TOKENS, useTokens } from './useTokens';
+import { useTokens } from './useTokens';
 
 export const SQUAD_PLANS_REQUEST = 'squad-plans-info';
 const SUBSCRIBE_TO_SQUADS_PLAN_MUTATION = 'subscribe-to-squads';

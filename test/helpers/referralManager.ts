@@ -154,13 +154,13 @@ export async function deployReferralManagerFixture() {
   const stakingPlans: StakingPlan[] = [
     {
       durationDays: 1,
-      rewardPercent: 100,
+      apr: 100,
       subscriptionCost: BigNumber.from(10).pow(18),
       subscriptionDurationDays: 365,
     },
     {
       durationDays: 3,
-      rewardPercent: 300,
+      apr: 300,
       subscriptionCost: BigNumber.from(10).pow(18),
       subscriptionDurationDays: 365,
     },

@@ -7,10 +7,11 @@ import { bigNumberToString } from '@/utils/number';
 import { getReadableDuration } from '@/utils/time';
 
 import { useStakingContract } from './contracts/useStakingContract';
+import { TOKENS } from './contracts/useTokenContract';
 import { HELPER_USER_SQUADS_INFO_REQUEST } from './useHelper';
 import { useNotification } from './useNotification';
 import { SAV_BALANCE_REQUEST, SAVR_BALANCE_REQUEST } from './useTokenBalance';
-import { TOKENS, useTokens } from './useTokens';
+import { useTokens } from './useTokens';
 
 export const STAKING_PLANS_REQUEST = 'staking-plans';
 export const USER_STAKING_INFO_REQUEST = 'user-staking-info';
@@ -32,17 +33,80 @@ const getWithdrawMessage = (deposit?: BigNumberish, rewards?: BigNumberish) => {
   return message;
 };
 
+export const useStakingPlans = () => {
+  const queryClient = useQueryClient();
+  const stakingContract = useStakingContract();
+  const { success, handleError } = useNotification();
+
+  const stakingPlansRequest = useQuery(
+    [STAKING_PLANS_REQUEST],
+    async () => {
+      return await stakingContract.getStakingPlans();
+    },
+    { select: (data) => data.map((plan) => ({ ...plan, apr: plan.apr.toNumber() / 10 })) }
+  );
+
+  const updatePlanActivity = useMutation(
+    ['update-plan-activity'],
+    async ({ planId, isActive }: { planId: number; isActive: boolean }) => {
+      const txHash = await stakingContract.updatePlanActivity(planId, isActive);
+      success({
+        title: 'Success',
+        description: `${planId} staking plan ${isActive ? 'enabled' : 'disabled'}`,
+        txHash,
+      });
+    },
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries([STAKING_PLANS_REQUEST]);
+      },
+      onError: handleError,
+    }
+  );
+
+  const addStakingPlan = useMutation(
+    ['add-staking-plan'],
+    async ({
+      subscriptionCost,
+      stakingDuration,
+      apr,
+    }: {
+      subscriptionCost: BigNumber;
+      stakingDuration: number;
+      apr: number;
+    }) => {
+      const subscriptionDuration = 365;
+      const txHash = await stakingContract.addStakingPlan(
+        subscriptionCost,
+        subscriptionDuration,
+        stakingDuration,
+        apr
+      );
+      success({
+        title: 'Success',
+        description: `${stakingDuration} days Staking plan created`,
+        txHash,
+      });
+    },
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries([STAKING_PLANS_REQUEST]);
+      },
+      onError: handleError,
+    }
+  );
+
+  return { stakingPlansRequest, updatePlanActivity, addStakingPlan };
+};
+
 export const useStaking = () => {
   const { address: account } = useAccount();
 
   const queryClient = useQueryClient();
   const stakingContract = useStakingContract();
+  const { stakingPlansRequest } = useStakingPlans();
   const { success, handleError } = useNotification();
   const tokens = useTokens();
-
-  const stakingPlansRequest = useQuery([STAKING_PLANS_REQUEST], async () => {
-    return await stakingContract.getStakingPlans();
-  });
 
   const userPlansInfoRequest = useQuery([USER_STAKING_INFO_REQUEST, { account }], async () => {
     const res = account ? await stakingContract.getUserStakingInfo(account) : null;

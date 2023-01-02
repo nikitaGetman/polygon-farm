@@ -1,7 +1,7 @@
 import { useCallback, useEffect } from 'react';
 import { useLocation, useOutlet, useSearchParams } from 'react-router-dom';
 import { CSSTransition, SwitchTransition } from 'react-transition-group';
-import { Box } from '@chakra-ui/react';
+import { Flex } from '@chakra-ui/react';
 
 import { REFERRER_SEARCH_PARAMS_KEY, useLocalReferrer } from '@/hooks/useLocalReferrer';
 import { isLanding, LANDING_PATH, routes } from '@/router';
@@ -14,7 +14,7 @@ export const Layout = () => {
   const currentOutlet = useOutlet();
   const { nodeRef } =
     routes.find((route) =>
-      // TODO: Hack for '/raffles/:id' route
+      // Hack for '/raffles/:id' route
       route.path.includes(location.pathname.split('/')[1])
     ) ?? {};
 
@@ -48,10 +48,10 @@ export const Layout = () => {
           appear
         >
           {(state) => (
-            <Box ref={nodeRef as any}>
+            <Flex ref={nodeRef as any} flexGrow={1} direction="column">
               {currentOutlet}
               <Footer />
-            </Box>
+            </Flex>
           )}
         </CSSTransition>
       </SwitchTransition>

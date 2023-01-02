@@ -1,4 +1,4 @@
-import { BigNumberish, ethers } from 'ethers';
+import { BigNumber, BigNumberish, ethers } from 'ethers';
 import { useContract, useProvider, useSigner } from 'wagmi';
 
 import { Staking } from '@/types';
@@ -77,6 +77,26 @@ export const useStakingContract = () => {
     return waitForTransaction(tx);
   };
 
+  const updatePlanActivity = async (planId: number, isActive: boolean) => {
+    const tx = await contract.updatePlanActivity(planId, isActive);
+    return waitForTransaction(tx);
+  };
+
+  const addStakingPlan = async (
+    subscriptionCost: BigNumber,
+    subscriptionDuration: number,
+    stakingDuration: number,
+    apr: number
+  ) => {
+    const tx = await contract.addStakingPlan(
+      subscriptionCost,
+      subscriptionDuration,
+      stakingDuration,
+      apr
+    );
+    return waitForTransaction(tx);
+  };
+
   return {
     contract,
     address: contractAddress,
@@ -88,5 +108,7 @@ export const useStakingContract = () => {
     getUserStakesWithRewards,
     getUserStakes,
     subscribe,
+    updatePlanActivity,
+    addStakingPlan,
   };
 };

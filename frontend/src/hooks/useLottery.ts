@@ -5,9 +5,10 @@ import { useAccount } from 'wagmi';
 
 import { useLotteryContract } from './contracts/useLotteryContract';
 import { useTicketContract } from './contracts/useTicketContract';
+import { TOKENS } from './contracts/useTokenContract';
 import { useNotification } from './useNotification';
 import { SAV_BALANCE_REQUEST } from './useTokenBalance';
-import { TOKENS, useTokens } from './useTokens';
+import { useTokens } from './useTokens';
 
 export const TICKET_BALANCE_REQUEST = 'ticket-balance-request';
 const LOTTERY_TICKET_PRICE_REQUEST = 'lottery-ticket-price-request';

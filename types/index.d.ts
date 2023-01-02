@@ -2,7 +2,7 @@ import { BigNumber } from "ethers";
 
 export type StakingPlan = {
   durationDays: number;
-  rewardPercent: number;
+  apr: number;
   subscriptionCost: BigNumber; // BigNumber
   subscriptionDurationDays: number;
 };

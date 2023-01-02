@@ -7,7 +7,7 @@ interface IStaking {
         uint256 subscriptionCost;
         uint256 subscriptionDuration;
         uint256 stakingDuration;
-        uint256 profitPercent;
+        uint256 apr;
         uint256 totalStakesToken1No;
         uint256 totalStakesToken2No;
         uint256 totalStakedToken1;
@@ -21,7 +21,7 @@ interface IStaking {
         uint256 amount;
         uint256 timeStart;
         uint256 timeEnd;
-        uint256 profitPercent;
+        uint256 apr;
         uint256 profit;
         bool isClaimed;
         bool isToken2;

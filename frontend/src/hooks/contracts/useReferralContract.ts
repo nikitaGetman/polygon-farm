@@ -49,6 +49,16 @@ export const useReferralContract = () => {
     return await contract.queryFilter(filter);
   };
 
+  const updateLevelSubscriptionCost = async (newCost: BigNumber) => {
+    const tx = await contract.updateLevelSubscriptionCost(newCost);
+    return waitForTransaction(tx);
+  };
+
+  const updateFullSubscriptionCost = async (newCost: BigNumber) => {
+    const tx = await contract.updateFullSubscriptionCost(newCost);
+    return waitForTransaction(tx);
+  };
+
   return {
     contract,
     address: contractAddress,
@@ -58,5 +68,7 @@ export const useReferralContract = () => {
     setMyReferrer,
     claimRewards,
     getRewards,
+    updateLevelSubscriptionCost,
+    updateFullSubscriptionCost,
   };
 };

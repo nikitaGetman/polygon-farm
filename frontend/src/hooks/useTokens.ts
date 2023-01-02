@@ -3,14 +3,9 @@ import { BigNumber, BigNumberish, ethers } from 'ethers';
 import { useAccount } from 'wagmi';
 
 import { ContractsEnum } from './contracts/useContractAbi';
-import { useTokenContract } from './contracts/useTokenContract';
+import { TOKENS, useTokenContract } from './contracts/useTokenContract';
 import { useConnectWallet } from './useConnectWallet';
 import { useNotification } from './useNotification';
-
-export enum TOKENS {
-  SAV = 'SAV',
-  SAVR = 'SAVR',
-}
 
 const INCREASE_TOKEN_ALLOWANCE_MUTATION = 'increase-allowance';
 export const useTokens = () => {

@@ -10,6 +10,7 @@ import "./snapshot";
 import "./roles";
 import "./addStakingPlan";
 import "./addSquadPlan";
+import "./exportAccounts";
 import "./lottery/createLotteryRound";
 import "./lottery/finishLotteryRound";
 import "./lottery/createFinishedLotteryRound";

@@ -87,19 +87,19 @@ export async function waitForStakeFinished(days: number) {
 export const STAKING_PLANS: StakingPlan[] = [
   {
     durationDays: 1,
-    rewardPercent: 100, // 10%
+    apr: 100, // 10%
     subscriptionCost: BigNumber.from(10).pow(18), // 1 token
     subscriptionDurationDays: 10,
   },
   {
     durationDays: 5,
-    rewardPercent: 500, // 50%
+    apr: 500, // 50%
     subscriptionCost: BigNumber.from(10).pow(19), // 10 tokens
     subscriptionDurationDays: 15,
   },
   {
     durationDays: 10,
-    rewardPercent: 1000, // 100%
+    apr: 1000, // 100%
     subscriptionCost: BigNumber.from(10).pow(20), // 100 tokens
     subscriptionDurationDays: 30,
   },

@@ -5,10 +5,17 @@ import { useAccount } from 'wagmi';
 
 import { useHasRole } from '@/hooks/admin/useHasRole';
 import { ContractsEnum } from '@/hooks/contracts/useContractAbi';
-import { useDocumentTitle } from '@/hooks/useDocumentTitle';
+import { useDocumentTitle } from '@/hooks/useMeta';
 
 import { CenteredSpinner } from '../ui/CenteredSpinner/CenteredSpinner';
 import { ConnectWalletButton } from '../ui/ConnectWalletButton/ConnectWalletButton';
+
+import { Addresses } from './blocks/Addresses';
+import { Balances } from './blocks/Balances';
+import { ExchangeControl } from './blocks/ExchangeControl';
+import { ReferralControl } from './blocks/ReferralControl';
+import { StakingControl } from './blocks/StakingControl';
+import { TokenControl } from './blocks/TokenControl';
 
 export const AdminPanel = () => {
   useDocumentTitle('iSaver | Admin panel');
@@ -74,5 +81,15 @@ export const AdminPanel = () => {
     );
   }
 
-  return <Container variant="dashboard">Admin</Container>;
+  return (
+    <Container variant="dashboard" padding="40px 0 80px" minWidth="container.xl">
+      <Balances />
+      {isSavAdmin ? <TokenControl token={ContractsEnum.SAV} /> : null}
+      {isSavRAdmin ? <TokenControl token={ContractsEnum.SAVR} /> : null}
+      {isStakingAdmin ? <StakingControl /> : null}
+      {isReferralAdmin ? <ReferralControl /> : null}
+      {isVendorSellAdmin ? <ExchangeControl /> : null}
+      <Addresses />
+    </Container>
+  );
 };

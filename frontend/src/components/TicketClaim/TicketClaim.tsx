@@ -126,9 +126,9 @@ export const TicketClaim = () => {
           direction={{ sm: 'column', xl: 'row' }}
           whiteSpace="nowrap"
         >
-          <Text textStyle="textBoldPtSans">Or you can buy Raffle Tickets</Text>
+          <Text textStyle="textSansBold">Or you can buy Raffle Tickets</Text>
 
-          <Text textStyle="textBoldPtSans" mb={{ sm: '16px', xl: '0' }}>
+          <Text textStyle="textSansBold" mb={{ sm: '16px', xl: '0' }}>
             {bigNumberToString(ticketPrice, { precision: 0 })} SAV / 1 Ticket
           </Text>
 

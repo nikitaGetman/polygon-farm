@@ -1,6 +1,8 @@
 import React, { FC, useEffect, useMemo, useState } from 'react';
 import { Box, CloseButton, Flex, Link, Text } from '@chakra-ui/react';
-import { chain, useAccount, useNetwork } from 'wagmi';
+import { useAccount } from 'wagmi';
+
+import { useExplorerLink } from '@/hooks/useExplorerLink';
 
 export type NotificationProps = {
   type: 'success' | 'error' | 'info';
@@ -16,7 +18,6 @@ export const Notification: FC<NotificationProps> = ({
   txHash,
   onClose,
 }) => {
-  const { chain: currentChain } = useNetwork();
   const { isConnected } = useAccount();
   const [isAuth, setIsAuth] = useState(false);
 
@@ -36,12 +37,7 @@ export const Notification: FC<NotificationProps> = ({
     return 'green.400';
   }, [type]);
 
-  const scanLink = useMemo(() => {
-    if (currentChain?.id === chain.polygon.id) {
-      return `https://polygonscan.com/tx/${txHash}`;
-    }
-    return `https://mumbai.polygonscan.com/tx/${txHash}`;
-  }, [txHash, currentChain]);
+  const scanLink = useExplorerLink(txHash);
 
   return (
     <Box

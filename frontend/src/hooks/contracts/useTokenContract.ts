@@ -13,6 +13,11 @@ export enum SavEvent {
   Approval = 'Approval',
 }
 
+export enum TOKENS {
+  SAV = ContractsEnum.SAV,
+  SAVR = ContractsEnum.SAVR,
+}
+
 export const useTokenContract = (token: ContractsEnum.SAV | ContractsEnum.SAVR) => {
   const { data: signer } = useSigner();
   const provider = useProvider();
@@ -67,6 +72,41 @@ export const useTokenContract = (token: ContractsEnum.SAV | ContractsEnum.SAVR) 
     return waitForTransaction(tx);
   };
 
+  // Administration
+  const paused = async () => {
+    return contract.paused();
+  };
+
+  const addToBlacklist = async (addresses: string[]) => {
+    const tx = await contract.addToBlacklist(addresses);
+    return waitForTransaction(tx);
+  };
+
+  const removeFromBlacklist = async (addresses: string[]) => {
+    const tx = await contract.removeFromBlacklist(addresses);
+    return waitForTransaction(tx);
+  };
+
+  const addToWhitelist = async (addresses: string[]) => {
+    const tx = await contract.addToWhitelist(addresses);
+    return waitForTransaction(tx);
+  };
+
+  const removeFromWhitelist = async (addresses: string[]) => {
+    const tx = await contract.removeFromWhitelist(addresses);
+    return waitForTransaction(tx);
+  };
+
+  const pause = async () => {
+    const tx = await contract.pause();
+    return waitForTransaction(tx);
+  };
+
+  const unpause = async () => {
+    const tx = await contract.unpause();
+    return waitForTransaction(tx);
+  };
+
   return {
     contract,
     address,
@@ -77,5 +117,13 @@ export const useTokenContract = (token: ContractsEnum.SAV | ContractsEnum.SAVR) 
     approve,
     totalBurned,
     totalSupply,
+    // Administration
+    paused,
+    pause,
+    unpause,
+    addToBlacklist,
+    addToWhitelist,
+    removeFromBlacklist,
+    removeFromWhitelist,
   };
 };

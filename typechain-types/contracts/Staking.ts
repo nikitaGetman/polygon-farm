@@ -33,7 +33,7 @@ export declare namespace IStaking {
     subscriptionCost: PromiseOrValue<BigNumberish>;
     subscriptionDuration: PromiseOrValue<BigNumberish>;
     stakingDuration: PromiseOrValue<BigNumberish>;
-    profitPercent: PromiseOrValue<BigNumberish>;
+    apr: PromiseOrValue<BigNumberish>;
     totalStakesToken1No: PromiseOrValue<BigNumberish>;
     totalStakesToken2No: PromiseOrValue<BigNumberish>;
     totalStakedToken1: PromiseOrValue<BigNumberish>;
@@ -61,7 +61,7 @@ export declare namespace IStaking {
     subscriptionCost: BigNumber;
     subscriptionDuration: BigNumber;
     stakingDuration: BigNumber;
-    profitPercent: BigNumber;
+    apr: BigNumber;
     totalStakesToken1No: BigNumber;
     totalStakesToken2No: BigNumber;
     totalStakedToken1: BigNumber;
@@ -97,7 +97,7 @@ export declare namespace IStaking {
     amount: PromiseOrValue<BigNumberish>;
     timeStart: PromiseOrValue<BigNumberish>;
     timeEnd: PromiseOrValue<BigNumberish>;
-    profitPercent: PromiseOrValue<BigNumberish>;
+    apr: PromiseOrValue<BigNumberish>;
     profit: PromiseOrValue<BigNumberish>;
     isClaimed: PromiseOrValue<boolean>;
     isToken2: PromiseOrValue<boolean>;
@@ -115,7 +115,7 @@ export declare namespace IStaking {
     amount: BigNumber;
     timeStart: BigNumber;
     timeEnd: BigNumber;
-    profitPercent: BigNumber;
+    apr: BigNumber;
     profit: BigNumber;
     isClaimed: boolean;
     isToken2: boolean;
@@ -134,9 +134,9 @@ export declare namespace IStaking {
 
 export interface StakingInterface extends utils.Interface {
   functions: {
+    "BASE_POINTS_DIVIDER()": FunctionFragment;
     "DEFAULT_ADMIN_ROLE()": FunctionFragment;
     "MIN_STAKE_LIMIT()": FunctionFragment;
-    "PERCENTS_DIVIDER()": FunctionFragment;
     "TIME_STEP()": FunctionFragment;
     "addStakingPlan(uint256,uint256,uint256,uint256)": FunctionFragment;
     "calculateStakeProfit(uint256,uint256)": FunctionFragment;
@@ -164,10 +164,9 @@ export interface StakingInterface extends utils.Interface {
     "token1()": FunctionFragment;
     "token2()": FunctionFragment;
     "updateMinStakeLimit(uint256)": FunctionFragment;
-    "updatePercentDivider(uint256)": FunctionFragment;
+    "updatePlanAPR(uint256,uint256)": FunctionFragment;
     "updatePlanActivity(uint256,bool)": FunctionFragment;
     "updatePlanDurationDays(uint256,uint256)": FunctionFragment;
-    "updatePlanReward(uint256,uint256)": FunctionFragment;
     "updatePlanSubscriptionCost(uint256,uint256)": FunctionFragment;
     "updatePlanSubscriptionPeriod(uint256,uint256)": FunctionFragment;
     "updateReferralManager(address)": FunctionFragment;
@@ -183,9 +182,9 @@ export interface StakingInterface extends utils.Interface {
 
   getFunction(
     nameOrSignatureOrTopic:
+      | "BASE_POINTS_DIVIDER"
       | "DEFAULT_ADMIN_ROLE"
       | "MIN_STAKE_LIMIT"
-      | "PERCENTS_DIVIDER"
       | "TIME_STEP"
       | "addStakingPlan"
       | "calculateStakeProfit"
@@ -213,10 +212,9 @@ export interface StakingInterface extends utils.Interface {
       | "token1"
       | "token2"
       | "updateMinStakeLimit"
-      | "updatePercentDivider"
+      | "updatePlanAPR"
       | "updatePlanActivity"
       | "updatePlanDurationDays"
-      | "updatePlanReward"
       | "updatePlanSubscriptionCost"
       | "updatePlanSubscriptionPeriod"
       | "updateReferralManager"
@@ -231,15 +229,15 @@ export interface StakingInterface extends utils.Interface {
   ): FunctionFragment;
 
   encodeFunctionData(
+    functionFragment: "BASE_POINTS_DIVIDER",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
     functionFragment: "DEFAULT_ADMIN_ROLE",
     values?: undefined
   ): string;
   encodeFunctionData(
     functionFragment: "MIN_STAKE_LIMIT",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "PERCENTS_DIVIDER",
     values?: undefined
   ): string;
   encodeFunctionData(functionFragment: "TIME_STEP", values?: undefined): string;
@@ -356,8 +354,8 @@ export interface StakingInterface extends utils.Interface {
     values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
-    functionFragment: "updatePercentDivider",
-    values: [PromiseOrValue<BigNumberish>]
+    functionFragment: "updatePlanAPR",
+    values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
     functionFragment: "updatePlanActivity",
@@ -365,10 +363,6 @@ export interface StakingInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "updatePlanDurationDays",
-    values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "updatePlanReward",
     values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
@@ -417,15 +411,15 @@ export interface StakingInterface extends utils.Interface {
   ): string;
 
   decodeFunctionResult(
+    functionFragment: "BASE_POINTS_DIVIDER",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "DEFAULT_ADMIN_ROLE",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
     functionFragment: "MIN_STAKE_LIMIT",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "PERCENTS_DIVIDER",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "TIME_STEP", data: BytesLike): Result;
@@ -513,7 +507,7 @@ export interface StakingInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "updatePercentDivider",
+    functionFragment: "updatePlanAPR",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -522,10 +516,6 @@ export interface StakingInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "updatePlanDurationDays",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "updatePlanReward",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -673,7 +663,7 @@ export type StakedEventFilter = TypedEventFilter<StakedEvent>;
 export interface StakingPlanCreatedEventObject {
   planId: BigNumber;
   duration: BigNumber;
-  rewardPercent: BigNumber;
+  apr: BigNumber;
 }
 export type StakingPlanCreatedEvent = TypedEvent<
   [BigNumber, BigNumber, BigNumber],
@@ -721,11 +711,11 @@ export interface Staking extends BaseContract {
   removeListener: OnEvent<this>;
 
   functions: {
+    BASE_POINTS_DIVIDER(overrides?: CallOverrides): Promise<[BigNumber]>;
+
     DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<[string]>;
 
     MIN_STAKE_LIMIT(overrides?: CallOverrides): Promise<[BigNumber]>;
-
-    PERCENTS_DIVIDER(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     TIME_STEP(overrides?: CallOverrides): Promise<[BigNumber]>;
 
@@ -733,7 +723,7 @@ export interface Staking extends BaseContract {
       subscriptionCost: PromiseOrValue<BigNumberish>,
       subscriptionDuration: PromiseOrValue<BigNumberish>,
       stakingDuration: PromiseOrValue<BigNumberish>,
-      profitPercent: PromiseOrValue<BigNumberish>,
+      apr: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -857,7 +847,7 @@ export interface Staking extends BaseContract {
         subscriptionCost: BigNumber;
         subscriptionDuration: BigNumber;
         stakingDuration: BigNumber;
-        profitPercent: BigNumber;
+        apr: BigNumber;
         totalStakesToken1No: BigNumber;
         totalStakesToken2No: BigNumber;
         totalStakedToken1: BigNumber;
@@ -887,8 +877,9 @@ export interface Staking extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
-    updatePercentDivider(
-      divider_: PromiseOrValue<BigNumberish>,
+    updatePlanAPR(
+      planId: PromiseOrValue<BigNumberish>,
+      apr: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -901,12 +892,6 @@ export interface Staking extends BaseContract {
     updatePlanDurationDays(
       planId: PromiseOrValue<BigNumberish>,
       duration: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
-    updatePlanReward(
-      planId: PromiseOrValue<BigNumberish>,
-      percent: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -969,11 +954,11 @@ export interface Staking extends BaseContract {
     ): Promise<ContractTransaction>;
   };
 
+  BASE_POINTS_DIVIDER(overrides?: CallOverrides): Promise<BigNumber>;
+
   DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<string>;
 
   MIN_STAKE_LIMIT(overrides?: CallOverrides): Promise<BigNumber>;
-
-  PERCENTS_DIVIDER(overrides?: CallOverrides): Promise<BigNumber>;
 
   TIME_STEP(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -981,7 +966,7 @@ export interface Staking extends BaseContract {
     subscriptionCost: PromiseOrValue<BigNumberish>,
     subscriptionDuration: PromiseOrValue<BigNumberish>,
     stakingDuration: PromiseOrValue<BigNumberish>,
-    profitPercent: PromiseOrValue<BigNumberish>,
+    apr: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -1103,7 +1088,7 @@ export interface Staking extends BaseContract {
       subscriptionCost: BigNumber;
       subscriptionDuration: BigNumber;
       stakingDuration: BigNumber;
-      profitPercent: BigNumber;
+      apr: BigNumber;
       totalStakesToken1No: BigNumber;
       totalStakesToken2No: BigNumber;
       totalStakedToken1: BigNumber;
@@ -1133,8 +1118,9 @@ export interface Staking extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
-  updatePercentDivider(
-    divider_: PromiseOrValue<BigNumberish>,
+  updatePlanAPR(
+    planId: PromiseOrValue<BigNumberish>,
+    apr: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -1147,12 +1133,6 @@ export interface Staking extends BaseContract {
   updatePlanDurationDays(
     planId: PromiseOrValue<BigNumberish>,
     duration: PromiseOrValue<BigNumberish>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
-  updatePlanReward(
-    planId: PromiseOrValue<BigNumberish>,
-    percent: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -1215,11 +1195,11 @@ export interface Staking extends BaseContract {
   ): Promise<ContractTransaction>;
 
   callStatic: {
+    BASE_POINTS_DIVIDER(overrides?: CallOverrides): Promise<BigNumber>;
+
     DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<string>;
 
     MIN_STAKE_LIMIT(overrides?: CallOverrides): Promise<BigNumber>;
-
-    PERCENTS_DIVIDER(overrides?: CallOverrides): Promise<BigNumber>;
 
     TIME_STEP(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -1227,7 +1207,7 @@ export interface Staking extends BaseContract {
       subscriptionCost: PromiseOrValue<BigNumberish>,
       subscriptionDuration: PromiseOrValue<BigNumberish>,
       stakingDuration: PromiseOrValue<BigNumberish>,
-      profitPercent: PromiseOrValue<BigNumberish>,
+      apr: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -1349,7 +1329,7 @@ export interface Staking extends BaseContract {
         subscriptionCost: BigNumber;
         subscriptionDuration: BigNumber;
         stakingDuration: BigNumber;
-        profitPercent: BigNumber;
+        apr: BigNumber;
         totalStakesToken1No: BigNumber;
         totalStakesToken2No: BigNumber;
         totalStakedToken1: BigNumber;
@@ -1379,8 +1359,9 @@ export interface Staking extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
-    updatePercentDivider(
-      divider_: PromiseOrValue<BigNumberish>,
+    updatePlanAPR(
+      planId: PromiseOrValue<BigNumberish>,
+      apr: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -1393,12 +1374,6 @@ export interface Staking extends BaseContract {
     updatePlanDurationDays(
       planId: PromiseOrValue<BigNumberish>,
       duration: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    updatePlanReward(
-      planId: PromiseOrValue<BigNumberish>,
-      percent: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -1543,12 +1518,12 @@ export interface Staking extends BaseContract {
     "StakingPlanCreated(uint256,uint256,uint256)"(
       planId?: PromiseOrValue<BigNumberish> | null,
       duration?: null,
-      rewardPercent?: null
+      apr?: null
     ): StakingPlanCreatedEventFilter;
     StakingPlanCreated(
       planId?: PromiseOrValue<BigNumberish> | null,
       duration?: null,
-      rewardPercent?: null
+      apr?: null
     ): StakingPlanCreatedEventFilter;
 
     "Subscribed(address,uint256)"(
@@ -1562,11 +1537,11 @@ export interface Staking extends BaseContract {
   };
 
   estimateGas: {
+    BASE_POINTS_DIVIDER(overrides?: CallOverrides): Promise<BigNumber>;
+
     DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<BigNumber>;
 
     MIN_STAKE_LIMIT(overrides?: CallOverrides): Promise<BigNumber>;
-
-    PERCENTS_DIVIDER(overrides?: CallOverrides): Promise<BigNumber>;
 
     TIME_STEP(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -1574,7 +1549,7 @@ export interface Staking extends BaseContract {
       subscriptionCost: PromiseOrValue<BigNumberish>,
       subscriptionDuration: PromiseOrValue<BigNumberish>,
       stakingDuration: PromiseOrValue<BigNumberish>,
-      profitPercent: PromiseOrValue<BigNumberish>,
+      apr: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -1698,8 +1673,9 @@ export interface Staking extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
-    updatePercentDivider(
-      divider_: PromiseOrValue<BigNumberish>,
+    updatePlanAPR(
+      planId: PromiseOrValue<BigNumberish>,
+      apr: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -1712,12 +1688,6 @@ export interface Staking extends BaseContract {
     updatePlanDurationDays(
       planId: PromiseOrValue<BigNumberish>,
       duration: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    updatePlanReward(
-      planId: PromiseOrValue<BigNumberish>,
-      percent: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -1781,13 +1751,15 @@ export interface Staking extends BaseContract {
   };
 
   populateTransaction: {
+    BASE_POINTS_DIVIDER(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     DEFAULT_ADMIN_ROLE(
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     MIN_STAKE_LIMIT(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    PERCENTS_DIVIDER(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     TIME_STEP(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
@@ -1795,7 +1767,7 @@ export interface Staking extends BaseContract {
       subscriptionCost: PromiseOrValue<BigNumberish>,
       subscriptionDuration: PromiseOrValue<BigNumberish>,
       stakingDuration: PromiseOrValue<BigNumberish>,
-      profitPercent: PromiseOrValue<BigNumberish>,
+      apr: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -1919,8 +1891,9 @@ export interface Staking extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
-    updatePercentDivider(
-      divider_: PromiseOrValue<BigNumberish>,
+    updatePlanAPR(
+      planId: PromiseOrValue<BigNumberish>,
+      apr: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -1933,12 +1906,6 @@ export interface Staking extends BaseContract {
     updatePlanDurationDays(
       planId: PromiseOrValue<BigNumberish>,
       duration: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    updatePlanReward(
-      planId: PromiseOrValue<BigNumberish>,
-      percent: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 

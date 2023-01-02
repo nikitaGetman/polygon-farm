@@ -9,9 +9,8 @@ import { useTokenContract } from './contracts/useTokenContract';
 import { useUsdtTokenContract } from './contracts/useUsdtTokenContract';
 
 export const SAV_BALANCE_REQUEST = 'token-balance-sav';
-export const useSavBalance = () => {
+export const useSavBalance = (address?: string) => {
   const savContract = useTokenContract(ContractsEnum.SAV);
-  const { address } = useAccount();
 
   return useQuery([SAV_BALANCE_REQUEST, { address }], async () => {
     return address ? await savContract.balanceOf(address) : null;
@@ -19,9 +18,8 @@ export const useSavBalance = () => {
 };
 
 export const SAVR_BALANCE_REQUEST = 'token-balance-savr';
-export const useSavRBalance = () => {
+export const useSavRBalance = (address?: string) => {
   const savrContract = useTokenContract(ContractsEnum.SAVR);
-  const { address } = useAccount();
 
   return useQuery([SAVR_BALANCE_REQUEST, { address }], async () => {
     return address ? await savrContract.balanceOf(address) : null;
@@ -29,9 +27,8 @@ export const useSavRBalance = () => {
 };
 
 export const USDT_BALANCE_REQUEST = 'token-balance-usdt';
-export const useUsdtBalance = () => {
+export const useUsdtBalance = (address?: string) => {
   const usdtContract = useUsdtTokenContract();
-  const { address } = useAccount();
 
   return useQuery([USDT_BALANCE_REQUEST, { address }], async () => {
     return address ? await usdtContract.balanceOf(address) : null;
@@ -44,8 +41,8 @@ export const useTokenBalanceHistory = () => {
   const savrContract = useTokenContract(ContractsEnum.SAVR);
   const { address } = useAccount();
   const provider = useProvider();
-  const savBalance = useSavBalance();
-  const savrBalance = useSavRBalance();
+  const savBalance = useSavBalance(address);
+  const savrBalance = useSavRBalance(address);
 
   const transfersHistoryRequest = useQuery(
     [SAV_BALANCE_REQUEST, SAVR_BALANCE_REQUEST, BALANCE_HISTORY_REQUEST, { address }],

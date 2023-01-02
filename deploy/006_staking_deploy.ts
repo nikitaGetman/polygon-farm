@@ -34,7 +34,7 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
       console.log("Add staking plan " + (i + 1));
       await run("add-staking-plan", {
         durationDays: STAKINGS[i].durationDays,
-        rewardPercent: STAKINGS[i].rewardPercent,
+        apr: STAKINGS[i].apr,
         subscriptionCost: STAKINGS[i].subscriptionCost.toString(),
         subscriptionPeriodDays: STAKINGS[i].subscriptionDurationDays,
       });
@@ -56,11 +56,13 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
       await tx.wait();
 
       // Transfer 1 000 000 tokens to reward pool for testing
-      console.log("Transfer 100 000 SAV tokens from SAV holder to reward pool");
+      console.log(
+        "Transfer 10 000 000 SAV tokens from SAV holder to reward pool"
+      );
       const holderSigner = await ethers.getSigner(token1Holder);
       tx = await token1
         .connect(holderSigner)
-        .transfer(stakingPool, BigNumber.from(10).pow(23));
+        .transfer(stakingPool, BigNumber.from(10).pow(25));
       await tx.wait();
     }
   }

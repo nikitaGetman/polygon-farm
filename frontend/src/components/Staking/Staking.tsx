@@ -16,11 +16,11 @@ import { useAccount } from 'wagmi';
 
 import { ConnectWalletButton } from '@/components/ui/ConnectWalletButton/ConnectWalletButton';
 import { StatBlock } from '@/components/ui/StatBlock/StatBlock';
+import { TOKENS } from '@/hooks/contracts/useTokenContract';
 import { useConnectWallet } from '@/hooks/useConnectWallet';
 import { useLocalReferrer } from '@/hooks/useLocalReferrer';
 import { useStaking } from '@/hooks/useStaking';
-import { TOKENS } from '@/hooks/useTokens';
-import { getReadableAmount, getYearlyAPR, makeBigNumber } from '@/utils/number';
+import { getReadableAmount, makeBigNumber } from '@/utils/number';
 
 import { WarningTip } from '../ui/WarningTip/WarningTip';
 
@@ -166,7 +166,7 @@ export const Staking: FC<StakingProps> = ({ isPageView }) => {
               subscriptionDuration={planData.subscriptionDuration}
               stakingDuration={planData.stakingDuration}
               poolSize={planData.currentToken1Locked.add(planData.currentToken2Locked)}
-              apr={getYearlyAPR(planData.profitPercent, planData.stakingDuration)}
+              apr={planData.apr.toString()}
               userStakeSav={planData.currentToken1Staked || 0}
               userStakeSavR={planData.currentToken2Staked || 0}
               userTotalReward={planData.totalReward}
@@ -180,10 +180,7 @@ export const Staking: FC<StakingProps> = ({ isPageView }) => {
       </Grid>
       {isOpen && selectedPlan !== undefined ? (
         <StakingModal
-          apr={getYearlyAPR(
-            activeStakingPlans[selectedPlan].profitPercent,
-            activeStakingPlans[selectedPlan].stakingDuration
-          )}
+          apr={activeStakingPlans[selectedPlan].apr.toString()}
           lockPeriodDays={activeStakingPlans[selectedPlan].stakingDuration}
           isLoading={deposit.isLoading}
           onClose={closeModal}

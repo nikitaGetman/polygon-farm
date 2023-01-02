@@ -1,6 +1,6 @@
 import React from 'react';
 import { RouterProvider } from 'react-router-dom';
-import { Box, ChakraProvider } from '@chakra-ui/react';
+import { ChakraProvider, Flex } from '@chakra-ui/react';
 import { QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { WagmiConfig } from 'wagmi';
@@ -23,7 +23,7 @@ function App() {
           <AppStateProvider>
             <div className="background" />
 
-            <Flex position="relative" minHeight="100vh" direction="column">
+            <Flex position="relative" minHeight="100vh" direction="column" flexGrow={1}>
               <RouterProvider router={router} />
             </Flex>
 

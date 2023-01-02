@@ -1,7 +1,8 @@
 import { Chain, useNetwork } from 'wagmi';
 
 import Contracts from '@/config/contracts.json';
-import { ChainIDsEnum } from '@/config/index';
+
+import { useChainId } from './useChainId';
 
 export enum ContractsEnum {
   'SAV' = 'Token1',
@@ -28,13 +29,10 @@ export const useContractAbi = ({
 }): ContractAbi & { chain: Chain } => {
   const { chain } = useNetwork();
 
-  //   TODO: fix TS return type
-  let chainId = process.env.NODE_ENV === 'production' ? ChainIDsEnum.mumbai : ChainIDsEnum.hardhat;
-  if (chain?.network === 'maticmum') {
-    chainId = ChainIDsEnum.mumbai;
-  }
+  const chainId = useChainId();
 
-  const contractData = chainId ? (Contracts as any)[chainId][0].contracts[contract] : null;
+  //   TODO: fix TS return type
+  const contractData = (Contracts as any)[chainId][0].contracts[contract];
 
   return { ...contractData, chain };
 };

@@ -1,6 +1,7 @@
 import React, { createRef } from 'react';
 import { createBrowserRouter, Navigate } from 'react-router-dom';
 
+import { AdminPanel } from './components/AdminPanel/AdminPanel';
 import { Dashboard } from './components/Dashboard/Dashboard';
 import { ExchangePage } from './components/Exchange/ExchangePage';
 import { Layout } from './components/Layout/Layout';
@@ -29,6 +30,7 @@ const appRoutes = [
   { path: '/team', name: 'Squads', element: <SquadsPage />, nodeRef: createRef() },
   { path: '/exchange', name: 'Exchange', element: <ExchangePage />, nodeRef: createRef() },
   { path: '/raffles/:id', name: 'Raffle', element: <LotteryPage />, nodeRef: createRef() },
+  { path: '/admin-panel', name: 'Admin panel', element: <AdminPanel />, nodeRef: createRef() },
 ];
 
 export const routes = isLanding
