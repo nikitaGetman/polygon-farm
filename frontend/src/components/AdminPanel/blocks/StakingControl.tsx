@@ -80,7 +80,7 @@ const StakingPlanInfo: FC<StakingPlanInfoProps> = ({
       padding="8px"
     >
       <Flex alignItems="center" mb="8px">
-        <Text mr="12px">{index + 1} Staking plan</Text>
+        <Text mr="12px">id:{index} Staking plan</Text>
         <Text color={isActive ? 'green.400' : 'red'}>{isActive ? 'Active' : 'Disabled'}</Text>
       </Flex>
       <Flex alignItems="center">
