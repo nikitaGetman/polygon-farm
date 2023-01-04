@@ -58,7 +58,6 @@ export const SquadItem: FC<SquadItemProps> = ({
 
   return (
     <Box
-      margin="0 auto"
       width={isSmallSize ? '300px' : '420px'}
       background="rgba(38, 71, 55, 0.5)"
       boxShadow="0px 6px 11px rgba(0, 0, 0, 0.25)"

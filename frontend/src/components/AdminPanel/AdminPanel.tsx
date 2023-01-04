@@ -14,6 +14,7 @@ import { Addresses } from './blocks/Addresses';
 import { Balances } from './blocks/Balances';
 import { ExchangeControl } from './blocks/ExchangeControl';
 import { ReferralControl } from './blocks/ReferralControl';
+import { SquadsControl } from './blocks/SquadsControl';
 import { StakingControl } from './blocks/StakingControl';
 import { TokenControl } from './blocks/TokenControl';
 
@@ -88,6 +89,7 @@ export const AdminPanel = () => {
       {isSavRAdmin ? <TokenControl token={ContractsEnum.SAVR} /> : null}
       {isStakingAdmin ? <StakingControl /> : null}
       {isReferralAdmin ? <ReferralControl /> : null}
+      {isSquadsAdmin ? <SquadsControl /> : null}
       {isVendorSellAdmin ? <ExchangeControl /> : null}
       <Addresses />
     </Container>

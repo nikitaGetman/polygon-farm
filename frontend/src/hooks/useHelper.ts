@@ -43,18 +43,16 @@ export const useHelperUserSquadsFullInfo = (account?: string) => {
   const helperContract = useHelperContract();
   const { stakingPlansRequest } = useStaking();
 
-  const userSquadsInfoRequest = useQuery(
-    [HELPER_USER_SQUADS_INFO_REQUEST, { account }],
-    async () => {
-      return await helperContract.getUserSquadsInfo(account || ethers.constants.AddressZero);
-    }
+  const userSquadsInfoRequest = useQuery([HELPER_USER_SQUADS_INFO_REQUEST, { account }], async () =>
+    helperContract.getUserSquadsInfo(account || ethers.constants.AddressZero)
   );
 
   const userSquadsInfo = useMemo(() => {
     const currentTime = Date.now() / 1000;
     return (
-      userSquadsInfoRequest.data?.map(
-        ({ plan, squadStatus, members, userHasSufficientStaking }) => ({
+      userSquadsInfoRequest.data
+        ?.filter(({ plan }) => plan.isActive)
+        .map(({ plan, squadStatus, members, userHasSufficientStaking }) => ({
           plan: { ...plan },
           squadStatus: { ...squadStatus },
           members,
@@ -64,8 +62,7 @@ export const useHelperUserSquadsFullInfo = (account?: string) => {
             squadStatus.subscription.toNumber() > 0 &&
             squadStatus.subscription.toNumber() - currentTime <
               SQUADS_SUBSCRIPTION_ENDING_NOTIFICATION,
-        })
-      ) || []
+        })) || []
     );
   }, [stakingPlansRequest.data, userSquadsInfoRequest.data]);
 

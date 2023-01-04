@@ -494,9 +494,46 @@
             {
               "inputs": [
                 {
-                  "internalType": "uint256",
-                  "name": "planId",
-                  "type": "uint256"
+                  "components": [
+                    {
+                      "internalType": "uint256",
+                      "name": "index",
+                      "type": "uint256"
+                    },
+                    {
+                      "internalType": "uint256",
+                      "name": "subscriptionCost",
+                      "type": "uint256"
+                    },
+                    {
+                      "internalType": "uint256",
+                      "name": "reward",
+                      "type": "uint256"
+                    },
+                    {
+                      "internalType": "uint256",
+                      "name": "stakingThreshold",
+                      "type": "uint256"
+                    },
+                    {
+                      "internalType": "uint256",
+                      "name": "squadSize",
+                      "type": "uint256"
+                    },
+                    {
+                      "internalType": "uint256",
+                      "name": "stakingPlanId",
+                      "type": "uint256"
+                    },
+                    {
+                      "internalType": "bool",
+                      "name": "isActive",
+                      "type": "bool"
+                    }
+                  ],
+                  "internalType": "struct ISquads.SquadPlan",
+                  "name": "plan",
+                  "type": "tuple"
                 },
                 {
                   "internalType": "address",
@@ -527,6 +564,11 @@
                     },
                     {
                       "components": [
+                        {
+                          "internalType": "uint256",
+                          "name": "index",
+                          "type": "uint256"
+                        },
                         {
                           "internalType": "uint256",
                           "name": "subscriptionCost",
@@ -612,6 +654,11 @@
                     },
                     {
                       "components": [
+                        {
+                          "internalType": "uint256",
+                          "name": "index",
+                          "type": "uint256"
+                        },
                         {
                           "internalType": "uint256",
                           "name": "subscriptionCost",
@@ -3354,6 +3401,56 @@
               "type": "function"
             },
             {
+              "inputs": [],
+              "name": "getActivePlans",
+              "outputs": [
+                {
+                  "components": [
+                    {
+                      "internalType": "uint256",
+                      "name": "index",
+                      "type": "uint256"
+                    },
+                    {
+                      "internalType": "uint256",
+                      "name": "subscriptionCost",
+                      "type": "uint256"
+                    },
+                    {
+                      "internalType": "uint256",
+                      "name": "reward",
+                      "type": "uint256"
+                    },
+                    {
+                      "internalType": "uint256",
+                      "name": "stakingThreshold",
+                      "type": "uint256"
+                    },
+                    {
+                      "internalType": "uint256",
+                      "name": "squadSize",
+                      "type": "uint256"
+                    },
+                    {
+                      "internalType": "uint256",
+                      "name": "stakingPlanId",
+                      "type": "uint256"
+                    },
+                    {
+                      "internalType": "bool",
+                      "name": "isActive",
+                      "type": "bool"
+                    }
+                  ],
+                  "internalType": "struct ISquads.SquadPlan[]",
+                  "name": "",
+                  "type": "tuple[]"
+                }
+              ],
+              "stateMutability": "view",
+              "type": "function"
+            },
+            {
               "inputs": [
                 {
                   "internalType": "uint256",
@@ -3365,6 +3462,11 @@
               "outputs": [
                 {
                   "components": [
+                    {
+                      "internalType": "uint256",
+                      "name": "index",
+                      "type": "uint256"
+                    },
                     {
                       "internalType": "uint256",
                       "name": "subscriptionCost",
@@ -3410,6 +3512,11 @@
               "outputs": [
                 {
                   "components": [
+                    {
+                      "internalType": "uint256",
+                      "name": "index",
+                      "type": "uint256"
+                    },
                     {
                       "internalType": "uint256",
                       "name": "subscriptionCost",
@@ -3470,6 +3577,11 @@
             },
             {
               "inputs": [
+                {
+                  "internalType": "uint256",
+                  "name": "stakingPlanId",
+                  "type": "uint256"
+                },
                 {
                   "internalType": "uint256",
                   "name": "amount",
@@ -3631,6 +3743,11 @@
               ],
               "name": "plans",
               "outputs": [
+                {
+                  "internalType": "uint256",
+                  "name": "index",
+                  "type": "uint256"
+                },
                 {
                   "internalType": "uint256",
                   "name": "subscriptionCost",

@@ -2,32 +2,53 @@ import { FC, useCallback, useState } from 'react';
 import { Box, Button, Flex, Text, useDisclosure } from '@chakra-ui/react';
 import { BigNumber, BigNumberish } from 'ethers';
 
-import { useStakingPlans } from '@/hooks/useStaking';
+import { useSquadPlans } from '@/hooks/useSquads';
 import { bigNumberToString } from '@/utils/number';
-import { getReadableDuration } from '@/utils/time';
 
-import { AddStakingModal } from '../common/AddStakingModal';
+import { AddSquadModal } from '../common/AddSquadModal';
 import { AdminSection } from '../common/AdminSection';
 
-export const StakingControl = () => {
-  const { stakingPlansRequest, addStakingPlan, updatePlanActivity } = useStakingPlans();
+export const SquadsControl = () => {
+  const { squadPlansRequest, updatePlanActivity, addSquadPlan } = useSquadPlans();
   const { isOpen, onOpen, onClose } = useDisclosure();
 
+  const handleAddSquad = useCallback(
+    ({
+      subscriptionCost,
+      reward,
+      stakingPlanId,
+    }: {
+      subscriptionCost: BigNumber;
+      reward: BigNumber;
+      stakingPlanId: number;
+    }) => {
+      return addSquadPlan.mutateAsync({
+        subscriptionCost,
+        reward,
+        stakingThreshold: reward,
+        squadSize: 6,
+        stakingPlanId,
+      });
+    },
+    [addSquadPlan]
+  );
+
   return (
-    <AdminSection title="Staking">
+    <AdminSection title="Squads">
       <>
         <Button size="sm" onClick={onOpen}>
-          Add staking plan
+          Add squad plan
         </Button>
 
         <Box maxHeight="400px" overflowY="auto">
-          {stakingPlansRequest.data?.map((plan, index) => (
-            <StakingPlanInfo
+          {squadPlansRequest.data?.map((plan, index) => (
+            <SquadInfo
               key={index}
               index={index}
-              duration={plan.stakingDuration}
+              reward={plan.reward}
               subscriptionCost={plan.subscriptionCost}
-              apr={plan.apr.toString()}
+              stakingThreshold={plan.stakingThreshold}
+              stakingPlanId={plan.stakingPlanId}
               isActive={plan.isActive}
               onActivate={() => updatePlanActivity.mutateAsync({ planId: index, isActive: true })}
               onDeactivate={() =>
@@ -37,28 +58,28 @@ export const StakingControl = () => {
           ))}
         </Box>
 
-        {isOpen ? (
-          <AddStakingModal onClose={onClose} onSubmit={addStakingPlan.mutateAsync} />
-        ) : null}
+        {isOpen ? <AddSquadModal onClose={onClose} onSubmit={handleAddSquad} /> : null}
       </>
     </AdminSection>
   );
 };
 
-type StakingPlanInfoProps = {
+type SquadsControlProps = {
   index: number;
-  duration: BigNumberish;
   subscriptionCost: BigNumber;
-  apr: string | number;
+  reward: BigNumber;
+  stakingThreshold: BigNumber;
+  stakingPlanId: BigNumberish;
   isActive: boolean;
   onActivate: () => Promise<void>;
   onDeactivate: () => Promise<void>;
 };
-const StakingPlanInfo: FC<StakingPlanInfoProps> = ({
+const SquadInfo: FC<SquadsControlProps> = ({
   index,
-  duration,
   subscriptionCost,
-  apr,
+  reward,
+  stakingThreshold,
+  stakingPlanId,
   isActive,
   onActivate,
   onDeactivate,
@@ -84,25 +105,8 @@ const StakingPlanInfo: FC<StakingPlanInfoProps> = ({
       padding="8px"
     >
       <Flex alignItems="center" mb="8px">
-        <Text mr="12px">Staking (id: {index})</Text>
+        <Text mr="12px">Squad (id: {index})</Text>
         <Text color={isActive ? 'green.400' : 'red'}>{isActive ? 'Active' : 'Disabled'}</Text>
-      </Flex>
-
-      <Flex alignItems="center">
-        <Flex>
-          <Label width="90px">Duration:</Label>
-          <Value width="100px">{getReadableDuration(duration)}</Value>
-        </Flex>
-
-        <Flex>
-          <Label width="160px">Subscription cost:</Label>
-          <Value width="140px">{bigNumberToString(subscriptionCost)} SAV</Value>
-        </Flex>
-
-        <Flex>
-          <Label width="50px">APR:</Label>
-          <Value>{apr} %</Value>
-        </Flex>
 
         <Button
           variant={isActive ? 'filledRed' : undefined}
@@ -115,6 +119,28 @@ const StakingPlanInfo: FC<StakingPlanInfoProps> = ({
         >
           {isActive ? 'Deactivate' : 'Activate'}
         </Button>
+      </Flex>
+
+      <Flex alignItems="center">
+        <Flex>
+          <Label width="160px">Subscription cost:</Label>
+          <Value width="100px">{bigNumberToString(subscriptionCost, { precision: 0 })} SAV</Value>
+        </Flex>
+
+        <Flex>
+          <Label width="100px">Staking ID:</Label>
+          <Value width="40px">{stakingPlanId.toString()}</Value>
+        </Flex>
+
+        <Flex>
+          <Label width="110px">Min deposit:</Label>
+          <Value width="120px">{bigNumberToString(stakingThreshold, { precision: 0 })} SAV</Value>
+        </Flex>
+
+        <Flex>
+          <Label width="75px">Reward:</Label>
+          <Value>{bigNumberToString(reward, { precision: 0 })} SAVR</Value>
+        </Flex>
       </Flex>
     </Box>
   );
