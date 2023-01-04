@@ -1,5 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 
+import { getStampsFromDuration } from '@/utils/time';
+
 export const useCountdown = (timestamp: number, onExpire?: () => void) => {
   const [elapsedTime, setElapsedTime] = useState<number>();
   const interval = useRef<any>();
@@ -28,19 +30,7 @@ export const useCountdown = (timestamp: number, onExpire?: () => void) => {
     }
   }, [elapsedTime, onExpire, isActive, timestamp]);
 
-  const stamps = useMemo(() => {
-    const elapsedSeconds = Math.floor((elapsedTime || 0) / 1000);
-    const secInMin = 60;
-    const secInHour = 60 * secInMin;
-    const secInDay = 24 * secInHour;
-
-    const days = Math.floor(elapsedSeconds / secInDay);
-    const hours = Math.floor((elapsedSeconds % secInDay) / secInHour);
-    const minutes = Math.floor(((elapsedSeconds % secInDay) % secInHour) / secInMin);
-    const seconds = elapsedSeconds % secInMin;
-
-    return { days, hours, minutes, seconds };
-  }, [elapsedTime]);
+  const stamps = useMemo(() => getStampsFromDuration(elapsedTime || 0), [elapsedTime]);
 
   const stampStrings = useMemo(() => {
     const daysString = stamps.days.toString().padStart(2, '0');

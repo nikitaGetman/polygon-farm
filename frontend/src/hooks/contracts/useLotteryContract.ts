@@ -1,10 +1,20 @@
-import { BigNumberish } from 'ethers';
+import { BigNumber, BigNumberish } from 'ethers';
 import { useContract, useProvider, useSigner } from 'wagmi';
 
 import { Lottery } from '@/types';
 import { waitForTransaction } from '@/utils/waitForTransaction';
 
 import { ContractsEnum, useContractAbi } from './useContractAbi';
+
+export type CreateLotteryProps = {
+  startTime: number;
+  duration: number;
+  initialPrize: BigNumber;
+  tokensForOneTicket: BigNumber;
+  maxTicketsFromOneMember: number;
+  winnersForLevel: number[];
+  prizeForLevel: number[];
+};
 
 export const useLotteryContract = () => {
   const { data: signer } = useSigner();
@@ -26,6 +36,10 @@ export const useLotteryContract = () => {
 
   const getTicketPrice = () => {
     return contract.TICKET_PRICE();
+  };
+
+  const getRounds = () => {
+    return contract.getRounds();
   };
 
   const getRound = (roundId: BigNumberish) => {
@@ -86,11 +100,49 @@ export const useLotteryContract = () => {
     return waitForTransaction(tx);
   };
 
+  // Administration
+  const updateTicketPrice = async (price: BigNumber) => {
+    const tx = await contract.updateTicketPrice(price);
+    return waitForTransaction(tx);
+  };
+
+  const finishLotteryRound = async (roundId: number, pk: string[][]) => {
+    const tx = await contract.finishLotteryRound(roundId, pk);
+    return waitForTransaction(tx);
+  };
+
+  const manuallyGetWinners = async (roundId: number) => {
+    const tx = await contract.manuallyGetWinners(roundId);
+    return waitForTransaction(tx);
+  };
+
+  const createLotteryRound = async ({
+    startTime,
+    duration,
+    initialPrize,
+    tokensForOneTicket,
+    maxTicketsFromOneMember,
+    winnersForLevel,
+    prizeForLevel,
+  }: CreateLotteryProps) => {
+    const tx = await contract.createLotteryRound(
+      startTime,
+      duration,
+      initialPrize,
+      tokensForOneTicket,
+      maxTicketsFromOneMember,
+      winnersForLevel,
+      prizeForLevel
+    );
+    return waitForTransaction(tx);
+  };
+
   return {
     contract,
     address: contractAddress,
     getTicketPrice,
     getWinnerTotalPrize,
+    getRounds,
     getRound,
     getUserRoundEntry,
     getActiveRounds,
@@ -106,5 +158,10 @@ export const useLotteryContract = () => {
     buyTickets,
     claimDay,
     mintMyTicket,
+
+    updateTicketPrice,
+    finishLotteryRound,
+    manuallyGetWinners,
+    createLotteryRound,
   };
 };

@@ -34,7 +34,7 @@ export const SquadsControl = () => {
   );
 
   return (
-    <AdminSection title="Squads">
+    <AdminSection title="Squads" isLoading={squadPlansRequest.isLoading}>
       <>
         <Button size="sm" onClick={onOpen}>
           Add squad plan

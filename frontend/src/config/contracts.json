@@ -1681,6 +1681,101 @@
             },
             {
               "inputs": [],
+              "name": "getRounds",
+              "outputs": [
+                {
+                  "components": [
+                    {
+                      "internalType": "uint256",
+                      "name": "id",
+                      "type": "uint256"
+                    },
+                    {
+                      "internalType": "uint256",
+                      "name": "startTime",
+                      "type": "uint256"
+                    },
+                    {
+                      "internalType": "uint256",
+                      "name": "duration",
+                      "type": "uint256"
+                    },
+                    {
+                      "internalType": "bool",
+                      "name": "isClosed",
+                      "type": "bool"
+                    },
+                    {
+                      "internalType": "bool",
+                      "name": "isOracleFulfilled",
+                      "type": "bool"
+                    },
+                    {
+                      "internalType": "bool",
+                      "name": "isFinished",
+                      "type": "bool"
+                    },
+                    {
+                      "internalType": "uint256",
+                      "name": "initialPrize",
+                      "type": "uint256"
+                    },
+                    {
+                      "internalType": "uint256",
+                      "name": "totalPrize",
+                      "type": "uint256"
+                    },
+                    {
+                      "internalType": "uint256",
+                      "name": "maxTicketsFromOneMember",
+                      "type": "uint256"
+                    },
+                    {
+                      "internalType": "uint256",
+                      "name": "tokensForOneTicket",
+                      "type": "uint256"
+                    },
+                    {
+                      "internalType": "uint256[]",
+                      "name": "winnersForLevel",
+                      "type": "uint256[]"
+                    },
+                    {
+                      "internalType": "uint256[]",
+                      "name": "prizeForLevel",
+                      "type": "uint256[]"
+                    },
+                    {
+                      "internalType": "uint256",
+                      "name": "totalTickets",
+                      "type": "uint256"
+                    },
+                    {
+                      "internalType": "address[]",
+                      "name": "members",
+                      "type": "address[]"
+                    },
+                    {
+                      "internalType": "uint256",
+                      "name": "randomWord",
+                      "type": "uint256"
+                    },
+                    {
+                      "internalType": "address[][]",
+                      "name": "winners",
+                      "type": "address[][]"
+                    }
+                  ],
+                  "internalType": "struct ILottery.Round[]",
+                  "name": "",
+                  "type": "tuple[]"
+                }
+              ],
+              "stateMutability": "view",
+              "type": "function"
+            },
+            {
+              "inputs": [],
               "name": "getTotalRounds",
               "outputs": [
                 {

@@ -336,6 +336,10 @@ contract Lottery is ILottery, VRFConsumerBaseV2, AccessControl {
         return winnersRewards[user];
     }
 
+    function getRounds() public view returns (Round[] memory) {
+        return rounds;
+    }
+
     function getRound(uint256 id) public view returns (Round memory) {
         return rounds[id];
     }

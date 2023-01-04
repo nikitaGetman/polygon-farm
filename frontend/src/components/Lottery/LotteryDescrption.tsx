@@ -70,7 +70,12 @@ export const LotteryDescription: FC<LotteryDescriptionProps> = ({
           </Text>
         </Flex>
       </Box>
-      <Flex flexDirection="column" padding={{ sm: '30px 20px', '2xl': '40px 20px' }}>
+      <Flex
+        flexDirection="column"
+        padding={{ sm: '30px 20px', '2xl': '40px 20px' }}
+        maxH="800px"
+        overflowY="auto"
+      >
         <Text
           mb={{ sm: '18px', '2xl': '26px' }}
           fontSize={{ sm: '18px', '2xl': '26px' }}

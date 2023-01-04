@@ -13,7 +13,10 @@ export const ReferralControl = () => {
   } = useReferralManagerSubscriptions();
 
   return (
-    <AdminSection title="Referral Manager">
+    <AdminSection
+      title="Referral Manager"
+      isLoading={levelSubscriptionCost.isLoading || fullSubscriptionCost.isLoading}
+    >
       <ControlField
         label="1 Level Subscription cost"
         value={levelSubscriptionCost.data ? bigNumberToString(levelSubscriptionCost.data) : null}

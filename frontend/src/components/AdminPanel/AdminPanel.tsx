@@ -13,6 +13,7 @@ import { ConnectWalletButton } from '../ui/ConnectWalletButton/ConnectWalletButt
 import { Addresses } from './blocks/Addresses';
 import { Balances } from './blocks/Balances';
 import { ExchangeControl } from './blocks/ExchangeControl';
+import { LotteryControl } from './blocks/LotteryConttrol';
 import { ReferralControl } from './blocks/ReferralControl';
 import { SquadsControl } from './blocks/SquadsControl';
 import { StakingControl } from './blocks/StakingControl';
@@ -30,6 +31,7 @@ export const AdminPanel = () => {
   const isReferralAdmin = useHasRole(ContractsEnum.ReferralManager);
   const isSquadsAdmin = useHasRole(ContractsEnum.Squads);
   const isLotteryAdmin = useHasRole(ContractsEnum.Lottery);
+  const isLotteryOperator = useHasRole(ContractsEnum.Lottery, 'operator');
   const isVestingAdmin = useHasRole(ContractsEnum.TokenVesting);
   const isVendorSellAdmin = useHasRole(ContractsEnum.VendorSell);
 
@@ -41,6 +43,7 @@ export const AdminPanel = () => {
       isReferralAdmin,
       isSquadsAdmin,
       isLotteryAdmin,
+      isLotteryOperator,
       isVestingAdmin,
       isVendorSellAdmin,
     ],
@@ -51,6 +54,7 @@ export const AdminPanel = () => {
       isReferralAdmin,
       isSquadsAdmin,
       isLotteryAdmin,
+      isLotteryOperator,
       isVestingAdmin,
       isVendorSellAdmin,
     ]
@@ -91,6 +95,7 @@ export const AdminPanel = () => {
       {isReferralAdmin ? <ReferralControl /> : null}
       {isSquadsAdmin ? <SquadsControl /> : null}
       {isVendorSellAdmin ? <ExchangeControl /> : null}
+      {isLotteryAdmin || isLotteryOperator ? <LotteryControl /> : null}
       <Addresses />
     </Container>
   );

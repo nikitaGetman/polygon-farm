@@ -14,7 +14,7 @@ export const StakingControl = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
 
   return (
-    <AdminSection title="Staking">
+    <AdminSection title="Staking" isLoading={stakingPlansRequest.isLoading}>
       <>
         <Button size="sm" onClick={onOpen}>
           Add staking plan

@@ -6,11 +6,20 @@ import { AdminSection } from '../common/AdminSection';
 import { ControlField } from '../common/ControlField';
 
 export const ExchangeControl = () => {
-  const { isSellAvailableRequest, sellCommission, enableSell, disableSell, updateSellFee } =
-    useVendorSellControl();
+  const {
+    isSellAvailableRequest,
+    sellCommissionRequest,
+    sellCommission,
+    enableSell,
+    disableSell,
+    updateSellFee,
+  } = useVendorSellControl();
 
   return (
-    <AdminSection title="Exchange">
+    <AdminSection
+      title="Exchange"
+      isLoading={isSellAvailableRequest.isLoading || sellCommissionRequest.isLoading}
+    >
       <Flex alignItems="center" mb="16px">
         <Text textStyle="text1" width="100px">
           SAV sell:

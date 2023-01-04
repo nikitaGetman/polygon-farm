@@ -1,9 +1,13 @@
 import { useMemo } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { BigNumber } from 'ethers';
+import { parseEther } from 'ethers/lib/utils';
 import { useAccount } from 'wagmi';
 
-import { useLotteryContract } from './contracts/useLotteryContract';
+import { parseLotteryFormat } from '@/lib/lottery';
+import { bigNumberToString } from '@/utils/number';
+
+import { CreateLotteryProps, useLotteryContract } from './contracts/useLotteryContract';
 import { useTicketContract } from './contracts/useTicketContract';
 import { TOKENS } from './contracts/useTokenContract';
 import { useNotification } from './useNotification';
@@ -11,6 +15,7 @@ import { SAV_BALANCE_REQUEST } from './useTokenBalance';
 import { useTokens } from './useTokens';
 
 export const TICKET_BALANCE_REQUEST = 'ticket-balance-request';
+const LOTTERY_ROUNDS_REQUEST = 'lottery-rounds-request';
 const LOTTERY_TICKET_PRICE_REQUEST = 'lottery-ticket-price-request';
 const LOTTERY_WINNER_PRIZE_REQUEST = 'lottery-winner-prize-request';
 const LOTTERY_CLAIM_PERIOD_REQUEST = 'lottery-claim-period-request';
@@ -22,23 +27,121 @@ const BUY_TICKETS_MUTATION = 'buy-tickets-mutation';
 const CLAIM_DAY_MUTATION = 'claim-day-mutation';
 const MINT_TICKET_MUTATION = 'mint-ticket-mutation';
 
+export const useLotteryControl = () => {
+  const lotteryContract = useLotteryContract();
+  const queryClient = useQueryClient();
+  const { success, handleError } = useNotification();
+
+  const roundsRequest = useQuery(
+    [LOTTERY_ROUNDS_REQUEST],
+    async () => {
+      return await lotteryContract.getRounds();
+    },
+    { select: (data) => data.map(parseLotteryFormat).sort((a, b) => b.id - a.id) }
+  );
+
+  const ticketPriceRequest = useQuery([LOTTERY_TICKET_PRICE_REQUEST], async () => {
+    return await lotteryContract.getTicketPrice();
+  });
+
+  const ticketPrice = useMemo(
+    () => ticketPriceRequest.data || BigNumber.from(0),
+    [ticketPriceRequest.data]
+  );
+
+  const updateTicketPrice = useMutation(
+    ['update-ticket-price'],
+    async (price: number) => {
+      const priceBN = parseEther(price.toString());
+
+      const txHash = await lotteryContract.updateTicketPrice(priceBN);
+      success({
+        title: 'Success',
+        description: `Ticket price changed to ${bigNumberToString(priceBN)} SAV`,
+        txHash,
+      });
+    },
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries([LOTTERY_TICKET_PRICE_REQUEST]);
+      },
+      onError: handleError,
+    }
+  );
+
+  const finishLotteryRound = useMutation(
+    ['finish-lottery-round'],
+    async ({ roundId, pk }: { roundId: number; pk: string[][] }) => {
+      const txHash = await lotteryContract.finishLotteryRound(roundId, pk);
+      success({
+        title: 'Success',
+        description: `Raffle round ${
+          roundId + 1
+        } is closed. Oracle will fullfil round with random word in about 2 minutes.`,
+        txHash,
+      });
+    },
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries([LOTTERY_ROUNDS_REQUEST]);
+      },
+      onError: handleError,
+    }
+  );
+
+  const manuallyGetWinners = useMutation(
+    ['get-lottery-round-winners'],
+    async (roundId: number) => {
+      const txHash = await lotteryContract.manuallyGetWinners(roundId);
+      success({
+        title: 'Success',
+        description: `Raffle round ${roundId + 1} is finished. Winners are determined.`,
+        txHash,
+      });
+    },
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries([LOTTERY_ROUNDS_REQUEST]);
+      },
+      onError: handleError,
+    }
+  );
+
+  const createLotteryRound = useMutation(
+    ['create-lottery-round'],
+    async (props: CreateLotteryProps) => {
+      const txHash = await lotteryContract.createLotteryRound(props);
+      success({ title: 'Success', description: 'Raffle round has been created', txHash });
+    },
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries([LOTTERY_ROUNDS_REQUEST]);
+      },
+      onError: handleError,
+    }
+  );
+
+  return {
+    ticketPriceRequest,
+    ticketPrice,
+    roundsRequest,
+    updateTicketPrice,
+    finishLotteryRound,
+    manuallyGetWinners,
+    createLotteryRound,
+  };
+};
+
 const claimStreakForTicket = 5;
 export const useLottery = () => {
   const { address: account } = useAccount();
 
   const queryClient = useQueryClient();
   const lotteryContract = useLotteryContract();
+  const { ticketPriceRequest, ticketPrice } = useLotteryControl();
   const ticketContract = useTicketContract();
   const { success, handleError } = useNotification();
   const tokens = useTokens();
-
-  const ticketPriceRequest = useQuery([LOTTERY_TICKET_PRICE_REQUEST], async () => {
-    return await lotteryContract.getTicketPrice();
-  });
-  const ticketPrice = useMemo(
-    () => ticketPriceRequest.data || BigNumber.from(0),
-    [ticketPriceRequest.data]
-  );
 
   const userTotalPrizeRequest = useQuery([LOTTERY_WINNER_PRIZE_REQUEST, { account }], async () => {
     return account ? await lotteryContract.getWinnerTotalPrize(account) : null;

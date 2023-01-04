@@ -20,8 +20,15 @@ export const Balances = () => {
   const vestingBalance = useSavBalance(vestingPool);
   const { tvl } = useStaking();
 
+  const isLoading =
+    stakingBalance.isLoading ||
+    referralBalance.isLoading ||
+    vendorBalance.isLoading ||
+    vendorChangeBalance.isLoading ||
+    vestingBalance.isLoading;
+
   return (
-    <AdminSection title="Balances">
+    <AdminSection title="Balances" isLoading={isLoading}>
       <Balance label="Staking pool" balance={stakingBalance.data} symbol="SAV" />
       <Balance label="Staking TVL" balance={tvl} symbol="SAV" minLimit={0} />
       <Balance label="Referral rewards pool" balance={referralBalance.data} symbol="SAVR" />

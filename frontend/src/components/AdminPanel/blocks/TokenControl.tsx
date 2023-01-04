@@ -38,7 +38,7 @@ export const TokenControl: FC<TokenControlProps> = ({ token }) => {
   );
 
   return (
-    <AdminSection title={title}>
+    <AdminSection title={title} isLoading={isPaused.isLoading}>
       <ButtonGroup size="sm" my="12px">
         <Button
           borderRadius="sm"
