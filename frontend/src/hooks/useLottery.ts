@@ -162,9 +162,9 @@ export const useLottery = () => {
     { select: (data) => data.toNumber() }
   );
 
-  const isClaimedToday = useQuery(
+  const isClaimAvailable = useQuery(
     [LOTTERY_IS_CLAIMED_TODAY_REQUEST, { account }],
-    () => lotteryContract.isClaimedToday(account),
+    () => lotteryContract.isClaimAvailable(account),
     { enabled: Boolean(account) }
   );
 
@@ -254,7 +254,7 @@ export const useLottery = () => {
 
     claimPeriod,
     claimStreakForTicket,
-    isClaimedToday,
+    isClaimAvailable,
     claimStreak,
     lastClaim,
     isMintAvailable,

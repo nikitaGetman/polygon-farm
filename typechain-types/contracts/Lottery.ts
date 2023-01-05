@@ -109,7 +109,7 @@ export interface LotteryInterface extends utils.Interface {
     "getWinnerPrize(address)": FunctionFragment;
     "grantRole(bytes32,address)": FunctionFragment;
     "hasRole(bytes32,address)": FunctionFragment;
-    "isClaimedToday(address)": FunctionFragment;
+    "isClaimAvailable(address)": FunctionFragment;
     "isMintAvailable(address)": FunctionFragment;
     "manuallyGetWinners(uint256)": FunctionFragment;
     "mintMyTicket()": FunctionFragment;
@@ -159,7 +159,7 @@ export interface LotteryInterface extends utils.Interface {
       | "getWinnerPrize"
       | "grantRole"
       | "hasRole"
-      | "isClaimedToday"
+      | "isClaimAvailable"
       | "isMintAvailable"
       | "manuallyGetWinners"
       | "mintMyTicket"
@@ -276,7 +276,7 @@ export interface LotteryInterface extends utils.Interface {
     values: [PromiseOrValue<BytesLike>, PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
-    functionFragment: "isClaimedToday",
+    functionFragment: "isClaimAvailable",
     values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
@@ -440,7 +440,7 @@ export interface LotteryInterface extends utils.Interface {
   decodeFunctionResult(functionFragment: "grantRole", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "hasRole", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "isClaimedToday",
+    functionFragment: "isClaimAvailable",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -771,7 +771,7 @@ export interface Lottery extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[boolean]>;
 
-    isClaimedToday(
+    isClaimAvailable(
       user: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<[boolean]>;
@@ -1018,7 +1018,7 @@ export interface Lottery extends BaseContract {
     overrides?: CallOverrides
   ): Promise<boolean>;
 
-  isClaimedToday(
+  isClaimAvailable(
     user: PromiseOrValue<string>,
     overrides?: CallOverrides
   ): Promise<boolean>;
@@ -1263,7 +1263,7 @@ export interface Lottery extends BaseContract {
       overrides?: CallOverrides
     ): Promise<boolean>;
 
-    isClaimedToday(
+    isClaimAvailable(
       user: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<boolean>;
@@ -1585,7 +1585,7 @@ export interface Lottery extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    isClaimedToday(
+    isClaimAvailable(
       user: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
@@ -1807,7 +1807,7 @@ export interface Lottery extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    isClaimedToday(
+    isClaimAvailable(
       user: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;

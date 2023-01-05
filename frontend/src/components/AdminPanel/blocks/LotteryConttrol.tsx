@@ -99,9 +99,9 @@ const LotteryRoundInfo: FC<LotteryRoundInfoProps> = ({
   const levels = winnersForLevel.length;
 
   const roundStatus = useMemo(() => {
-    if (isClosed) return LotteryStatusEnum.closed;
+    if (isClosed && !isFinished) return LotteryStatusEnum.closed;
     return status;
-  }, [isClosed, status]);
+  }, [isClosed, status, isFinished]);
 
   const durationStampsString = useMemo(() => {
     const stamps = getStampsFromDuration(duration * 1000);

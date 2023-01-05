@@ -77,7 +77,7 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
         "Lottery",
         admin
       );
-      tx = await lotteryContract.updateClaimPeriod(180);
+      tx = await lotteryContract.updateClaimPeriod(120);
       await tx.wait();
     }
   }

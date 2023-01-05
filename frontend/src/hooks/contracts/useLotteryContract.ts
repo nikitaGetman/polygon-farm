@@ -64,8 +64,8 @@ export const useLotteryContract = () => {
     return contract.CLAIM_PERIOD();
   };
 
-  const isClaimedToday = (user?: string) => {
-    return user ? contract.isClaimedToday(user) : Promise.reject('incorrect request data');
+  const isClaimAvailable = (user?: string) => {
+    return user ? contract.isClaimAvailable(user) : Promise.reject('incorrect request data');
   };
 
   const getLastClaimTime = (user?: string) => {
@@ -150,7 +150,7 @@ export const useLotteryContract = () => {
 
     getClaimPeriod,
     getClaimStreak,
-    isClaimedToday,
+    isClaimAvailable,
     getLastClaimTime,
     isMintAvailable,
 
