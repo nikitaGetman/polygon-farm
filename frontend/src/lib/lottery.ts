@@ -6,6 +6,7 @@ export enum LotteryStatusEnum {
   upcoming = 'upcoming',
   current = 'live',
   soldOut = 'sold out',
+  closed = 'closed',
   past = 'past',
 }
 

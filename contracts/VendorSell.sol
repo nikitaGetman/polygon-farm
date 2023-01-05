@@ -15,7 +15,7 @@ contract VendorSell is Context, AccessControl, Pausable {
     uint256 private CHANGE_TOKEN_DECIMALS = 6; // USDT decimals
 
     uint256 public swapRate; // div by DIVIDER
-    uint256 public sellTokenCommission = 100; // 10%
+    uint256 public sellTokenFee = 100; // 10%
     bool private _isSellAvailable;
 
     IERC20 public token;
@@ -77,8 +77,7 @@ contract VendorSell is Context, AccessControl, Pausable {
         uint256 _amountChangeTokenWithFee = getEquivalentChangeTokenEstimate(
             _amountToken
         );
-        uint256 fee = (_amountChangeTokenWithFee * sellTokenCommission) /
-            DIVIDER;
+        uint256 fee = (_amountChangeTokenWithFee * sellTokenFee) / DIVIDER;
         uint256 _amountChangeToken = _amountChangeTokenWithFee - fee;
 
         require(_amountChangeToken > 0, "Insufficient amount");
@@ -160,11 +159,11 @@ contract VendorSell is Context, AccessControl, Pausable {
         swapRate = swapRate_;
     }
 
-    function updatesellTokenCommission(uint256 sellTokenCommission_)
+    function updateSellFee(uint256 sellTokenFee_)
         public
         onlyRole(DEFAULT_ADMIN_ROLE)
     {
-        sellTokenCommission = sellTokenCommission_;
+        sellTokenFee = sellTokenFee_;
     }
 
     function updateChangeTokenPool(address pool)

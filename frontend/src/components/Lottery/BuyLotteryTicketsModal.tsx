@@ -13,6 +13,7 @@ import {
   Text,
 } from '@chakra-ui/react';
 import { BigNumber } from 'ethers';
+import { useAccount } from 'wagmi';
 
 import { InputAmount } from '@/components/ui/InputAmount/InputAmount';
 import { useSavBalance } from '@/hooks/useTokenBalance';
@@ -40,7 +41,8 @@ export const BuyLotteryTicketsModal: FC<BuyLotteryTicketsModalProps> = ({
 }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [amount, setAmount] = useState<number>();
-  const { data: savBalance } = useSavBalance();
+  const { address } = useAccount();
+  const { data: savBalance } = useSavBalance(address);
 
   const handleUpdate = useCallback(
     (val?: string) => {

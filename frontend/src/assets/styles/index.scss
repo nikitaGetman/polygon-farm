@@ -67,6 +67,12 @@ body {
 .route-transition--appear-active {
 }
 
+.date-picker-element {
+  padding: 8px 16px;
+  border-radius: 5px;
+  background: var(--chakra-colors-gray-200);
+}
+
 @media screen and (max-width: $xl) {
   .table-responsive-wrapper {
     margin-left: calc(50% - 50vw);

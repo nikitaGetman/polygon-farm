@@ -494,9 +494,46 @@
             {
               "inputs": [
                 {
-                  "internalType": "uint256",
-                  "name": "planId",
-                  "type": "uint256"
+                  "components": [
+                    {
+                      "internalType": "uint256",
+                      "name": "index",
+                      "type": "uint256"
+                    },
+                    {
+                      "internalType": "uint256",
+                      "name": "subscriptionCost",
+                      "type": "uint256"
+                    },
+                    {
+                      "internalType": "uint256",
+                      "name": "reward",
+                      "type": "uint256"
+                    },
+                    {
+                      "internalType": "uint256",
+                      "name": "stakingThreshold",
+                      "type": "uint256"
+                    },
+                    {
+                      "internalType": "uint256",
+                      "name": "squadSize",
+                      "type": "uint256"
+                    },
+                    {
+                      "internalType": "uint256",
+                      "name": "stakingPlanId",
+                      "type": "uint256"
+                    },
+                    {
+                      "internalType": "bool",
+                      "name": "isActive",
+                      "type": "bool"
+                    }
+                  ],
+                  "internalType": "struct ISquads.SquadPlan",
+                  "name": "plan",
+                  "type": "tuple"
                 },
                 {
                   "internalType": "address",
@@ -527,6 +564,11 @@
                     },
                     {
                       "components": [
+                        {
+                          "internalType": "uint256",
+                          "name": "index",
+                          "type": "uint256"
+                        },
                         {
                           "internalType": "uint256",
                           "name": "subscriptionCost",
@@ -612,6 +654,11 @@
                     },
                     {
                       "components": [
+                        {
+                          "internalType": "uint256",
+                          "name": "index",
+                          "type": "uint256"
+                        },
                         {
                           "internalType": "uint256",
                           "name": "subscriptionCost",
@@ -1634,6 +1681,101 @@
             },
             {
               "inputs": [],
+              "name": "getRounds",
+              "outputs": [
+                {
+                  "components": [
+                    {
+                      "internalType": "uint256",
+                      "name": "id",
+                      "type": "uint256"
+                    },
+                    {
+                      "internalType": "uint256",
+                      "name": "startTime",
+                      "type": "uint256"
+                    },
+                    {
+                      "internalType": "uint256",
+                      "name": "duration",
+                      "type": "uint256"
+                    },
+                    {
+                      "internalType": "bool",
+                      "name": "isClosed",
+                      "type": "bool"
+                    },
+                    {
+                      "internalType": "bool",
+                      "name": "isOracleFulfilled",
+                      "type": "bool"
+                    },
+                    {
+                      "internalType": "bool",
+                      "name": "isFinished",
+                      "type": "bool"
+                    },
+                    {
+                      "internalType": "uint256",
+                      "name": "initialPrize",
+                      "type": "uint256"
+                    },
+                    {
+                      "internalType": "uint256",
+                      "name": "totalPrize",
+                      "type": "uint256"
+                    },
+                    {
+                      "internalType": "uint256",
+                      "name": "maxTicketsFromOneMember",
+                      "type": "uint256"
+                    },
+                    {
+                      "internalType": "uint256",
+                      "name": "tokensForOneTicket",
+                      "type": "uint256"
+                    },
+                    {
+                      "internalType": "uint256[]",
+                      "name": "winnersForLevel",
+                      "type": "uint256[]"
+                    },
+                    {
+                      "internalType": "uint256[]",
+                      "name": "prizeForLevel",
+                      "type": "uint256[]"
+                    },
+                    {
+                      "internalType": "uint256",
+                      "name": "totalTickets",
+                      "type": "uint256"
+                    },
+                    {
+                      "internalType": "address[]",
+                      "name": "members",
+                      "type": "address[]"
+                    },
+                    {
+                      "internalType": "uint256",
+                      "name": "randomWord",
+                      "type": "uint256"
+                    },
+                    {
+                      "internalType": "address[][]",
+                      "name": "winners",
+                      "type": "address[][]"
+                    }
+                  ],
+                  "internalType": "struct ILottery.Round[]",
+                  "name": "",
+                  "type": "tuple[]"
+                }
+              ],
+              "stateMutability": "view",
+              "type": "function"
+            },
+            {
+              "inputs": [],
               "name": "getTotalRounds",
               "outputs": [
                 {
@@ -1738,7 +1880,7 @@
                   "type": "address"
                 }
               ],
-              "name": "isClaimedToday",
+              "name": "isClaimAvailable",
               "outputs": [
                 {
                   "internalType": "bool",
@@ -3354,6 +3496,56 @@
               "type": "function"
             },
             {
+              "inputs": [],
+              "name": "getActivePlans",
+              "outputs": [
+                {
+                  "components": [
+                    {
+                      "internalType": "uint256",
+                      "name": "index",
+                      "type": "uint256"
+                    },
+                    {
+                      "internalType": "uint256",
+                      "name": "subscriptionCost",
+                      "type": "uint256"
+                    },
+                    {
+                      "internalType": "uint256",
+                      "name": "reward",
+                      "type": "uint256"
+                    },
+                    {
+                      "internalType": "uint256",
+                      "name": "stakingThreshold",
+                      "type": "uint256"
+                    },
+                    {
+                      "internalType": "uint256",
+                      "name": "squadSize",
+                      "type": "uint256"
+                    },
+                    {
+                      "internalType": "uint256",
+                      "name": "stakingPlanId",
+                      "type": "uint256"
+                    },
+                    {
+                      "internalType": "bool",
+                      "name": "isActive",
+                      "type": "bool"
+                    }
+                  ],
+                  "internalType": "struct ISquads.SquadPlan[]",
+                  "name": "",
+                  "type": "tuple[]"
+                }
+              ],
+              "stateMutability": "view",
+              "type": "function"
+            },
+            {
               "inputs": [
                 {
                   "internalType": "uint256",
@@ -3365,6 +3557,11 @@
               "outputs": [
                 {
                   "components": [
+                    {
+                      "internalType": "uint256",
+                      "name": "index",
+                      "type": "uint256"
+                    },
                     {
                       "internalType": "uint256",
                       "name": "subscriptionCost",
@@ -3410,6 +3607,11 @@
               "outputs": [
                 {
                   "components": [
+                    {
+                      "internalType": "uint256",
+                      "name": "index",
+                      "type": "uint256"
+                    },
                     {
                       "internalType": "uint256",
                       "name": "subscriptionCost",
@@ -3470,6 +3672,11 @@
             },
             {
               "inputs": [
+                {
+                  "internalType": "uint256",
+                  "name": "stakingPlanId",
+                  "type": "uint256"
+                },
                 {
                   "internalType": "uint256",
                   "name": "amount",
@@ -3631,6 +3838,11 @@
               ],
               "name": "plans",
               "outputs": [
+                {
+                  "internalType": "uint256",
+                  "name": "index",
+                  "type": "uint256"
+                },
                 {
                   "internalType": "uint256",
                   "name": "subscriptionCost",
@@ -4254,7 +4466,7 @@
                 {
                   "indexed": false,
                   "internalType": "uint256",
-                  "name": "rewardPercent",
+                  "name": "apr",
                   "type": "uint256"
                 }
               ],
@@ -4282,6 +4494,19 @@
             },
             {
               "inputs": [],
+              "name": "BASE_POINTS_DIVIDER",
+              "outputs": [
+                {
+                  "internalType": "uint256",
+                  "name": "",
+                  "type": "uint256"
+                }
+              ],
+              "stateMutability": "view",
+              "type": "function"
+            },
+            {
+              "inputs": [],
               "name": "DEFAULT_ADMIN_ROLE",
               "outputs": [
                 {
@@ -4296,19 +4521,6 @@
             {
               "inputs": [],
               "name": "MIN_STAKE_LIMIT",
-              "outputs": [
-                {
-                  "internalType": "uint256",
-                  "name": "",
-                  "type": "uint256"
-                }
-              ],
-              "stateMutability": "view",
-              "type": "function"
-            },
-            {
-              "inputs": [],
-              "name": "PERCENTS_DIVIDER",
               "outputs": [
                 {
                   "internalType": "uint256",
@@ -4351,7 +4563,7 @@
                 },
                 {
                   "internalType": "uint256",
-                  "name": "profitPercent",
+                  "name": "apr",
                   "type": "uint256"
                 }
               ],
@@ -4488,7 +4700,7 @@
                     },
                     {
                       "internalType": "uint256",
-                      "name": "profitPercent",
+                      "name": "apr",
                       "type": "uint256"
                     },
                     {
@@ -4679,7 +4891,7 @@
                     },
                     {
                       "internalType": "uint256",
-                      "name": "profitPercent",
+                      "name": "apr",
                       "type": "uint256"
                     },
                     {
@@ -4742,7 +4954,7 @@
                         },
                         {
                           "internalType": "uint256",
-                          "name": "profitPercent",
+                          "name": "apr",
                           "type": "uint256"
                         },
                         {
@@ -4971,7 +5183,7 @@
                 },
                 {
                   "internalType": "uint256",
-                  "name": "profitPercent",
+                  "name": "apr",
                   "type": "uint256"
                 },
                 {
@@ -5088,11 +5300,16 @@
               "inputs": [
                 {
                   "internalType": "uint256",
-                  "name": "divider_",
+                  "name": "planId",
+                  "type": "uint256"
+                },
+                {
+                  "internalType": "uint256",
+                  "name": "apr",
                   "type": "uint256"
                 }
               ],
-              "name": "updatePercentDivider",
+              "name": "updatePlanAPR",
               "outputs": [],
               "stateMutability": "nonpayable",
               "type": "function"
@@ -5129,24 +5346,6 @@
                 }
               ],
               "name": "updatePlanDurationDays",
-              "outputs": [],
-              "stateMutability": "nonpayable",
-              "type": "function"
-            },
-            {
-              "inputs": [
-                {
-                  "internalType": "uint256",
-                  "name": "planId",
-                  "type": "uint256"
-                },
-                {
-                  "internalType": "uint256",
-                  "name": "percent",
-                  "type": "uint256"
-                }
-              ],
-              "name": "updatePlanReward",
               "outputs": [],
               "stateMutability": "nonpayable",
               "type": "function"
@@ -9238,7 +9437,7 @@
             },
             {
               "inputs": [],
-              "name": "sellTokenCommission",
+              "name": "sellTokenFee",
               "outputs": [
                 {
                   "internalType": "uint256",
@@ -9344,6 +9543,19 @@
               "inputs": [
                 {
                   "internalType": "uint256",
+                  "name": "sellTokenFee_",
+                  "type": "uint256"
+                }
+              ],
+              "name": "updateSellFee",
+              "outputs": [],
+              "stateMutability": "nonpayable",
+              "type": "function"
+            },
+            {
+              "inputs": [
+                {
+                  "internalType": "uint256",
                   "name": "swapRate_",
                   "type": "uint256"
                 }
@@ -9375,19 +9587,6 @@
                 }
               ],
               "name": "updateTokenPool",
-              "outputs": [],
-              "stateMutability": "nonpayable",
-              "type": "function"
-            },
-            {
-              "inputs": [
-                {
-                  "internalType": "uint256",
-                  "name": "sellTokenCommission_",
-                  "type": "uint256"
-                }
-              ],
-              "name": "updatesellTokenCommission",
               "outputs": [],
               "stateMutability": "nonpayable",
               "type": "function"
@@ -18818,7 +19017,7 @@
           ]
         },
         "Helper": {
-          "address": "0xDECaBBF113c3f48bb09b15f5Be3228fBB22e5eBe",
+          "address": "0x7B65D54E7EAB2ef73b40bC7CE8d2f52D2af46D7C",
           "abi": [
             {
               "inputs": [
@@ -18980,9 +19179,46 @@
             {
               "inputs": [
                 {
-                  "internalType": "uint256",
-                  "name": "planId",
-                  "type": "uint256"
+                  "components": [
+                    {
+                      "internalType": "uint256",
+                      "name": "index",
+                      "type": "uint256"
+                    },
+                    {
+                      "internalType": "uint256",
+                      "name": "subscriptionCost",
+                      "type": "uint256"
+                    },
+                    {
+                      "internalType": "uint256",
+                      "name": "reward",
+                      "type": "uint256"
+                    },
+                    {
+                      "internalType": "uint256",
+                      "name": "stakingThreshold",
+                      "type": "uint256"
+                    },
+                    {
+                      "internalType": "uint256",
+                      "name": "squadSize",
+                      "type": "uint256"
+                    },
+                    {
+                      "internalType": "uint256",
+                      "name": "stakingPlanId",
+                      "type": "uint256"
+                    },
+                    {
+                      "internalType": "bool",
+                      "name": "isActive",
+                      "type": "bool"
+                    }
+                  ],
+                  "internalType": "struct ISquads.SquadPlan",
+                  "name": "plan",
+                  "type": "tuple"
                 },
                 {
                   "internalType": "address",
@@ -19013,6 +19249,11 @@
                     },
                     {
                       "components": [
+                        {
+                          "internalType": "uint256",
+                          "name": "index",
+                          "type": "uint256"
+                        },
                         {
                           "internalType": "uint256",
                           "name": "subscriptionCost",
@@ -19098,6 +19339,11 @@
                     },
                     {
                       "components": [
+                        {
+                          "internalType": "uint256",
+                          "name": "index",
+                          "type": "uint256"
+                        },
                         {
                           "internalType": "uint256",
                           "name": "subscriptionCost",
@@ -19344,7 +19590,7 @@
           ]
         },
         "Lottery": {
-          "address": "0xAaa267A1EEb37414074B21496398811311F049d6",
+          "address": "0xA96549076D271f6A78DE85eC445778BA411b84b1",
           "abi": [
             {
               "inputs": [
@@ -20120,6 +20366,101 @@
             },
             {
               "inputs": [],
+              "name": "getRounds",
+              "outputs": [
+                {
+                  "components": [
+                    {
+                      "internalType": "uint256",
+                      "name": "id",
+                      "type": "uint256"
+                    },
+                    {
+                      "internalType": "uint256",
+                      "name": "startTime",
+                      "type": "uint256"
+                    },
+                    {
+                      "internalType": "uint256",
+                      "name": "duration",
+                      "type": "uint256"
+                    },
+                    {
+                      "internalType": "bool",
+                      "name": "isClosed",
+                      "type": "bool"
+                    },
+                    {
+                      "internalType": "bool",
+                      "name": "isOracleFulfilled",
+                      "type": "bool"
+                    },
+                    {
+                      "internalType": "bool",
+                      "name": "isFinished",
+                      "type": "bool"
+                    },
+                    {
+                      "internalType": "uint256",
+                      "name": "initialPrize",
+                      "type": "uint256"
+                    },
+                    {
+                      "internalType": "uint256",
+                      "name": "totalPrize",
+                      "type": "uint256"
+                    },
+                    {
+                      "internalType": "uint256",
+                      "name": "maxTicketsFromOneMember",
+                      "type": "uint256"
+                    },
+                    {
+                      "internalType": "uint256",
+                      "name": "tokensForOneTicket",
+                      "type": "uint256"
+                    },
+                    {
+                      "internalType": "uint256[]",
+                      "name": "winnersForLevel",
+                      "type": "uint256[]"
+                    },
+                    {
+                      "internalType": "uint256[]",
+                      "name": "prizeForLevel",
+                      "type": "uint256[]"
+                    },
+                    {
+                      "internalType": "uint256",
+                      "name": "totalTickets",
+                      "type": "uint256"
+                    },
+                    {
+                      "internalType": "address[]",
+                      "name": "members",
+                      "type": "address[]"
+                    },
+                    {
+                      "internalType": "uint256",
+                      "name": "randomWord",
+                      "type": "uint256"
+                    },
+                    {
+                      "internalType": "address[][]",
+                      "name": "winners",
+                      "type": "address[][]"
+                    }
+                  ],
+                  "internalType": "struct ILottery.Round[]",
+                  "name": "",
+                  "type": "tuple[]"
+                }
+              ],
+              "stateMutability": "view",
+              "type": "function"
+            },
+            {
+              "inputs": [],
               "name": "getTotalRounds",
               "outputs": [
                 {
@@ -20224,7 +20565,7 @@
                   "type": "address"
                 }
               ],
-              "name": "isClaimedToday",
+              "name": "isClaimAvailable",
               "outputs": [
                 {
                   "internalType": "bool",
@@ -20612,7 +20953,7 @@
           ]
         },
         "ReferralManager": {
-          "address": "0x0B9159F99426FC64934E1c089E886EDB78d38C00",
+          "address": "0x5010f7806A07706A80Ac5F22E742694a2cE7eE3f",
           "abi": [
             {
               "inputs": [
@@ -21539,7 +21880,7 @@
           ]
         },
         "Squads": {
-          "address": "0x85187D1999377cD16CD4F0e92F9B4162b1BBba73",
+          "address": "0x498a23B13bf96114eB8e4Ab77248ACc610485635",
           "abi": [
             {
               "inputs": [
@@ -21840,6 +22181,56 @@
               "type": "function"
             },
             {
+              "inputs": [],
+              "name": "getActivePlans",
+              "outputs": [
+                {
+                  "components": [
+                    {
+                      "internalType": "uint256",
+                      "name": "index",
+                      "type": "uint256"
+                    },
+                    {
+                      "internalType": "uint256",
+                      "name": "subscriptionCost",
+                      "type": "uint256"
+                    },
+                    {
+                      "internalType": "uint256",
+                      "name": "reward",
+                      "type": "uint256"
+                    },
+                    {
+                      "internalType": "uint256",
+                      "name": "stakingThreshold",
+                      "type": "uint256"
+                    },
+                    {
+                      "internalType": "uint256",
+                      "name": "squadSize",
+                      "type": "uint256"
+                    },
+                    {
+                      "internalType": "uint256",
+                      "name": "stakingPlanId",
+                      "type": "uint256"
+                    },
+                    {
+                      "internalType": "bool",
+                      "name": "isActive",
+                      "type": "bool"
+                    }
+                  ],
+                  "internalType": "struct ISquads.SquadPlan[]",
+                  "name": "",
+                  "type": "tuple[]"
+                }
+              ],
+              "stateMutability": "view",
+              "type": "function"
+            },
+            {
               "inputs": [
                 {
                   "internalType": "uint256",
@@ -21851,6 +22242,11 @@
               "outputs": [
                 {
                   "components": [
+                    {
+                      "internalType": "uint256",
+                      "name": "index",
+                      "type": "uint256"
+                    },
                     {
                       "internalType": "uint256",
                       "name": "subscriptionCost",
@@ -21896,6 +22292,11 @@
               "outputs": [
                 {
                   "components": [
+                    {
+                      "internalType": "uint256",
+                      "name": "index",
+                      "type": "uint256"
+                    },
                     {
                       "internalType": "uint256",
                       "name": "subscriptionCost",
@@ -21956,6 +22357,11 @@
             },
             {
               "inputs": [
+                {
+                  "internalType": "uint256",
+                  "name": "stakingPlanId",
+                  "type": "uint256"
+                },
                 {
                   "internalType": "uint256",
                   "name": "amount",
@@ -22117,6 +22523,11 @@
               ],
               "name": "plans",
               "outputs": [
+                {
+                  "internalType": "uint256",
+                  "name": "index",
+                  "type": "uint256"
+                },
                 {
                   "internalType": "uint256",
                   "name": "subscriptionCost",
@@ -22503,7 +22914,7 @@
           ]
         },
         "Staking": {
-          "address": "0x8dc5eD607Ac23d78a0EE911B1218f6AD835B6897",
+          "address": "0xd87755eCE5f0c3Dba6D93bb597aCDEe1ce4Fb4be",
           "abi": [
             {
               "inputs": [
@@ -22740,7 +23151,7 @@
                 {
                   "indexed": false,
                   "internalType": "uint256",
-                  "name": "rewardPercent",
+                  "name": "apr",
                   "type": "uint256"
                 }
               ],
@@ -22768,6 +23179,19 @@
             },
             {
               "inputs": [],
+              "name": "BASE_POINTS_DIVIDER",
+              "outputs": [
+                {
+                  "internalType": "uint256",
+                  "name": "",
+                  "type": "uint256"
+                }
+              ],
+              "stateMutability": "view",
+              "type": "function"
+            },
+            {
+              "inputs": [],
               "name": "DEFAULT_ADMIN_ROLE",
               "outputs": [
                 {
@@ -22782,19 +23206,6 @@
             {
               "inputs": [],
               "name": "MIN_STAKE_LIMIT",
-              "outputs": [
-                {
-                  "internalType": "uint256",
-                  "name": "",
-                  "type": "uint256"
-                }
-              ],
-              "stateMutability": "view",
-              "type": "function"
-            },
-            {
-              "inputs": [],
-              "name": "PERCENTS_DIVIDER",
               "outputs": [
                 {
                   "internalType": "uint256",
@@ -22837,7 +23248,7 @@
                 },
                 {
                   "internalType": "uint256",
-                  "name": "profitPercent",
+                  "name": "apr",
                   "type": "uint256"
                 }
               ],
@@ -22974,7 +23385,7 @@
                     },
                     {
                       "internalType": "uint256",
-                      "name": "profitPercent",
+                      "name": "apr",
                       "type": "uint256"
                     },
                     {
@@ -23165,7 +23576,7 @@
                     },
                     {
                       "internalType": "uint256",
-                      "name": "profitPercent",
+                      "name": "apr",
                       "type": "uint256"
                     },
                     {
@@ -23228,7 +23639,7 @@
                         },
                         {
                           "internalType": "uint256",
-                          "name": "profitPercent",
+                          "name": "apr",
                           "type": "uint256"
                         },
                         {
@@ -23457,7 +23868,7 @@
                 },
                 {
                   "internalType": "uint256",
-                  "name": "profitPercent",
+                  "name": "apr",
                   "type": "uint256"
                 },
                 {
@@ -23574,11 +23985,16 @@
               "inputs": [
                 {
                   "internalType": "uint256",
-                  "name": "divider_",
+                  "name": "planId",
+                  "type": "uint256"
+                },
+                {
+                  "internalType": "uint256",
+                  "name": "apr",
                   "type": "uint256"
                 }
               ],
-              "name": "updatePercentDivider",
+              "name": "updatePlanAPR",
               "outputs": [],
               "stateMutability": "nonpayable",
               "type": "function"
@@ -23615,24 +24031,6 @@
                 }
               ],
               "name": "updatePlanDurationDays",
-              "outputs": [],
-              "stateMutability": "nonpayable",
-              "type": "function"
-            },
-            {
-              "inputs": [
-                {
-                  "internalType": "uint256",
-                  "name": "planId",
-                  "type": "uint256"
-                },
-                {
-                  "internalType": "uint256",
-                  "name": "percent",
-                  "type": "uint256"
-                }
-              ],
-              "name": "updatePlanReward",
               "outputs": [],
               "stateMutability": "nonpayable",
               "type": "function"
@@ -24644,7 +25042,7 @@
           ]
         },
         "Token1": {
-          "address": "0x6a5bFC3aBCf684a27653811030Daeb70CAaC4e56",
+          "address": "0x6e6B9420DDE50C4678F470cFE696ac2ccbAc3ABF",
           "abi": [
             {
               "inputs": [
@@ -25570,7 +25968,7 @@
           ]
         },
         "Token2": {
-          "address": "0xA11c12affdcAc6e44a3E190390E25cb61930A237",
+          "address": "0x29a9a9Cc0d2e5163f4e38d00c33EC12Dd1f0AEc2",
           "abi": [
             {
               "inputs": [
@@ -26438,7 +26836,7 @@
           ]
         },
         "TokenVesting": {
-          "address": "0xf2e08D8172F4B2dE313f397C9f4Ea6A36D7A316a",
+          "address": "0x1944D8A61484a517582B7c00A527F103D1f5E5bE",
           "abi": [
             {
               "inputs": [
@@ -27152,7 +27550,7 @@
           ]
         },
         "VendorSell": {
-          "address": "0x1BcAE5F3D078f373B66dd8E6aF3617E7874c3B9F",
+          "address": "0xb45772E41A1d029f924BEfE4615E7457F4c3Ca95",
           "abi": [
             {
               "inputs": [
@@ -27598,7 +27996,7 @@
             },
             {
               "inputs": [],
-              "name": "sellTokenCommission",
+              "name": "sellTokenFee",
               "outputs": [
                 {
                   "internalType": "uint256",
@@ -27704,6 +28102,19 @@
               "inputs": [
                 {
                   "internalType": "uint256",
+                  "name": "sellTokenFee_",
+                  "type": "uint256"
+                }
+              ],
+              "name": "updateSellFee",
+              "outputs": [],
+              "stateMutability": "nonpayable",
+              "type": "function"
+            },
+            {
+              "inputs": [
+                {
+                  "internalType": "uint256",
                   "name": "swapRate_",
                   "type": "uint256"
                 }
@@ -27735,19 +28146,6 @@
                 }
               ],
               "name": "updateTokenPool",
-              "outputs": [],
-              "stateMutability": "nonpayable",
-              "type": "function"
-            },
-            {
-              "inputs": [
-                {
-                  "internalType": "uint256",
-                  "name": "sellTokenCommission_",
-                  "type": "uint256"
-                }
-              ],
-              "name": "updatesellTokenCommission",
               "outputs": [],
               "stateMutability": "nonpayable",
               "type": "function"

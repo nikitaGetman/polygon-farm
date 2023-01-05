@@ -25,6 +25,7 @@ import type {
 
 export declare namespace ISquads {
   export type SquadPlanStruct = {
+    index: PromiseOrValue<BigNumberish>;
     subscriptionCost: PromiseOrValue<BigNumberish>;
     reward: PromiseOrValue<BigNumberish>;
     stakingThreshold: PromiseOrValue<BigNumberish>;
@@ -39,8 +40,10 @@ export declare namespace ISquads {
     BigNumber,
     BigNumber,
     BigNumber,
+    BigNumber,
     boolean
   ] & {
+    index: BigNumber;
     subscriptionCost: BigNumber;
     reward: BigNumber;
     stakingThreshold: BigNumber;
@@ -62,9 +65,10 @@ export declare namespace ISquads {
 
 export interface ISquadsInterface extends utils.Interface {
   functions: {
+    "getActivePlans()": FunctionFragment;
     "getPlan(uint256)": FunctionFragment;
     "getPlans()": FunctionFragment;
-    "getSufficientPlanIdByStakingAmount(uint256)": FunctionFragment;
+    "getSufficientPlanIdByStakingAmount(uint256,uint256)": FunctionFragment;
     "getUserSquadMembers(address,uint256)": FunctionFragment;
     "getUserSubscription(address,uint256)": FunctionFragment;
     "hasAnySubscription(address)": FunctionFragment;
@@ -76,6 +80,7 @@ export interface ISquadsInterface extends utils.Interface {
 
   getFunction(
     nameOrSignatureOrTopic:
+      | "getActivePlans"
       | "getPlan"
       | "getPlans"
       | "getSufficientPlanIdByStakingAmount"
@@ -89,13 +94,17 @@ export interface ISquadsInterface extends utils.Interface {
   ): FunctionFragment;
 
   encodeFunctionData(
+    functionFragment: "getActivePlans",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
     functionFragment: "getPlan",
     values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(functionFragment: "getPlans", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "getSufficientPlanIdByStakingAmount",
-    values: [PromiseOrValue<BigNumberish>]
+    values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
     functionFragment: "getUserSquadMembers",
@@ -131,6 +140,10 @@ export interface ISquadsInterface extends utils.Interface {
     values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]
   ): string;
 
+  decodeFunctionResult(
+    functionFragment: "getActivePlans",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "getPlan", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "getPlans", data: BytesLike): Result;
   decodeFunctionResult(
@@ -193,6 +206,10 @@ export interface ISquads extends BaseContract {
   removeListener: OnEvent<this>;
 
   functions: {
+    getActivePlans(
+      overrides?: CallOverrides
+    ): Promise<[ISquads.SquadPlanStructOutput[]]>;
+
     getPlan(
       planId: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
@@ -203,6 +220,7 @@ export interface ISquads extends BaseContract {
     ): Promise<[ISquads.SquadPlanStructOutput[]]>;
 
     getSufficientPlanIdByStakingAmount(
+      stakingPlanId: PromiseOrValue<BigNumberish>,
       amount: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
@@ -250,6 +268,10 @@ export interface ISquads extends BaseContract {
     ): Promise<[boolean]>;
   };
 
+  getActivePlans(
+    overrides?: CallOverrides
+  ): Promise<ISquads.SquadPlanStructOutput[]>;
+
   getPlan(
     planId: PromiseOrValue<BigNumberish>,
     overrides?: CallOverrides
@@ -258,6 +280,7 @@ export interface ISquads extends BaseContract {
   getPlans(overrides?: CallOverrides): Promise<ISquads.SquadPlanStructOutput[]>;
 
   getSufficientPlanIdByStakingAmount(
+    stakingPlanId: PromiseOrValue<BigNumberish>,
     amount: PromiseOrValue<BigNumberish>,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
@@ -305,6 +328,10 @@ export interface ISquads extends BaseContract {
   ): Promise<boolean>;
 
   callStatic: {
+    getActivePlans(
+      overrides?: CallOverrides
+    ): Promise<ISquads.SquadPlanStructOutput[]>;
+
     getPlan(
       planId: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
@@ -315,6 +342,7 @@ export interface ISquads extends BaseContract {
     ): Promise<ISquads.SquadPlanStructOutput[]>;
 
     getSufficientPlanIdByStakingAmount(
+      stakingPlanId: PromiseOrValue<BigNumberish>,
       amount: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
@@ -365,6 +393,8 @@ export interface ISquads extends BaseContract {
   filters: {};
 
   estimateGas: {
+    getActivePlans(overrides?: CallOverrides): Promise<BigNumber>;
+
     getPlan(
       planId: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
@@ -373,6 +403,7 @@ export interface ISquads extends BaseContract {
     getPlans(overrides?: CallOverrides): Promise<BigNumber>;
 
     getSufficientPlanIdByStakingAmount(
+      stakingPlanId: PromiseOrValue<BigNumberish>,
       amount: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
@@ -421,6 +452,8 @@ export interface ISquads extends BaseContract {
   };
 
   populateTransaction: {
+    getActivePlans(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
     getPlan(
       planId: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
@@ -429,6 +462,7 @@ export interface ISquads extends BaseContract {
     getPlans(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     getSufficientPlanIdByStakingAmount(
+      stakingPlanId: PromiseOrValue<BigNumberish>,
       amount: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;

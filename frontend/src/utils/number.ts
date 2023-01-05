@@ -70,11 +70,17 @@ export const makeBigNumber = (value: BigNumberish, decimals: number = 18) => {
 export const beautifyAmount = (amount: number | string, symbol: string, prettify: boolean) => {
   const amountNumber = parseFloat(amount.toString());
 
+  let parts = amountNumber > 0 ? [symbol] : [amountNumber, symbol];
+  let restNumber = amountNumber;
+  while (restNumber > 0) {
+    const isLastPart = restNumber < 1000;
+    parts.unshift((restNumber % 1000).toString().padStart(isLastPart ? 0 : 3, '0'));
+    restNumber = Math.floor(restNumber / 1000);
+  }
+
   const delimiter = prettify ? ' ' : '';
-  if (amount < 1000) return `${amountNumber}${delimiter}${symbol}`;
-  return `${roundToPrecision(amountNumber / 1000, 0)}${delimiter}${(amountNumber % 1000)
-    .toString()
-    .padStart(3, '0')}${delimiter}${symbol}`;
+
+  return parts.join(delimiter);
 };
 
 const roundToPrecision = (amount: number, precision: number) => {

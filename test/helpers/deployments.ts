@@ -124,7 +124,7 @@ export async function deployStaking({
       stakingPlans[i].subscriptionCost,
       stakingPlans[i].subscriptionDurationDays,
       stakingPlans[i].durationDays,
-      stakingPlans[i].rewardPercent
+      stakingPlans[i].apr
     );
   }
 

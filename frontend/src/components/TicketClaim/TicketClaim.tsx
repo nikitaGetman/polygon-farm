@@ -27,7 +27,7 @@ import { TicketMint } from './TicketMint';
 
 type TicketData = {
   isClaimed: boolean;
-  isClaimAvailable: boolean;
+  canClaim: boolean;
   timestamp: number;
 };
 export const TicketClaim = () => {
@@ -40,7 +40,7 @@ export const TicketClaim = () => {
     claimStreakForTicket,
 
     claimStreak,
-    isClaimedToday,
+    isClaimAvailable,
     lastClaim,
     isMintAvailable,
 
@@ -52,7 +52,7 @@ export const TicketClaim = () => {
 
   const refetchData = () => {
     claimStreak.refetch();
-    isClaimedToday.refetch();
+    isClaimAvailable.refetch();
     lastClaim.refetch();
     isMintAvailable.refetch();
 
@@ -60,32 +60,30 @@ export const TicketClaim = () => {
   };
 
   const ticketData = useMemo<TicketData[]>(() => {
-    const currentTime = Date.now() / 1000;
-
     return Array.from({ length: claimStreakForTicket }).map((_, index) => {
       const isClaimed = Boolean(claimStreak.data && index < claimStreak.data);
-      const isClaimAvailable = Boolean(!isClaimedToday.data && claimStreak.data === index);
+      const canClaim = Boolean(isClaimAvailable.data && claimStreak.data === index);
 
       let timestamp = 0;
       const streak = claimStreak.data || 0;
       if (
         !isClaimed &&
         claimPeriod.data &&
-        (isClaimAvailable || index === streak) &&
-        (index > 0 || !isClaimAvailable)
+        (canClaim || index === streak) &&
+        (index > 0 || !canClaim)
       ) {
         const lastClaimTime =
-          (!streak && !isClaimedToday.data) || !lastClaim.data
-            ? Math.floor(currentTime / claimPeriod.data) * claimPeriod.data
+          (!streak && isClaimAvailable.data) || !lastClaim.data
+            ? Math.floor(Date.now() / 1000)
             : lastClaim.data;
 
-        const timeOffset = streak > 0 && isClaimAvailable ? claimPeriod.data * 2 : claimPeriod.data;
+        const timeOffset = streak > 0 && canClaim ? claimPeriod.data * 2 : claimPeriod.data;
         timestamp = (lastClaimTime + timeOffset) * 1000;
       }
 
       return {
         isClaimed,
-        isClaimAvailable,
+        canClaim,
         timestamp,
       };
     });
@@ -93,7 +91,7 @@ export const TicketClaim = () => {
   }, [
     claimStreakForTicket,
     claimStreak.data,
-    isClaimedToday.data,
+    isClaimAvailable.data,
     claimPeriod.data,
     lastClaim.data,
     fetchIndex,
@@ -126,9 +124,9 @@ export const TicketClaim = () => {
           direction={{ sm: 'column', xl: 'row' }}
           whiteSpace="nowrap"
         >
-          <Text textStyle="textBoldPtSans">Or you can buy Raffle Tickets</Text>
+          <Text textStyle="textSansBold">Or you can buy Raffle Tickets</Text>
 
-          <Text textStyle="textBoldPtSans" mb={{ sm: '16px', xl: '0' }}>
+          <Text textStyle="textSansBold" mb={{ sm: '16px', xl: '0' }}>
             {bigNumberToString(ticketPrice, { precision: 0 })} SAV / 1 Ticket
           </Text>
 
@@ -175,12 +173,12 @@ export const TicketClaim = () => {
             '2xl': '193px 193px 193px 193px 216px 240px',
           }}
         >
-          {ticketData.map(({ isClaimed, isClaimAvailable, timestamp }, index) => (
+          {ticketData.map(({ isClaimed, canClaim, timestamp }, index) => (
             <GridItem key={index}>
               <Ticket
                 index={index}
                 isClaimed={isClaimed}
-                isAvailable={isClaimAvailable}
+                canClaim={canClaim}
                 timestamp={timestamp}
                 onClaim={claimDay.mutateAsync}
                 onExpire={refetchData}
@@ -229,19 +227,12 @@ export const TicketClaim = () => {
 type TicketProps = {
   index: number;
   isClaimed: boolean;
-  isAvailable: boolean;
+  canClaim: boolean;
   timestamp: number;
   onClaim: () => Promise<void>;
   onExpire: () => void;
 };
-const Ticket: FC<TicketProps> = ({
-  index,
-  isClaimed,
-  isAvailable,
-  timestamp,
-  onClaim,
-  onExpire,
-}) => {
+const Ticket: FC<TicketProps> = ({ index, isClaimed, canClaim, timestamp, onClaim, onExpire }) => {
   const { isConnected } = useAccount();
   const { stamps, stampStrings } = useCountdown(timestamp, onExpire);
   const [isLoading, setIsLoading] = useState(false);
@@ -276,11 +267,11 @@ const Ticket: FC<TicketProps> = ({
     <Box textAlign={{ sm: 'center', lg: 'unset' }}>
       <TicketIcon
         isClaimed={isClaimed}
-        isActive={isAvailable}
+        isActive={canClaim}
         hasTimer={showTimer}
-        onClick={isAvailable && !isLoading ? handleClaim : undefined}
+        onClick={canClaim && !isLoading ? handleClaim : undefined}
       >
-        {isClaimed || isAvailable ? (
+        {isClaimed || canClaim ? (
           <Flex
             direction="column"
             textAlign="center"
@@ -302,7 +293,7 @@ const Ticket: FC<TicketProps> = ({
                 >
                   CLAIM
                 </Text>
-                {isAvailable && timestamp ? (
+                {canClaim && timestamp ? (
                   <Text
                     width="125px"
                     mt={{ sm: '2px', lg: '10px', xl: '5px', '2xl': '10px' }}

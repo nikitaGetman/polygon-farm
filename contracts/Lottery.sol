@@ -289,7 +289,7 @@ contract Lottery is ILottery, VRFConsumerBaseV2, AccessControl {
     }
 
     function claimDay() public {
-        require(!isClaimedToday(_msgSender()), "Already claimed today");
+        require(isClaimAvailable(_msgSender()), "Claim is not available");
         require(
             !isMintAvailable(_msgSender()),
             "Mint ticket before next claim"
@@ -304,10 +304,7 @@ contract Lottery is ILottery, VRFConsumerBaseV2, AccessControl {
 
         for (uint256 i = 0; i < claims[_msgSender()].length; i++) {
             if (claims[_msgSender()][i] == 0) {
-                // Cut fractionaal part
-                claims[_msgSender()][i] =
-                    (block.timestamp / CLAIM_PERIOD) *
-                    CLAIM_PERIOD;
+                claims[_msgSender()][i] = block.timestamp;
                 break;
             }
         }
@@ -318,7 +315,7 @@ contract Lottery is ILottery, VRFConsumerBaseV2, AccessControl {
 
         _mintTicket(_msgSender(), 1);
 
-        lastTicketMint[_msgSender()] = getLastClaimTime(_msgSender());
+        lastTicketMint[_msgSender()] = block.timestamp;
         claims[_msgSender()] = new uint256[](DAYS_STREAK_FOR_TICKET);
     }
 
@@ -334,6 +331,10 @@ contract Lottery is ILottery, VRFConsumerBaseV2, AccessControl {
 
     function getWinnerPrize(address user) public view returns (uint256) {
         return winnersRewards[user];
+    }
+
+    function getRounds() public view returns (Round[] memory) {
+        return rounds;
     }
 
     function getRound(uint256 id) public view returns (Round memory) {
@@ -407,9 +408,8 @@ contract Lottery is ILottery, VRFConsumerBaseV2, AccessControl {
         return foundFinishedRounds;
     }
 
-    function isClaimedToday(address user) public view returns (bool) {
-        uint256 today = block.timestamp / CLAIM_PERIOD;
-        return getLastClaimTime(user) / CLAIM_PERIOD == today;
+    function isClaimAvailable(address user) public view returns (bool) {
+        return getLastClaimTime(user) + CLAIM_PERIOD <= block.timestamp;
     }
 
     function getLastClaimTime(address user) public view returns (uint256) {
@@ -437,14 +437,16 @@ contract Lottery is ILottery, VRFConsumerBaseV2, AccessControl {
         if (userClaims.length == 0) return 0;
 
         uint256 streak = 1;
-        uint256 lastClaim = userClaims[0] / CLAIM_PERIOD;
+        uint256 lastClaim = userClaims[0];
         for (uint256 i = 1; i < userClaims.length; i++) {
             if (userClaims[i] == 0) break;
 
-            uint256 claim = userClaims[i] / CLAIM_PERIOD;
-            if (claim == lastClaim + 1) {
+            if (
+                lastClaim + CLAIM_PERIOD <= userClaims[i] &&
+                lastClaim + CLAIM_PERIOD * 2 > userClaims[i]
+            ) {
                 streak += 1;
-                lastClaim = claim;
+                lastClaim = userClaims[i];
             } else {
                 // reset streak if period between claims more than 1 day
                 return 0;
@@ -454,7 +456,7 @@ contract Lottery is ILottery, VRFConsumerBaseV2, AccessControl {
         // reset streak if current time more than claim period from the last claim
         if (
             streak != DAYS_STREAK_FOR_TICKET &&
-            block.timestamp / CLAIM_PERIOD > lastClaim + 1
+            block.timestamp > lastClaim + CLAIM_PERIOD * 2
         ) {
             return 0;
         }

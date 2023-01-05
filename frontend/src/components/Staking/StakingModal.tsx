@@ -21,12 +21,13 @@ import {
   Text,
 } from '@chakra-ui/react';
 import { BigNumberish, ethers } from 'ethers';
+import { useAccount } from 'wagmi';
 
 import { ReactComponent as ChevronDownIcon } from '@/assets/images/icons/chevron-down.svg';
 import { ReactComponent as SavIcon } from '@/assets/images/sav_icon.svg';
 import { ReactComponent as SavrIcon } from '@/assets/images/savr_icon.svg';
+import { TOKENS } from '@/hooks/contracts/useTokenContract';
 import { useSavBalance, useSavRBalance } from '@/hooks/useTokenBalance';
-import { TOKENS } from '@/hooks/useTokens';
 import { bigNumberToString } from '@/utils/number';
 import { getReadableDuration } from '@/utils/time';
 
@@ -61,8 +62,9 @@ export const StakingModal: FC<StakingModalProps> = ({
   const [token, setToken] = useState<TOKENS>(TOKENS.SAV);
   const [amount, setAmount] = useState<string>();
   const [isAgreed, setIsAgreed] = useState(false);
-  const { data: savBalance } = useSavBalance();
-  const { data: savrBalance } = useSavRBalance();
+  const { address } = useAccount();
+  const { data: savBalance } = useSavBalance(address);
+  const { data: savrBalance } = useSavRBalance(address);
 
   const handleTokenChange = (token: TOKENS) => {
     setToken(token);

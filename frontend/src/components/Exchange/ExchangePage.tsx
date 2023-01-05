@@ -11,6 +11,7 @@ import {
   Link,
   Text,
 } from '@chakra-ui/react';
+import { useAccount } from 'wagmi';
 
 import { ReactComponent as SwapIcon } from '@/assets/images/icons/swap.svg';
 import { ReactComponent as SavIcon } from '@/assets/images/sav_icon.svg';
@@ -46,6 +47,7 @@ export const ExchangePage = () => {
   const [amount, setAmount] = useState<string>();
   const [sellAmount, setSellAmount] = useState<string>();
 
+  const { address } = useAccount();
   const navigate = useNavigate();
   const {
     buyTokens,
@@ -55,8 +57,8 @@ export const ExchangePage = () => {
     getTokenBuyEquivalent,
     sellCommission,
   } = useVendorSell();
-  const usdtBalance = useUsdtBalance();
-  const savBalance = useSavBalance();
+  const usdtBalance = useUsdtBalance(address);
+  const savBalance = useSavBalance(address);
 
   const handleClose = useCallback(() => {
     navigate('/');
@@ -202,7 +204,7 @@ export const ExchangePage = () => {
         {isTokenSell ? (
           <Text mt="30px" textStyle="text1">
             {isSellAvailable ? (
-              <>The commission for the sale of tokens is {(sellCommission || 0) * 100}%</>
+              <>Token sell fee is {(sellCommission || 0) * 100}%</>
             ) : (
               <>
                 The exchange is not available.

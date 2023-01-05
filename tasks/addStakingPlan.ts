@@ -3,7 +3,7 @@ import { Staking } from "typechain-types";
 
 task("add-staking-plan", "Add staking plan")
   .addParam("durationDays", "Staking duration (days)", 0, types.int)
-  .addParam("rewardPercent", "Reward for staking (percents)", 0, types.int)
+  .addParam("apr", "APR for staking (percents)", 0, types.int)
   .addParam("subscriptionCost", "Cost of subscription", "0", types.string)
   .addOptionalParam(
     "subscriptionDurationDays",
@@ -22,7 +22,7 @@ task("add-staking-plan", "Add staking plan")
       taskArgs.subscriptionCost,
       taskArgs.subscriptionDurationDays,
       taskArgs.durationDays,
-      taskArgs.rewardPercent
+      taskArgs.apr
     );
 
     await tx.wait();

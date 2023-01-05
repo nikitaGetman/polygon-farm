@@ -11,6 +11,56 @@ import type {
 
 const _abi = [
   {
+    inputs: [],
+    name: "getActivePlans",
+    outputs: [
+      {
+        components: [
+          {
+            internalType: "uint256",
+            name: "index",
+            type: "uint256",
+          },
+          {
+            internalType: "uint256",
+            name: "subscriptionCost",
+            type: "uint256",
+          },
+          {
+            internalType: "uint256",
+            name: "reward",
+            type: "uint256",
+          },
+          {
+            internalType: "uint256",
+            name: "stakingThreshold",
+            type: "uint256",
+          },
+          {
+            internalType: "uint256",
+            name: "squadSize",
+            type: "uint256",
+          },
+          {
+            internalType: "uint256",
+            name: "stakingPlanId",
+            type: "uint256",
+          },
+          {
+            internalType: "bool",
+            name: "isActive",
+            type: "bool",
+          },
+        ],
+        internalType: "struct ISquads.SquadPlan[]",
+        name: "",
+        type: "tuple[]",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
     inputs: [
       {
         internalType: "uint256",
@@ -22,6 +72,11 @@ const _abi = [
     outputs: [
       {
         components: [
+          {
+            internalType: "uint256",
+            name: "index",
+            type: "uint256",
+          },
           {
             internalType: "uint256",
             name: "subscriptionCost",
@@ -69,6 +124,11 @@ const _abi = [
         components: [
           {
             internalType: "uint256",
+            name: "index",
+            type: "uint256",
+          },
+          {
+            internalType: "uint256",
             name: "subscriptionCost",
             type: "uint256",
           },
@@ -108,6 +168,11 @@ const _abi = [
   },
   {
     inputs: [
+      {
+        internalType: "uint256",
+        name: "stakingPlanId",
+        type: "uint256",
+      },
       {
         internalType: "uint256",
         name: "amount",

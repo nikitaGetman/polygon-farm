@@ -12,7 +12,7 @@ contract Staking is IStaking, AccessControl {
 
     mapping(uint256 => mapping(address => Staker)) private users;
 
-    uint256 public PERCENTS_DIVIDER = 1000;
+    uint256 public BASE_POINTS_DIVIDER = 1000;
     uint256 public TIME_STEP = 1 days;
     uint256 public MIN_STAKE_LIMIT = 1 * 1e17; // 0.1 Token
 
@@ -44,7 +44,7 @@ contract Staking is IStaking, AccessControl {
     event StakingPlanCreated(
         uint256 indexed planId,
         uint256 duration,
-        uint256 rewardPercent
+        uint256 apr
     );
     event ActivityChanged(uint256 indexed planId, bool isActive);
     event Subscribed(address indexed user, uint256 indexed planId);
@@ -107,7 +107,7 @@ contract Staking is IStaking, AccessControl {
             amount: depositAmount,
             timeStart: getTimestamp(),
             timeEnd: getTimestamp() + plan.stakingDuration * TIME_STEP,
-            profitPercent: plan.profitPercent,
+            apr: plan.apr,
             profit: stakingProfit,
             isClaimed: false,
             isToken2: isToken2
@@ -288,17 +288,17 @@ contract Staking is IStaking, AccessControl {
         uint256 subscriptionCost,
         uint256 subscriptionDuration,
         uint256 stakingDuration,
-        uint256 profitPercent
+        uint256 apr
     ) public onlyRole(DEFAULT_ADMIN_ROLE) {
         require(stakingDuration > 0, "Insufficient duration");
-        require(profitPercent > 0, "Insufficient profit percent");
+        require(apr > 0, "Insufficient APR");
 
         StakingPlan memory plan = StakingPlan({
             isActive: true,
             subscriptionCost: subscriptionCost,
             subscriptionDuration: subscriptionDuration,
             stakingDuration: stakingDuration,
-            profitPercent: profitPercent,
+            apr: apr,
             totalStakesToken1No: 0,
             totalStakesToken2No: 0,
             totalStakedToken1: 0,
@@ -310,11 +310,7 @@ contract Staking is IStaking, AccessControl {
 
         stakingPlans.push(plan);
 
-        emit StakingPlanCreated(
-            stakingPlans.length - 1,
-            stakingDuration,
-            profitPercent
-        );
+        emit StakingPlanCreated(stakingPlans.length - 1, stakingDuration, apr);
     }
 
     function calculateStakeProfit(uint256 planId, uint256 amount)
@@ -322,7 +318,9 @@ contract Staking is IStaking, AccessControl {
         view
         returns (uint256)
     {
-        return (amount * stakingPlans[planId].profitPercent) / PERCENTS_DIVIDER;
+        return
+            (((amount * stakingPlans[planId].apr) / 365) *
+                stakingPlans[planId].stakingDuration) / BASE_POINTS_DIVIDER;
     }
 
     function _getAvailableStakeReward(Stake storage stake)
@@ -482,13 +480,6 @@ contract Staking is IStaking, AccessControl {
         squadsManager = ISquads(squadsManager_);
     }
 
-    function updatePercentDivider(uint256 divider_)
-        public
-        onlyRole(DEFAULT_ADMIN_ROLE)
-    {
-        PERCENTS_DIVIDER = divider_;
-    }
-
     function updateTimeStep(uint256 step_) public onlyRole(DEFAULT_ADMIN_ROLE) {
         TIME_STEP = step_;
     }
@@ -516,11 +507,11 @@ contract Staking is IStaking, AccessControl {
         stakingPlans[planId].stakingDuration = duration;
     }
 
-    function updatePlanReward(uint256 planId, uint256 percent)
+    function updatePlanAPR(uint256 planId, uint256 apr)
         public
         onlyRole(DEFAULT_ADMIN_ROLE)
     {
-        stakingPlans[planId].profitPercent = percent;
+        stakingPlans[planId].apr = apr;
     }
 
     function updatePlanSubscriptionCost(uint256 planId, uint256 cost)

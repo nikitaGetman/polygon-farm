@@ -35,3 +35,17 @@ export const getLocalDateString = (timestamp: BigNumberish) => {
 
   return `${year}-${month}-${day}`;
 };
+
+export const getStampsFromDuration = (duration: number) => {
+  const elapsedSeconds = Math.floor((duration || 0) / 1000);
+  const secInMin = 60;
+  const secInHour = 60 * secInMin;
+  const secInDay = 24 * secInHour;
+
+  const days = Math.floor(elapsedSeconds / secInDay);
+  const hours = Math.floor((elapsedSeconds % secInDay) / secInHour);
+  const minutes = Math.floor(((elapsedSeconds % secInDay) % secInHour) / secInMin);
+  const seconds = elapsedSeconds % secInMin;
+
+  return { days, hours, minutes, seconds };
+};

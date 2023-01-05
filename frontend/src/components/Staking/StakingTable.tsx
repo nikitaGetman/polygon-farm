@@ -27,7 +27,7 @@ type Stake = {
   amount: BigNumber;
   timeStart: BigNumber;
   timeEnd: BigNumber;
-  profitPercent: BigNumber;
+  apr: BigNumber;
   profit: BigNumber;
   reward: BigNumber;
   isClaimed: boolean;

@@ -92,17 +92,8 @@ export declare namespace Helper {
 }
 
 export declare namespace ISquads {
-  export type SquadStruct = {
-    subscription: PromiseOrValue<BigNumberish>;
-    squadsFilled: PromiseOrValue<BigNumberish>;
-  };
-
-  export type SquadStructOutput = [BigNumber, BigNumber] & {
-    subscription: BigNumber;
-    squadsFilled: BigNumber;
-  };
-
   export type SquadPlanStruct = {
+    index: PromiseOrValue<BigNumberish>;
     subscriptionCost: PromiseOrValue<BigNumberish>;
     reward: PromiseOrValue<BigNumberish>;
     stakingThreshold: PromiseOrValue<BigNumberish>;
@@ -117,8 +108,10 @@ export declare namespace ISquads {
     BigNumber,
     BigNumber,
     BigNumber,
+    BigNumber,
     boolean
   ] & {
+    index: BigNumber;
     subscriptionCost: BigNumber;
     reward: BigNumber;
     stakingThreshold: BigNumber;
@@ -126,13 +119,23 @@ export declare namespace ISquads {
     stakingPlanId: BigNumber;
     isActive: boolean;
   };
+
+  export type SquadStruct = {
+    subscription: PromiseOrValue<BigNumberish>;
+    squadsFilled: PromiseOrValue<BigNumberish>;
+  };
+
+  export type SquadStructOutput = [BigNumber, BigNumber] & {
+    subscription: BigNumber;
+    squadsFilled: BigNumber;
+  };
 }
 
 export interface HelperInterface extends utils.Interface {
   functions: {
     "getLotteryRoundWinnersWithTickets(uint256)": FunctionFragment;
     "getUserReferralsFullInfoByLevel(address,uint256)": FunctionFragment;
-    "getUserSquadInfo(uint256,address)": FunctionFragment;
+    "getUserSquadInfo((uint256,uint256,uint256,uint256,uint256,uint256,bool),address)": FunctionFragment;
     "getUserSquadsInfo(address)": FunctionFragment;
     "lottery()": FunctionFragment;
     "owner()": FunctionFragment;
@@ -184,7 +187,7 @@ export interface HelperInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "getUserSquadInfo",
-    values: [PromiseOrValue<BigNumberish>, PromiseOrValue<string>]
+    values: [ISquads.SquadPlanStruct, PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
     functionFragment: "getUserSquadsInfo",
@@ -350,7 +353,7 @@ export interface Helper extends BaseContract {
     ): Promise<[Helper.ReferralFullInfoStructOutput[]]>;
 
     getUserSquadInfo(
-      planId: PromiseOrValue<BigNumberish>,
+      plan: ISquads.SquadPlanStruct,
       user: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<[Helper.UserSquadInfoStructOutput]>;
@@ -426,7 +429,7 @@ export interface Helper extends BaseContract {
   ): Promise<Helper.ReferralFullInfoStructOutput[]>;
 
   getUserSquadInfo(
-    planId: PromiseOrValue<BigNumberish>,
+    plan: ISquads.SquadPlanStruct,
     user: PromiseOrValue<string>,
     overrides?: CallOverrides
   ): Promise<Helper.UserSquadInfoStructOutput>;
@@ -502,7 +505,7 @@ export interface Helper extends BaseContract {
     ): Promise<Helper.ReferralFullInfoStructOutput[]>;
 
     getUserSquadInfo(
-      planId: PromiseOrValue<BigNumberish>,
+      plan: ISquads.SquadPlanStruct,
       user: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<Helper.UserSquadInfoStructOutput>;
@@ -588,7 +591,7 @@ export interface Helper extends BaseContract {
     ): Promise<BigNumber>;
 
     getUserSquadInfo(
-      planId: PromiseOrValue<BigNumberish>,
+      plan: ISquads.SquadPlanStruct,
       user: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
@@ -665,7 +668,7 @@ export interface Helper extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     getUserSquadInfo(
-      planId: PromiseOrValue<BigNumberish>,
+      plan: ISquads.SquadPlanStruct,
       user: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;

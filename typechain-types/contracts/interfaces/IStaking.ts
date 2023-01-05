@@ -50,7 +50,7 @@ export declare namespace IStaking {
     amount: PromiseOrValue<BigNumberish>;
     timeStart: PromiseOrValue<BigNumberish>;
     timeEnd: PromiseOrValue<BigNumberish>;
-    profitPercent: PromiseOrValue<BigNumberish>;
+    apr: PromiseOrValue<BigNumberish>;
     profit: PromiseOrValue<BigNumberish>;
     isClaimed: PromiseOrValue<boolean>;
     isToken2: PromiseOrValue<boolean>;
@@ -68,7 +68,7 @@ export declare namespace IStaking {
     amount: BigNumber;
     timeStart: BigNumber;
     timeEnd: BigNumber;
-    profitPercent: BigNumber;
+    apr: BigNumber;
     profit: BigNumber;
     isClaimed: boolean;
     isToken2: boolean;

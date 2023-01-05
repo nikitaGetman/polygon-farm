@@ -103,12 +103,13 @@ export interface LotteryInterface extends utils.Interface {
     "getLastFinishedRounds(uint256,uint256)": FunctionFragment;
     "getRoleAdmin(bytes32)": FunctionFragment;
     "getRound(uint256)": FunctionFragment;
+    "getRounds()": FunctionFragment;
     "getTotalRounds()": FunctionFragment;
     "getUserRoundEntry(address,uint256)": FunctionFragment;
     "getWinnerPrize(address)": FunctionFragment;
     "grantRole(bytes32,address)": FunctionFragment;
     "hasRole(bytes32,address)": FunctionFragment;
-    "isClaimedToday(address)": FunctionFragment;
+    "isClaimAvailable(address)": FunctionFragment;
     "isMintAvailable(address)": FunctionFragment;
     "manuallyGetWinners(uint256)": FunctionFragment;
     "mintMyTicket()": FunctionFragment;
@@ -152,12 +153,13 @@ export interface LotteryInterface extends utils.Interface {
       | "getLastFinishedRounds"
       | "getRoleAdmin"
       | "getRound"
+      | "getRounds"
       | "getTotalRounds"
       | "getUserRoundEntry"
       | "getWinnerPrize"
       | "grantRole"
       | "hasRole"
-      | "isClaimedToday"
+      | "isClaimAvailable"
       | "isMintAvailable"
       | "manuallyGetWinners"
       | "mintMyTicket"
@@ -252,6 +254,7 @@ export interface LotteryInterface extends utils.Interface {
     functionFragment: "getRound",
     values: [PromiseOrValue<BigNumberish>]
   ): string;
+  encodeFunctionData(functionFragment: "getRounds", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "getTotalRounds",
     values?: undefined
@@ -273,7 +276,7 @@ export interface LotteryInterface extends utils.Interface {
     values: [PromiseOrValue<BytesLike>, PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
-    functionFragment: "isClaimedToday",
+    functionFragment: "isClaimAvailable",
     values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
@@ -421,6 +424,7 @@ export interface LotteryInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "getRound", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "getRounds", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "getTotalRounds",
     data: BytesLike
@@ -436,7 +440,7 @@ export interface LotteryInterface extends utils.Interface {
   decodeFunctionResult(functionFragment: "grantRole", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "hasRole", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "isClaimedToday",
+    functionFragment: "isClaimAvailable",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -738,6 +742,10 @@ export interface Lottery extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[ILottery.RoundStructOutput]>;
 
+    getRounds(
+      overrides?: CallOverrides
+    ): Promise<[ILottery.RoundStructOutput[]]>;
+
     getTotalRounds(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     getUserRoundEntry(
@@ -763,7 +771,7 @@ export interface Lottery extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[boolean]>;
 
-    isClaimedToday(
+    isClaimAvailable(
       user: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<[boolean]>;
@@ -983,6 +991,8 @@ export interface Lottery extends BaseContract {
     overrides?: CallOverrides
   ): Promise<ILottery.RoundStructOutput>;
 
+  getRounds(overrides?: CallOverrides): Promise<ILottery.RoundStructOutput[]>;
+
   getTotalRounds(overrides?: CallOverrides): Promise<BigNumber>;
 
   getUserRoundEntry(
@@ -1008,7 +1018,7 @@ export interface Lottery extends BaseContract {
     overrides?: CallOverrides
   ): Promise<boolean>;
 
-  isClaimedToday(
+  isClaimAvailable(
     user: PromiseOrValue<string>,
     overrides?: CallOverrides
   ): Promise<boolean>;
@@ -1226,6 +1236,8 @@ export interface Lottery extends BaseContract {
       overrides?: CallOverrides
     ): Promise<ILottery.RoundStructOutput>;
 
+    getRounds(overrides?: CallOverrides): Promise<ILottery.RoundStructOutput[]>;
+
     getTotalRounds(overrides?: CallOverrides): Promise<BigNumber>;
 
     getUserRoundEntry(
@@ -1251,7 +1263,7 @@ export interface Lottery extends BaseContract {
       overrides?: CallOverrides
     ): Promise<boolean>;
 
-    isClaimedToday(
+    isClaimAvailable(
       user: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<boolean>;
@@ -1546,6 +1558,8 @@ export interface Lottery extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    getRounds(overrides?: CallOverrides): Promise<BigNumber>;
+
     getTotalRounds(overrides?: CallOverrides): Promise<BigNumber>;
 
     getUserRoundEntry(
@@ -1571,7 +1585,7 @@ export interface Lottery extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    isClaimedToday(
+    isClaimAvailable(
       user: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
@@ -1766,6 +1780,8 @@ export interface Lottery extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
+    getRounds(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
     getTotalRounds(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     getUserRoundEntry(
@@ -1791,7 +1807,7 @@ export interface Lottery extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    isClaimedToday(
+    isClaimAvailable(
       user: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;

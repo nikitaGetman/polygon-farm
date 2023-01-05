@@ -24,11 +24,11 @@ const buttonProps = {
 
 export const WalletPortfolio = () => {
   const navigate = useNavigate();
-  const { isConnected } = useAccount();
+  const { address, isConnected } = useAccount();
   const { addSAV, addSAVR } = useAddTokens();
 
-  const { data: savBalance } = useSavBalance();
-  const { data: savrBalance } = useSavRBalance();
+  const { data: savBalance } = useSavBalance(address);
+  const { data: savrBalance } = useSavRBalance(address);
 
   const { balanceHistory } = useTokenBalanceHistory();
 

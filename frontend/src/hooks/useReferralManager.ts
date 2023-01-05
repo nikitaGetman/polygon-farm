@@ -1,22 +1,24 @@
 import { useMemo } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { BigNumber, ethers } from 'ethers';
+import { parseEther } from 'ethers/lib/utils';
 import { useAccount } from 'wagmi';
 
 import { bigNumberToString } from '@/utils/number';
 import { createReferralLink } from '@/utils/referralLinks';
 
 import { useReferralContract } from './contracts/useReferralContract';
+import { TOKENS } from './contracts/useTokenContract';
 import { useConnectWallet } from './useConnectWallet';
 import { useNotification } from './useNotification';
 import { useStaking } from './useStaking';
 import { SAV_BALANCE_REQUEST, SAVR_BALANCE_REQUEST } from './useTokenBalance';
-import { TOKENS, useTokens } from './useTokens';
+import { useTokens } from './useTokens';
 
 export const USER_REFERRAL_INFO_REQUEST = 'user-referrals-info';
 
-const LEVEL_SUBSCRIPTION_COST_REQUEST = 'get-referral-level-subscription-cost';
-const ALL_LEVELS_SUBSCRIPTION_COST_REQUEST = 'get-all-referral-levels-subscription-cost';
+export const LEVEL_SUBSCRIPTION_COST_REQUEST = 'get-referral-level-subscription-cost';
+export const ALL_LEVELS_SUBSCRIPTION_COST_REQUEST = 'get-all-referral-levels-subscription-cost';
 const USER_REFERRAL_REWARDS_REQUEST = 'user-referral-rewards';
 const SUBSCRIBE_TO_REFERRAL_LEVEL_MUTATION = 'subscribe-to-referral-level';
 const SUBSCRIBE_TO_ALL_REFERRAL_LEVELS_MUTATION = 'subscribe-to-all-referral-levels';
@@ -25,8 +27,64 @@ const CLAIM_REFERRAL_REWARDS_MUTATION = 'claim-referral-rewards';
 
 export const REFERRAL_SUBSCRIPTION_ENDING_NOTIFICATION = 15 * 24 * 60 * 60; // 15 days in seconds
 
+export const useReferralManagerSubscriptions = () => {
+  const referralContract = useReferralContract();
+  const queryClient = useQueryClient();
+  const { success, handleError } = useNotification();
+
+  const levelSubscriptionCost = useQuery([LEVEL_SUBSCRIPTION_COST_REQUEST], async () => {
+    return await referralContract.contract.levelSubscriptionCost();
+  });
+  const fullSubscriptionCost = useQuery([ALL_LEVELS_SUBSCRIPTION_COST_REQUEST], async () => {
+    return await referralContract.contract.fullSubscriptionCost();
+  });
+
+  const updateLevelSubscription = useMutation(
+    ['update-level-subscription-cost'],
+    async (cost: number) => {
+      const costBN = parseEther(cost.toString());
+
+      const txHash = await referralContract.updateLevelSubscriptionCost(costBN);
+      success({ title: 'Success', description: '1 level subscription cost updated', txHash });
+    },
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries([LEVEL_SUBSCRIPTION_COST_REQUEST]);
+        queryClient.invalidateQueries([ALL_LEVELS_SUBSCRIPTION_COST_REQUEST]);
+      },
+      onError: handleError,
+    }
+  );
+
+  const updateFullSubscription = useMutation(
+    ['update-full-subscription-cost'],
+    async (cost: number) => {
+      const costBN = parseEther(cost.toString());
+
+      const txHash = await referralContract.updateFullSubscriptionCost(costBN);
+      success({ title: 'Success', description: 'Full subscription cost updated', txHash });
+    },
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries([LEVEL_SUBSCRIPTION_COST_REQUEST]);
+        queryClient.invalidateQueries([ALL_LEVELS_SUBSCRIPTION_COST_REQUEST]);
+      },
+      onError: handleError,
+    }
+  );
+
+  return {
+    levelSubscriptionCost,
+    fullSubscriptionCost,
+    updateLevelSubscription,
+    updateFullSubscription,
+    referralContract,
+  };
+};
+
 export const useReferralManager = () => {
   const { address: account } = useAccount();
+  const { levelSubscriptionCost, fullSubscriptionCost } = useReferralManagerSubscriptions();
 
   const queryClient = useQueryClient();
   const referralContract = useReferralContract();
@@ -41,13 +99,6 @@ export const useReferralManager = () => {
 
   const userReferralInfo = useQuery([USER_REFERRAL_INFO_REQUEST, { account }], async () => {
     return account ? await referralContract.getUserInfo(account) : null;
-  });
-
-  const levelSubscriptionCost = useQuery([LEVEL_SUBSCRIPTION_COST_REQUEST], async () => {
-    return await referralContract.contract.levelSubscriptionCost();
-  });
-  const fullSubscriptionCost = useQuery([ALL_LEVELS_SUBSCRIPTION_COST_REQUEST], async () => {
-    return await referralContract.contract.fullSubscriptionCost();
   });
 
   const referralRewardsRequest = useQuery(

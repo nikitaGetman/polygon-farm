@@ -152,7 +152,7 @@ const _abi = [
           },
           {
             internalType: "uint256",
-            name: "profitPercent",
+            name: "apr",
             type: "uint256",
           },
           {

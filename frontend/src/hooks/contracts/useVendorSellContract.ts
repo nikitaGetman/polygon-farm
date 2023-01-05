@@ -25,7 +25,7 @@ export const useVendorSellContract = () => {
   };
 
   const getSellTokenCommission = () => {
-    return contract.sellTokenCommission();
+    return contract.sellTokenFee();
   };
 
   const getDivider = () => {
@@ -46,6 +46,21 @@ export const useVendorSellContract = () => {
     return waitForTransaction(tx);
   };
 
+  const updateSellFee = async (fee: number) => {
+    const tx = await contract.updateSellFee(fee);
+    return waitForTransaction(tx);
+  };
+
+  const enableSell = async () => {
+    const tx = await contract.enableSell();
+    return waitForTransaction(tx);
+  };
+
+  const disableSell = async () => {
+    const tx = await contract.disableSell();
+    return waitForTransaction(tx);
+  };
+
   return {
     contract,
     address: contractAddress,
@@ -55,5 +70,8 @@ export const useVendorSellContract = () => {
     isSellAvailable,
     buyTokens,
     sellTokens,
+    updateSellFee,
+    enableSell,
+    disableSell,
   };
 };

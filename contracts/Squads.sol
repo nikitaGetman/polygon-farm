@@ -93,7 +93,10 @@ contract Squads is ISquads, AccessControl {
     ) public returns (bool) {
         if (referrer == address(0) || member == address(0)) return false;
 
-        int256 _planId = getSufficientPlanIdByStakingAmount(amount);
+        int256 _planId = getSufficientPlanIdByStakingAmount(
+            stakingPlanId,
+            amount
+        );
 
         if (_planId < 0) return false;
 
@@ -164,6 +167,28 @@ contract Squads is ISquads, AccessControl {
         return plans;
     }
 
+    function getActivePlans() public view returns (SquadPlan[] memory) {
+        uint256 totalActivePlans = 0;
+        bool[] memory activePlansFlags = new bool[](plans.length);
+        for (uint256 i = 0; i < plans.length; i++) {
+            if (plans[i].isActive) {
+                activePlansFlags[i] = true;
+                totalActivePlans += 1;
+            }
+        }
+
+        SquadPlan[] memory activePlans = new SquadPlan[](totalActivePlans);
+        for (uint256 i = plans.length; i > 0; i--) {
+            if (activePlansFlags[i - 1]) {
+                totalActivePlans -= 1;
+                activePlans[totalActivePlans] = plans[i - 1];
+                if (totalActivePlans == 0) break;
+            }
+        }
+
+        return activePlans;
+    }
+
     function userHasSufficientStaking(address user, uint256 planId)
         public
         view
@@ -179,7 +204,10 @@ contract Squads is ISquads, AccessControl {
             if (
                 stakes[i - 1].timeEnd > block.timestamp &&
                 !stakes[i - 1].isToken2 &&
-                getSufficientPlanIdByStakingAmount(stakes[i - 1].amount) ==
+                getSufficientPlanIdByStakingAmount(
+                    plans[planId].stakingPlanId,
+                    stakes[i - 1].amount
+                ) ==
                 int256(planId)
             ) return true;
         }
@@ -204,14 +232,17 @@ contract Squads is ISquads, AccessControl {
         return false;
     }
 
-    function getSufficientPlanIdByStakingAmount(uint256 amount)
-        public
-        view
-        returns (int256)
-    {
+    function getSufficientPlanIdByStakingAmount(
+        uint256 stakingPlanId,
+        uint256 amount
+    ) public view returns (int256) {
         int256 planId = -1;
         for (uint256 i = 0; i < plans.length; i++) {
-            if (amount >= plans[i].stakingThreshold) planId = int256(i);
+            if (
+                plans[i].isActive &&
+                plans[i].stakingPlanId == stakingPlanId &&
+                amount >= plans[i].stakingThreshold
+            ) planId = int256(i);
         }
 
         return planId;
@@ -252,6 +283,7 @@ contract Squads is ISquads, AccessControl {
         uint256 stakingPlanId_
     ) public onlyRole(DEFAULT_ADMIN_ROLE) {
         SquadPlan memory plan = SquadPlan(
+            plans.length,
             subscriptionCost_,
             reward_,
             stakingThreshold_,

@@ -17,6 +17,7 @@ export const SquadsList = () => {
 
   return (
     <Flex
+      justifyContent="center"
       gap={{ sm: '20px', md: '30px', lg: '10px', xl: '20px' }}
       flexWrap="wrap"
       marginX={{ lg: '-5px', base: 'unset' }}

@@ -86,18 +86,17 @@ contract Helper is Ownable {
         bool userHasSufficientStaking;
     }
 
-    function getUserSquadInfo(uint256 planId, address user)
+    function getUserSquadInfo(ISquads.SquadPlan memory plan, address user)
         public
         view
         returns (UserSquadInfo memory)
     {
         ISquads.Squad memory squadStatus = squads.getUserSubscription(
             user,
-            planId
+            plan.index
         );
-        ISquads.SquadPlan memory plan = squads.getPlan(planId);
-        address[] memory members = squads.getUserSquadMembers(user, planId);
-        bool hasStaking = squads.userHasSufficientStaking(user, planId);
+        address[] memory members = squads.getUserSquadMembers(user, plan.index);
+        bool hasStaking = squads.userHasSufficientStaking(user, plan.index);
 
         return UserSquadInfo(squadStatus, plan, members, hasStaking);
     }
@@ -107,12 +106,14 @@ contract Helper is Ownable {
         view
         returns (UserSquadInfo[] memory)
     {
-        uint256 length = squads.getPlans().length;
+        ISquads.SquadPlan[] memory activePlans = squads.getActivePlans();
 
-        UserSquadInfo[] memory squadsInfo = new UserSquadInfo[](length);
+        UserSquadInfo[] memory squadsInfo = new UserSquadInfo[](
+            activePlans.length
+        );
 
-        for (uint256 i = 0; i < length; i++) {
-            squadsInfo[i] = getUserSquadInfo(i, user);
+        for (uint256 i = 0; i < activePlans.length; i++) {
+            squadsInfo[i] = getUserSquadInfo(activePlans[i], user);
         }
 
         return squadsInfo;
