@@ -93,7 +93,7 @@ export declare namespace Helper {
 
 export declare namespace ISquads {
   export type SquadPlanStruct = {
-    index: PromiseOrValue<BigNumberish>;
+    squadPlanId: PromiseOrValue<BigNumberish>;
     subscriptionCost: PromiseOrValue<BigNumberish>;
     reward: PromiseOrValue<BigNumberish>;
     stakingThreshold: PromiseOrValue<BigNumberish>;
@@ -111,7 +111,7 @@ export declare namespace ISquads {
     BigNumber,
     boolean
   ] & {
-    index: BigNumber;
+    squadPlanId: BigNumber;
     subscriptionCost: BigNumber;
     reward: BigNumber;
     stakingThreshold: BigNumber;

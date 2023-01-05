@@ -8,6 +8,8 @@ import {
   Token2,
   Helper,
   Lottery,
+  Ticket,
+  VendorSell,
 } from "typechain-types";
 
 const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
@@ -18,6 +20,7 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
 
   const token1 = await ethers.getContract<Token1>("Token1", admin);
   const token2 = await ethers.getContract<Token2>("Token2", admin);
+  const ticket = await ethers.getContract<Ticket>("Ticket", admin);
   const staking = await ethers.getContract<Staking>("Staking", admin);
   const referralManager = await ethers.getContract<ReferralManager>(
     "ReferralManager",
@@ -26,6 +29,7 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   const squadsManager = await ethers.getContract<Squads>("Squads", admin);
   const lottery = await ethers.getContract<Lottery>("Lottery", admin);
   const helper = await ethers.getContract<Helper>("Helper", admin);
+  const vendor = await ethers.getContract<VendorSell>("VendorSell", admin);
 
   // --------------------- STAKING ------------------------
   // ------------------------------------------------------
@@ -153,7 +157,38 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
     await tx.wait();
   }
 
-  //   TODO: add VendorSell and Lottery contracts
+  //   TODO: add VendorSell and Lottery (minter role) contracts
+
+  // --------------------- Lottery ------------------------
+  // ------------------------------------------------------
+  // check Ticket address in Lottery
+  // check PaymentToken (SAV) address in Lottery
+  // check RewardToken (SAVR) address in Lottery
+  // check RewardPool address in Lottery
+  // check Lottery has Minter role in Ticket token
+  const minterRole = await ticket.MINTER_ROLE();
+  const hasMinterRole = await ticket.hasRole(minterRole, lottery.address);
+  if (!hasMinterRole) {
+    console.log("Set Ticket MINTER role for Lottery contract");
+    const tx = await ticket.grantRole(minterRole, lottery.address);
+    await tx.wait();
+  }
+
+  // --------------------- VendorSell ------------------------
+  // ------------------------------------------------------
+  // check tokenPool in VendorSell
+  // check changeTokenPool in VendorSell
+  // check changeToken (USDT) in VendorSell
+  // check token (SAV) in VendorSell
+  const vendorToken = await vendor.token();
+  if (vendorToken !== token1.address) {
+    console.log("Update VendorSell token address");
+    const tx = await vendor.updateToken(token1.address);
+    await tx.wait();
+  }
+
+  // --------------------- Vesting ------------------------
+  // ------------------------------------------------------
 
   console.log("---- EVERYTHING UP TO DATE ----");
 };

@@ -18,7 +18,7 @@ const _abi = [
         components: [
           {
             internalType: "uint256",
-            name: "index",
+            name: "squadPlanId",
             type: "uint256",
           },
           {
@@ -74,7 +74,7 @@ const _abi = [
         components: [
           {
             internalType: "uint256",
-            name: "index",
+            name: "squadPlanId",
             type: "uint256",
           },
           {
@@ -124,7 +124,7 @@ const _abi = [
         components: [
           {
             internalType: "uint256",
-            name: "index",
+            name: "squadPlanId",
             type: "uint256",
           },
           {

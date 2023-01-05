@@ -32,8 +32,13 @@ export const Balances = () => {
       <Balance label="Staking pool" balance={stakingBalance.data} symbol="SAV" />
       <Balance label="Staking TVL" balance={tvl} symbol="SAV" minLimit={0} />
       <Balance label="Referral rewards pool" balance={referralBalance.data} symbol="SAVR" />
-      <Balance label="Vendor pool (SAV)" balance={vendorBalance.data} symbol="SAV" />
-      <Balance label="Vendor pool (USDT)" balance={vendorChangeBalance.data} symbol="USDT" />
+      <Balance label="Exchange pool (SAV)" balance={vendorBalance.data} symbol="SAV" />
+      <Balance
+        label="Exchange pool (USDT)"
+        balance={vendorChangeBalance.data}
+        decimals={6}
+        symbol="USDT"
+      />
       <Balance label="Vesting pool" balance={vestingBalance.data} symbol="SAV" />
     </AdminSection>
   );
@@ -44,8 +49,9 @@ type BalanceProps = {
   balance?: BigNumberish | null;
   symbol?: string;
   minLimit?: BigNumberish;
+  decimals?: number;
 };
-const Balance: FC<BalanceProps> = ({ label, balance, symbol, minLimit = 10_000 }) => {
+const Balance: FC<BalanceProps> = ({ label, balance, symbol, decimals, minLimit = 10_000 }) => {
   const color = symbol === 'SAVR' ? 'savr' : 'sav';
 
   const isLowBalance = BigNumber.from(minLimit).gt(
@@ -59,7 +65,11 @@ const Balance: FC<BalanceProps> = ({ label, balance, symbol, minLimit = 10_000 }
       </Text>
       <Text color={color}>
         {balance
-          ? beautifyAmount(bigNumberToString(balance || 0, { precision: 0 }), symbol || '', true)
+          ? beautifyAmount(
+              bigNumberToString(balance || 0, { precision: 0, decimals }),
+              symbol || '',
+              true
+            )
           : '---'}
       </Text>
     </Flex>

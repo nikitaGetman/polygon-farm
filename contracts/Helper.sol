@@ -93,10 +93,16 @@ contract Helper is Ownable {
     {
         ISquads.Squad memory squadStatus = squads.getUserSubscription(
             user,
-            plan.index
+            plan.squadPlanId
         );
-        address[] memory members = squads.getUserSquadMembers(user, plan.index);
-        bool hasStaking = squads.userHasSufficientStaking(user, plan.index);
+        address[] memory members = squads.getUserSquadMembers(
+            user,
+            plan.squadPlanId
+        );
+        bool hasStaking = squads.userHasSufficientStaking(
+            user,
+            plan.squadPlanId
+        );
 
         return UserSquadInfo(squadStatus, plan, members, hasStaking);
     }

@@ -3,6 +3,7 @@ pragma solidity 0.8.11;
 
 interface IStaking {
     struct StakingPlan {
+        uint256 stakingPlanId;
         bool isActive;
         uint256 subscriptionCost;
         uint256 subscriptionDuration;

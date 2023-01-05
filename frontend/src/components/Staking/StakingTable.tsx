@@ -32,7 +32,7 @@ type Stake = {
   reward: BigNumber;
   isClaimed: boolean;
   isToken2: boolean;
-  planId: number;
+  stakingPlanId: number;
   stakeId: number;
   period: number;
 };
@@ -54,7 +54,7 @@ export const StakingTable = ({
   onClaim,
 }: {
   stakes: Stake[];
-  onClaim: (planId: number, stakeId: number) => Promise<void>;
+  onClaim: (stakingPlanId: number, stakeId: number) => Promise<void>;
 }) => {
   const { isOpen, onToggle } = useDisclosure();
   const [loadingIndex, setLoadingIndex] = useState<number>();
@@ -75,9 +75,9 @@ export const StakingTable = ({
   const emptyRows = Math.max(0, COLLAPSED_LIMIT - visibleItems.length);
 
   const handleClaim = useCallback(
-    async (planId: number, stakeId: number, index: number) => {
+    async (stakingPlanId: number, stakeId: number, index: number) => {
       setLoadingIndex(index);
-      onClaim(planId, stakeId).finally(() => {
+      onClaim(stakingPlanId, stakeId).finally(() => {
         setLoadingIndex(undefined);
       });
     },
@@ -134,7 +134,7 @@ export const StakingTable = ({
                     size="xs"
                     variant="outlinedWhite"
                     isLoading={loadingIndex === index}
-                    onClick={() => handleClaim(stake.planId, stake.stakeId, index)}
+                    onClick={() => handleClaim(stake.stakingPlanId, stake.stakeId, index)}
                   >
                     Claim
                   </Button>

@@ -34,7 +34,7 @@ export const useSquadPlans = () => {
       const txHash = await squadsContract.updatePlanActivity(planId, isActive);
       success({
         title: 'Success',
-        description: `Squad plan with id ${planId} - ${isActive ? 'enabled' : 'disabled'}`,
+        description: `Team plan with id ${planId} - ${isActive ? 'enabled' : 'disabled'}`,
         txHash,
       });
     },
@@ -56,7 +56,7 @@ export const useSquadPlans = () => {
       stakingPlanId: number;
     }) => {
       const txHash = await squadsContract.addPlan(params);
-      success({ title: 'Success', description: 'Squad plan has been created', txHash });
+      success({ title: 'Success', description: 'Team plan has been created', txHash });
     },
     {
       onSuccess: () => {
@@ -94,11 +94,15 @@ export const useSquads = () => {
   const subscribe = useMutation(
     [SUBSCRIBE_TO_SQUADS_PLAN_MUTATION],
     async (planId: number) => {
-      const squadPlan = squadPlansRequest?.data?.[planId];
+      const squadPlan = squadPlansRequest?.data?.find(
+        (plan) => plan.squadPlanId.toNumber() === planId
+      );
       if (!squadPlan) {
         return;
       }
-      const stakingPlan = stakingPlansRequest?.data?.[squadPlan.stakingPlanId.toNumber()];
+      const stakingPlan = stakingPlansRequest?.data?.find(
+        (plan) => plan.stakingPlanId === squadPlan.stakingPlanId.toNumber()
+      );
       if (!stakingPlan) {
         return;
       }

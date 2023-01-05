@@ -19,12 +19,15 @@ export const StakingPage = () => {
 
   const stakesList = useMemo(
     () =>
-      userStakesRequest.data?.reduce((acc, stakes, index) => {
-        const period = stakingPlansRequest.data?.[index].stakingDuration;
+      userStakesRequest.data?.reduce((acc, stakes) => {
+        if (!stakes || !stakes.length) return acc;
+
+        const period = stakingPlansRequest.data?.find(
+          (plan) => plan.stakingPlanId === stakes[0].stakingPlanId
+        )?.stakingDuration;
         const stakesWithPeriod = stakes.map((s, stakeIndex) => ({
           ...s,
           period,
-          planId: index,
           stakeId: stakeIndex,
         }));
         return [...acc, ...stakesWithPeriod];

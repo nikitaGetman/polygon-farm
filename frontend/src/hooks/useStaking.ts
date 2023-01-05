@@ -43,7 +43,14 @@ export const useStakingPlans = () => {
     async () => {
       return await stakingContract.getStakingPlans();
     },
-    { select: (data) => data.map((plan) => ({ ...plan, apr: plan.apr.toNumber() / 10 })) }
+    {
+      select: (data) =>
+        data.map((plan) => ({
+          ...plan,
+          apr: plan.apr.toNumber() / 10,
+          stakingPlanId: plan.stakingPlanId.toNumber(),
+        })),
+    }
   );
 
   const updatePlanActivity = useMutation(
@@ -118,9 +125,15 @@ export const useStaking = () => {
     async () => {
       const res = account
         ? await Promise.all(
-            (stakingPlansRequest.data || []).map((_, index) =>
-              stakingContract.getUserStakes(account, index)
-            )
+            (stakingPlansRequest.data || [])
+              .filter((plan) => plan.isActive)
+              .map((plan) =>
+                stakingContract
+                  .getUserStakes(account, plan.stakingPlanId)
+                  .then((stakes) =>
+                    stakes.map((stake) => ({ ...stake, stakingPlanId: plan.stakingPlanId }))
+                  )
+              )
           )
         : null;
 
@@ -143,7 +156,9 @@ export const useStaking = () => {
               (subscribedTill?.toNumber() || 0) - currentTime <
                 STAKING_SUBSCRIPTION_ENDING_NOTIFICATION;
 
-            const stakes = userStakesRequest.data?.[index];
+            const stakes = userStakesRequest.data?.find(
+              (s) => s[0]?.stakingPlanId === plan.stakingPlanId
+            );
 
             const { totalReward, totalDeposit } = stakes
               ? stakes.reduce(
@@ -173,10 +188,9 @@ export const useStaking = () => {
               ...plan,
               ...userPlansInfoRequest.data?.[index],
               isSubscriptionEnding,
-              planId: index,
               totalReward,
               totalDeposit,
-              stakes: userStakesRequest.data?.[index],
+              stakes,
               hasReadyStakes,
             };
           })
@@ -206,7 +220,8 @@ export const useStaking = () => {
   const subscribe = useMutation(
     [STAKING_SUBSCRIBE_MUTATION],
     async (planId: number) => {
-      const stakingPlan = activeStakingPlans[planId];
+      const stakingPlan = activeStakingPlans.find((plan) => plan.stakingPlanId === planId);
+      if (!stakingPlan) throw new Error();
 
       await tokens.increaseAllowanceIfRequired.mutateAsync({
         token: TOKENS.SAV,
@@ -252,7 +267,8 @@ export const useStaking = () => {
         requiredAmount: amount,
       });
 
-      const stakingPlan = activeStakingPlans[planId];
+      const stakingPlan = activeStakingPlans.find((plan) => plan.stakingPlanId === planId);
+      if (!stakingPlan) throw new Error();
 
       const txHash = await stakingContract.deposit({ planId, amount, isToken2, referrer });
       success({
@@ -281,8 +297,10 @@ export const useStaking = () => {
   const withdraw = useMutation(
     [STAKING_CLAIM_MUTATION],
     async ({ planId, stakeId }: { planId: number; stakeId: number }) => {
-      const stake = activeStakingPlans?.[planId]?.stakes?.[stakeId] || null;
       const txHash = await stakingContract.withdraw(planId, stakeId);
+      const stake = activeStakingPlans.find((plan) => plan.stakingPlanId === planId)?.stakes?.[
+        stakeId
+      ];
       success({
         title: 'Success',
         description: getWithdrawMessage(stake?.isToken2 ? 0 : stake?.amount, stake?.profit),
@@ -306,10 +324,10 @@ export const useStaking = () => {
     [STAKING_CLAIM_ALL_MUTATION],
     async (planId: number) => {
       const txHash = await stakingContract.withdrawAll(planId);
-      const stakePlan = activeStakingPlans?.[planId] || null;
+      const stakingPlan = activeStakingPlans.find((plan) => plan.stakingPlanId === planId);
       success({
         title: 'Success',
-        description: getWithdrawMessage(stakePlan?.totalDeposit, stakePlan?.totalReward),
+        description: getWithdrawMessage(stakingPlan?.totalDeposit, stakingPlan?.totalReward),
         txHash,
       });
     },

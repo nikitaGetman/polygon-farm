@@ -497,7 +497,7 @@
                   "components": [
                     {
                       "internalType": "uint256",
-                      "name": "index",
+                      "name": "squadPlanId",
                       "type": "uint256"
                     },
                     {
@@ -566,7 +566,7 @@
                       "components": [
                         {
                           "internalType": "uint256",
-                          "name": "index",
+                          "name": "squadPlanId",
                           "type": "uint256"
                         },
                         {
@@ -656,7 +656,7 @@
                       "components": [
                         {
                           "internalType": "uint256",
-                          "name": "index",
+                          "name": "squadPlanId",
                           "type": "uint256"
                         },
                         {
@@ -3230,7 +3230,7 @@
                 {
                   "indexed": true,
                   "internalType": "uint256",
-                  "name": "planId",
+                  "name": "squadPlanId",
                   "type": "uint256"
                 },
                 {
@@ -3330,7 +3330,7 @@
                 {
                   "indexed": true,
                   "internalType": "uint256",
-                  "name": "planId",
+                  "name": "squadPlanId",
                   "type": "uint256"
                 },
                 {
@@ -3355,7 +3355,7 @@
                 {
                   "indexed": true,
                   "internalType": "uint256",
-                  "name": "planId",
+                  "name": "squadPlanId",
                   "type": "uint256"
                 },
                 {
@@ -3374,7 +3374,7 @@
                 {
                   "indexed": true,
                   "internalType": "uint256",
-                  "name": "planId",
+                  "name": "squadPlanId",
                   "type": "uint256"
                 },
                 {
@@ -3423,7 +3423,7 @@
                 {
                   "indexed": true,
                   "internalType": "uint256",
-                  "name": "planId",
+                  "name": "squadPlanId",
                   "type": "uint256"
                 },
                 {
@@ -3503,7 +3503,7 @@
                   "components": [
                     {
                       "internalType": "uint256",
-                      "name": "index",
+                      "name": "squadPlanId",
                       "type": "uint256"
                     },
                     {
@@ -3559,7 +3559,7 @@
                   "components": [
                     {
                       "internalType": "uint256",
-                      "name": "index",
+                      "name": "squadPlanId",
                       "type": "uint256"
                     },
                     {
@@ -3609,7 +3609,7 @@
                   "components": [
                     {
                       "internalType": "uint256",
-                      "name": "index",
+                      "name": "squadPlanId",
                       "type": "uint256"
                     },
                     {
@@ -3840,7 +3840,7 @@
               "outputs": [
                 {
                   "internalType": "uint256",
-                  "name": "index",
+                  "name": "squadPlanId",
                   "type": "uint256"
                 },
                 {
@@ -4268,7 +4268,7 @@
                 {
                   "indexed": true,
                   "internalType": "uint256",
-                  "name": "planId",
+                  "name": "stakingPlanId",
                   "type": "uint256"
                 },
                 {
@@ -4293,7 +4293,7 @@
                 {
                   "indexed": true,
                   "internalType": "uint256",
-                  "name": "planId",
+                  "name": "stakingPlanId",
                   "type": "uint256"
                 },
                 {
@@ -4411,7 +4411,7 @@
                 {
                   "indexed": true,
                   "internalType": "uint256",
-                  "name": "planId",
+                  "name": "stakingPlanId",
                   "type": "uint256"
                 },
                 {
@@ -4454,7 +4454,7 @@
                 {
                   "indexed": true,
                   "internalType": "uint256",
-                  "name": "planId",
+                  "name": "stakingPlanId",
                   "type": "uint256"
                 },
                 {
@@ -4485,7 +4485,7 @@
                 {
                   "indexed": true,
                   "internalType": "uint256",
-                  "name": "planId",
+                  "name": "stakingPlanId",
                   "type": "uint256"
                 }
               ],
@@ -4678,6 +4678,11 @@
               "outputs": [
                 {
                   "components": [
+                    {
+                      "internalType": "uint256",
+                      "name": "stakingPlanId",
+                      "type": "uint256"
+                    },
                     {
                       "internalType": "bool",
                       "name": "isActive",
@@ -5161,6 +5166,11 @@
               ],
               "name": "stakingPlans",
               "outputs": [
+                {
+                  "internalType": "uint256",
+                  "name": "stakingPlanId",
+                  "type": "uint256"
+                },
                 {
                   "internalType": "bool",
                   "name": "isActive",

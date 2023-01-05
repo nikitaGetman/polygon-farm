@@ -20,18 +20,26 @@ export const StakingControl = () => {
           Add staking plan
         </Button>
 
-        <Box maxHeight="400px" overflowY="auto">
-          {stakingPlansRequest.data?.map((plan, index) => (
+        <Box mt="16px" maxHeight="400px" overflowY="auto">
+          {stakingPlansRequest.data?.map((plan) => (
             <StakingPlanInfo
-              key={index}
-              index={index}
+              key={plan.stakingPlanId}
+              stakingPlanId={plan.stakingPlanId}
               duration={plan.stakingDuration}
               subscriptionCost={plan.subscriptionCost}
               apr={plan.apr.toString()}
               isActive={plan.isActive}
-              onActivate={() => updatePlanActivity.mutateAsync({ planId: index, isActive: true })}
+              onActivate={() =>
+                updatePlanActivity.mutateAsync({
+                  planId: plan.stakingPlanId,
+                  isActive: true,
+                })
+              }
               onDeactivate={() =>
-                updatePlanActivity.mutateAsync({ planId: index, isActive: false })
+                updatePlanActivity.mutateAsync({
+                  planId: plan.stakingPlanId,
+                  isActive: false,
+                })
               }
             />
           ))}
@@ -46,7 +54,7 @@ export const StakingControl = () => {
 };
 
 type StakingPlanInfoProps = {
-  index: number;
+  stakingPlanId: number;
   duration: BigNumberish;
   subscriptionCost: BigNumber;
   apr: string | number;
@@ -55,7 +63,7 @@ type StakingPlanInfoProps = {
   onDeactivate: () => Promise<void>;
 };
 const StakingPlanInfo: FC<StakingPlanInfoProps> = ({
-  index,
+  stakingPlanId,
   duration,
   subscriptionCost,
   apr,
@@ -77,14 +85,14 @@ const StakingPlanInfo: FC<StakingPlanInfoProps> = ({
   return (
     <Box
       textStyle="text1"
-      mt="16px"
+      _notFirst={{ mt: '16px' }}
       border="1px solid"
       borderColor="gray.200"
       borderRadius="sm"
       padding="8px"
     >
       <Flex alignItems="center" mb="8px">
-        <Text mr="12px">Staking (id: {index})</Text>
+        <Text mr="12px">Staking (id: {stakingPlanId})</Text>
         <Text color={isActive ? 'green.400' : 'red'}>{isActive ? 'Active' : 'Disabled'}</Text>
       </Flex>
 

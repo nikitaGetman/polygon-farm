@@ -21,29 +21,29 @@ contract Squads is ISquads, AccessControl {
 
     event Subscribed(
         address indexed subscriber,
-        uint256 indexed planId,
+        uint256 indexed squadPlanId,
         uint256 indexed timestamp
     );
     event SquadFilled(
         address indexed user,
-        uint256 indexed planId,
+        uint256 indexed squadPlanId,
         uint256 indexed squadCount
     );
     event MemberAdded(
         address indexed user,
-        uint256 indexed planId,
+        uint256 indexed squadPlanId,
         address member,
         uint256 squadMembers
     );
     event SquadPlanCreated(
-        uint256 indexed planId,
+        uint256 indexed squadPlanId,
         uint256 subscriptionCost,
         uint256 reward,
         uint256 stakingThreshold,
         uint256 squadSize,
         uint256 stakingPlanId
     );
-    event SquadActivityChanged(uint256 indexed planId, bool isActive);
+    event SquadActivityChanged(uint256 indexed squadPlanId, bool isActive);
 
     constructor(
         address subscriptionToken_,

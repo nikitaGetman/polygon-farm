@@ -29,6 +29,7 @@ import type {
 
 export declare namespace IStaking {
   export type StakingPlanStruct = {
+    stakingPlanId: PromiseOrValue<BigNumberish>;
     isActive: PromiseOrValue<boolean>;
     subscriptionCost: PromiseOrValue<BigNumberish>;
     subscriptionDuration: PromiseOrValue<BigNumberish>;
@@ -44,6 +45,7 @@ export declare namespace IStaking {
   };
 
   export type StakingPlanStructOutput = [
+    BigNumber,
     boolean,
     BigNumber,
     BigNumber,
@@ -57,6 +59,7 @@ export declare namespace IStaking {
     BigNumber,
     BigNumber
   ] & {
+    stakingPlanId: BigNumber;
     isActive: boolean;
     subscriptionCost: BigNumber;
     subscriptionDuration: BigNumber;
@@ -582,7 +585,7 @@ export interface StakingInterface extends utils.Interface {
 }
 
 export interface ActivityChangedEventObject {
-  planId: BigNumber;
+  stakingPlanId: BigNumber;
   isActive: boolean;
 }
 export type ActivityChangedEvent = TypedEvent<
@@ -594,7 +597,7 @@ export type ActivityChangedEventFilter = TypedEventFilter<ActivityChangedEvent>;
 
 export interface ClaimedEventObject {
   user: string;
-  planId: BigNumber;
+  stakingPlanId: BigNumber;
   stakeIndex: BigNumber;
   amount: BigNumber;
   isToken2: boolean;
@@ -646,7 +649,7 @@ export type RoleRevokedEventFilter = TypedEventFilter<RoleRevokedEvent>;
 
 export interface StakedEventObject {
   user: string;
-  planId: BigNumber;
+  stakingPlanId: BigNumber;
   stakeIndex: BigNumber;
   amount: BigNumber;
   profit: BigNumber;
@@ -661,7 +664,7 @@ export type StakedEvent = TypedEvent<
 export type StakedEventFilter = TypedEventFilter<StakedEvent>;
 
 export interface StakingPlanCreatedEventObject {
-  planId: BigNumber;
+  stakingPlanId: BigNumber;
   duration: BigNumber;
   apr: BigNumber;
 }
@@ -675,7 +678,7 @@ export type StakingPlanCreatedEventFilter =
 
 export interface SubscribedEventObject {
   user: string;
-  planId: BigNumber;
+  stakingPlanId: BigNumber;
 }
 export type SubscribedEvent = TypedEvent<
   [string, BigNumber],
@@ -830,6 +833,7 @@ export interface Staking extends BaseContract {
       overrides?: CallOverrides
     ): Promise<
       [
+        BigNumber,
         boolean,
         BigNumber,
         BigNumber,
@@ -843,6 +847,7 @@ export interface Staking extends BaseContract {
         BigNumber,
         BigNumber
       ] & {
+        stakingPlanId: BigNumber;
         isActive: boolean;
         subscriptionCost: BigNumber;
         subscriptionDuration: BigNumber;
@@ -1071,6 +1076,7 @@ export interface Staking extends BaseContract {
     overrides?: CallOverrides
   ): Promise<
     [
+      BigNumber,
       boolean,
       BigNumber,
       BigNumber,
@@ -1084,6 +1090,7 @@ export interface Staking extends BaseContract {
       BigNumber,
       BigNumber
     ] & {
+      stakingPlanId: BigNumber;
       isActive: boolean;
       subscriptionCost: BigNumber;
       subscriptionDuration: BigNumber;
@@ -1312,6 +1319,7 @@ export interface Staking extends BaseContract {
       overrides?: CallOverrides
     ): Promise<
       [
+        BigNumber,
         boolean,
         BigNumber,
         BigNumber,
@@ -1325,6 +1333,7 @@ export interface Staking extends BaseContract {
         BigNumber,
         BigNumber
       ] & {
+        stakingPlanId: BigNumber;
         isActive: boolean;
         subscriptionCost: BigNumber;
         subscriptionDuration: BigNumber;
@@ -1438,17 +1447,17 @@ export interface Staking extends BaseContract {
 
   filters: {
     "ActivityChanged(uint256,bool)"(
-      planId?: PromiseOrValue<BigNumberish> | null,
+      stakingPlanId?: PromiseOrValue<BigNumberish> | null,
       isActive?: null
     ): ActivityChangedEventFilter;
     ActivityChanged(
-      planId?: PromiseOrValue<BigNumberish> | null,
+      stakingPlanId?: PromiseOrValue<BigNumberish> | null,
       isActive?: null
     ): ActivityChangedEventFilter;
 
     "Claimed(address,uint256,uint256,uint256,bool,uint256)"(
       user?: PromiseOrValue<string> | null,
-      planId?: PromiseOrValue<BigNumberish> | null,
+      stakingPlanId?: PromiseOrValue<BigNumberish> | null,
       stakeIndex?: PromiseOrValue<BigNumberish> | null,
       amount?: null,
       isToken2?: null,
@@ -1456,7 +1465,7 @@ export interface Staking extends BaseContract {
     ): ClaimedEventFilter;
     Claimed(
       user?: PromiseOrValue<string> | null,
-      planId?: PromiseOrValue<BigNumberish> | null,
+      stakingPlanId?: PromiseOrValue<BigNumberish> | null,
       stakeIndex?: PromiseOrValue<BigNumberish> | null,
       amount?: null,
       isToken2?: null,
@@ -1498,7 +1507,7 @@ export interface Staking extends BaseContract {
 
     "Staked(address,uint256,uint256,uint256,uint256,bool,uint256)"(
       user?: PromiseOrValue<string> | null,
-      planId?: PromiseOrValue<BigNumberish> | null,
+      stakingPlanId?: PromiseOrValue<BigNumberish> | null,
       stakeIndex?: PromiseOrValue<BigNumberish> | null,
       amount?: null,
       profit?: null,
@@ -1507,7 +1516,7 @@ export interface Staking extends BaseContract {
     ): StakedEventFilter;
     Staked(
       user?: PromiseOrValue<string> | null,
-      planId?: PromiseOrValue<BigNumberish> | null,
+      stakingPlanId?: PromiseOrValue<BigNumberish> | null,
       stakeIndex?: PromiseOrValue<BigNumberish> | null,
       amount?: null,
       profit?: null,
@@ -1516,23 +1525,23 @@ export interface Staking extends BaseContract {
     ): StakedEventFilter;
 
     "StakingPlanCreated(uint256,uint256,uint256)"(
-      planId?: PromiseOrValue<BigNumberish> | null,
+      stakingPlanId?: PromiseOrValue<BigNumberish> | null,
       duration?: null,
       apr?: null
     ): StakingPlanCreatedEventFilter;
     StakingPlanCreated(
-      planId?: PromiseOrValue<BigNumberish> | null,
+      stakingPlanId?: PromiseOrValue<BigNumberish> | null,
       duration?: null,
       apr?: null
     ): StakingPlanCreatedEventFilter;
 
     "Subscribed(address,uint256)"(
       user?: PromiseOrValue<string> | null,
-      planId?: PromiseOrValue<BigNumberish> | null
+      stakingPlanId?: PromiseOrValue<BigNumberish> | null
     ): SubscribedEventFilter;
     Subscribed(
       user?: PromiseOrValue<string> | null,
-      planId?: PromiseOrValue<BigNumberish> | null
+      stakingPlanId?: PromiseOrValue<BigNumberish> | null
     ): SubscribedEventFilter;
   };
 
