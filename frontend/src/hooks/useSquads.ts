@@ -4,7 +4,6 @@ import { BigNumber } from 'ethers';
 import { useAccount } from 'wagmi';
 
 import { bigNumberToString } from '@/utils/number';
-import { getReadableDuration } from '@/utils/time';
 
 import { useSquadsContract } from './contracts/useSquadsContract';
 import { TOKENS } from './contracts/useTokenContract';
@@ -118,9 +117,7 @@ export const useSquads = () => {
         title: 'Success',
         description: `${bigNumberToString(squadPlan.stakingThreshold, {
           precision: 0,
-        })}/${getReadableDuration(
-          stakingPlan.stakingDuration
-        )} Team subscription has been activated for one year`,
+        })}/${stakingPlan.stakingDuration} Team subscription has been activated for one year`,
         txHash,
       });
     },

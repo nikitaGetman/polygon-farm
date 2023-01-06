@@ -19027,7 +19027,7 @@
           ]
         },
         "Helper": {
-          "address": "0x7B65D54E7EAB2ef73b40bC7CE8d2f52D2af46D7C",
+          "address": "0xA98a6273Ec0512e9409454f4B214046F401c7a7A",
           "abi": [
             {
               "inputs": [
@@ -19192,7 +19192,7 @@
                   "components": [
                     {
                       "internalType": "uint256",
-                      "name": "index",
+                      "name": "squadPlanId",
                       "type": "uint256"
                     },
                     {
@@ -19261,7 +19261,7 @@
                       "components": [
                         {
                           "internalType": "uint256",
-                          "name": "index",
+                          "name": "squadPlanId",
                           "type": "uint256"
                         },
                         {
@@ -19351,7 +19351,7 @@
                       "components": [
                         {
                           "internalType": "uint256",
-                          "name": "index",
+                          "name": "squadPlanId",
                           "type": "uint256"
                         },
                         {
@@ -21890,7 +21890,7 @@
           ]
         },
         "Squads": {
-          "address": "0x498a23B13bf96114eB8e4Ab77248ACc610485635",
+          "address": "0x4977838CFDF405Fd009615D35397b79566E3C3Cf",
           "abi": [
             {
               "inputs": [
@@ -21925,7 +21925,7 @@
                 {
                   "indexed": true,
                   "internalType": "uint256",
-                  "name": "planId",
+                  "name": "squadPlanId",
                   "type": "uint256"
                 },
                 {
@@ -22025,7 +22025,7 @@
                 {
                   "indexed": true,
                   "internalType": "uint256",
-                  "name": "planId",
+                  "name": "squadPlanId",
                   "type": "uint256"
                 },
                 {
@@ -22050,7 +22050,7 @@
                 {
                   "indexed": true,
                   "internalType": "uint256",
-                  "name": "planId",
+                  "name": "squadPlanId",
                   "type": "uint256"
                 },
                 {
@@ -22069,7 +22069,7 @@
                 {
                   "indexed": true,
                   "internalType": "uint256",
-                  "name": "planId",
+                  "name": "squadPlanId",
                   "type": "uint256"
                 },
                 {
@@ -22118,7 +22118,7 @@
                 {
                   "indexed": true,
                   "internalType": "uint256",
-                  "name": "planId",
+                  "name": "squadPlanId",
                   "type": "uint256"
                 },
                 {
@@ -22198,7 +22198,7 @@
                   "components": [
                     {
                       "internalType": "uint256",
-                      "name": "index",
+                      "name": "squadPlanId",
                       "type": "uint256"
                     },
                     {
@@ -22254,7 +22254,7 @@
                   "components": [
                     {
                       "internalType": "uint256",
-                      "name": "index",
+                      "name": "squadPlanId",
                       "type": "uint256"
                     },
                     {
@@ -22304,7 +22304,7 @@
                   "components": [
                     {
                       "internalType": "uint256",
-                      "name": "index",
+                      "name": "squadPlanId",
                       "type": "uint256"
                     },
                     {
@@ -22535,7 +22535,7 @@
               "outputs": [
                 {
                   "internalType": "uint256",
-                  "name": "index",
+                  "name": "squadPlanId",
                   "type": "uint256"
                 },
                 {
@@ -22924,7 +22924,7 @@
           ]
         },
         "Staking": {
-          "address": "0xd87755eCE5f0c3Dba6D93bb597aCDEe1ce4Fb4be",
+          "address": "0xF849a042B54DC60752256C1f1DF360Ce614A3D06",
           "abi": [
             {
               "inputs": [
@@ -22963,7 +22963,7 @@
                 {
                   "indexed": true,
                   "internalType": "uint256",
-                  "name": "planId",
+                  "name": "stakingPlanId",
                   "type": "uint256"
                 },
                 {
@@ -22988,7 +22988,7 @@
                 {
                   "indexed": true,
                   "internalType": "uint256",
-                  "name": "planId",
+                  "name": "stakingPlanId",
                   "type": "uint256"
                 },
                 {
@@ -23106,7 +23106,7 @@
                 {
                   "indexed": true,
                   "internalType": "uint256",
-                  "name": "planId",
+                  "name": "stakingPlanId",
                   "type": "uint256"
                 },
                 {
@@ -23149,7 +23149,7 @@
                 {
                   "indexed": true,
                   "internalType": "uint256",
-                  "name": "planId",
+                  "name": "stakingPlanId",
                   "type": "uint256"
                 },
                 {
@@ -23180,7 +23180,7 @@
                 {
                   "indexed": true,
                   "internalType": "uint256",
-                  "name": "planId",
+                  "name": "stakingPlanId",
                   "type": "uint256"
                 }
               ],
@@ -23373,6 +23373,11 @@
               "outputs": [
                 {
                   "components": [
+                    {
+                      "internalType": "uint256",
+                      "name": "stakingPlanId",
+                      "type": "uint256"
+                    },
                     {
                       "internalType": "bool",
                       "name": "isActive",
@@ -23856,6 +23861,11 @@
               ],
               "name": "stakingPlans",
               "outputs": [
+                {
+                  "internalType": "uint256",
+                  "name": "stakingPlanId",
+                  "type": "uint256"
+                },
                 {
                   "internalType": "bool",
                   "name": "isActive",

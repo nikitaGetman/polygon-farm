@@ -30,7 +30,7 @@ export const Footer = () => {
         }`;
         sendDataMessage(message)
           .then(() => {
-            success({ title: 'Email address has been sent' });
+            success({ title: 'Email was accepted' });
             setEmail('');
             inputRef.current?.blur();
           })
