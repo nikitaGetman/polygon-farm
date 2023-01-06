@@ -32,7 +32,7 @@ export const WalletPortfolio = () => {
 
   const { balanceHistory } = useTokenBalanceHistory();
 
-  const { tvl, totalClaimed } = useStaking();
+  const { tvlSavSavr, totalClaimed } = useStaking();
 
   return (
     <Flex alignItems={{ sm: 'stretch', xl: 'center' }} direction={{ sm: 'column', xl: 'row' }}>
@@ -147,7 +147,7 @@ export const WalletPortfolio = () => {
               <Flex alignItems="baseline" width="50%" whiteSpace="nowrap">
                 <Text mr="8px">Total Value Locked</Text>
                 <Text fontSize="18px" fontWeight="500">
-                  {getReadableAmount(tvl || 0, { precision: 3 })}
+                  {getReadableAmount(tvlSavSavr || 0, { precision: 3 })}
                 </Text>
               </Flex>
               <Flex

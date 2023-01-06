@@ -3,19 +3,30 @@ import { Box, Button, Flex, Text, useDisclosure } from '@chakra-ui/react';
 import { BigNumber, BigNumberish } from 'ethers';
 
 import { useStakingPlans } from '@/hooks/useStaking';
+import { useStakingHistory } from '@/hooks/useStakingHistory';
 import { bigNumberToString } from '@/utils/number';
 import { getReadableDuration } from '@/utils/time';
 
 import { AddStakingModal } from '../common/AddStakingModal';
 import { AdminSection } from '../common/AdminSection';
+import { StakeUnlockChart } from '../common/StakeUnlockChart';
 
 export const StakingControl = () => {
   const { stakingPlansRequest, addStakingPlan, updatePlanActivity } = useStakingPlans();
   const { isOpen, onOpen, onClose } = useDisclosure();
 
+  const data = useStakingHistory();
+
   return (
     <AdminSection title="Staking" isLoading={stakingPlansRequest.isLoading}>
       <>
+        <Text textStyle="text1" mb="12px">
+          Staking unlock chart:
+        </Text>
+        <Box height="300px" mb="24px" pr="30px">
+          <StakeUnlockChart data={data} />
+        </Box>
+
         <Button size="sm" onClick={onOpen}>
           Add staking plan
         </Button>

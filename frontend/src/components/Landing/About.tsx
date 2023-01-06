@@ -12,7 +12,13 @@ export const About = () => {
 
   return (
     <Flex className="about-container">
-      <Flex alignItems="center" width="100%" justifyContent="center">
+      <Flex
+        alignItems="center"
+        justifySelf="center"
+        width="100%"
+        maxWidth={{ xl: '1000px', '2xl': 'unset' }}
+        justifyContent="center"
+      >
         <Box className="about-container__img" data-atrr={useBreakpoint()}>
           <BlueboxIcon height={isXl ? '304px' : '594px'} />
         </Box>

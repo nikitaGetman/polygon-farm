@@ -1,4 +1,4 @@
-import { useQuery } from 'wagmi';
+import { useQuery } from '@tanstack/react-query';
 
 import { ContractsEnum } from './contracts/useContractAbi';
 import { useTokenContract } from './contracts/useTokenContract';

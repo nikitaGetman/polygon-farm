@@ -32,7 +32,7 @@ type AddLotteryRoundProps = {
 export const AddLotteryRound: FC<AddLotteryRoundProps> = ({ onClose, onSubmit }) => {
   const [isLoading, setIsLoading] = useState(false);
 
-  const [startDate, setStartDate] = useState<Date | null>(new Date());
+  const [startDate, setStartDate] = useState<Date | null>(new Date(Date.now() + 900_000));
   const [days, setDays] = useState<string>();
   const [hours, setHours] = useState<string>();
   const [mins, setMins] = useState<string>();
@@ -96,6 +96,13 @@ export const AddLotteryRound: FC<AddLotteryRoundProps> = ({ onClose, onSubmit })
     onSubmit,
   ]);
 
+  const filterPassedTime = (time: Date | number) => {
+    const currentDate = new Date();
+    const selectedDate = new Date(time);
+
+    return currentDate.getTime() + 900_000 < selectedDate.getTime();
+  };
+
   const isSubmitEnabled =
     (initialPrize || tokensForOneTicket) &&
     maxTicketsFromOneMember &&
@@ -119,13 +126,14 @@ export const AddLotteryRound: FC<AddLotteryRoundProps> = ({ onClose, onSubmit })
             <DatePicker
               className="date-picker-element"
               selected={startDate}
-              minDate={new Date()}
+              minDate={new Date(Date.now() + 900_000)}
+              filterTime={filterPassedTime}
               placeholderText="Select raffle start date"
               showTimeSelect
               timeFormat="HH:mm"
               timeIntervals={15}
               timeCaption="Time"
-              dateFormat="yyyy-mm-dd hh:mm"
+              dateFormat="yyyy-MM-dd hh:mm"
               onChange={(date: any) => setStartDate(date)}
             />
           </Flex>
@@ -175,7 +183,7 @@ export const AddLotteryRound: FC<AddLotteryRoundProps> = ({ onClose, onSubmit })
             </Text>
             <Input
               type="number"
-              placeholder="SAV"
+              placeholder="SAVR"
               onChange={(e) => setInitialPrize(e.target.value)}
             />
           </Box>
@@ -186,7 +194,7 @@ export const AddLotteryRound: FC<AddLotteryRoundProps> = ({ onClose, onSubmit })
             </Text>
             <Input
               type="number"
-              placeholder="SAV"
+              placeholder="SAVR"
               onChange={(e) => setTokensForOneTicket(e.target.value)}
             />
           </Box>
@@ -247,7 +255,7 @@ export const AddLotteryRound: FC<AddLotteryRoundProps> = ({ onClose, onSubmit })
             isDisabled={!isSubmitEnabled || isLoading}
             onClick={handleSubmit}
           >
-            Close Raffle round
+            Create Raffle round
           </Button>
         </ModalFooter>
       </ModalContent>

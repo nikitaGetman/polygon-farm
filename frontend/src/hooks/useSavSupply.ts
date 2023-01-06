@@ -14,8 +14,12 @@ export const useSavSupply = () => {
 
   const totalSupply = useQuery(['sav-total-supply-query'], () => savContract.totalSupply());
 
+  const uniqueAddresses = useMemo(() => {
+    return Array.from(new Set([...Object.values(accounts), ...Object.values(contracts)]));
+  }, [accounts, contracts]);
+
   const balances = useQueries({
-    queries: [...Object.values(accounts), ...Object.values(contracts)].map((address) => ({
+    queries: uniqueAddresses.map((address) => ({
       queryKey: ['circulating-supply', address],
       queryFn: () => savContract.balanceOf(address),
     })),

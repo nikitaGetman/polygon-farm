@@ -21,7 +21,7 @@ const STAKING_DEPOSIT_MUTATION = 'staking-deposit';
 const STAKING_CLAIM_MUTATION = 'staking-claim';
 const STAKING_CLAIM_ALL_MUTATION = 'staking-claim-all';
 
-const STAKING_SUBSCRIPTION_ENDING_NOTIFICATION = 15 * 24 * 60 * 60; // 15 days in seconds
+const STAKING_SUBSCRIPTION_ENDING_NOTIFICATION = 30 * 24 * 60 * 60; // 30 days in seconds
 const REFETCH_REWARD_INTERVAL = 30000; // 30 secs
 
 const getWithdrawMessage = (deposit?: BigNumberish, rewards?: BigNumberish) => {
@@ -203,12 +203,23 @@ export const useStaking = () => {
     [activeStakingPlans]
   );
 
-  const tvl = useMemo(() => {
+  const tvlSav = useMemo(() => {
     return stakingPlansRequest.data?.reduce(
-      (acc, plan) => acc.add(plan.currentToken1Locked).add(plan.currentToken2Locked),
+      (acc, plan) => acc.add(plan.currentToken1Locked),
       BigNumber.from(0)
     );
   }, [stakingPlansRequest.data]);
+
+  const tvlSavr = useMemo(() => {
+    return stakingPlansRequest.data?.reduce(
+      (acc, plan) => acc.add(plan.currentToken2Locked),
+      BigNumber.from(0)
+    );
+  }, [stakingPlansRequest.data]);
+
+  const tvlSavSavr = useMemo(() => {
+    return tvlSav?.add(tvlSavr || 0);
+  }, [tvlSav, tvlSavr]);
 
   const totalClaimed = useMemo(() => {
     return stakingPlansRequest.data?.reduce(
@@ -355,7 +366,9 @@ export const useStaking = () => {
     withdraw,
     withdrawAll,
     stakingContract,
-    tvl,
+    tvlSav,
+    tvlSavr,
+    tvlSavSavr,
     totalClaimed,
   };
 };

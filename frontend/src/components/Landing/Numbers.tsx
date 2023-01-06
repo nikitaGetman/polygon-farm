@@ -11,7 +11,7 @@ import './Landing.scss';
 
 const maxSupply = BigNumber.from(10).pow(18).mul(1_000_000_000);
 export const Numbers = () => {
-  const { tvl } = useStaking();
+  const { tvlSav } = useStaking();
   const savBurned = useSavTokenBurn();
 
   const { circulatingSupply, totalSupply } = useSavSupply();
@@ -67,7 +67,7 @@ export const Numbers = () => {
         <Flex className="number-item">
           <Text className="number-item__heading">Total Value Locked</Text>
           <Text className="number-item__text" color="green.400">
-            {beautifyAmount(bigNumberToString(tvl || 0, { precision: 0 }), '', true)}
+            {beautifyAmount(bigNumberToString(tvlSav || 0, { precision: 0 }), '', true)}
           </Text>
         </Flex>
         <Flex className="number-item">

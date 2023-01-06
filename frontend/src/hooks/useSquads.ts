@@ -16,7 +16,7 @@ import { useTokens } from './useTokens';
 export const SQUAD_PLANS_REQUEST = 'squad-plans-info';
 const SUBSCRIBE_TO_SQUADS_PLAN_MUTATION = 'subscribe-to-squads';
 
-export const SQUADS_SUBSCRIPTION_ENDING_NOTIFICATION = 15 * 24 * 60 * 60; // 15 days in seconds
+export const SQUADS_SUBSCRIPTION_ENDING_NOTIFICATION = 30 * 24 * 60 * 60; // 30 days in seconds
 
 export const useSquadPlans = () => {
   const squadsContract = useSquadsContract();

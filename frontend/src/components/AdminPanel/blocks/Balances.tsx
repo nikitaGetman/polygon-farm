@@ -18,7 +18,7 @@ export const Balances = () => {
   const vendorBalance = useSavBalance(vendorPool);
   const vendorChangeBalance = useUsdtBalance(vendorChangePool);
   const vestingBalance = useSavBalance(vestingPool);
-  const { tvl } = useStaking();
+  const { tvlSav, tvlSavr } = useStaking();
 
   const isLoading =
     stakingBalance.isLoading ||
@@ -30,7 +30,8 @@ export const Balances = () => {
   return (
     <AdminSection title="Balances" isLoading={isLoading}>
       <Balance label="Staking pool" balance={stakingBalance.data} symbol="SAV" />
-      <Balance label="Staking TVL" balance={tvl} symbol="SAV" minLimit={0} />
+      <Balance label="Staking TVL (SAV)" balance={tvlSav} symbol="SAV" minLimit={0} />
+      <Balance label="Staking TVL (SAVR)" balance={tvlSavr} symbol="SAVR" minLimit={0} />
       <Balance label="Referral rewards pool" balance={referralBalance.data} symbol="SAVR" />
       <Balance label="Exchange pool (SAV)" balance={vendorBalance.data} symbol="SAV" />
       <Balance
@@ -46,7 +47,7 @@ export const Balances = () => {
 
 type BalanceProps = {
   label: string;
-  balance?: BigNumberish | null;
+  balance?: BigNumber | null;
   symbol?: string;
   minLimit?: BigNumberish;
   decimals?: number;
@@ -55,7 +56,7 @@ const Balance: FC<BalanceProps> = ({ label, balance, symbol, decimals, minLimit 
   const color = symbol === 'SAVR' ? 'savr' : 'sav';
 
   const isLowBalance = BigNumber.from(minLimit).gt(
-    bigNumberToString(balance || 0, { precision: 0 })
+    bigNumberToString(balance || 0, { precision: 0, decimals })
   );
 
   return (

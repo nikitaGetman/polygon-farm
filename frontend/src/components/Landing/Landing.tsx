@@ -14,7 +14,11 @@ import './Landing.scss';
 export const Landing = () => {
   return (
     <Box overflowX="hidden">
-      <Box id="top" className="main-container" paddingTop={{ sm: '20px', lg: '50px' }}>
+      <Box
+        id="top"
+        className="main-container"
+        paddingTop={{ sm: '20px', lg: '43px', xl: '55px', '2xl': '100px' }}
+      >
         <Main />
       </Box>
       <About />
