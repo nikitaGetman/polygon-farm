@@ -1,10 +1,8 @@
 import React from 'react';
 import { Flex, Text } from '@chakra-ui/react';
-import { useQuery } from '@tanstack/react-query';
 import { BigNumber } from 'ethers';
 
-import { ContractsEnum } from '@/hooks/contracts/useContractAbi';
-import { useTokenContract } from '@/hooks/contracts/useTokenContract';
+import { useSavSupply } from '@/hooks/useSavSupply';
 import { useSavTokenBurn } from '@/hooks/useSavTokenBurn';
 import { useStaking } from '@/hooks/useStaking';
 import { beautifyAmount, bigNumberToString, getReadableAmount } from '@/utils/number';
@@ -16,13 +14,7 @@ export const Numbers = () => {
   const { tvl } = useStaking();
   const savBurned = useSavTokenBurn();
 
-  const savToken = useTokenContract(ContractsEnum.SAV);
-
-  const totalSupply = useQuery(['sav-total-supply-query'], async () => {
-    return await savToken.totalSupply();
-  });
-
-  const circulatingSupply = savBurned.data ? maxSupply.sub(savBurned.data) : maxSupply;
+  const { circulatingSupply, totalSupply } = useSavSupply();
 
   return (
     <Flex mb={{ sm: '80px', xl: '100px', '2xl': '100px' }} justifyContent="center" flexWrap="wrap">
@@ -57,7 +49,7 @@ export const Numbers = () => {
         <Flex className="number-item">
           <Text className="number-item__heading">Total Supply</Text>
           <Text className="number-item__text" color="green.400">
-            {getReadableAmount(totalSupply.data || maxSupply, { precision: 0, prettify: true })}
+            {getReadableAmount(totalSupply || maxSupply, { precision: 0, prettify: true })}
           </Text>
         </Flex>
         <Flex className="number-item">

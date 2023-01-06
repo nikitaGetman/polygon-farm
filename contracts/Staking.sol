@@ -26,7 +26,7 @@ contract Staking is IStaking, AccessControl {
 
     event Staked(
         address indexed user,
-        uint256 indexed planId,
+        uint256 indexed stakingPlanId,
         uint256 indexed stakeIndex,
         uint256 amount,
         uint256 profit,
@@ -35,19 +35,19 @@ contract Staking is IStaking, AccessControl {
     );
     event Claimed(
         address indexed user,
-        uint256 indexed planId,
+        uint256 indexed stakingPlanId,
         uint256 indexed stakeIndex,
         uint256 amount,
         bool isToken2,
         uint256 timestamp
     );
     event StakingPlanCreated(
-        uint256 indexed planId,
+        uint256 indexed stakingPlanId,
         uint256 duration,
         uint256 apr
     );
-    event ActivityChanged(uint256 indexed planId, bool isActive);
-    event Subscribed(address indexed user, uint256 indexed planId);
+    event ActivityChanged(uint256 indexed stakingPlanId, bool isActive);
+    event Subscribed(address indexed user, uint256 indexed stakingPlanId);
 
     constructor(
         address token1_,
@@ -294,6 +294,7 @@ contract Staking is IStaking, AccessControl {
         require(apr > 0, "Insufficient APR");
 
         StakingPlan memory plan = StakingPlan({
+            stakingPlanId: stakingPlans.length,
             isActive: true,
             subscriptionCost: subscriptionCost,
             subscriptionDuration: subscriptionDuration,

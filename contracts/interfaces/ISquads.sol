@@ -8,7 +8,7 @@ interface ISquads {
     }
 
     struct SquadPlan {
-        uint256 index;
+        uint256 squadPlanId;
         uint256 subscriptionCost;
         uint256 reward; // reward for filling full squad
         uint256 stakingThreshold; // min staking amount that member should do

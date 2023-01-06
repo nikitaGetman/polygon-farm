@@ -37,8 +37,14 @@ export const Staking: FC<StakingProps> = ({ isPageView }) => {
   const [selectedPlan, setSelectedPlan] = useState<number>();
   const { getLocalReferrer } = useLocalReferrer();
 
-  const { activeStakingPlans, hasEndingSubscription, subscribe, deposit, withdrawAll } =
-    useStaking();
+  const {
+    stakingPlansRequest,
+    activeStakingPlans,
+    hasEndingSubscription,
+    subscribe,
+    deposit,
+    withdrawAll,
+  } = useStaking();
 
   const openModal = useCallback(
     (index: number) => {
@@ -157,7 +163,7 @@ export const Staking: FC<StakingProps> = ({ isPageView }) => {
             ))
           : null}
         {activeStakingPlans.map((planData) => (
-          <GridItem colSpan={1} rowSpan={1} key={planData.planId} width="100%">
+          <GridItem colSpan={1} rowSpan={1} key={planData.stakingPlanId} width="100%">
             <StakingPlan
               isSubscribed={planData.isSubscribed}
               isSubscriptionEnding={planData.isSubscriptionEnding}
@@ -171,17 +177,17 @@ export const Staking: FC<StakingProps> = ({ isPageView }) => {
               userStakeSavR={planData.currentToken2Staked || 0}
               userTotalReward={planData.totalReward}
               isClaimAvailable={planData.hasReadyStakes}
-              onSubscribe={() => subscribe.mutateAsync(planData.planId)}
-              onDeposit={() => openModal(planData.planId)}
-              onClaim={() => withdrawAll.mutateAsync(planData.planId)}
+              onSubscribe={() => subscribe.mutateAsync(planData.stakingPlanId)}
+              onDeposit={() => openModal(planData.stakingPlanId)}
+              onClaim={() => withdrawAll.mutateAsync(planData.stakingPlanId)}
             />
           </GridItem>
         ))}
       </Grid>
       {isOpen && selectedPlan !== undefined ? (
         <StakingModal
-          apr={activeStakingPlans[selectedPlan].apr.toString()}
-          lockPeriodDays={activeStakingPlans[selectedPlan].stakingDuration}
+          apr={stakingPlansRequest.data?.[selectedPlan].apr.toString() || 0}
+          lockPeriodDays={stakingPlansRequest.data?.[selectedPlan].stakingDuration || 0}
           isLoading={deposit.isLoading}
           onClose={closeModal}
           onStake={onDeposit}

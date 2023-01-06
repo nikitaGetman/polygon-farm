@@ -41,7 +41,6 @@ const menuItemStyle = {
 export const WalletMenu: FC<Props> = ({ connector, disconnect, address }) => {
   const connectorIcon = connector ? CONNECTOR_ICON[connector.name] : undefined;
   const { onCopy, setValue, hasCopied } = useClipboard(address || '');
-
   const { success } = useNotification();
   useEffect(() => {
     if (hasCopied) {
@@ -64,9 +63,9 @@ export const WalletMenu: FC<Props> = ({ connector, disconnect, address }) => {
         rightIcon={isFullView ? <ChevronDownIcon /> : undefined}
         size={{ sm: 'md', '2xl': 'lg' }}
         padding={{ sm: '10px', xl: '20px' }}
-        textTransform="lowercase"
+        textTransform="unset"
       >
-        {isFullView ? trimAddress(address) : connectorIcon}
+        {isFullView ? trimAddress(address, 4, false) : connectorIcon}
       </MenuButton>
       <Portal>
         <MenuList bgColor="green.100" minWidth="150px" p="6px 8px" zIndex="60">

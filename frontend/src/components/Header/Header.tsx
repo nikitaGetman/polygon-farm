@@ -60,6 +60,7 @@ export const Header: FC<HeaderProps> = ({ isLandingView }) => {
       <Container variant="header">
         <Box
           as="a"
+          cursor="pointer"
           onClick={() => (isLandingView ? navigate('/#top') : window.open(LANDING_URL, '_self'))}
         >
           <Image src={Logo} alt="Logo" height={{ sm: '40px', '2xl': 'unset' }} />

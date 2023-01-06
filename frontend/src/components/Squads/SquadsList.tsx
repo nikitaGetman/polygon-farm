@@ -36,19 +36,16 @@ export const SquadsList = () => {
         : null}
 
       {userSquadsInfo.map(
-        (
-          {
-            squadStatus,
-            members,
-            plan,
-            userHasSufficientStaking,
-            stakingPlan,
-            isSubscriptionEnding,
-          },
-          index
-        ) => (
+        ({
+          squadStatus,
+          members,
+          plan,
+          userHasSufficientStaking,
+          stakingPlan,
+          isSubscriptionEnding,
+        }) => (
           <SquadItem
-            key={index}
+            key={plan.squadPlanId.toNumber()}
             isSmallSize={isSm}
             subscription={squadStatus.subscription}
             squadsFilled={squadStatus.squadsFilled}
@@ -59,7 +56,7 @@ export const SquadsList = () => {
             userHasStake={userHasSufficientStaking}
             members={members}
             reward={plan.reward}
-            onSubscribe={() => subscribe.mutateAsync(index)}
+            onSubscribe={() => subscribe.mutateAsync(plan.squadPlanId.toNumber())}
           />
         )
       )}

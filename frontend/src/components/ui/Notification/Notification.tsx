@@ -61,7 +61,7 @@ export const Notification: FC<NotificationProps> = ({
       ) : null}
       {txHash && scanLink ? (
         <Link href={scanLink} target="_blank" color="green.400" display="block" mt="10px">
-          View in Polygonscan
+          View on Polygonscan
         </Link>
       ) : null}
     </Box>

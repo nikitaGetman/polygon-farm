@@ -100,7 +100,7 @@ export const StakingModal: FC<StakingModalProps> = ({
             >
               <Flex alignItems="center">
                 <Box width="40px">{token === TOKENS.SAV ? <SavIcon /> : <SavrIcon />}</Box>
-                <span>Stake {token}</span>
+                <span>Stake {token === TOKENS.SAV ? 'SAV' : 'SAVR'}</span>
               </Flex>
             </MenuButton>
             <MenuList>

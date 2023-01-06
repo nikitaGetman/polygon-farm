@@ -29,7 +29,7 @@ import type {
 
 export declare namespace ISquads {
   export type SquadPlanStruct = {
-    index: PromiseOrValue<BigNumberish>;
+    squadPlanId: PromiseOrValue<BigNumberish>;
     subscriptionCost: PromiseOrValue<BigNumberish>;
     reward: PromiseOrValue<BigNumberish>;
     stakingThreshold: PromiseOrValue<BigNumberish>;
@@ -47,7 +47,7 @@ export declare namespace ISquads {
     BigNumber,
     boolean
   ] & {
-    index: BigNumber;
+    squadPlanId: BigNumber;
     subscriptionCost: BigNumber;
     reward: BigNumber;
     stakingThreshold: BigNumber;
@@ -434,7 +434,7 @@ export interface SquadsInterface extends utils.Interface {
 
 export interface MemberAddedEventObject {
   user: string;
-  planId: BigNumber;
+  squadPlanId: BigNumber;
   member: string;
   squadMembers: BigNumber;
 }
@@ -483,7 +483,7 @@ export type RoleRevokedEvent = TypedEvent<
 export type RoleRevokedEventFilter = TypedEventFilter<RoleRevokedEvent>;
 
 export interface SquadActivityChangedEventObject {
-  planId: BigNumber;
+  squadPlanId: BigNumber;
   isActive: boolean;
 }
 export type SquadActivityChangedEvent = TypedEvent<
@@ -496,7 +496,7 @@ export type SquadActivityChangedEventFilter =
 
 export interface SquadFilledEventObject {
   user: string;
-  planId: BigNumber;
+  squadPlanId: BigNumber;
   squadCount: BigNumber;
 }
 export type SquadFilledEvent = TypedEvent<
@@ -507,7 +507,7 @@ export type SquadFilledEvent = TypedEvent<
 export type SquadFilledEventFilter = TypedEventFilter<SquadFilledEvent>;
 
 export interface SquadPlanCreatedEventObject {
-  planId: BigNumber;
+  squadPlanId: BigNumber;
   subscriptionCost: BigNumber;
   reward: BigNumber;
   stakingThreshold: BigNumber;
@@ -524,7 +524,7 @@ export type SquadPlanCreatedEventFilter =
 
 export interface SubscribedEventObject {
   subscriber: string;
-  planId: BigNumber;
+  squadPlanId: BigNumber;
   timestamp: BigNumber;
 }
 export type SubscribedEvent = TypedEvent<
@@ -642,7 +642,7 @@ export interface Squads extends BaseContract {
         BigNumber,
         boolean
       ] & {
-        index: BigNumber;
+        squadPlanId: BigNumber;
         subscriptionCost: BigNumber;
         reward: BigNumber;
         stakingThreshold: BigNumber;
@@ -836,7 +836,7 @@ export interface Squads extends BaseContract {
       BigNumber,
       boolean
     ] & {
-      index: BigNumber;
+      squadPlanId: BigNumber;
       subscriptionCost: BigNumber;
       reward: BigNumber;
       stakingThreshold: BigNumber;
@@ -1032,7 +1032,7 @@ export interface Squads extends BaseContract {
         BigNumber,
         boolean
       ] & {
-        index: BigNumber;
+        squadPlanId: BigNumber;
         subscriptionCost: BigNumber;
         reward: BigNumber;
         stakingThreshold: BigNumber;
@@ -1150,13 +1150,13 @@ export interface Squads extends BaseContract {
   filters: {
     "MemberAdded(address,uint256,address,uint256)"(
       user?: PromiseOrValue<string> | null,
-      planId?: PromiseOrValue<BigNumberish> | null,
+      squadPlanId?: PromiseOrValue<BigNumberish> | null,
       member?: null,
       squadMembers?: null
     ): MemberAddedEventFilter;
     MemberAdded(
       user?: PromiseOrValue<string> | null,
-      planId?: PromiseOrValue<BigNumberish> | null,
+      squadPlanId?: PromiseOrValue<BigNumberish> | null,
       member?: null,
       squadMembers?: null
     ): MemberAddedEventFilter;
@@ -1195,27 +1195,27 @@ export interface Squads extends BaseContract {
     ): RoleRevokedEventFilter;
 
     "SquadActivityChanged(uint256,bool)"(
-      planId?: PromiseOrValue<BigNumberish> | null,
+      squadPlanId?: PromiseOrValue<BigNumberish> | null,
       isActive?: null
     ): SquadActivityChangedEventFilter;
     SquadActivityChanged(
-      planId?: PromiseOrValue<BigNumberish> | null,
+      squadPlanId?: PromiseOrValue<BigNumberish> | null,
       isActive?: null
     ): SquadActivityChangedEventFilter;
 
     "SquadFilled(address,uint256,uint256)"(
       user?: PromiseOrValue<string> | null,
-      planId?: PromiseOrValue<BigNumberish> | null,
+      squadPlanId?: PromiseOrValue<BigNumberish> | null,
       squadCount?: PromiseOrValue<BigNumberish> | null
     ): SquadFilledEventFilter;
     SquadFilled(
       user?: PromiseOrValue<string> | null,
-      planId?: PromiseOrValue<BigNumberish> | null,
+      squadPlanId?: PromiseOrValue<BigNumberish> | null,
       squadCount?: PromiseOrValue<BigNumberish> | null
     ): SquadFilledEventFilter;
 
     "SquadPlanCreated(uint256,uint256,uint256,uint256,uint256,uint256)"(
-      planId?: PromiseOrValue<BigNumberish> | null,
+      squadPlanId?: PromiseOrValue<BigNumberish> | null,
       subscriptionCost?: null,
       reward?: null,
       stakingThreshold?: null,
@@ -1223,7 +1223,7 @@ export interface Squads extends BaseContract {
       stakingPlanId?: null
     ): SquadPlanCreatedEventFilter;
     SquadPlanCreated(
-      planId?: PromiseOrValue<BigNumberish> | null,
+      squadPlanId?: PromiseOrValue<BigNumberish> | null,
       subscriptionCost?: null,
       reward?: null,
       stakingThreshold?: null,
@@ -1233,12 +1233,12 @@ export interface Squads extends BaseContract {
 
     "Subscribed(address,uint256,uint256)"(
       subscriber?: PromiseOrValue<string> | null,
-      planId?: PromiseOrValue<BigNumberish> | null,
+      squadPlanId?: PromiseOrValue<BigNumberish> | null,
       timestamp?: PromiseOrValue<BigNumberish> | null
     ): SubscribedEventFilter;
     Subscribed(
       subscriber?: PromiseOrValue<string> | null,
-      planId?: PromiseOrValue<BigNumberish> | null,
+      squadPlanId?: PromiseOrValue<BigNumberish> | null,
       timestamp?: PromiseOrValue<BigNumberish> | null
     ): SubscribedEventFilter;
   };

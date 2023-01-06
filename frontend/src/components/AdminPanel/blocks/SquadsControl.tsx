@@ -34,25 +34,33 @@ export const SquadsControl = () => {
   );
 
   return (
-    <AdminSection title="Squads" isLoading={squadPlansRequest.isLoading}>
+    <AdminSection title="Teams" isLoading={squadPlansRequest.isLoading}>
       <>
         <Button size="sm" onClick={onOpen}>
-          Add squad plan
+          Add Team plan
         </Button>
 
-        <Box maxHeight="400px" overflowY="auto">
-          {squadPlansRequest.data?.map((plan, index) => (
+        <Box mt="16px" maxHeight="400px" overflowY="auto">
+          {squadPlansRequest.data?.map((plan) => (
             <SquadInfo
-              key={index}
-              index={index}
+              key={plan.squadPlanId.toNumber()}
+              squadPlanId={plan.squadPlanId.toNumber()}
               reward={plan.reward}
               subscriptionCost={plan.subscriptionCost}
               stakingThreshold={plan.stakingThreshold}
               stakingPlanId={plan.stakingPlanId}
               isActive={plan.isActive}
-              onActivate={() => updatePlanActivity.mutateAsync({ planId: index, isActive: true })}
+              onActivate={() =>
+                updatePlanActivity.mutateAsync({
+                  planId: plan.squadPlanId.toNumber(),
+                  isActive: true,
+                })
+              }
               onDeactivate={() =>
-                updatePlanActivity.mutateAsync({ planId: index, isActive: false })
+                updatePlanActivity.mutateAsync({
+                  planId: plan.squadPlanId.toNumber(),
+                  isActive: false,
+                })
               }
             />
           ))}
@@ -65,7 +73,7 @@ export const SquadsControl = () => {
 };
 
 type SquadsControlProps = {
-  index: number;
+  squadPlanId: number;
   subscriptionCost: BigNumber;
   reward: BigNumber;
   stakingThreshold: BigNumber;
@@ -75,7 +83,7 @@ type SquadsControlProps = {
   onDeactivate: () => Promise<void>;
 };
 const SquadInfo: FC<SquadsControlProps> = ({
-  index,
+  squadPlanId,
   subscriptionCost,
   reward,
   stakingThreshold,
@@ -98,14 +106,14 @@ const SquadInfo: FC<SquadsControlProps> = ({
   return (
     <Box
       textStyle="text1"
-      mt="16px"
+      _notFirst={{ mt: '16px' }}
       border="1px solid"
       borderColor="gray.200"
       borderRadius="sm"
       padding="8px"
     >
       <Flex alignItems="center" mb="8px">
-        <Text mr="12px">Squad (id: {index})</Text>
+        <Text mr="12px">Team (id: {squadPlanId})</Text>
         <Text color={isActive ? 'green.400' : 'red'}>{isActive ? 'Active' : 'Disabled'}</Text>
 
         <Button
