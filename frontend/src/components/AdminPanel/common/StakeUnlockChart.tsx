@@ -36,7 +36,6 @@ export const StakeUnlockChart: FC<StakeUnlockChartProps> = ({ data }) => {
         <Tooltip
           contentStyle={{ background: '#193524' }}
           labelFormatter={(val) => new Date(val * 1000).toLocaleString()}
-          formatter={(val, name, props) => `${val} ${name}, ${props.name}`}
         />
 
         <Area
