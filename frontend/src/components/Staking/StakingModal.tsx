@@ -151,7 +151,12 @@ export const StakingModal: FC<StakingModalProps> = ({
             >
               <Text fontSize="18px" ml={2}>
                 I have read, understand, and agree to the{' '}
-                <Link as={RouterLink} color="yellow.200" to="#">
+                <Link
+                  color="yellow.200"
+                  onClick={() =>
+                    window.open('https://isaver.gitbook.io/isaver/products/staking', '_blank')
+                  }
+                >
                   Terms of Service
                 </Link>
               </Text>

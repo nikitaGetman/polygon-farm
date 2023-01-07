@@ -26,8 +26,8 @@ export const SquadsList = () => {
         ? Array.from({ length: 3 }).map((_, index) => (
             <Skeleton
               key={index}
-              height={isSm ? '350px' : '490px'}
               width={isSm ? '300px' : '420px'}
+              height={isSm ? '350px' : '490px'}
               borderRadius="md"
               startColor="gray.200"
               endColor="bgGreen.200"

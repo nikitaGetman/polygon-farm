@@ -25,7 +25,7 @@ const SUBSCRIBE_TO_ALL_REFERRAL_LEVELS_MUTATION = 'subscribe-to-all-referral-lev
 const SET_MY_REFERRER_MUTATION = 'set-my-referrer';
 const CLAIM_REFERRAL_REWARDS_MUTATION = 'claim-referral-rewards';
 
-export const REFERRAL_SUBSCRIPTION_ENDING_NOTIFICATION = 15 * 24 * 60 * 60; // 15 days in seconds
+export const REFERRAL_SUBSCRIPTION_ENDING_NOTIFICATION = 30 * 24 * 60 * 60; // 30 days in seconds
 
 export const useReferralManagerSubscriptions = () => {
   const referralContract = useReferralContract();

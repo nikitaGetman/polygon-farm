@@ -92,7 +92,7 @@ body {
   font-size: 32px;
   line-height: 130%;
   color: #ffffff;
-  margin-bottom: 80px;
+  margin-bottom: 72px;
 }
 
 .main-text {
@@ -130,6 +130,7 @@ body {
   backdrop-filter: blur(22.5px);
   border-radius: 5px;
   margin-bottom: 100px;
+  justify-content: center;
 
   .text {
     padding-bottom: 25px;
@@ -203,10 +204,11 @@ body {
 }
 
 .benefit-container {
+  gap: 33px;
   margin-top: 50px;
 
   .icons-card {
-    width: calc(25% - 20px);
+    width: 300px;
     padding: 50px 20px 20px;
 
     svg {
@@ -386,9 +388,8 @@ body {
     width: 30px;
   }
   .main-container {
-    max-width: 100%;
-    padding: 0 40px;
-    overflow-x: hidden;
+    max-width: 940px;
+    padding: 0;
   }
   .main-heading {
     font-size: 52px;
@@ -403,6 +404,9 @@ body {
     font-size: 26px;
     line-height: 130%;
     margin-bottom: 20px;
+  }
+  .main-btns {
+    margin-bottom: 80px;
   }
   .coins-text__img {
     svg {
@@ -466,9 +470,10 @@ body {
   }
   .benefit-container {
     margin-top: 40px;
+    gap: 20px;
 
     .icons-card {
-      width: calc(25% - 20px);
+      width: 220px;
       svg {
         width: 100px;
       }
@@ -530,11 +535,11 @@ body {
 
 @media screen and (max-width: $xl) {
   .main-container {
-    padding: 0 15px;
+    max-width: 610px;
   }
   .main-heading {
-    font-size: 26px;
-    margin-bottom: 10px;
+    font-size: 38px;
+    margin-bottom: 0;
   }
   .main-banner {
     &__top {
@@ -543,11 +548,11 @@ body {
   }
   .main-subheading {
     font-size: 12px;
-    margin-bottom: 60px;
+    margin-bottom: 35px;
   }
   .main-text {
     font-size: 18px;
-    margin-bottom: 13px;
+    margin-bottom: 20px;
   }
   .coins-text__img {
     svg {
@@ -562,8 +567,8 @@ body {
     font-size: 16px;
   }
   .about-container {
-    padding: 35px 0;
-    margin-bottom: 80px;
+    padding: 50px 0 40px;
+    margin-bottom: 70px;
 
     &__img {
       display: none;
@@ -579,7 +584,7 @@ body {
     }
   }
   .main-btns {
-    margin-bottom: 80px;
+    margin-bottom: 60px;
 
     button:first-child {
       margin-right: 15px;
@@ -594,9 +599,6 @@ body {
   }
   .heading-container {
     padding: 0 90px;
-  }
-  .heading {
-    font-size: 16px;
   }
   .icons-card {
     padding-top: 40px;
@@ -625,11 +627,11 @@ body {
   .benefit-container {
     margin-top: 30px;
     flex-wrap: wrap;
+    gap: 10px;
 
     .icons-card {
       padding: 40px 35px 20px;
-      width: calc(50% - 5px);
-      margin-bottom: 10px;
+      width: 300px;
       min-height: 450px;
 
       svg {
@@ -727,6 +729,7 @@ body {
     }
   }
   .number-item {
+    margin-bottom: 30px;
     width: 50%;
 
     &:nth-child(3n) {
@@ -742,7 +745,8 @@ body {
     }
   }
   .about-container {
-    padding: 30px 10px 40px;
+    padding: 50px 10px 40px;
+    margin-bottom: 60px;
   }
   .heading-container {
     padding: 0;
@@ -845,9 +849,10 @@ body {
   }
   .main-btns {
     margin-top: 20px;
+    margin-bottom: 50px;
   }
   .about-container {
-    padding: 30px 10px;
+    padding: 40px 10px;
     .subheading {
       margin-bottom: 25px;
     }
@@ -873,7 +878,7 @@ body {
   .benefit-container {
     .icons-card {
       padding: 25px;
-      width: 100%;
+      width: 300px;
       min-height: 190px;
 
       &__heading {
@@ -891,13 +896,12 @@ body {
       }
     }
   }
-  .number-item {
-    &__heading {
-      font-size: 12px;
-      line-height: 16px;
-    }
+  .number {
+    margin-top: 40px;
   }
-
+  .plans {
+    margin-bottom: 100px;
+  }
   .plans-container {
     flex-direction: column;
     align-items: center;

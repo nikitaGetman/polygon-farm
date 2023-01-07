@@ -10,9 +10,15 @@ import './Landing.scss';
 
 export const Benefits = () => {
   return (
-    <Flex justifyContent="center" flexWrap="wrap" className="benefit">
+    <Flex
+      justifyContent="center"
+      flexWrap="wrap"
+      className="benefit"
+      flexDirection="column"
+      alignItems="center"
+    >
       <h4 className="heading">Our benefits</h4>
-      <Flex justifyContent="space-between" className="benefit-container">
+      <Flex justifyContent="center" className="benefit-container">
         <Flex className="icons-card card--shadow">
           <BankIcon />
           <Text className="icons-card__heading">Stable Passive Income</Text>

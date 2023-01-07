@@ -77,6 +77,11 @@ export const useStakingContract = () => {
     return waitForTransaction(tx);
   };
 
+  const getAllStakes = async () => {
+    const filter = contract.filters.Staked();
+    return await contract.queryFilter(filter);
+  };
+
   const updatePlanActivity = async (planId: number, isActive: boolean) => {
     const tx = await contract.updatePlanActivity(planId, isActive);
     return waitForTransaction(tx);
@@ -108,6 +113,7 @@ export const useStakingContract = () => {
     getUserStakesWithRewards,
     getUserStakes,
     subscribe,
+    getAllStakes,
     updatePlanActivity,
     addStakingPlan,
   };
