@@ -73,6 +73,7 @@ export interface TokenVestingInterface extends utils.Interface {
     "computeReleasableAmount(bytes32)": FunctionFragment;
     "computeVestingScheduleIdForAddressAndIndex(address,uint256)": FunctionFragment;
     "createVestingSchedule(address,uint256,uint256,uint256,uint256,bool,uint256)": FunctionFragment;
+    "createVestingSchedules(address[],uint256,uint256,uint256,uint256,bool,uint256)": FunctionFragment;
     "getLastVestingScheduleForHolder(address)": FunctionFragment;
     "getReservesBalance()": FunctionFragment;
     "getRoleAdmin(bytes32)": FunctionFragment;
@@ -100,6 +101,7 @@ export interface TokenVestingInterface extends utils.Interface {
       | "computeReleasableAmount"
       | "computeVestingScheduleIdForAddressAndIndex"
       | "createVestingSchedule"
+      | "createVestingSchedules"
       | "getLastVestingScheduleForHolder"
       | "getReservesBalance"
       | "getRoleAdmin"
@@ -140,6 +142,18 @@ export interface TokenVestingInterface extends utils.Interface {
     functionFragment: "createVestingSchedule",
     values: [
       PromiseOrValue<string>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<boolean>,
+      PromiseOrValue<BigNumberish>
+    ]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "createVestingSchedules",
+    values: [
+      PromiseOrValue<string>[],
       PromiseOrValue<BigNumberish>,
       PromiseOrValue<BigNumberish>,
       PromiseOrValue<BigNumberish>,
@@ -236,6 +250,10 @@ export interface TokenVestingInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "createVestingSchedule",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "createVestingSchedules",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -419,6 +437,17 @@ export interface TokenVesting extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
+    createVestingSchedules(
+      _beneficiaries: PromiseOrValue<string>[],
+      _start: PromiseOrValue<BigNumberish>,
+      _cliff: PromiseOrValue<BigNumberish>,
+      _duration: PromiseOrValue<BigNumberish>,
+      _slicePeriodSeconds: PromiseOrValue<BigNumberish>,
+      _revocable: PromiseOrValue<boolean>,
+      _amount: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
     getLastVestingScheduleForHolder(
       holder: PromiseOrValue<string>,
       overrides?: CallOverrides
@@ -535,6 +564,17 @@ export interface TokenVesting extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
+  createVestingSchedules(
+    _beneficiaries: PromiseOrValue<string>[],
+    _start: PromiseOrValue<BigNumberish>,
+    _cliff: PromiseOrValue<BigNumberish>,
+    _duration: PromiseOrValue<BigNumberish>,
+    _slicePeriodSeconds: PromiseOrValue<BigNumberish>,
+    _revocable: PromiseOrValue<boolean>,
+    _amount: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
   getLastVestingScheduleForHolder(
     holder: PromiseOrValue<string>,
     overrides?: CallOverrides
@@ -640,6 +680,17 @@ export interface TokenVesting extends BaseContract {
 
     createVestingSchedule(
       _beneficiary: PromiseOrValue<string>,
+      _start: PromiseOrValue<BigNumberish>,
+      _cliff: PromiseOrValue<BigNumberish>,
+      _duration: PromiseOrValue<BigNumberish>,
+      _slicePeriodSeconds: PromiseOrValue<BigNumberish>,
+      _revocable: PromiseOrValue<boolean>,
+      _amount: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    createVestingSchedules(
+      _beneficiaries: PromiseOrValue<string>[],
       _start: PromiseOrValue<BigNumberish>,
       _cliff: PromiseOrValue<BigNumberish>,
       _duration: PromiseOrValue<BigNumberish>,
@@ -807,6 +858,17 @@ export interface TokenVesting extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
+    createVestingSchedules(
+      _beneficiaries: PromiseOrValue<string>[],
+      _start: PromiseOrValue<BigNumberish>,
+      _cliff: PromiseOrValue<BigNumberish>,
+      _duration: PromiseOrValue<BigNumberish>,
+      _slicePeriodSeconds: PromiseOrValue<BigNumberish>,
+      _revocable: PromiseOrValue<boolean>,
+      _amount: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
     getLastVestingScheduleForHolder(
       holder: PromiseOrValue<string>,
       overrides?: CallOverrides
@@ -917,6 +979,17 @@ export interface TokenVesting extends BaseContract {
 
     createVestingSchedule(
       _beneficiary: PromiseOrValue<string>,
+      _start: PromiseOrValue<BigNumberish>,
+      _cliff: PromiseOrValue<BigNumberish>,
+      _duration: PromiseOrValue<BigNumberish>,
+      _slicePeriodSeconds: PromiseOrValue<BigNumberish>,
+      _revocable: PromiseOrValue<boolean>,
+      _amount: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    createVestingSchedules(
+      _beneficiaries: PromiseOrValue<string>[],
       _start: PromiseOrValue<BigNumberish>,
       _cliff: PromiseOrValue<BigNumberish>,
       _duration: PromiseOrValue<BigNumberish>,

@@ -157,8 +157,6 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
     await tx.wait();
   }
 
-  //   TODO: add VendorSell and Lottery (minter role) contracts
-
   // --------------------- Lottery ------------------------
   // ------------------------------------------------------
   // check Ticket address in Lottery

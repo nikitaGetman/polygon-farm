@@ -3,7 +3,7 @@ import { Box, Flex, Text } from '@chakra-ui/react';
 
 import { useCountdown } from '@/hooks/useCountdown';
 
-const SHOW_RESULT_DELAY = 600; // 10 mins
+const SHOW_RESULT_DELAY = 10800; // 180 mins
 export const LotteryCountdown = ({
   startTime,
   duration,

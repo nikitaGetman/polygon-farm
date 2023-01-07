@@ -2,6 +2,9 @@ import { HardhatRuntimeEnvironment } from "hardhat/types";
 import { DeployFunction } from "hardhat-deploy/types";
 import { VENDOR_SELL_SWAP_RATE } from "../config";
 import { ERC20, Token1, VendorSell } from "typechain-types";
+import USDT_ABI from "../config/abi/usdtABI.json";
+
+const POLYGON_USDT_ADDRESS = "0xc2132D05D31c914a87C6611C10748AEb04B58e8F";
 
 const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   const { deployments, getNamedAccounts, ethers, network } = hre;
@@ -13,8 +16,9 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
 
   const changeTokenContract =
     network.name === "mainnet"
-      ? null
+      ? await ethers.getContractAt(USDT_ABI, POLYGON_USDT_ADDRESS)
       : await deployments.get("ERC20BurnableMock");
+
   const swapRate = VENDOR_SELL_SWAP_RATE;
 
   const token1 = await ethers.getContract<Token1>("Token1");
