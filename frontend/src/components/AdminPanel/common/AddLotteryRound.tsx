@@ -19,6 +19,8 @@ import { parseEther } from 'ethers/lib/utils';
 
 import { CreateLotteryProps } from '@/hooks/contracts/useLotteryContract';
 
+import { DateTimeInput } from './DateTimeInput';
+
 import 'react-datepicker/dist/react-datepicker.css';
 
 type Level = {
@@ -33,10 +35,8 @@ export const AddLotteryRound: FC<AddLotteryRoundProps> = ({ onClose, onSubmit })
   const [isLoading, setIsLoading] = useState(false);
 
   const [startDate, setStartDate] = useState<Date | null>(new Date(Date.now() + 900_000));
-  const [days, setDays] = useState<string>();
-  const [hours, setHours] = useState<string>();
-  const [mins, setMins] = useState<string>();
-  const [secs, setSecs] = useState<string>();
+  const [duration, setDuration] = useState<number>();
+
   const [initialPrize, setInitialPrize] = useState<string>();
   const [tokensForOneTicket, setTokensForOneTicket] = useState<string>();
   const [maxTicketsFromOneMember, setMaxTicketsFromOneMember] = useState<string>();
@@ -58,15 +58,9 @@ export const AddLotteryRound: FC<AddLotteryRoundProps> = ({ onClose, onSubmit })
   );
 
   const handleSubmit = useCallback(() => {
-    if (!startDate) return;
+    if (!startDate || !duration) return;
 
     setIsLoading(true);
-
-    const duration =
-      parseFloat(days || '0') * (60 * 60 * 24) +
-      parseFloat(hours || '0') * (60 * 60) +
-      parseFloat(mins || '0') * 60 +
-      parseFloat(secs || '0');
 
     const initialPrizeBN = parseEther(initialPrize || '0');
     const tokensForOneTicketBN = parseEther(tokensForOneTicket || '0');
@@ -84,11 +78,8 @@ export const AddLotteryRound: FC<AddLotteryRoundProps> = ({ onClose, onSubmit })
       prizeForLevel,
     }).finally(() => setIsLoading(false));
   }, [
+    duration,
     startDate,
-    days,
-    hours,
-    mins,
-    secs,
     initialPrize,
     tokensForOneTicket,
     maxTicketsFromOneMember,
@@ -104,10 +95,7 @@ export const AddLotteryRound: FC<AddLotteryRoundProps> = ({ onClose, onSubmit })
   };
 
   const isSubmitEnabled =
-    (initialPrize || tokensForOneTicket) &&
-    maxTicketsFromOneMember &&
-    startDate &&
-    (days || hours || mins || secs);
+    (initialPrize || tokensForOneTicket) && maxTicketsFromOneMember && startDate && duration;
 
   return (
     <Modal isOpen onClose={onClose}>
@@ -142,39 +130,7 @@ export const AddLotteryRound: FC<AddLotteryRoundProps> = ({ onClose, onSubmit })
             <Text textStyle="text1" mb="4px">
               Duration:
             </Text>
-            <Flex alignItems="center" gap="8px">
-              <Input
-                size="md"
-                type="number"
-                fontSize="16px"
-                placeholder="Days"
-                onChange={(e) => setDays(e.target.value)}
-              />
-              -
-              <Input
-                size="md"
-                type="number"
-                fontSize="16px"
-                placeholder="Hours"
-                onChange={(e) => setHours(e.target.value)}
-              />
-              -
-              <Input
-                size="md"
-                type="number"
-                fontSize="16px"
-                placeholder="Mins"
-                onChange={(e) => setMins(e.target.value)}
-              />
-              -
-              <Input
-                size="md"
-                type="number"
-                fontSize="16px"
-                placeholder="Secs"
-                onChange={(e) => setSecs(e.target.value)}
-              />
-            </Flex>
+            <DateTimeInput onChange={setDuration} />
           </Box>
 
           <Box mb="20px">

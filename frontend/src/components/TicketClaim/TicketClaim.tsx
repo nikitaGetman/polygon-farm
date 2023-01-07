@@ -158,6 +158,8 @@ export const TicketClaim = () => {
         background="rgba(38, 71, 55, 0.5)"
         boxShadow="0 6px 11px rgba(0, 0, 0, 0.25)"
         borderRadius="md"
+        // Fix of Firefox render artifact
+        _hover={{ boxShadow: '0 6px 12px rgba(0, 0, 0, 0.25)' }}
       >
         <Grid
           key={fetchIndex}

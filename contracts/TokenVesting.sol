@@ -56,6 +56,43 @@ contract TokenVesting is AccessControl, ReentrancyGuard {
     }
 
     /**
+     * @notice Creates a new vesting schedules for the list of beneficiaries.
+     * @param _beneficiaries addresses of the beneficiaries to whom vested tokens are transferred
+     * @param _start start time of the vesting period
+     * @param _cliff duration in seconds of the cliff in which tokens will begin to vest
+     * @param _duration duration in seconds of the period in which the tokens will vest
+     * @param _slicePeriodSeconds duration of a slice period for the vesting in seconds
+     * @param _revocable whether the vesting is revocable or not
+     * @param _amount total amount of tokens to be released at the end of the vesting
+     */
+    function createVestingSchedules(
+        address[] memory _beneficiaries,
+        uint256 _start,
+        uint256 _cliff,
+        uint256 _duration,
+        uint256 _slicePeriodSeconds,
+        bool _revocable,
+        uint256 _amount
+    ) public onlyRole(DEFAULT_ADMIN_ROLE) {
+        require(
+            _beneficiaries.length > 0,
+            "TokenVesting: 0 beneficiaries are specified"
+        );
+
+        for (uint256 i = 0; i < _beneficiaries.length; i++) {
+            createVestingSchedule(
+                _beneficiaries[i],
+                _start,
+                _cliff,
+                _duration,
+                _slicePeriodSeconds,
+                _revocable,
+                _amount
+            );
+        }
+    }
+
+    /**
      * @notice Creates a new vesting schedule for a beneficiary.
      * @param _beneficiary address of the beneficiary to whom vested tokens are transferred
      * @param _start start time of the vesting period

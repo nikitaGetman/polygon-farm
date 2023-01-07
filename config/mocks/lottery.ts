@@ -1,7 +1,7 @@
 export const LOTTERIES = [
   {
-    startTime: Date.now() / 1000 + 1000,
-    duration: 3000, // half day
+    startTime: Date.now() / 1000 + 100,
+    duration: 100, // half day
     initialPrize: 1_000, // 1000
     tokensForOneTicket: 0, // 5
     maxTicketsFromOneMember: 10,

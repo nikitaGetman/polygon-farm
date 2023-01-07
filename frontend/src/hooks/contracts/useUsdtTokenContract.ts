@@ -6,7 +6,7 @@ import Contracts from '@/config/contracts.json';
 import { ERC20 } from '@/types';
 import { waitForTransaction } from '@/utils/waitForTransaction';
 
-const POLYGON_USDT_ADDRESS = '';
+const POLYGON_USDT_ADDRESS = '0xc2132D05D31c914a87C6611C10748AEb04B58e8F';
 
 export const useUsdtTokenContract = () => {
   const { data: signer } = useSigner();
@@ -15,7 +15,6 @@ export const useUsdtTokenContract = () => {
   const { chain } = useNetwork();
 
   let address;
-  //   TODO: add usdt addresses
   if (chain?.network === 'matic') {
     address = POLYGON_USDT_ADDRESS;
   } else if (chain?.network === 'maticmum') {

@@ -18,6 +18,7 @@ import { ReferralControl } from './blocks/ReferralControl';
 import { SquadsControl } from './blocks/SquadsControl';
 import { StakingControl } from './blocks/StakingControl';
 import { TokenControl } from './blocks/TokenControl';
+import { Vesting } from './blocks/Vesting';
 
 export const AdminPanel = () => {
   useDocumentTitle('iSaver | Admin panel');
@@ -96,6 +97,7 @@ export const AdminPanel = () => {
       {isSquadsAdmin ? <SquadsControl /> : null}
       {isVendorSellAdmin ? <ExchangeControl /> : null}
       {isLotteryAdmin || isLotteryOperator ? <LotteryControl /> : null}
+      {isVestingAdmin ? <Vesting /> : null}
       <Addresses />
     </Container>
   );
