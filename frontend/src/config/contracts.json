@@ -26899,7 +26899,7 @@
           ]
         },
         "TokenVesting": {
-          "address": "0x1944D8A61484a517582B7c00A527F103D1f5E5bE",
+          "address": "0x4065eAAfe3B68759Bf4909FFAb90207ed9A5b8C0",
           "abi": [
             {
               "inputs": [
@@ -27138,6 +27138,49 @@
                 }
               ],
               "name": "createVestingSchedule",
+              "outputs": [],
+              "stateMutability": "nonpayable",
+              "type": "function"
+            },
+            {
+              "inputs": [
+                {
+                  "internalType": "address[]",
+                  "name": "_beneficiaries",
+                  "type": "address[]"
+                },
+                {
+                  "internalType": "uint256",
+                  "name": "_start",
+                  "type": "uint256"
+                },
+                {
+                  "internalType": "uint256",
+                  "name": "_cliff",
+                  "type": "uint256"
+                },
+                {
+                  "internalType": "uint256",
+                  "name": "_duration",
+                  "type": "uint256"
+                },
+                {
+                  "internalType": "uint256",
+                  "name": "_slicePeriodSeconds",
+                  "type": "uint256"
+                },
+                {
+                  "internalType": "bool",
+                  "name": "_revocable",
+                  "type": "bool"
+                },
+                {
+                  "internalType": "uint256",
+                  "name": "_amount",
+                  "type": "uint256"
+                }
+              ],
+              "name": "createVestingSchedules",
               "outputs": [],
               "stateMutability": "nonpayable",
               "type": "function"
