@@ -44,7 +44,7 @@ export const ConnectWalletModal: FC<ConnectWalletModalProps> = ({ onClose, isOpe
   );
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose}>
+    <Modal isCentered isOpen={isOpen} onClose={onClose}>
       <ModalOverlay />
       <ModalContent>
         <ModalHeader justifyContent="center">
@@ -53,14 +53,9 @@ export const ConnectWalletModal: FC<ConnectWalletModalProps> = ({ onClose, isOpe
         </ModalHeader>
         <ModalBody>
           {connectError ? (
-            <>
-              <Text color="error" textAlign="center" textStyle="textBold">
-                {connectError.message}
-              </Text>
-              <Text fontSize="12px" fontWeight="400">
-                {JSON.stringify(connectError)}
-              </Text>
-            </>
+            <Text color="error" textAlign="center" textStyle="textBold">
+              {connectError.message}
+            </Text>
           ) : null}
           <ConnectButton
             text={metamaskConnector.name}

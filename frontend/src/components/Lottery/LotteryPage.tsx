@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useMemo } from 'react';
-import { Link as RouterLink, useNavigate, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { ArrowBackIcon } from '@chakra-ui/icons';
 import {
   Box,
@@ -19,6 +19,7 @@ import { useHelperLotteryRoundWinners } from '@/hooks/useHelper';
 import { useLottery } from '@/hooks/useLottery';
 import { useLotteryRoundById } from '@/hooks/useLotteryRoundById';
 import { useDocumentTitle, useMetaDescription } from '@/hooks/useMeta';
+import { useNavigateByHash } from '@/hooks/useNavigateByHash';
 import { LotteryStatusEnum } from '@/lib/lottery';
 import { getLotteryTitle } from '@/utils/lottery';
 
@@ -42,7 +43,7 @@ export const LotteryPage = () => {
   const { isConnected, address } = useAccount();
   const { connect } = useConnectWallet();
   const { isOpen, onOpen, onClose } = useDisclosure(); // Buy Ticket modal
-  const navigate = useNavigate();
+  const navigate = useNavigateByHash();
   const { ticketBalance } = useLottery();
   const {
     round,
@@ -93,12 +94,10 @@ export const LotteryPage = () => {
     () => roundWinners?.data?.find((winner) => winner.address === address)?.prize,
     [roundWinners.data, address]
   );
-
   return (
     <Container variant="dashboard">
       <Link
-        as={RouterLink}
-        to="/"
+        onClick={() => navigate('/#raffles')}
         textStyle="button"
         alignSelf="flex-start"
         my={{ sm: '20px', xl: '30px' }}

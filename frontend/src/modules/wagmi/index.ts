@@ -15,11 +15,11 @@ const { chains, provider, webSocketProvider } = configureChains(
   [
     alchemyProvider({ apiKey: process.env.REACT_APP_ALCHEMY_KEY || '' }),
     publicProvider(),
-    jsonRpcProvider({
-      rpc: () => ({
-        http: process.env.REACT_APP_PUBLIC_RPC_URL || 'http://localhost:8545',
-      }),
-    }),
+    // jsonRpcProvider({
+    //   rpc: () => ({
+    //     http: process.env.REACT_APP_PUBLIC_RPC_URL || 'http://localhost:8545',
+    //   }),
+    // }),
   ],
   {
     pollingInterval: 4_000, // default
