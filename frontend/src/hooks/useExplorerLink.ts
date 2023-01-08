@@ -1,5 +1,6 @@
 import { useMemo } from 'react';
-import { chain, useNetwork } from 'wagmi';
+import { useNetwork } from 'wagmi';
+import { polygon } from 'wagmi/chains';
 
 export const useExplorerLink = (hash?: string, isAddress?: boolean) => {
   const { chain: currentChain } = useNetwork();
@@ -9,7 +10,7 @@ export const useExplorerLink = (hash?: string, isAddress?: boolean) => {
 
     const type = isAddress ? 'address' : 'tx';
 
-    if (currentChain?.id === chain.polygon.id) {
+    if (currentChain?.id === polygon.id) {
       return `https://polygonscan.com/${type}/${hash}`;
     }
 
