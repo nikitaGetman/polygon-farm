@@ -6,13 +6,15 @@ import { useContractsAddresses } from './admin/useContractsAddresses';
 import { ContractsEnum } from './contracts/useContractAbi';
 import { useTokenContract } from './contracts/useTokenContract';
 
-export const useSavSupply = () => {
-  const savContract = useTokenContract(ContractsEnum.SAV);
+export const useTokenSupply = (token: ContractsEnum.SAV | ContractsEnum.SAVR) => {
+  const tokenContract = useTokenContract(token);
 
   const accounts = useAccounts();
   const contracts = useContractsAddresses();
 
-  const totalSupply = useQuery(['sav-total-supply-query'], () => savContract.totalSupply());
+  const totalSupply = useQuery(['token-total-supply-query', { token }], () =>
+    tokenContract.totalSupply()
+  );
 
   const uniqueAddresses = useMemo(() => {
     return Array.from(new Set([...Object.values(accounts), ...Object.values(contracts)]));
@@ -20,8 +22,8 @@ export const useSavSupply = () => {
 
   const balances = useQueries({
     queries: uniqueAddresses.map((address) => ({
-      queryKey: ['circulating-supply', address],
-      queryFn: () => savContract.balanceOf(address),
+      queryKey: ['circulating-supply', token, address],
+      queryFn: () => tokenContract.balanceOf(address),
     })),
   });
 

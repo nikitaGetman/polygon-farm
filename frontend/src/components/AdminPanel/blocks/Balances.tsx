@@ -3,8 +3,10 @@ import { Flex, Text } from '@chakra-ui/react';
 import { BigNumber, BigNumberish } from 'ethers';
 
 import { useAccounts } from '@/hooks/admin/useAccounts';
+import { ContractsEnum } from '@/hooks/contracts/useContractAbi';
 import { useStaking } from '@/hooks/useStaking';
 import { useSavBalance, useSavRBalance, useUsdtBalance } from '@/hooks/useTokenBalance';
+import { useTokenSupply } from '@/hooks/useTokenSupply';
 import { beautifyAmount, bigNumberToString } from '@/utils/number';
 
 import { AdminSection } from '../common/AdminSection';
@@ -19,6 +21,8 @@ export const Balances = () => {
   const vendorChangeBalance = useUsdtBalance(vendorChangePool);
   const vestingBalance = useSavBalance(vestingPool);
   const { tvlSav, tvlSavr } = useStaking();
+  const savSupply = useTokenSupply(ContractsEnum.SAV);
+  const savrSupply = useTokenSupply(ContractsEnum.SAVR);
 
   const isLoading =
     stakingBalance.isLoading ||
@@ -29,6 +33,26 @@ export const Balances = () => {
 
   return (
     <AdminSection title="Balances" isLoading={isLoading}>
+      <Balance label="SAV Total Supply" balance={savSupply.totalSupply} symbol="SAV" minLimit={0} />
+      <Balance
+        label="SAV Circulating Supply"
+        balance={savSupply.circulatingSupply}
+        symbol="SAV"
+        minLimit={0}
+      />
+      <Balance
+        label="SAVR Total Supply"
+        balance={savrSupply.totalSupply}
+        symbol="SAVR"
+        minLimit={0}
+      />
+      <Balance
+        label="SAVR Circulating Supply"
+        balance={savrSupply.circulatingSupply}
+        symbol="SAVR"
+        minLimit={0}
+      />
+
       <Balance label="Staking pool" balance={stakingBalance.data} symbol="SAV" />
       <Balance label="Staking TVL (SAV)" balance={tvlSav} symbol="SAV" minLimit={0} />
       <Balance label="Staking TVL (SAVR)" balance={tvlSavr} symbol="SAVR" minLimit={0} />
@@ -47,7 +71,7 @@ export const Balances = () => {
 
 type BalanceProps = {
   label: string;
-  balance?: BigNumber | null;
+  balance?: BigNumberish | null;
   symbol?: string;
   minLimit?: BigNumberish;
   decimals?: number;

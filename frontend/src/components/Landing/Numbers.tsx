@@ -2,9 +2,10 @@ import React from 'react';
 import { Flex, Text } from '@chakra-ui/react';
 import { BigNumber } from 'ethers';
 
-import { useSavSupply } from '@/hooks/useSavSupply';
+import { ContractsEnum } from '@/hooks/contracts/useContractAbi';
 import { useSavTokenBurn } from '@/hooks/useSavTokenBurn';
 import { useStaking } from '@/hooks/useStaking';
+import { useTokenSupply } from '@/hooks/useTokenSupply';
 import { beautifyAmount, bigNumberToString, getReadableAmount } from '@/utils/number';
 
 import './Landing.scss';
@@ -14,7 +15,7 @@ export const Numbers = () => {
   const { tvlSav } = useStaking();
   const savBurned = useSavTokenBurn();
 
-  const { circulatingSupply, totalSupply } = useSavSupply();
+  const { circulatingSupply, totalSupply } = useTokenSupply(ContractsEnum.SAV);
 
   return (
     <Flex mb={{ sm: '80px', xl: '100px', '2xl': '100px' }} justifyContent="center" flexWrap="wrap">
