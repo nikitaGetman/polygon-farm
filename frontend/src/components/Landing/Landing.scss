@@ -127,7 +127,7 @@ body {
 
 .about-container {
   background: rgba(28, 74, 64, 0.3);
-  backdrop-filter: blur(22.5px);
+  // backdrop-filter: blur(22.5px);
   border-radius: 5px;
   margin-bottom: 100px;
   justify-content: center;
@@ -224,7 +224,7 @@ body {
 .card--shadow {
   background: rgba(28, 74, 64, 0.3);
   box-shadow: inset 8px 9px 14px #0b200a;
-  backdrop-filter: blur(22.5px);
+  // backdrop-filter: blur(22.5px);
   border-radius: 5px;
 }
 

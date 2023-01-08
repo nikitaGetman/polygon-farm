@@ -1,4 +1,4 @@
-import React, { FC, useCallback, useEffect } from 'react';
+import React, { FC, useCallback, useEffect, useState } from 'react';
 import {
   Button,
   Flex,
@@ -44,7 +44,7 @@ export const ConnectWalletModal: FC<ConnectWalletModalProps> = ({ onClose, isOpe
   );
 
   return (
-    <Modal isCentered isOpen={isOpen} onClose={onClose}>
+    <Modal isOpen={isOpen} onClose={onClose}>
       <ModalOverlay />
       <ModalContent>
         <ModalHeader justifyContent="center">
@@ -53,9 +53,14 @@ export const ConnectWalletModal: FC<ConnectWalletModalProps> = ({ onClose, isOpe
         </ModalHeader>
         <ModalBody>
           {connectError ? (
-            <Text color="error" textAlign="center" textStyle="textBold">
-              {connectError.message}
-            </Text>
+            <>
+              <Text color="error" textAlign="center" textStyle="textBold">
+                {connectError.message}
+              </Text>
+              <Text fontSize="12px" fontWeight="400">
+                {JSON.stringify(connectError)}
+              </Text>
+            </>
           ) : null}
           <ConnectButton
             text={metamaskConnector.name}
