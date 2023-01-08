@@ -8,11 +8,11 @@ import { useStakingContract } from './contracts/useStakingContract';
 import { useStakingPlans } from './useStaking';
 
 type StakeLockChange = {
-  timestamp: number;
+  day: number;
   change: BigNumber;
 };
 type StakeLockBalance = {
-  timestamp: number;
+  day: number;
   balance: BigNumber;
 };
 
@@ -42,36 +42,40 @@ export const useStakingHistory = () => {
     const balanceChange = stakesDataRequest.data?.reduce(
       (acc, stake) => {
         acc.push({
-          timestamp: stake.timestamp,
+          day: Math.floor(stake.timestamp / 86400),
           change: stake.isToken2 ? stake.profit : stake.amount.add(stake.profit),
         });
         acc.push({
-          timestamp: stake.tillTimestamp,
+          day: Math.floor(stake.tillTimestamp / 86400),
           change: stake.isToken2 ? stake.profit.mul(-1) : stake.amount.add(stake.profit).mul(-1),
         });
         return acc;
       },
       [
-        { timestamp: Math.floor(Date.now() / 1000) + 30, change: BigNumber.from(0) },
+        { day: Math.floor(Date.now() / 1000 / 86400) + 30, change: BigNumber.from(0) },
       ] as StakeLockChange[]
     );
 
     return balanceChange
-      ?.sort((a, b) => a.timestamp - b.timestamp)
+      ?.sort((a, b) => a.day - b.day)
       .reduce((acc, tx) => {
         if (!acc.length) {
-          acc.push({ timestamp: tx.timestamp, balance: tx.change });
+          acc.push({ day: tx.day, balance: tx.change });
         } else {
-          const prevBalance = acc.slice(-1)[0].balance;
-          acc.push({
-            timestamp: tx.timestamp,
-            balance: prevBalance.add(tx.change),
-          });
+          const prev = acc.slice(-1)[0];
+          if (prev.day === tx.day) {
+            acc[acc.length - 1].balance = prev.balance.add(tx.change);
+          } else {
+            acc.push({
+              day: tx.day,
+              balance: prev.balance.add(tx.change),
+            });
+          }
         }
 
         return acc;
       }, [] as StakeLockBalance[])
-      .filter((data) => data.timestamp >= Date.now() / 1000)
+      .filter((data) => data.day >= Date.now() / 1000 / 86400)
       .map((data) => ({ ...data, balance: bigNumberToNumber(data.balance) }));
   }, [stakesDataRequest.data]);
 

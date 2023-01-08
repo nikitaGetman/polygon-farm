@@ -3,7 +3,7 @@ import { Area, AreaChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'rec
 
 type StakesData = {
   balance: number;
-  timestamp: number;
+  day: number;
 };
 type StakeUnlockChartProps = {
   data?: StakesData[] | null;
@@ -22,10 +22,10 @@ export const StakeUnlockChart: FC<StakeUnlockChartProps> = ({ data }) => {
         {/* <CartesianGrid strokeDasharray="3 3" /> */}
         <XAxis
           type="number"
-          dataKey="timestamp"
+          dataKey="day"
           domain={[Date.now(), 'dataMax']}
           minTickGap={1}
-          tickFormatter={(val) => new Date(val * 1000).toLocaleDateString()}
+          tickFormatter={(val) => new Date(val * 1000 * 86400).toLocaleDateString()}
           name="Date"
           //   label="Date"
           scale="time"
@@ -35,7 +35,7 @@ export const StakeUnlockChart: FC<StakeUnlockChartProps> = ({ data }) => {
 
         <Tooltip
           contentStyle={{ background: '#193524' }}
-          labelFormatter={(val) => new Date(val * 1000).toLocaleString()}
+          labelFormatter={(val) => new Date(val * 1000 * 86400).toLocaleString()}
         />
 
         <Area

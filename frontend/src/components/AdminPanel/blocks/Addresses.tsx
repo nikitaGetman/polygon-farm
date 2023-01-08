@@ -40,7 +40,7 @@ export const Addresses = () => {
 };
 
 const AddressInfo = ({ title, address }: { title: string; address: string }) => {
-  const explorerLink = useExplorerLink(address);
+  const explorerLink = useExplorerLink(address, true);
 
   return (
     <Flex alignItems="baseline" fontSize="14px">
