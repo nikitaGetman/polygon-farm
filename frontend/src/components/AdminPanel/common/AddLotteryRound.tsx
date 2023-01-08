@@ -121,7 +121,7 @@ export const AddLotteryRound: FC<AddLotteryRoundProps> = ({ onClose, onSubmit })
               timeFormat="HH:mm"
               timeIntervals={15}
               timeCaption="Time"
-              dateFormat="yyyy-MM-dd hh:mm"
+              dateFormat="yyyy-MM-dd HH:mm"
               onChange={(date: any) => setStartDate(date)}
             />
           </Flex>

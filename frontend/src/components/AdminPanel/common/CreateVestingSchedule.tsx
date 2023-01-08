@@ -93,7 +93,7 @@ export const CreateVestingSchedule: FC<CreateVestingScheduleProps> = ({ onClose,
               timeFormat="HH:mm"
               timeIntervals={5}
               timeCaption="Time"
-              dateFormat="yyyy-MM-dd hh:mm"
+              dateFormat="yyyy-MM-dd HH:mm"
               onChange={(date: any) => setStartDate(date)}
             />
           </Flex>
