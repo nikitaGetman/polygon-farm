@@ -8,11 +8,12 @@ import { ContractsEnum, useContractAbi } from '../contracts/useContractAbi';
 
 const HAS_ROLE_REQUEST = 'has-role-request';
 
-type Role = 'admin' | 'operator';
+type Role = 'admin' | 'operator' | 'minter';
 
 const ROLES: Record<Role, string> = {
   admin: '0x0000000000000000000000000000000000000000000000000000000000000000',
   operator: utils.keccak256(utils.toUtf8Bytes('OPERATOR_ROLE')),
+  minter: utils.keccak256(utils.toUtf8Bytes('MINTER_ROLE')),
 };
 
 export const useHasRole = (

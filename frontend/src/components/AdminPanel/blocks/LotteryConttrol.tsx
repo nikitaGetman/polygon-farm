@@ -4,19 +4,16 @@ import { Box, Button, Flex, Text, useDisclosure } from '@chakra-ui/react';
 import { LotteryStatus } from '@/components/Lottery/LotteryStatus';
 import { useLotteryControl } from '@/hooks/useLottery';
 import { LotteryStatusEnum } from '@/lib/lottery';
-import { bigNumberToString } from '@/utils/number';
 import { getLocalDateTimeString, getStampsFromDuration } from '@/utils/time';
 
 import { AddLotteryRound } from '../common/AddLotteryRound';
 import { AdminSection } from '../common/AdminSection';
 import { CloseLotteryRound } from '../common/CloseLotteryRound';
-import { ControlField } from '../common/ControlField';
 
 export const LotteryControl = () => {
   const {
     ticketPriceRequest,
     roundsRequest,
-    updateTicketPrice,
     finishLotteryRound,
     manuallyGetWinners,
     createLotteryRound,
@@ -29,12 +26,6 @@ export const LotteryControl = () => {
       isLoading={ticketPriceRequest.isLoading || roundsRequest.isLoading}
     >
       <>
-        <ControlField
-          label="Raffle Ticket price"
-          value={ticketPriceRequest.data ? bigNumberToString(ticketPriceRequest.data) : null}
-          onSubmit={updateTicketPrice.mutateAsync}
-        />
-
         <Button size="sm" onClick={onOpen}>
           Create lottery round
         </Button>

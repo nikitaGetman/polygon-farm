@@ -17,6 +17,7 @@ import { LotteryControl } from './blocks/LotteryConttrol';
 import { ReferralControl } from './blocks/ReferralControl';
 import { SquadsControl } from './blocks/SquadsControl';
 import { StakingControl } from './blocks/StakingControl';
+import { TicketControl } from './blocks/TicketControl';
 import { TokenControl } from './blocks/TokenControl';
 import { Vesting } from './blocks/Vesting';
 
@@ -33,6 +34,8 @@ export const AdminPanel = () => {
   const isSquadsAdmin = useHasRole(ContractsEnum.Squads);
   const isLotteryAdmin = useHasRole(ContractsEnum.Lottery);
   const isLotteryOperator = useHasRole(ContractsEnum.Lottery, 'operator');
+  const isTicketAdmin = useHasRole(ContractsEnum.Ticket);
+  const isTicketMinter = useHasRole(ContractsEnum.Ticket, 'minter');
   const isVestingAdmin = useHasRole(ContractsEnum.TokenVesting);
   const isVendorSellAdmin = useHasRole(ContractsEnum.VendorSell);
 
@@ -96,6 +99,7 @@ export const AdminPanel = () => {
       {isReferralAdmin ? <ReferralControl /> : null}
       {isSquadsAdmin ? <SquadsControl /> : null}
       {isVendorSellAdmin ? <ExchangeControl /> : null}
+      {isTicketAdmin || isTicketMinter ? <TicketControl /> : null}
       {isLotteryAdmin || isLotteryOperator ? <LotteryControl /> : null}
       {isVestingAdmin ? <Vesting /> : null}
       <Addresses />

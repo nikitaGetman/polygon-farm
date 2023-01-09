@@ -1,3 +1,4 @@
+import { ethers } from 'ethers';
 import { useContract, useProvider, useSigner } from 'wagmi';
 
 import { Ticket } from '@/types';
@@ -31,6 +32,11 @@ export const useTicketContract = () => {
     return waitForTransaction(tx);
   };
 
+  const mintTickets = async ({ address, amount }: { address: string; amount: number }) => {
+    const tx = await contract.mint(address, 0, amount, ethers.utils.toUtf8Bytes(''));
+    return waitForTransaction(tx);
+  };
+
   return {
     contract,
     address: contractAddress,
@@ -38,5 +44,6 @@ export const useTicketContract = () => {
     balanceOf,
     isApprovedForAll,
     setApprovalForAll,
+    mintTickets,
   };
 };
