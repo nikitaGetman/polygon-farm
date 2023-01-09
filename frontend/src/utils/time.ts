@@ -3,10 +3,10 @@ import { BigNumber, BigNumberish } from 'ethers';
 export const getReadableDuration = (days: BigNumberish) => {
   const numberDays = BigNumber.from(days).toNumber();
 
-  if (numberDays % 365 === 0) {
-    const numberYears = numberDays / 365;
-    return numberYears > 1 ? `${numberYears} Years` : `${numberYears} Year`;
-  }
+  // if (numberDays % 365 === 0) {
+  //   const numberYears = numberDays / 365;
+  //   return numberYears > 1 ? `${numberYears} Years` : `${numberYears} Year`;
+  // }
 
   return numberDays > 1 ? `${numberDays} days` : `${numberDays} day`;
 };

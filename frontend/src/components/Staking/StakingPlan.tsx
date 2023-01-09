@@ -2,7 +2,7 @@ import React, { FC, useCallback, useState } from 'react';
 import { Box, Button, Flex, Text, useBreakpoint } from '@chakra-ui/react';
 import { BigNumber, BigNumberish } from 'ethers';
 
-import { bigNumberToString, getReadableAmount } from '@/utils/number';
+import { bigNumberToString, getReadableAmount, getYearlyAPR } from '@/utils/number';
 import { getLocalDateString, getReadableDuration } from '@/utils/time';
 
 type StakingPlanProps = {
@@ -129,10 +129,12 @@ export const StakingPlan: FC<StakingPlanProps> = ({
                   {getReadableDuration(stakingDuration)}
                 </StakingParameter>
 
-                {isSm ? <StakingParameter title="APR">{apr}%</StakingParameter> : null}
+                {isSm ? (
+                  <StakingParameter title="APR">{getYearlyAPR(apr)}%</StakingParameter>
+                ) : null}
               </Flex>
               <StakingParameter title="Pool size">{getReadableAmount(poolSize)}</StakingParameter>
-              {isSm ? null : <StakingParameter title="APR">{apr}%</StakingParameter>}
+              {isSm ? null : <StakingParameter title="APR">{getYearlyAPR(apr)}%</StakingParameter>}
             </Flex>
             <Flex justifyContent="space-between" direction={{ sm: 'column', md: 'row' }}>
               <Box mb={{ sm: '16px', md: 'unset' }}>

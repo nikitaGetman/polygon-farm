@@ -20,9 +20,9 @@ export const Addresses = () => {
         <AddressInfo title="SAVR (ERC20)" address={contracts.Token2} />
         <AddressInfo title="Staking" address={contracts.Staking} />
         <AddressInfo title="Referral Manager" address={contracts.ReferralManager} />
-        <AddressInfo title="Squads" address={contracts.Squads} />
-        <AddressInfo title="Lottery" address={contracts.Lottery} />
-        <AddressInfo title="Lottery Ticket (ERC1155)" address={contracts.Ticket} />
+        <AddressInfo title="Teams" address={contracts.Squads} />
+        <AddressInfo title="Raffles" address={contracts.Lottery} />
+        <AddressInfo title="Raffle Ticket (ERC1155)" address={contracts.Ticket} />
         <AddressInfo title="Token exchange" address={contracts.VendorSell} />
         <AddressInfo title="Vesting" address={contracts.TokenVesting} />
 

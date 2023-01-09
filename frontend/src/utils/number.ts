@@ -29,14 +29,8 @@ export const bigNumberToNumber = (
   return parseFloat(stringValue);
 };
 
-const PERCENT_DIVIDER = 1000.0;
-export const getYearlyAPR = (profit: BigNumberish, duration: BigNumberish) => {
-  return roundToPrecision(
-    (((BigNumber.from(profit).toNumber() / PERCENT_DIVIDER) * 100) /
-      BigNumber.from(duration).toNumber()) *
-      365.0,
-    2
-  );
+export const getYearlyAPR = (apr: string | number) => {
+  return parseFloat(apr.toString()).toFixed(2);
 };
 
 export const getReadableAmount = (
