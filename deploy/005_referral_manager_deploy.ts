@@ -34,16 +34,19 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
     const referralRewardPoolSigner = await ethers.getSigner(referralRewardPool);
     const adminSigner = await ethers.getSigner(admin);
 
+    console.log("Approve referralRewardPool Token2 for ReferralManager");
     let tx = await token2
       .connect(referralRewardPoolSigner)
       .approve(referralManager.address, ethers.constants.MaxUint256);
     await tx.wait();
+    console.log("Add referralRewardPool to Token2 whitelist");
     tx = await token2
       .connect(adminSigner)
       .addToWhitelist([referralRewardPoolSigner.address]);
     await tx.wait();
 
     if (!network.live) {
+      console.log("Transfer Token2 from tokenHolder to referralRewardPool");
       const holderSigner = await ethers.getSigner(token2Holder);
       tx = await token2
         .connect(holderSigner)

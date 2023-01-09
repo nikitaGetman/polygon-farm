@@ -18,7 +18,7 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
 
   if (tokenVesting.newlyDeployed) {
     const vestingPoolSigner = await ethers.getSigner(vestingPool);
-
+    console.log("Approve Token1 for TokenVesting");
     const tx = await token1
       .connect(vestingPoolSigner)
       .approve(tokenVesting.address, ethers.constants.MaxUint256);

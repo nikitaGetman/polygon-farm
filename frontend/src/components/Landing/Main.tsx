@@ -27,7 +27,7 @@ export const Main = () => {
           <h2 className="main-subheading">On the new platform on Polygon</h2>
         </Box>
         <Box>
-          <h5 className="main-text color-green">Up to 7% in Fixed Deposits</h5>
+          <h5 className="main-text color-green">Up to 30% in Fixed Deposits</h5>
         </Box>
         {isSm && <CoinImage />}
         <Flex className="main-btns" gap={{ sm: '10px', '2xl': 5 }} flexWrap="wrap">

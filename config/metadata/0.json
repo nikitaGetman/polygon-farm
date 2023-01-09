@@ -1,7 +1,7 @@
-// bafkreidpjakpjd5o3rwmbwwdrc6czdtgn6ylxvzio6bmxcf7zllpzwqhvy
+// https://bafkreidbleyicztofdeksgq7eqafoup4ldaqiqeioa7bxplsjcnrcpv3e4.ipfs.nftstorage.link/
 {
   "name": "iSaver Raffle Ticket",
   "description": "The Ticket allows you to participate in the iSaver Raffle",
-  "image": "https://raw.githubusercontent.com/nikitaGetman/polygon-farm/master/config/metadata/NFT_Ticket.jpg",
+  "image": "https://dashboard.isaver.io/isaver_ticket.svg",
   "external_url": "https://isaver.io"
 }

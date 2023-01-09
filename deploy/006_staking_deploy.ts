@@ -26,28 +26,30 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
     ],
     log: true,
     autoMine: true,
-    gasPrice: ethers.BigNumber.from(10).pow(10),
+    // gasPrice: ethers.BigNumber.from(10).pow(10),
   });
 
   if (staking.newlyDeployed) {
-    for (let i = 0; i < STAKINGS.length; i++) {
-      console.log("Add staking plan " + (i + 1));
-      await run("add-staking-plan", {
-        durationDays: STAKINGS[i].durationDays,
-        apr: STAKINGS[i].apr,
-        subscriptionCost: STAKINGS[i].subscriptionCost.toString(),
-        subscriptionPeriodDays: STAKINGS[i].subscriptionDurationDays,
-      });
-    }
-
+    console.log("Approve stakingPool Token1 for Staking");
     const token1 = await ethers.getContract<Token1>("Token1", stakingPool);
     let tx = await token1.approve(staking.address, ethers.constants.MaxUint256);
     await tx.wait();
+    console.log("Add Staking to Token2 whitelist");
     const token2 = await ethers.getContract<Token2>("Token2", admin);
     tx = await token2.addToWhitelist([staking.address]);
     await tx.wait();
 
     if (!network.live) {
+      for (let i = 0; i < STAKINGS.length; i++) {
+        console.log("Add staking plan " + (i + 1));
+        await run("add-staking-plan", {
+          durationDays: STAKINGS[i].durationDays,
+          apr: STAKINGS[i].apr,
+          subscriptionCost: STAKINGS[i].subscriptionCost.toString(),
+          subscriptionPeriodDays: STAKINGS[i].subscriptionDurationDays,
+        });
+      }
+
       const stakingContract = await ethers.getContract<Staking>(
         "Staking",
         admin

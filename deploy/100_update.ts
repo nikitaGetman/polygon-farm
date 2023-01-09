@@ -191,5 +191,14 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   console.log("---- EVERYTHING UP TO DATE ----");
 };
 func.tags = ["Update"];
-func.dependencies = ["ReferralManager", "Staking"];
+func.dependencies = [
+  "ReferralManager",
+  "Staking",
+  "Token1",
+  "Token2",
+  "Squads",
+  "Lottery",
+  "VendorSell",
+  "TokenVesting",
+];
 export default func;

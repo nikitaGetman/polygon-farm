@@ -9,11 +9,11 @@ import { publicProvider } from 'wagmi/providers/public';
 window.Buffer = require('buffer/').Buffer;
 
 const { chains, provider, webSocketProvider } = configureChains(
-  process.env.NODE_ENV === 'production'
-    ? [polygonMumbai, polygon]
-    : [hardhat, polygonMumbai, polygon],
+  process.env.NODE_ENV === 'production' ? [polygon] : [hardhat, polygonMumbai, polygon],
   [
-    alchemyProvider({ apiKey: process.env.REACT_APP_ALCHEMY_KEY || '' }),
+    alchemyProvider({
+      apiKey: process.env.REACT_APP_ALCHEMY_KEY || '',
+    }),
     publicProvider(),
     // jsonRpcProvider({
     //   rpc: () => ({

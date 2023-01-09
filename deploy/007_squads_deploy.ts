@@ -4,7 +4,7 @@ import { SQUADS } from "config";
 import { ReferralManager, Staking } from "typechain-types";
 
 const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
-  const { deployments, getNamedAccounts, ethers, run } = hre;
+  const { deployments, getNamedAccounts, ethers, run, network } = hre;
   const { deploy } = deployments;
 
   const { deployer, admin } = await getNamedAccounts();
@@ -24,24 +24,28 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
     args: [token1Address, referralManager.address, stakingContract.address],
     log: true,
     autoMine: true,
-    gasPrice: ethers.BigNumber.from(10).pow(10),
+    // gasPrice: ethers.BigNumber.from(10).pow(10),
   });
 
   if (squadManager.newlyDeployed) {
+    console.log("Authorize SquadManager in ReferralManager contract");
     let tx = await referralManager.authorizeContract(squadManager.address);
     await tx.wait();
+    console.log("Update SquadManager in Staking contract");
     tx = await stakingContract.updateSquadsManager(squadManager.address);
     await tx.wait();
 
-    for (let i = 0; i < SQUADS.length; i++) {
-      console.log("Add plan " + (i + 1));
-      await run("add-squad-plan", {
-        subscriptionCost: SQUADS[i].subscriptionCost.toString(),
-        reward: SQUADS[i].reward.toString(),
-        stakingThreshold: SQUADS[i].stakingThreshold.toString(),
-        squadSize: SQUADS[i].squadSize,
-        stakingPlanId: SQUADS[i].stakingPlanId,
-      });
+    if (!network.live) {
+      for (let i = 0; i < SQUADS.length; i++) {
+        console.log("Add plan " + (i + 1));
+        await run("add-squad-plan", {
+          subscriptionCost: SQUADS[i].subscriptionCost.toString(),
+          reward: SQUADS[i].reward.toString(),
+          stakingThreshold: SQUADS[i].stakingThreshold.toString(),
+          squadSize: SQUADS[i].squadSize,
+          stakingPlanId: SQUADS[i].stakingPlanId,
+        });
+      }
     }
   }
 };

@@ -14,10 +14,9 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
 
   const token1Address = (await deployments.get("Token1")).address;
 
-  const changeTokenContract =
-    network.name === "mainnet"
-      ? await ethers.getContractAt(USDT_ABI, POLYGON_USDT_ADDRESS)
-      : await deployments.get("ERC20BurnableMock");
+  const changeTokenContract = network.live
+    ? await ethers.getContractAt(USDT_ABI, POLYGON_USDT_ADDRESS)
+    : await deployments.get("ERC20BurnableMock");
 
   const swapRate = VENDOR_SELL_SWAP_RATE;
 
@@ -28,7 +27,7 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   }
 
   const changeToken = await ethers.getContractAt<ERC20>(
-    changeTokenContract.abi,
+    network.live ? USDT_ABI : changeTokenContract.abi,
     changeTokenContract.address
   );
 
@@ -49,11 +48,13 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
     const vendorPoolSigner = await ethers.getSigner(vendorPool);
     const vendorChangePoolSigner = await ethers.getSigner(vendorChangePool);
 
+    console.log("Approve Token1 VendorPool");
     let tx = await token1
       .connect(vendorPoolSigner)
       .approve(vendorSell.address, ethers.constants.MaxUint256);
     await tx.wait();
 
+    console.log("Approve USDT VendorChangePool");
     tx = await changeToken
       .connect(vendorChangePoolSigner)
       .approve(vendorSell.address, ethers.constants.MaxUint256);

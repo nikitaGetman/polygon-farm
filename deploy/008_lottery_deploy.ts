@@ -22,6 +22,7 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
     from: deployer,
     log: true,
     autoMine: true,
+    // gasPrice: ethers.BigNumber.from(10).pow(10),
   });
   let vrfCoordinator = VRF_COORDINATOR[network.name];
   if (!network.live && !vrfCoordinator) {
@@ -33,6 +34,8 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
 
     vrfCoordinator = vrfCoordinatorMock.address;
   }
+
+  // return;
 
   // IMPORTANT: Manually add lottery contract to coordinator
   const lottery = await deploy("Lottery", {
@@ -46,21 +49,25 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
       token2.address,
       referralRewardPool,
       vrfCoordinator,
-      process.env.ORACLE_SUBSCRIPTION_ID,
+      network.live
+        ? process.env.ORACLE_SUBSCRIPTION_ID_MAINNET
+        : process.env.ORACLE_SUBSCRIPTION_ID_MUMBAI,
       KEY_HASH[network.name] || ethers.constants.HashZero,
     ],
     log: true,
     autoMine: true,
-    gasPrice: ethers.BigNumber.from(10).pow(10),
+    // gasPrice: ethers.BigNumber.from(10).pow(10),
   });
 
   if (lottery.newlyDeployed) {
+    console.log("Approve referralRewardPool Token2 for Lottery");
     let tx = await token2.approve(lottery.address, ethers.constants.MaxUint256);
     await tx.wait();
 
     const isWhitelisted = await token2.isAddressInWhiteList(referralRewardPool);
     if (!isWhitelisted) {
       const adminSigner = await ethers.getSigner(admin);
+      console.log("Add referralRewardPool to Token2 whitelist");
       tx = await token2
         .connect(adminSigner)
         .addToWhitelist([referralRewardPool]);
@@ -69,6 +76,7 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
 
     const ticketToken = await ethers.getContract<Ticket>("Ticket", admin);
     const MinterRole = await ticketToken.MINTER_ROLE();
+    console.log("Grant Ticket MINTER_ROLE for Lottery contract");
     tx = await ticketToken.grantRole(MinterRole, lottery.address);
     await tx.wait();
 

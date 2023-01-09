@@ -8,6 +8,10 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
 
   const { deployer, token2Holder } = await getNamedAccounts();
 
+  if (!TOKEN2_INITIAL_SUPPLY) {
+    throw new Error("Token1 initial supply not specified");
+  }
+
   await deploy("Token2", {
     from: deployer,
     args: [ethers.BigNumber.from(TOKEN2_INITIAL_SUPPLY), token2Holder],

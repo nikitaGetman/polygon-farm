@@ -31,7 +31,7 @@ contract Ticket is
 
     constructor()
         ERC1155(
-            "https://bafkreidpjakpjd5o3rwmbwwdrc6czdtgn6ylxvzio6bmxcf7zllpzwqhvy.ipfs.nftstorage.link/"
+            "https://bafkreidbleyicztofdeksgq7eqafoup4ldaqiqeioa7bxplsjcnrcpv3e4.ipfs.nftstorage.link/"
         )
     {
         _grantRole(DEFAULT_ADMIN_ROLE, msg.sender);

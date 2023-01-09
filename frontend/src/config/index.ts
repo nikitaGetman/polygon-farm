@@ -9,6 +9,7 @@ export const SQUADS = 'Squads';
 export const LOTTERY = 'Lottery';
 
 export enum ChainIDsEnum {
+  mainnet = 137,
   mumbai = 80001,
   hardhat = 31337,
 }
