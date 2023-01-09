@@ -71,7 +71,7 @@ export const Balances = () => {
 
 type BalanceProps = {
   label: string;
-  balance?: BigNumberish | null;
+  balance?: BigNumber | null;
   symbol?: string;
   minLimit?: BigNumberish;
   decimals?: number;
@@ -91,9 +91,10 @@ const Balance: FC<BalanceProps> = ({ label, balance, symbol, decimals, minLimit 
       <Text color={color}>
         {balance
           ? beautifyAmount(
-              bigNumberToString(balance || 0, { precision: 0, decimals }),
+              bigNumberToString(balance || 0, { precision: 2, decimals }),
               symbol || '',
-              true
+              true,
+              2
             )
           : '---'}
       </Text>

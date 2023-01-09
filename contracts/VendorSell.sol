@@ -60,12 +60,12 @@ contract VendorSell is Context, AccessControl, Pausable {
             "Not enough tokens in exchange pool"
         );
 
-        changeToken.transferFrom(
+        changeToken.safeTransferFrom(
             _msgSender(),
             _changeTokenPool,
             _amountChangeToken
         );
-        token.transferFrom(_tokenPool, _msgSender(), _amountToken);
+        token.safeTransferFrom(_tokenPool, _msgSender(), _amountToken);
 
         emit TokensPurchased(_msgSender(), _amountToken, _amountChangeToken);
     }
@@ -86,8 +86,8 @@ contract VendorSell is Context, AccessControl, Pausable {
             "Not enough tokens in exchange pool"
         );
 
-        token.transferFrom(_msgSender(), _tokenPool, _amountToken);
-        changeToken.transferFrom(
+        token.safeTransferFrom(_msgSender(), _tokenPool, _amountToken);
+        changeToken.safeTransferFrom(
             _changeTokenPool,
             _msgSender(),
             _amountChangeToken

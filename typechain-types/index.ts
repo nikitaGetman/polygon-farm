@@ -12,6 +12,10 @@ export type { VRFCoordinatorV2Interface } from "./@chainlink/contracts/src/v0.8/
 export { VRFCoordinatorV2Interface__factory } from "./factories/@chainlink/contracts/src/v0.8/interfaces/VRFCoordinatorV2Interface__factory";
 export type { VRFConsumerBaseV2 } from "./@chainlink/contracts/src/v0.8/VRFConsumerBaseV2";
 export { VRFConsumerBaseV2__factory } from "./factories/@chainlink/contracts/src/v0.8/VRFConsumerBaseV2__factory";
+export type { IERC20PermitUpgradeable } from "./@openzeppelin/contracts-upgradeable/token/ERC20/extensions/draft-IERC20PermitUpgradeable.sol/IERC20PermitUpgradeable";
+export { IERC20PermitUpgradeable__factory } from "./factories/@openzeppelin/contracts-upgradeable/token/ERC20/extensions/draft-IERC20PermitUpgradeable.sol/IERC20PermitUpgradeable__factory";
+export type { IERC20Upgradeable } from "./@openzeppelin/contracts-upgradeable/token/ERC20/IERC20Upgradeable";
+export { IERC20Upgradeable__factory } from "./factories/@openzeppelin/contracts-upgradeable/token/ERC20/IERC20Upgradeable__factory";
 export type { AccessControl } from "./@openzeppelin/contracts/access/AccessControl";
 export { AccessControl__factory } from "./factories/@openzeppelin/contracts/access/AccessControl__factory";
 export type { IAccessControl } from "./@openzeppelin/contracts/access/IAccessControl";

@@ -61,14 +61,25 @@ export const makeBigNumber = (value: BigNumberish, decimals: number = 18) => {
   return ethers.utils.parseUnits(value.toString(), decimals);
 };
 
-export const beautifyAmount = (amount: number | string, symbol: string, prettify: boolean) => {
+export const beautifyAmount = (
+  amount: number | string,
+  symbol: string,
+  prettify: boolean,
+  decimals: number = 0
+) => {
   const amountNumber = parseFloat(amount.toString());
 
   let parts = amountNumber > 0 ? [symbol] : [amountNumber, symbol];
   let restNumber = amountNumber;
+  let fractional = Math.floor((restNumber * 10 ** decimals) % 10 ** decimals);
+  let isFirst = true;
   while (restNumber > 0) {
     const isLastPart = restNumber < 1000;
-    parts.unshift((restNumber % 1000).toString().padStart(isLastPart ? 0 : 3, '0'));
+    const nextPart = Math.floor(restNumber % 1000)
+      .toString()
+      .padStart(isLastPart ? 0 : 3, '0');
+    parts.unshift(isFirst && fractional ? `${nextPart}.${fractional}` : nextPart);
+    isFirst = false;
     restNumber = Math.floor(restNumber / 1000);
   }
 
