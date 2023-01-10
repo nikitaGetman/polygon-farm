@@ -55,6 +55,7 @@ export interface TicketInterface extends utils.Interface {
     "safeBatchTransferFrom(address,address,uint256[],uint256[],bytes)": FunctionFragment;
     "safeTransferFrom(address,address,uint256,uint256,bytes)": FunctionFragment;
     "setApprovalForAll(address,bool)": FunctionFragment;
+    "setContractURI(string)": FunctionFragment;
     "setRoyaltyPercent(uint256)": FunctionFragment;
     "setURI(string)": FunctionFragment;
     "supportsInterface(bytes4)": FunctionFragment;
@@ -92,6 +93,7 @@ export interface TicketInterface extends utils.Interface {
       | "safeBatchTransferFrom"
       | "safeTransferFrom"
       | "setApprovalForAll"
+      | "setContractURI"
       | "setRoyaltyPercent"
       | "setURI"
       | "supportsInterface"
@@ -227,6 +229,10 @@ export interface TicketInterface extends utils.Interface {
     values: [PromiseOrValue<string>, PromiseOrValue<boolean>]
   ): string;
   encodeFunctionData(
+    functionFragment: "setContractURI",
+    values: [PromiseOrValue<string>]
+  ): string;
+  encodeFunctionData(
     functionFragment: "setRoyaltyPercent",
     values: [PromiseOrValue<BigNumberish>]
   ): string;
@@ -315,6 +321,10 @@ export interface TicketInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "setApprovalForAll",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "setContractURI",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -620,6 +630,11 @@ export interface Ticket extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
+    setContractURI(
+      newuri: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
     setRoyaltyPercent(
       percentBasePoints: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -789,6 +804,11 @@ export interface Ticket extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
+  setContractURI(
+    newuri: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
   setRoyaltyPercent(
     percentBasePoints: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -953,6 +973,11 @@ export interface Ticket extends BaseContract {
     setApprovalForAll(
       operator: PromiseOrValue<string>,
       approved: PromiseOrValue<boolean>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    setContractURI(
+      newuri: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -1210,6 +1235,11 @@ export interface Ticket extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
+    setContractURI(
+      newuri: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
     setRoyaltyPercent(
       percentBasePoints: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -1377,6 +1407,11 @@ export interface Ticket extends BaseContract {
     setApprovalForAll(
       operator: PromiseOrValue<string>,
       approved: PromiseOrValue<boolean>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    setContractURI(
+      newuri: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 

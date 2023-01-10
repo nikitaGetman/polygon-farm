@@ -29,6 +29,8 @@ contract Ticket is
     bytes32 public constant PAUSER_ROLE = keccak256("PAUSER_ROLE");
     bytes32 public constant MINTER_ROLE = keccak256("MINTER_ROLE");
 
+    string private _contractUri;
+
     constructor()
         ERC1155(
             "https://bafkreidbleyicztofdeksgq7eqafoup4ldaqiqeioa7bxplsjcnrcpv3e4.ipfs.nftstorage.link/"
@@ -43,10 +45,18 @@ contract Ticket is
         symbol = "SAVRT";
         _recipient = msg.sender;
         _royalty = 100;
+        _contractUri = "https://bafkreifrpcvihvnnavh3zcpugoj4dhy4o6i6sdi555rtwyuhvhk4zxxhey.ipfs.nftstorage.link/";
     }
 
     function setURI(string memory newuri) public onlyRole(URI_SETTER_ROLE) {
         _setURI(newuri);
+    }
+
+    function setContractURI(string memory newuri)
+        public
+        onlyRole(URI_SETTER_ROLE)
+    {
+        _setContractUri(newuri);
     }
 
     function pause() public onlyRole(PAUSER_ROLE) {
@@ -84,6 +94,10 @@ contract Ticket is
         bytes memory data
     ) internal override(ERC1155, ERC1155Supply) whenNotPaused {
         super._beforeTokenTransfer(operator, from, to, ids, amounts, data);
+    }
+
+    function _setContractUri(string memory newuri) internal virtual {
+        _contractUri = newuri;
     }
 
     /** @dev EIP2981 royalties implementation. */
@@ -137,9 +151,7 @@ contract Ticket is
 
     /** @dev Contract-level metadata for OpenSea. */
 
-    // Update for collection-specific metadata.
-    function contractURI() public pure returns (string memory) {
-        return
-            "https://bafkreidpjakpjd5o3rwmbwwdrc6czdtgn6ylxvzio6bmxcf7zllpzwqhvy.ipfs.nftstorage.link/"; // Contract-level metadata for ParkPics
+    function contractURI() public view returns (string memory) {
+        return _contractUri;
     }
 }

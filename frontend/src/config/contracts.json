@@ -5194,7 +5194,7 @@
           ]
         },
         "Ticket": {
-          "address": "0x5348bC49fDB871265557B8b30005Ea3B580C1bC1",
+          "address": "0x98BADc9fDdAF3978AcEfc0539A96F1003a002fe2",
           "abi": [
             {
               "inputs": [],
@@ -5589,7 +5589,7 @@
                   "type": "string"
                 }
               ],
-              "stateMutability": "pure",
+              "stateMutability": "view",
               "type": "function"
             },
             {
@@ -5930,6 +5930,19 @@
                 }
               ],
               "name": "setApprovalForAll",
+              "outputs": [],
+              "stateMutability": "nonpayable",
+              "type": "function"
+            },
+            {
+              "inputs": [
+                {
+                  "internalType": "string",
+                  "name": "newuri",
+                  "type": "string"
+                }
+              ],
+              "name": "setContractURI",
               "outputs": [],
               "stateMutability": "nonpayable",
               "type": "function"
