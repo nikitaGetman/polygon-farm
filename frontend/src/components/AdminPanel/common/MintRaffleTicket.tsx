@@ -33,7 +33,7 @@ export const MintRaffleTicket: FC<MintRaffleTicketProps> = ({ onClose, onSubmit 
   const isDataValid = address && amount;
 
   return (
-    <Modal isOpen onClose={onClose}>
+    <Modal isOpen isCentered onClose={onClose}>
       <ModalOverlay />
       <ModalContent>
         <ModalHeader textStyle="textSansBold" fontSize={26}>
